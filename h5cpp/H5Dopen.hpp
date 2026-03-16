@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
- * Author: Varga, Steven <steven@vargaconsulting.ca>
- */
+/* SPDX-License-Identifier: MIT
+ * This file is part of H5CPP.
+ * Copyright (c) 2018-2024 Varga Consulting, Toronto, ON, Canada.
+ * Copyright (c) 2025-2026 Varga Labs, Toronto, ON, Canada. */
 
 #ifndef  H5CPP_DOPEN_HPP 
 #define  H5CPP_DOPEN_HPP
