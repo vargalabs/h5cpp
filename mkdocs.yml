@@ -6,12 +6,12 @@ copyright: Steven Varga
 docs_dir: docs
 nav:
   - Overview: index.md
-  - Getting Started: getting-started.md
-  - Parallel HDF5: parallel-hdf5.md
-  - Examples: examples.md
-  - Type Support: type-support.md
   - Design: design.md
+  - Architecture:
+    - HDF5 concepts: architecture-core.md
+    - I/O Operations: architecture-io.md
 
+  - Examples: examples.md
 theme:
   name: material
   custom_dir: docs/overrides

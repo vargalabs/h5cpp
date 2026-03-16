@@ -20,17 +20,17 @@ body::before {
 /* Dark theme (slate) */
 body[data-md-color-scheme="slate"]::before {
   background-color: var(--branding-tint-dark);
-  background-image:
-    url("../assets/scribble-dark.svg"),
-    url("../assets/elliptic-curve-dark.svg");
+  background-repeat: repeat;
+  background-size: 1200px 800px;  
+  background-image: url("../assets/background-dark.svg");
 }
 
 /* Light theme (solarized) */
 body[data-md-color-scheme="solarized"]::before {
   background-color: var(--branding-tint-light);
-  background-image:
-    url("../assets/scribble-light.svg"),
-    url("../assets/elliptic-curve-light.svg");
+  background-image: url("../assets/background-light.svg");
+  background-repeat: repeat;
+  background-size: 1200px 800px;  
 }
 
 
