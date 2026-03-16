@@ -6,7 +6,7 @@ enable_testing()
 find_package(ZLIB REQUIRED)
 
 set(INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/../h5cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
     ${HDF5_C_INCLUDE_DIRS}
 )
 
@@ -30,7 +30,9 @@ function(add_test_case file_name)
     set(multi_value_args LIBRARIES)
     cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
 
-    set(test_name test-${file_name})
+    string(TOLOWER "${file_name}" file_name_lc)
+    set(test_name test-${file_name_lc})
+
     add_executable(${test_name} ${file_name}.cpp)
 
     set_target_properties(${test_name} PROPERTIES
@@ -41,11 +43,12 @@ function(add_test_case file_name)
     foreach(lib IN LISTS ARG_LIBRARIES)
         target_link_libraries(${test_name} PRIVATE ${lib})
     endforeach()
+
     add_test(NAME ${test_name} COMMAND ${test_name})
 endfunction()
 
 # test cases
-#add_test_case(H5cmake)
-#add_test_case(H5Iall)
-# add_test_case(H5Tmeta)
-add_test_case(example)
+add_test_case(H5names)
+add_test_case(H5compat)
+add_test_case(H5meta)
+add_test_case(H5Tmeta)
