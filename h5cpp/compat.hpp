@@ -3,139 +3,84 @@
  * Copyright (c) 2018-2024 Varga Consulting, Toronto, ON, Canada.
  * Copyright (c) 2025-2026 Varga Labs, Toronto, ON, Canada. */
 
-#ifndef  H5CPP_COMPAT_HPP
-#define  H5CPP_COMPAT_HPP
+#ifndef H5CPP_COMPAT_HPP
+#define H5CPP_COMPAT_HPP
 
 #include <hdf5.h>
 #include <cstddef>
-#include <utility>
-#include <type_traits>
 #include <tuple>
+#include <type_traits>
+#include <utility>
 
-namespace h5::compat { // C++11 shim to lower from c++17
-    template <std::size_t ...> struct index_sequence{ };
-
-    template <std::size_t N, std::size_t ... next>
-    struct index_sequence_ : public index_sequence_<N-1U, N-1U, next...>{ };
-
-    template <std::size_t ... next> struct index_sequence_<0U, next ... >{ 
-        using type = index_sequence<next ... >;
+namespace h5::compat {
+    template<std::size_t...> struct index_sequence {};
+    template<std::size_t n, std::size_t... next>
+    struct index_sequence_impl_t : index_sequence_impl_t<n - 1U, n - 1U, next...> {};
+    template<std::size_t... next> struct index_sequence_impl_t<0U, next...> {
+        using type = index_sequence<next...>;
     };
-
-    template <std::size_t N>
-    using make_index_sequence = typename index_sequence_<N>::type;
-
-    template <class F, class Tuple, std::size_t... I>
-    constexpr herr_t apply_impl( F&& f, Tuple&& t, compat::index_sequence<I...> ){
-        return std::forward<F>(f)( std::get<I>(std::forward<Tuple>(t))...);
+    template<std::size_t N> using make_index_sequence = typename index_sequence_impl_t<N>::type;
+    template<class T, class tuple_t, std::size_t... i>
+    constexpr herr_t apply_impl(T&& f, tuple_t&& t, index_sequence<i...>) {
+        return std::forward<T>(f)(std::get<i>(std::forward<tuple_t>(t))...);
     }
 
-    template <class F, class Tuple>
-    constexpr herr_t apply(F&& f, Tuple&& t){
-        using TP = typename std::decay<Tuple>::type;
-        return apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
-            compat::make_index_sequence<std::tuple_size<TP>::value>{});
+    template<class T, class tuple_t>
+    constexpr herr_t apply(T&& f, tuple_t&& t) {
+        using tp_t = typename std::decay<tuple_t>::type;
+        return apply_impl(
+            std::forward<T>(f),
+            std::forward<tuple_t>(t),
+            make_index_sequence<std::tuple_size<tp_t>::value>{}
+        );
     }
-    template<typename T>
-    struct is_pod : std::integral_constant<bool,
-        std::is_standard_layout<T>::value && std::is_trivially_copyable<T>::value> {};
-
-}
-
-namespace h5::impl::compat {
     struct nonesuch {
-        nonesuch( ) = delete;
-        ~nonesuch( ) = delete;
-        nonesuch( nonesuch const& ) = delete;
-        void operator = ( nonesuch const& ) = delete;
+        nonesuch() = delete;
+        ~nonesuch() = delete;
+        nonesuch(nonesuch const&) = delete;
+        void operator=(nonesuch const&) = delete;
     };
-
-    template< class... > using void_t = void;
     namespace detail {
-        template <class Default, class AlwaysVoid,
-                  template<class...> class Op, class... Args>
-        struct detector {
-          using value_t = std::false_type;
-          using type = Default;
+        template<class default_t, class always_void_t, template<class...> class op_t, class... args_t>
+        struct detector_t {
+            using value_t = std::false_type;
+            using type = default_t;
         };
 
-        template <class Default, template<class...> class Op, class... Args>
-        struct detector<Default, std::void_t<Op<Args...>>, Op, Args...> {
-          using value_t = std::true_type;
-          using type = Op<Args...>;
+        template<class default_t, template<class...> class op_t, class... args_t>
+        struct detector_t<default_t, std::void_t<op_t<args_t...>>, op_t, args_t...> {
+            using value_t = std::true_type;
+            using type = op_t<args_t...>;
         };
+
     } // namespace detail
 
-    template <template<class...> class Op, class... Args>
-    using is_detected = typename detail::detector<nonesuch, void, Op, Args...>::value_t;
+    template<template<class...> class op_t, class... args_t> using is_detected = typename detail::detector_t<nonesuch, void, op_t, args_t...>::value_t;
+    template<template<class...> class op_t, class... args_t> using detected_t = typename detail::detector_t<nonesuch, void, op_t, args_t...>::type;
+    template<class default_t, template<class...> class op_t, class... args_t> using detected_or = detail::detector_t<default_t, void, op_t, args_t...>;
+    template<template<class...> class op_t, class... args_t> constexpr bool is_detected_v = is_detected<op_t, args_t...>::value;
+    template<class default_t, template<class...> class op_t, class... args_t> using detected_or_t = typename detected_or<default_t, op_t, args_t...>::type;
+    template<class expected_t, template<class...> class op_t, class... args_t> using is_detected_exact = std::is_same<expected_t, detected_t<op_t, args_t...>>;
+    template<class expected_t, template<class...> class op_t, class... args_t> constexpr bool is_detected_exact_v = is_detected_exact<expected_t, op_t, args_t...>::value;
+    template<class to_t, template<class...> class op_t, class... args_t> using is_detected_convertible = std::is_convertible<detected_t<op_t, args_t...>, to_t>;
+    template<class to_t, template<class...> class op_t, class... args_t> constexpr bool is_detected_convertible_v = is_detected_convertible<to_t, op_t, args_t...>::value;
 
-    template <template<class...> class Op, class... Args>
-    using detected_t = typename detail::detector<nonesuch, void, Op, Args...>::type;
-
-    template <class Default, template<class...> class Op, class... Args>
-    using detected_or = detail::detector<Default, void, Op, Args...>;
-
-    // helper templates
-    template< template<class...> class Op, class... Args >
-    constexpr bool is_detected_v = is_detected<Op, Args...>::value;
-    template< class Default, template<class...> class Op, class... Args >
-    using detected_or_t = typename detected_or<Default, Op, Args...>::type;
-    template <class Expected, template<class...> class Op, class... Args>
-    using is_detected_exact = std::is_same<Expected, detected_t<Op, Args...>>;
-    template <class Expected, template<class...> class Op, class... Args>
-    constexpr bool is_detected_exact_v = is_detected_exact<Expected, Op, Args...>::value;
-    template <class To, template<class...> class Op, class... Args>
-    using is_detected_convertible = std::is_convertible<detected_t<Op, Args...>, To>;
-    template <class To, template<class...> class Op, class... Args>
-    constexpr bool is_detected_convertible_v = is_detected_convertible<To, Op, Args...>::value;
-}
+    template<class T> using is_pod = std::is_pod<typename std::remove_cv<typename std::remove_reference<T>::type>::type>;
+    template<class T> constexpr bool is_pod_v = is_pod<T>::value;      
+} // namespace h5::compat
 
 namespace h5::meta::compat {
-// N4436 and https://en.cppreference.com/w/cpp/experimental/is_detected 
-    struct nonesuch {
-        nonesuch( ) = delete;
-        //~nonesuch( ) = delete;
-        nonesuch( nonesuch const& ) = delete;
-        void operator = ( nonesuch const& ) = delete;
-    };
-
-    template< class... > using void_t = void;
-    namespace detail {
-        template <class Default, class AlwaysVoid,
-                  template<class...> class Op, class... Args>
-        struct detector {
-          using value_t = std::false_type;
-          using type = Default;
-        };
-
-        template <class Default, template<class...> class Op, class... Args>
-        struct detector<Default, std::void_t<Op<Args...>>, Op, Args...> {
-          using value_t = std::true_type;
-          using type = Op<Args...>;
-        };
-    } // namespace detail
-
-    template <template<class...> class Op, class... Args>
-    using is_detected = typename detail::detector<nonesuch, void, Op, Args...>::value_t;
-
-    template <template<class...> class Op, class... Args>
-    using detected_t = typename detail::detector<nonesuch, void, Op, Args...>::type;
-
-    template <class Default, template<class...> class Op, class... Args>
-    using detected_or = detail::detector<Default, void, Op, Args...>;
-
-    // helper templates
-    template< template<class...> class Op, class... Args >
-    constexpr bool is_detected_v = is_detected<Op, Args...>::value;
-    template< class Default, template<class...> class Op, class... Args >
-    using detected_or_t = typename detected_or<Default, Op, Args...>::type;
-    template <class Expected, template<class...> class Op, class... Args>
-    using is_detected_exact = std::is_same<Expected, detected_t<Op, Args...>>;
-    template <class Expected, template<class...> class Op, class... Args>
-    constexpr bool is_detected_exact_v = is_detected_exact<Expected, Op, Args...>::value;
-    template <class To, template<class...> class Op, class... Args>
-    using is_detected_convertible = std::is_convertible<detected_t<Op, Args...>, To>;
-    template <class To, template<class...> class Op, class... Args>
-    constexpr bool is_detected_convertible_v = is_detected_convertible<To, Op, Args...>::value;
+    using h5::compat::detected_or;
+    using h5::compat::detected_or_t;
+    using h5::compat::detected_t;
+    using h5::compat::is_detected;
+    using h5::compat::is_detected_convertible;
+    using h5::compat::is_detected_convertible_v;
+    using h5::compat::is_detected_exact;
+    using h5::compat::is_detected_exact_v;
+    using h5::compat::is_detected_v;
+    using h5::compat::is_pod;
+    using h5::compat::is_pod_v;    
+    using h5::compat::nonesuch;
 }
 #endif
