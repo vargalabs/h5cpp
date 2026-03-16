@@ -3,8 +3,7 @@
  * Copyright (c) 2018-2024 Varga Consulting, Toronto, ON, Canada.
  * Copyright (c) 2025-2026 Varga Labs, Toronto, ON, Canada. */
 
-#ifndef H5CPP_COMPAT_HPP
-#define H5CPP_COMPAT_HPP
+#pragma once
 
 #include <hdf5.h>
 #include <cstddef>
@@ -83,4 +82,3 @@ namespace h5::meta::compat {
     using h5::compat::is_pod_v;    
     using h5::compat::nonesuch;
 }
-#endif
