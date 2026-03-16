@@ -33,7 +33,7 @@ namespace h5 { namespace impl {
 	// helpers
 	template <class T>
 		using is_scalar = std::integral_constant<bool,
-			std::is_integral<T>::value || std::is_pod<T>::value || std::is_same<T,std::string>::value>;
+			std::is_integral<T>::value || h5::compat::is_pod<T>::value || std::is_same<T,std::string>::value>;
 	template <class T, class B = typename impl::decay<T>::type>
 		using is_rank01 = std::integral_constant<bool,
 			std::is_same<T,std::initializer_list<B>>::value || 
@@ -45,7 +45,7 @@ namespace h5 { namespace impl {
 	template<class T> struct rank<std::vector<T>>: public std::integral_constant<size_t,1>{};
 
 	// 3.) read access
-	template <class T> inline typename std::enable_if<std::is_integral<T>::value || std::is_pod<T>::value,
+	template <class T> inline typename std::enable_if<std::is_integral<T>::value || h5::compat::is_pod<T>::value,
 		const T*>::type data( const T& ref ){ return &ref; }
 	template<class T> inline typename std::enable_if< impl::is_scalar<T>::value,
 		const T*>::type data( const std::initializer_list<T>& ref ){ return ref.begin(); }
@@ -63,7 +63,7 @@ namespace h5 { namespace impl {
 	//template <class T> inline typename std::enable_if<std::is_integral<T>::value,
 	//	const T*>::type data( const T& ref ){ return &ref; }
 	// 5.) obtain dimensions of extents
-	template <class T> inline constexpr typename std::enable_if< impl::is_scalar<T>::value,
+	template <class T> inline constexpr typename std::enable_if< impl::is_scalar<T>::value &&!impl::is_rank01<T>::value,
 		std::array<size_t,0>>::type size( T value ){ return{}; }
 	template <class T> inline typename std::enable_if< impl::is_rank01<T>::value,
 		std::array<size_t,1>>::type size( const T& ref ){ return {ref.size()}; }

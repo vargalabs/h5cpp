@@ -11,6 +11,16 @@ namespace h5 {
 }
 
 namespace h5{ namespace impl {
+	using aligned_ptr_t = std::unique_ptr<char, void(*)(void*)>;
+	inline static void free_aligned(void* p) { std::free(p); }
+
+	inline std::unique_ptr<char, void(*)(void*)>
+	make_aligned(size_t alignment, size_t size) {
+		void* p = aligned_alloc(alignment, size);
+		if (!p) throw std::bad_alloc();
+		return { (char*)p, free_aligned };
+	}
+	
 	enum struct filter_direction_t {
 		forward = 0, reverse = 1
 	};
@@ -72,7 +82,8 @@ namespace h5{ namespace impl {
 		void push( filter::call_t filter );
 		void pop();
 
-		std::unique_ptr<char> ptr0, ptr1; // will call std::free on dtor
+		aligned_ptr_t ptr0{nullptr, free_aligned};
+		aligned_ptr_t ptr1{nullptr, free_aligned};		
 		filter::call_t filter[H5CPP_MAX_FILTER];
 		hsize_t n,
 				C[H5CPP_MAX_RANK], D[H5CPP_MAX_RANK],
@@ -155,9 +166,9 @@ inline void h5::impl::pipeline_t<Derived>::set_cache( const h5::dcpl_t& dcpl, si
 		push(
 			filter::get_callback( H5Pget_filter2( dcpl, i, &flags[i], &cd_size[i], cd_values[i], 0, nullptr, &filter_config )));
 	}
+	ptr0 = make_aligned(H5CPP_MEM_ALIGNMENT, block_size);
+	ptr1 = make_aligned(H5CPP_MEM_ALIGNMENT, block_size);
 
-	ptr0 = std::move( std::unique_ptr<char>{ (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size )} );
-	ptr1 = std::move( std::unique_ptr<char>{ (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size )} );
 	// get an alias to smart ptr
 	if( (chunk0 = ptr0.get()) == NULL || (chunk1 = ptr1.get()) == NULL )
 	   	throw h5::error::io::dataset::open( H5CPP_ERROR_MSG("CTOR: couldn't allocate memory for caching chunks, invalid/check size?"));

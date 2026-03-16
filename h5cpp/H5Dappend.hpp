@@ -49,12 +49,14 @@ namespace h5 {
                 this->count[i] = pt.count[i];
             }
             // since pt.rank = 0, we can skip 
-			return pt;
+			return *this;
 		}
 		friend std::ostream& ::operator<<(std::ostream &os, const h5::pt_t& pt);
 		template<class T>
 		friend void append( h5::pt_t& ds, const T& ref);
 		friend void flush(h5::pt_t&);
+		void reset();
+		
 		private:
 		void init(const h5::ds_t& ds_);
 		void flush();
@@ -228,8 +230,7 @@ void h5::pt_t::flush(){
 	hsize_t r=1; for(hsize_t i=1; i<rank; i++) r*=chunk_dims[i];
 	*current_dims += (n % r) ? n / r + 1 : n / r;
 	h5::set_extent(ds, current_dims);
-
-	if( H5Tis_variable_str(this->dt)) {
+	if( H5Tis_variable_str(this->dt) > 0 ) {
 		hsize_t block = 1, count = n;
 	 	h5::sp_t mem_space{H5Screate_simple(rank, &count, nullptr )};
 		h5::sp_t file_space{H5Dget_space( static_cast<::hid_t>(ds) )};
@@ -247,6 +248,10 @@ void h5::pt_t::flush(){
 	}
 }
 
+inline void  h5::pt_t::reset() {
+	std::memset(current_dims, 0, H5CPP_MAX_RANK * sizeof(hsize_t));
+}
+
 namespace h5 {
 	/** @ingroup io-append
 	 * @brief extends HDF5 dataset along the first/slowest growing dimension, then writes passed object to the newly created space
@@ -262,11 +267,14 @@ namespace h5 {
 
 	inline void flush(h5::pt_t& pt) try {
 		pt.flush();
-        //TODO: find better mechanism for deprecating code: #pragma message("not implemented: do not call pt_t::flush() ...")
-		// for now
 	} catch ( const std::runtime_error& e){
 		throw h5::error::io::dataset::close( e.what() );
 	}
+	inline void reset(h5::pt_t& pt) try {
+		pt.reset();
+	} catch ( const std::runtime_error& e){
+		throw h5::error::io::dataset::write( e.what() );
+	}	
 }
 
 inline std::ostream& operator<<(std::ostream &os, const h5::pt_t& pt) {

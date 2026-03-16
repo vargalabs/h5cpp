@@ -180,7 +180,7 @@ namespace h5 {
 	* @endcode 
  	*/
 	template <class T, class... args_t>
-	inline h5::ds_t write(const h5::ds_t& ds, const T& ref,  args_t&&... args) try {
+	inline h5::ds_t write(h5::ds_t ds, const T& ref,  args_t&&... args) try {
 		using tcount = typename arg::tpos<const h5::count_t&,const args_t&...>;
 		using element_t = typename impl::decay<T>::type;
 

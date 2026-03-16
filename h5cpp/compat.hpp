@@ -36,6 +36,10 @@ namespace h5::compat { // C++11 shim to lower from c++17
         return apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
             compat::make_index_sequence<std::tuple_size<TP>::value>{});
     }
+    template<typename T>
+    struct is_pod : std::integral_constant<bool,
+        std::is_standard_layout<T>::value && std::is_trivially_copyable<T>::value> {};
+
 }
 
 namespace h5::impl::compat {

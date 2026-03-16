@@ -31,7 +31,7 @@ namespace h5 {
 
 	//POD ELEMENT TYPES: Rank 0 and rank > 0
 	template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
-	typename std::enable_if< !std::is_arithmetic<D>::value && std::is_pod<D>::value && !std::is_same<T,std::string>::value,
+	typename std::enable_if< !std::is_arithmetic<D>::value && compat::is_pod<D>::value && !std::is_same<T,std::string>::value,
 	T>::type aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
 		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
 		hid_t id;

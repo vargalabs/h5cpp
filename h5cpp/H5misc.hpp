@@ -18,7 +18,6 @@ namespace h5{
 namespace h5::utils {
 	template <class T>
 	static constexpr bool is_supported = std::is_class<T>::value | std::is_arithmetic<T>::value;
-	//static constexpr bool is_supported = std::is_pod<T>::value && std::is_class<T>::value | std::is_arithmetic<T>::value;
 }
 
 

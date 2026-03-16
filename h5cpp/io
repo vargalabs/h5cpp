@@ -15,7 +15,8 @@
 	#include "H5Dwrite.hpp"
 	#include "H5Dread.hpp"
 	#include "H5Dappend.hpp"
-	
+	#include "H5Dranges.hpp"
+
 	#include "H5Acreate.hpp"
 	#include "H5Aopen.hpp"
 	#include "H5Awrite.hpp"
