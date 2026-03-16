@@ -2,26 +2,66 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://steven-varga.ca/</loc>
-         <lastmod>2026-03-15</lastmod>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/architecture-core/</loc>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/architecture-integration/</loc>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/architecture-io/</loc>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/architecture-parallelism/</loc>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/architecture-types/</loc>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/architecture/</loc>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/compiler/</loc>
+         <lastmod>2026-03-16</lastmod>
     </url>
     <url>
          <loc>https://steven-varga.ca/design/</loc>
-         <lastmod>2026-03-15</lastmod>
+         <lastmod>2026-03-16</lastmod>
     </url>
     <url>
          <loc>https://steven-varga.ca/examples/</loc>
-         <lastmod>2026-03-15</lastmod>
+         <lastmod>2026-03-16</lastmod>
     </url>
     <url>
-         <loc>https://steven-varga.ca/getting-started/</loc>
-         <lastmod>2026-03-15</lastmod>
+         <loc>https://steven-varga.ca/stl/</loc>
+         <lastmod>2026-03-16</lastmod>
     </url>
     <url>
-         <loc>https://steven-varga.ca/parallel-hdf5/</loc>
-         <lastmod>2026-03-15</lastmod>
+         <loc>https://steven-varga.ca/examples/attributes/</loc>
+         <lastmod>2026-03-16</lastmod>
     </url>
     <url>
-         <loc>https://steven-varga.ca/type-support/</loc>
-         <lastmod>2026-03-15</lastmod>
+         <loc>https://steven-varga.ca/examples/container/</loc>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/examples/datasets/</loc>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/examples/groups/</loc>
+         <lastmod>2026-03-16</lastmod>
+    </url>
+    <url>
+         <loc>https://steven-varga.ca/examples/sparse-matrix/</loc>
+         <lastmod>2026-03-16</lastmod>
     </url>
 </urlset>

@@ -1,0 +1,977 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5">
+      
+      
+        <meta name="author" content="Steven Varga">
+      
+      
+        <link rel="canonical" href="https://steven-varga.ca/architecture-io/">
+      
+      
+        <link rel="prev" href="../architecture-core/">
+      
+      
+        <link rel="next" href="../examples/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>I/O Operations - VargaLABS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../styles/asciinema-player.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+      <link rel="stylesheet" href="../styles/custom.css">
+    
+      <link rel="stylesheet" href="../styles/mobile.css">
+    
+      <link rel="stylesheet" href="../styles/socials.css">
+    
+      <link rel="stylesheet" href="../styles/background.css">
+    
+      <link rel="stylesheet" href="../styles/blog.css">
+    
+      <link rel="stylesheet" href="../styles/asciinema.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+    
+    
+
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="VargaLABS" />
+    <meta property="og:title" content="VargaLABS" />
+    <meta property="og:description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
+    <meta property="og:url" content="https://steven-varga.ca/architecture-io/" />
+    <meta property="og:image" content="https://steven-varga.ca//assets/social/og-default.png" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="" />
+    <meta name="twitter:title" content="VargaLABS" />
+    <meta name="twitter:description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
+    <meta name="twitter:image" content="https://steven-varga.ca//assets/social/og-default.png" />
+
+    <!-- SEO -->
+    <link rel="canonical" href="https://steven-varga.ca/architecture-io/" />
+    <meta name="description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
+    <script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "VargaLABS",
+    "description": "H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5",
+    "url": "https://steven-varga.ca/architecture-io/",
+    "datePublished": "2010-01-01",
+    "author": {
+        "@type": "Person",
+        "name": "Steven Varga"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "VargaLABS",
+        "logo": {
+        "@type": "ImageObject",
+        "url": "https://steven-varga.ca//assets/logo.png"
+        }
+    },
+    "image": "https://steven-varga.ca//assets/social/og-default.png"
+    }
+    </script>    
+
+<link rel="alternate" type="application/rss+xml" title="VargaLABS RSS Feed" href="../rss.xml" />
+<link rel="alternate" type="application/feed+json" title="VargaLABS JSON Feed" href="../feed.json" />
+
+
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="solarized" data-md-color-primary="orange" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#open" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://steven-varga.ca/" title="VargaLABS" class="md-header__button md-logo" aria-label="VargaLABS" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis"> H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5 </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              I/O Operations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    <div class="md-social-inline">
+      
+      
+        
+        
+        
+        
+          
+          
+        
+        <a href="https://wa.me/16475611829" target="_blank" rel="noopener" title="wa.me" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.23 8.23 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23-1.48 0-2.93-.39-4.19-1.15l-.3-.17-3.12.82.83-3.04-.2-.32a8.2 8.2 0 0 1-1.26-4.38c.01-4.54 3.7-8.24 8.25-8.24M8.53 7.33c-.16 0-.43.06-.66.31-.22.25-.87.86-.87 2.07 0 1.22.89 2.39 1 2.56.14.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18s.21-1.07.15-1.18c-.07-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.53.07-.26-.13-1.06-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.27-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.11-.56-1.35-.77-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.47-.01"/></svg>
+        </a>
+      
+        
+        
+        
+        
+        <a href="mailto:steven@vargaconsulting.ca" target="_blank" rel="noopener" title="" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 5.5H9c-1.1 0-2 .9-2 2v9a2 2 0 0 0 2 2h13c1.11 0 2-.89 2-2v-9a2 2 0 0 0-2-2m0 3.67-6.5 3.33L9 9.17V7.5l6.5 3.31L22 7.5zM5 16.5c0 .17.03.33.05.5H1c-.552 0-1-.45-1-1s.448-1 1-1h4zM3 7h2.05c-.02.17-.05.33-.05.5V9H3c-.55 0-1-.45-1-1s.45-1 1-1m-2 5c0-.55.45-1 1-1h3v2H2c-.55 0-1-.45-1-1"/></svg>
+        </a>
+      
+        
+        
+        
+        
+          
+          
+        
+        <a href="https://x.com/vargaconsulting" target="_blank" rel="noopener" title="x.com" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.2 4.2 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.33 1.84q-.51 0-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23"/></svg>
+        </a>
+      
+        
+        
+        
+        
+          
+          
+        
+        <a href="https://www.linkedin.com/in/steven-varga-04224a19/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37z"/></svg>
+        </a>
+      
+        
+        
+        
+        
+          
+          
+        
+        <a href="https://github.com/vargaconsulting" target="_blank" rel="noopener" title="github.com" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>
+        </a>
+      
+
+      
+      <span class="md-header__button md-icon" style="pointer-events: none; opacity: 0.4;">|</span>  
+    </div>
+  
+
+  
+  
+    
+    
+    
+
+    <input class="md-option"
+           data-md-color-media=""
+           data-md-color-scheme="solarized"
+           data-md-color-primary="orange"
+           data-md-color-accent="indigo"
+            aria-label="Switch to dark mode"
+           
+           type="radio" name="__palette" id="__palette_0">
+
+    
+      <label class="md-header__button md-icon"
+             title="Switch to dark mode"
+             for="__palette_1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+    
+    
+    
+
+    <input class="md-option"
+           data-md-color-media=""
+           data-md-color-scheme="slate"
+           data-md-color-primary="orange"
+           data-md-color-accent="indigo"
+            aria-label="Switch to light mode"
+           
+           type="radio" name="__palette" id="__palette_1">
+
+    
+      <label class="md-header__button md-icon"
+             title="Switch to light mode"
+             for="__palette_0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-icon lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+<!-- -->
+
+<!-- -->
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://steven-varga.ca/" title="VargaLABS" class="md-nav__button md-logo" aria-label="VargaLABS" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    VargaLABS
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HDF5 concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    I/O Operations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    I/O Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WRITE
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#append" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Append
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#open" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WRITE
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#append" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Append
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+
+
+
+
+  <h1>I/O Operations</h1>
+
+<p>H5CPP uses C++ template metaprogramming to build a Pythonic I/O interface: calls are composed from strongly typed descriptors rather than rigid positional argument lists, while remaining fully resolved at compile time and incurring no runtime overhead. The following sections describe the core H5CPP I/O operators: <code>h5::create</code>, <code>h5::read</code>, <code>h5::write</code>, <code>h5::append</code>, <code>h5::open</code>, <code>h5::close</code> and their syntax is presented in EBNF-style notation. We begin with a few common terms. </p>
+<ul>
+<li><strong>File or container</strong> An HDF5 file may be viewed as a container with its own internal hierarchy of groups, datasets, named types, and attributes. The file itself is an ordinary file in the host file system and can be copied, moved, or archived using standard tools, while its contents are accessed through HDF5-specific I/O calls. To refer to such a container, pass either an open file handle <code>h5::fd_t</code>, a group handle <code>h5::gr_t</code>, or the path to the HDF5 file:</li>
+</ul>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">file</span><span class="w"> </span><span class="o">::=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">file_path</span><span class="p">;</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Groups and datasets</strong> HDF5 groups (<code>h5::gr_t</code>) are similar to file-system directories: they act as containers for datasets, named types, and subgroups. For this reason, the terms <em>group</em> and <em>directory</em> are used interchangeably in this documentation. Like datasets, groups may also carry attributes. A dataset is a concrete object within the container. To identify one uniquely, pass either an open dataset handle <code>h5::ds_t</code>, or specify both the container and the dataset path. In the latter case, H5CPP generates the necessary shim code at compile time to obtain the corresponding <code>h5::fd_t</code> handle and resolve the dataset.</li>
+</ul>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">dataset</span><span class="w"> </span><span class="o">::=</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dataset_path</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">file_path</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dataset_path</span><span class="p">)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ds</span><span class="p">;</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Dataspace</strong> HDF5 datasets may have different shapes in memory and on disk. A <strong>dataspace</strong> describes that shape: it specifies the current extent of the object and, where applicable, the maximum extent to which it may be extended.</li>
+</ul>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">dataspace</span><span class="w"> </span><span class="o">::=</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">sp_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dataspace</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">current_dims</span><span class="o">&amp;</span><span class="w"> </span><span class="n">current_dims</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">current_dims</span><span class="o">&amp;</span><span class="w"> </span><span class="n">current_dims</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">              </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">max_dims</span><span class="o">&amp;</span><span class="w"> </span><span class="n">max_dims</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">max_dims</span><span class="o">&amp;</span><span class="w"> </span><span class="n">max_dims</span><span class="p">;</span>
+</span></code></pre></div>
+<ul>
+<li>
+<p><strong>Type parameter <code>T</code></strong> denotes the template type parameter associated with the object being read or written. In H5CPP, the element type is deduced at compile time, which allows the library to support a flexible range of storage-capable C++ types. Broadly speaking, supported objects fall into two categories:</p>
+<ul>
+<li>types backed by contiguous memory, such as vectors, matrices, and C-style POD or standard-layout records</li>
+<li>more complex C++ object types with non-trivial internal structure</li>
+</ul>
+</li>
+</ul>
+<p>The latter are not generally supported as first-class storage objects. See the <a href="#types">Supported Types</a> section for details.</p>
+<h4 id="open"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.1 10 4 18V8h17a2 2 0 0 0-2-2h-7l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h15c.9 0 1.7-.6 1.9-1.5l2.3-8.5zM19 18H6l1.6-6h13z"/></svg></span>  Open</h4>
+<p>The <a href="#pythonic-syntax">previous section</a> introduced the common EBNF terms such as <code>file</code> and <code>dataspace</code>. Opening HDF5 objects follows the same general pattern: each object type has a corresponding open function, optionally parameterized with a property list.</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="nf">h5::open</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w">  </span><span class="n">H5F_ACC_RDWR</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">H5F_ACC_RDONLY</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fapl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fapl</span><span class="p">]</span><span class="w"> </span><span class="p">);</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="w"> </span><span class="nf">h5::gopen</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">location</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gapl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gapl</span><span class="p">]</span><span class="w"> </span><span class="p">);</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="w"> </span><span class="nf">h5::open</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">location</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dapl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dapl</span><span class="p">]</span><span class="w"> </span><span class="p">);</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">h5</span><span class="o">::</span><span class="n">at_t</span><span class="w"> </span><span class="nf">h5::aopen</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">:</span><span class="n">ds_t</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">acpl</span><span class="p">]</span><span class="w"> </span><span class="p">);</span>
+</span></code></pre></div>
+<p>The optional property lists include [<code>h5::fapl_t</code>][602] for files and [<code>h5::dapl_t</code>][605] for datasets. These allow access behavior to be refined when needed. The supported file access flags are:</p>
+<ul>
+<li><code>H5F_ACC_RDWR</code> — open with read/write access</li>
+<li><code>H5F_ACC_RDONLY</code> — open with read-only access</li>
+</ul>
+<p>In the standard HDF5 model, only one process may open a file for writing at a time, while multiple readers may access it concurrently. This is the usual single-writer / multiple-reader constraint. If exclusive write access is too restrictive, use <strong>parallel HDF5</strong>. In that model, multiple MPI processes may write to the same file using collective or independent access patterns such as <code>h5::collective</code> or <code>h5::independent</code>. On MPI-based clusters and supercomputers, parallel HDF5 is the preferred approach and can scale to very high aggregate throughput.</p>
+<p>Here is a cleaner revision:</p>
+<h4 id="create"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19V5H5v14zm0-16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-8 4h2v4h4v2h-4v4h-2v-4H7v-2h4z"/></svg></span> Create</h4>
+<p>Creation follows the same pattern as opening: each HDF5 object type has a corresponding create function, optionally parameterized with property lists.</p>
+<p><div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">[</span><span class="n">file</span><span class="p">]</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">H5F_ACC_TRUNC</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">H5F_ACC_EXCL</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">            </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fcpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fcpl</span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fapl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fapl</span><span class="p">]);</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">[</span><span class="n">group</span><span class="p">]</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gcreate</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">            </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">lcpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">lcpl</span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gcpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gcpl</span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gapl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gapl</span><span class="p">]);</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">[</span><span class="n">dataset</span><span class="p">]</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">location</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dataset_path</span><span class="p">,</span><span class="w"> </span><span class="n">dataspace</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">lcpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">lcpl</span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dcpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dcpl</span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dapl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dapl</span><span class="p">]</span><span class="w"> </span><span class="p">);</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="p">[</span><span class="n">attribute</span><span class="p">]</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="n">h5</span><span class="o">::</span><span class="n">at_t</span><span class="w"> </span><span class="n">acreate</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="o">&amp;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dt_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">     </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">current_dims</span><span class="p">{...}</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">acpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">acpl</span><span class="p">]);</span>
+</span></code></pre></div>
+The most commonly used property lists are: [<code>h5::fcpl_t</code>][601], [<code>h5::fapl_t</code>][602], [<code>h5::lcpl_t</code>][603], [<code>h5::dcpl_t</code>][604], and [<code>h5::dapl_t</code>][605]. The file creation flags are <code>H5F_ACC_TRUNC</code> — create the file, truncating it if it already exists, <code>H5F_ACC_EXCL</code> — create the file only if it does not already exist. The following creates an HDF5 file and then defines a chunked, extensible dataset.
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;h5cpp/all&gt;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="p">...</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="w"> </span><span class="n">M</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;arma.h5&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">H5F_ACC_TRUNC</span><span class="p">);</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create</span><span class="o">&lt;</span><span class="kt">short</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;dataset/path/object.name&quot;</span><span class="p">,</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="n">h5</span><span class="o">::</span><span class="n">current_dims</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">},</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">max_dims</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">H5S_UNLIMITED</span><span class="p">},</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">chunk</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fill_value</span><span class="o">&lt;</span><span class="kt">short</span><span class="o">&gt;</span><span class="p">{</span><span class="mi">3</span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gzip</span><span class="p">{</span><span class="mi">9</span><span class="p">});</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">ds</span><span class="p">[</span><span class="s">&quot;attribute-name&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="p">...</span>
+</span></code></pre></div></p>
+<p>In this example:</p>
+<ul>
+<li>the file is created with truncation enabled</li>
+<li>the dataset is created with current dimensions <code>{10, 20}</code></li>
+<li>the second dimension is declared extensible via <code>H5S_UNLIMITED</code></li>
+<li>chunking, fill value, and gzip compression are specified through the dataset creation property list</li>
+</ul>
+<p>A couple of technical notes.</p>
+<ul>
+<li>I changed <code>h5::fd_t</code> to <code>h5::gr_t</code> for <code>gcreate</code>, because returning a file descriptor there would be mildly alarming.</li>
+<li><code>h5::at_t</code> may need to be <code>h5::att_t</code> if that is your actual attribute handle type elsewhere.</li>
+<li><code>const h5::ds_t | const h5::gr_t | const h5::dt_t&amp; node</code> is a bit uneven as written in the source; in real docs I would probably normalize all of those references visually.</li>
+</ul>
+<p>The section is now much easier to scan: syntax first, property lists next, example after. Less soup, more structure.</p>
+<p>Here is a cleaner revision of the section:</p>
+<h4 id="read"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 13.09V7c0-2.21-3.58-4-8-4S4 4.79 4 7v10c0 2.21 3.59 4 8 4 .46 0 .9 0 1.33-.06A6 6 0 0 1 13 19v-.05c-.32.05-.65.05-1 .05-3.87 0-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23.65 0 1.27-.04 1.88-.11A5.99 5.99 0 0 1 19 13c.34 0 .67.04 1 .09m-2-.64c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2 6 1.5 6 2-2.13 2-6 2m10 11-3 3-3-3h2v-4h2v4z"/></svg></span> Read</h4>
+<p>H5CPP provides two forms of read operators: one returns a <strong>newly created object</strong> for convenient one-shot access, while the other reads into <strong>an existing object</strong> for repeated use where avoiding allocation is important. When a value is returned, H5CPP creates the object with the appropriate shape and relies on return value optimization (RVO) so that no extra copy is introduced. When reading into an existing object, the caller is responsible for providing a correctly sized destination. H5CPP then uses the supplied memory directly whenever possible, avoiding unnecessary temporaries. Internally, HDF5 may still use a chunk-sized transfer buffer, for example for filtering or datatype conversion. In practice this overhead is usually small, and chunk sizes should generally be chosen so they remain cache-friendly.</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">read</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ds</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">offset_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">offset</span><span class="p">]</span><span class="w">  </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">stride_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">stride</span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">count_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">count</span><span class="p">]</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dxpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dxpl</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">err_t</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">read</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ds</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ref</span><span class="w"> </span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">[</span><span class="n">h5</span><span class="o">::</span><span class="n">offset_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">offset</span><span class="p">]</span><span class="w">  </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">stride_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">stride</span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">count_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">count</span><span class="p">]</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dxpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dxpl</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">aread</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="o">&amp;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="o">&amp;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dt_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">acpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">acpl</span><span class="p">])</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">aread</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">at_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">attr</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">acpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">acpl</span><span class="p">])</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+</span></code></pre></div>
+<p>Dimensions of extent <code>1</code> are dropped automatically, so the result is returned as a 2D object. For repeated access inside a tight loop, read into a preallocated buffer:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="w"> </span><span class="nf">buffer</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10&#39;000&#39;000</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">h5</span><span class="o">::</span><span class="n">read</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">offset</span><span class="p">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">chunk</span><span class="p">});</span>
+</span></code></pre></div>
+<p>In this form, <code>h5::count{...}</code> is inferred from the size of <code>buffer</code>. Passing an explicit count that does not match the target object can produce a useful compile-time diagnostic. When working with raw or managed pointers, the target memory extent must be specified explicitly:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">[]</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ptr</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="kt">double</span><span class="p">[</span><span class="n">buffer_size</span><span class="p">]);</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10&#39;000&#39;000</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="n">h5</span><span class="o">::</span><span class="n">read</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="w"> </span><span class="n">ptr</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">offset</span><span class="p">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">buffer_size</span><span class="p">},</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">count</span><span class="p">{</span><span class="n">buffer_size</span><span class="p">});</span>
+</span></code></pre></div>
+<h4 id="write"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 13.09V7c0-2.21-3.58-4-8-4S4 4.79 4 7v10c0 2.21 3.59 4 8 4 .46 0 .9 0 1.33-.06A6 6 0 0 1 13 19v-.05c-.32.05-.65.05-1 .05-3.87 0-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23.65 0 1.27-.04 1.88-.11A5.99 5.99 0 0 1 19 13c.34 0 .67.04 1 .09m-2-.64c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2 6 1.5 6 2-2.13 2-6 2m10 9h-2v4h-2v-4h-2l3-3z"/></svg></span> WRITE</h4>
+<p>H5CPP provides two forms of write operators. <strong>Reference-based writes</strong> are intended for object types the library understands directly, such as supported containers, matrices, and records, and <strong>are generally the preferred</strong> interface because they combine convenience with the same performance characteristics as pointer-based access. <strong>Pointer-based writes</strong> operate on arbitrary contiguous memory regions and <strong>are</strong> mainly <strong>useful in cases where no higher-level type mapping is available</strong>; in that case, you provide the memory address and transfer properties, and H5CPP handles the rest. As with reads, the underlying HDF5 library may still allocate a chunk-sized transfer buffer, typically for filtering or datatype conversion, but this overhead is usually small when chunk sizes are chosen sensibly—ideally no larger than the processor’s last-level cache.</p>
+<p><div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">[</span><span class="n">dataset</span><span class="p">]</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">write</span><span class="p">(</span><span class="w"> </span><span class="n">dataset</span><span class="p">,</span><span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ref</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="p">[,</span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">offset_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">offset</span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">stride_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">stride</span><span class="p">]</span><span class="w">  </span><span class="p">[,</span><span class="k">const</span><span class="o">&amp;</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dxcpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dxpl</span><span class="p">]</span><span class="w"> </span><span class="p">);</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">write</span><span class="p">(</span><span class="w"> </span><span class="n">dataset</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="p">[,</span><span class="k">const</span><span class="w"> </span><span class="n">hsize_t</span><span class="o">*</span><span class="w"> </span><span class="n">offset</span><span class="p">]</span><span class="w"> </span><span class="p">[,</span><span class="k">const</span><span class="w"> </span><span class="n">hsize_t</span><span class="o">*</span><span class="w"> </span><span class="n">stride</span><span class="p">]</span><span class="w"> </span><span class="p">,</span><span class="k">const</span><span class="w"> </span><span class="n">hsize_t</span><span class="o">*</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dxpl_t</span><span class="w"> </span><span class="n">dxpl</span><span class="w"> </span><span class="p">]);</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="p">[</span><span class="n">attribute</span><span class="p">]</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">awrite</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="o">&amp;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="o">&amp;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dt_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">obj</span><span class="w">  </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">acpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">acpl</span><span class="p">]);</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">awrite</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">at_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">attr</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">acpl_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">acpl</span><span class="p">]);</span>
+</span></code></pre></div>
+Property lists are:  [<code>dxpl_t</code>][606]</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;h5cpp/all&gt;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;some_file.h5&quot;</span><span class="p">,</span><span class="n">H5F_ACC_TRUNC</span><span class="p">);</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">h5</span><span class="o">::</span><span class="n">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="s">&quot;/result&quot;</span><span class="p">,</span><span class="n">M</span><span class="p">);</span>
+</span></code></pre></div>
+<h4 id="append"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3h2v2h4V3h2v2h4V3h2v2h4V3h2zM4 10h4V7H4zm6 0h4V7h-4zm10 0V7h-4v3zm-9 4h2v3h3v2h-3v3h-2v-3H8v-2h3z"/></svg></span> Append</h4>
+<p>For streaming or append-only workloads, <strong>packet tables are</strong> often the most <strong>practical</strong> choice. Although the append operator uses its own <code>h5::pt_t</code> handle, the underlying storage object is still an ordinary HDF5 dataset, and conversion between <code>h5::pt_t</code> and <code>h5::ds_t</code> is seamless. The main difference is internal: unlike the other H5CPP handles, <code>h5::pt_t</code> maintains its own buffer and uses a specialized transfer pipeline optimized for incremental writes. The same pipeline may also be enabled for regular dataset I/O through the <code>h5::experimental</code> data-transfer property, as described in the [experimental pipeline documentation][308].</p>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;h5cpp/core&gt;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;your_data_definition.h&quot;</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;h5cpp/io&gt;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">append</span><span class="p">(</span><span class="n">h5</span><span class="o">::</span><span class="n">pt_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ds</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ref</span><span class="p">);</span>
+</span></code></pre></div>
+<p><strong>Example:</strong>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;h5cpp/core&gt;</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;your_data_definition.h&quot;</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;h5cpp/io&gt;</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="k">auto</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;NYSE high freq dataset.h5&quot;</span><span class="p">);</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">h5</span><span class="o">::</span><span class="n">pt_t</span><span class="w"> </span><span class="n">pt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create</span><span class="o">&lt;</span><span class="n">ns</span><span class="o">::</span><span class="n">nyse_stock_quote</span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">fd</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">        </span><span class="s">&quot;price_quotes/2018-01-05.qte&quot;</span><span class="p">,</span><span class="n">h5</span><span class="o">::</span><span class="n">max_dims</span><span class="p">{</span><span class="n">H5S_UNLIMITED</span><span class="p">},</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">chunk</span><span class="p">{</span><span class="mi">1024</span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gzip</span><span class="p">{</span><span class="mi">9</span><span class="p">}</span><span class="w"> </span><span class="p">);</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">quote_update_t</span><span class="w"> </span><span class="n">qu</span><span class="p">;</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="kt">bool</span><span class="w"> </span><span class="n">having_a_good_day</span><span class="p">{</span><span class="nb">true</span><span class="p">};</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="k">while</span><span class="p">(</span><span class="w"> </span><span class="n">having_a_good_day</span><span class="w"> </span><span class="p">){</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">    </span><span class="k">try</span><span class="p">{</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">        </span><span class="n">recieve_data_from_udp_stream</span><span class="p">(</span><span class="w"> </span><span class="n">qu</span><span class="w"> </span><span class="p">)</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="n">qu</span><span class="p">);</span>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">){</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">cant_fix_connection</span><span class="p">()</span><span class="w"> </span><span class="p">)</span>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="w">            </span><span class="n">having_a_good_day</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span>
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="p">}</span>
+</span></code></pre></div></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+
+
+  
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright custom-footer">
+        <div class="custom-footer-left">
+          Blockchain, cryptographic protocols, HPC, or trading systems in C++, Rust, Julia, Python, R and CUDA
+        </div>
+        <div class="custom-footer-right">
+          © 2017–2025 VargaLABS, Toronto, ON, Canada 🇨🇦
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "content.code.copy", "content.tooltips", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.tailwindcss.com"></script>
+      
+        <script src="../javascripts/tw-config.js"></script>
+      
+        <script src="../javascripts/asciinema-player.min.js"></script>
+      
+        <script src="https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"></script>
+      
+        <script src="https://unpkg.com/@popperjs/core@2"></script>
+      
+        <script src="https://unpkg.com/tippy.js@6"></script>
+      
+    
+  </body>
+</html>

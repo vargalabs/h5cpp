@@ -16,8 +16,10 @@
         <link rel="canonical" href="https://steven-varga.ca/design/">
       
       
-        <link rel="prev" href="../type-support/">
+        <link rel="prev" href="..">
       
+      
+        <link rel="next" href="../architecture-core/">
       
       
         
@@ -143,7 +145,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#design-considerations" class="md-skip">
+        <a href="#bottom-line" class="md-skip">
           Skip to content
         </a>
       
@@ -372,114 +374,6 @@
       
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../getting-started/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Getting Started
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../parallel-hdf5/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Parallel HDF5
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../type-support/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Type Support
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -488,8 +382,6 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
-      
-        
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
@@ -533,135 +425,12 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#guaranteed-no-vendor-lock-in" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Guaranteed No Vendor Lock-In
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#no-lock-in-at-the-license-level" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        No lock-in at the license level
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#no-lock-in-at-the-api-level" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        No lock-in at the API level
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-deliberate-exception-h5pt_t" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The deliberate exception: h5::pt_t
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#full-interoperability-with-the-hdf5-c-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Full interoperability with the HDF5 C API
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#a-thin-c-layer-not-a-competing-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A thin C++ layer, not a competing runtime
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#preserve-the-hdf5-mental-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Preserve the HDF5 mental model
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#raii-without-sacrificing-control" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RAII without sacrificing control
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#incremental-adoption-in-real-codebases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Incremental adoption in real codebases
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-this-matters-in-quantitative-and-hpc-systems" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why this matters in quantitative and HPC systems
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#design-summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Design summary
-      
-    </span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#bottom-line" class="md-nav__link">
@@ -678,6 +447,143 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HDF5 concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    I/O Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -701,135 +607,12 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#guaranteed-no-vendor-lock-in" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Guaranteed No Vendor Lock-In
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#no-lock-in-at-the-license-level" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        No lock-in at the license level
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#no-lock-in-at-the-api-level" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        No lock-in at the API level
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-deliberate-exception-h5pt_t" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The deliberate exception: h5::pt_t
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#full-interoperability-with-the-hdf5-c-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Full interoperability with the HDF5 C API
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#a-thin-c-layer-not-a-competing-runtime" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A thin C++ layer, not a competing runtime
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#preserve-the-hdf5-mental-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Preserve the HDF5 mental model
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#raii-without-sacrificing-control" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        RAII without sacrificing control
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#incremental-adoption-in-real-codebases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Incremental adoption in real codebases
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-this-matters-in-quantitative-and-hpc-systems" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why this matters in quantitative and HPC systems
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#design-summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Design summary
-      
-    </span>
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#bottom-line" class="md-nav__link">
@@ -861,141 +644,46 @@
 
 
 
-<h1 id="design-considerations">Design Considerations</h1>
-<h2 id="guaranteed-no-vendor-lock-in">Guaranteed No Vendor Lock-In</h2>
-<p>H5CPP was designed around a simple principle:</p>
-<blockquote>
-<p><strong>make HDF5 easier to use in modern C++ without trapping the user inside a wrapper-specific world</strong></p>
-</blockquote>
-<p>That means two things from the outset:</p>
+  <h1>Design</h1>
+
+<p>H5CPP is designed as a <strong>thin modern C++ layer over the native HDF5 handle model</strong>, not as a replacement object system. Its goal is to reduce boilerplate, improve readability, and make HDF5 feel natural in modern C++ — <strong>without cutting users off from the underlying HDF5 C API</strong>.</p>
+<p>Many wrapper libraries take the opposite approach: they reduce boilerplate by imposing a private object model, and once you adopt it, getting back to the underlying system becomes awkward or impossible. H5CPP was built to avoid that trap. With one deliberate exception, <strong>all H5CPP handle types are fully binary compatible with native HDF5 C API handles</strong>, remaining aligned with the underlying <code>hid_t</code> model rather than inventing a disconnected runtime identity for files, groups, datasets, dataspaces, datatypes, references, or property lists. The deliberate exception is <code>h5::pt_t</code>, a higher-level packet-table abstraction introduced where a dedicated wrapper genuinely improves usability.</p>
+<p>This design keeps mixed C and C++ usage straightforward, preserves the relevance of existing HDF5 documentation and expertise, and supports incremental adoption in existing codebases. It also means that H5CPP reduces abstraction lock-in in the technical sense, while the <strong>MIT license</strong> removes it in the legal one. For infrastructure libraries that tend to live for years inside research platforms, market-data pipelines, simulation engines, and HPC systems, that is a design choice with long-term consequences.</p>
+<hr />
+<div class="flex gap-4 w-full">
+<div class="w-1/2 border border-solid border-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col">
+<div class="bg-gray-400 text-white px-4 h-9 rounded-t flex items-center">
+<p><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="m99.3 256.1 69.4-119.9c-5.6-12.2-8.8-25.8-8.8-40.2 0-53 43-96 96-96s96 43 96 96c0 14.3-3.1 27.9-8.8 40.2l44.4 76.7c-23.1 26-53.7 45.1-88.4 53.8L256 191.9l-68.1 117.6c21.5 6.8 44.3 10.5 68.1 10.5 70.7 0 133.8-32.7 174.9-84 11.1-13.8 31.2-16 45-5s16 31.2 5 45C428.2 341.8 347 384 256.1 384c-35.4 0-69.4-6.4-100.7-18.1l-56.7 97.8c-4.7 8.1-11.7 14.7-20.1 18.9l-55.4 27.7c-5 2.5-10.9 2.2-15.6-.7S0 501.5 0 496v-55.4c0-8.4 2.2-16.7 6.5-24.1l60-103.7c-12.8-11.2-24.6-23.5-35.3-36.8-11.1-13.8-8.8-33.9 5-45s33.9-8.8 45 5c5.7 7.1 11.8 13.8 18.2 20.1zm281.8 151.8c32.5-13 62.4-31 88.9-52.9l35.6 61.5c4.2 7.3 6.5 15.6 6.5 24.1V496c0 5.5-2.9 10.7-7.6 13.6s-10.6 3.2-15.6.7l-55.4-27.7c-8.4-4.2-15.4-10.8-20.1-18.9zM256 128a32 32 0 1 0 0-64 32 32 0 1 0 0 64"/></svg></span> What H5CPP Adds</p>
+</div>
+<div class="p-4 flex-1">
 <ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 10a3.04 3.04 0 0 1 3-3 3.04 3.04 0 0 1 3 3 3.04 3.04 0 0 1-3 3 3.04 3.04 0 0 1-3-3m3 9 4 1v-3.08A7.54 7.54 0 0 1 12 18a7.54 7.54 0 0 1-4-1.08V20m4-16a5.78 5.78 0 0 0-4.24 1.74A5.78 5.78 0 0 0 6 10a5.78 5.78 0 0 0 1.76 4.23A5.78 5.78 0 0 0 12 16a5.78 5.78 0 0 0 4.24-1.77A5.78 5.78 0 0 0 18 10a5.78 5.78 0 0 0-1.76-4.26A5.78 5.78 0 0 0 12 4m8 6a8 8 0 0 1-.57 2.8A7.8 7.8 0 0 1 18 15.28V23l-6-2-6 2v-7.72A7.9 7.9 0 0 1 4 10a7.68 7.68 0 0 1 2.33-5.64A7.73 7.73 0 0 1 12 2a7.73 7.73 0 0 1 5.67 2.36A7.68 7.68 0 0 1 20 10"/></svg></span> <strong>MIT licensed</strong></li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> <strong>fully interoperable with the native HDF5 C API</strong></li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 15H6l7-14v8h5l-7 14z"/></svg></span> reduces descriptor and cleanup boilerplate</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> makes HDF5 code easier to read and maintain</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10.5 15.97.41 2.44c-.26.14-.68.27-1.24.39-.57.13-1.24.2-2.01.2-2.21-.04-3.87-.7-4.98-1.96Q1 15.135 1 12.21c.05-2.31.72-4.08 2-5.32C4.32 5.64 5.96 5 7.94 5c.75 0 1.4.07 1.94.19s.94.25 1.2.4l-.58 2.49-1.06-.34c-.4-.1-.86-.15-1.39-.15-1.16-.01-2.12.36-2.87 1.1-.76.73-1.15 1.85-1.18 3.34 0 1.36.37 2.42 1.08 3.2.71.77 1.71 1.17 2.99 1.18l1.33-.12c.43-.08.79-.19 1.1-.32M11 11h2V9h2v2h2v2h-2v2h-2v-2h-2zm7 0h2V9h2v2h2v2h-2v2h-2v-2h-2z"/></svg></span> fits naturally into modern C++ templates, containers, and RAII</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10 17-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9m-6-8L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5z"/></svg></span> improves safety through scoped resource management</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9zm6.82 6L12 12.72 5.18 9 12 5.28zM17 16l-5 2.72L7 16v-3.73L12 15l5-2.73z"/></svg></span> keeps existing HDF5 knowledge immediately useful</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 3h14a2 2 0 0 1 2 2v7.08a6 6 0 0 0-4.32.92H12v4h1.08c-.11.68-.11 1.35 0 2H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2m0 4v4h6V7zm8 0v4h6V7zm-8 6v4h6v-4zm11.94 5.5h2v-4h2v4h2l-3 3z"/></svg></span> introduces higher-level abstractions such as <code>h5::pt_t</code> only where they provide clear value</li>
 </ul>
-<p>Together, these two properties eliminate vendor lock-in in both the legal and technical sense. You are free to use H5CPP in open-source, research, commercial, and production systems, and you are never forced to abandon the native HDF5 programming model in order to benefit from the library.</p>
-<h2 id="no-lock-in-at-the-license-level">No lock-in at the license level</h2>
-<p>H5CPP is released under the <strong>MIT license</strong>.</p>
-<p>That matters because infrastructure libraries tend to live for years and often become deeply embedded in research platforms, market-data pipelines, simulation engines, and HPC applications. A restrictive license at the storage layer is the sort of thing that quietly becomes tomorrow’s migraine.</p>
-<p>With MIT licensing:</p>
+</div>
+</div>
+<div class="w-1/2 border border-solid border-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col">
+<div class="bg-gray-400 text-white px-4 h-9 rounded-t flex items-center">
+<p><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> What H5CPP Preserves</p>
+</div>
+<div class="p-4 flex-1">
 <ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> H5CPP can be used in commercial and proprietary codebases</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> internal forks and extensions are straightforward</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> adoption does not force a future relicensing event</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> teams retain full freedom over how the library is integrated and maintained</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 5-5 5 5 0 0 0-5-5"/></svg></span> direct interoperability with the native HDF5 C API</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> alignment with the native <code>hid_t</code> handle model</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17v2h6v-2zM3 5v2h10V5zm10 16v-2h8v-2h-8v-2h-2v6zM7 9v2H3v2h4v2h2V9zm14 4v-2H11v2zm-6-4h2V7h4V5h-4V3h-2z"/></svg></span> access to low-level property-list tuning and layout control</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3C7.58 3 4 4.79 4 7v10c0 1.2 1.06 2.27 2.73 3h10.54c1.67-.73 2.73-1.8 2.73-3V7c0-2.21-3.58-4-8-4m6 14c0 .5-2.13 2-6 2s-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23zm0-4.55c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2 6 1.5 6 2-2.13 2-6 2M7 22h2v2H7zm8 0h2v2h-2zm-4 0h2v2h-2z"/></svg></span> use of advanced dataset and datatype features without wrapper lock-in</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21 9-4-4v3h-7v2h7v3M7 11l-4 4 4 4v-3h7v-2H7z"/></svg></span> straightforward incremental adoption in existing HDF5 codebases</li>
+<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 10a3.04 3.04 0 0 1 3-3 3.04 3.04 0 0 1 3 3 3.04 3.04 0 0 1-3 3 3.04 3.04 0 0 1-3-3m3 9 4 1v-3.08A7.54 7.54 0 0 1 12 18a7.54 7.54 0 0 1-4-1.08V20m4-16a5.78 5.78 0 0 0-4.24 1.74A5.78 5.78 0 0 0 6 10a5.78 5.78 0 0 0 1.76 4.23A5.78 5.78 0 0 0 12 16a5.78 5.78 0 0 0 4.24-1.77A5.78 5.78 0 0 0 18 10a5.78 5.78 0 0 0-1.76-4.26A5.78 5.78 0 0 0 12 4m8 6a8 8 0 0 1-.57 2.8A7.8 7.8 0 0 1 18 15.28V23l-6-2-6 2v-7.72A7.9 7.9 0 0 1 4 10a7.68 7.68 0 0 1 2.33-5.64A7.73 7.73 0 0 1 12 2a7.73 7.73 0 0 1 5.67 2.36A7.68 7.68 0 0 1 20 10"/></svg></span> MIT-licensed use in open-source, research, commercial, and internal systems</li>
 </ul>
-<p>In plain English: no legal handcuffs, no “gotcha” later.</p>
-<h2 id="no-lock-in-at-the-api-level">No lock-in at the API level</h2>
-<p>Many wrapper libraries reduce boilerplate at the cost of introducing a private object model that users must fully adopt. Once code enters that abstraction, getting back to the underlying system becomes awkward or impossible. H5CPP was designed specifically to avoid that trap.  With one deliberate exception, <strong>all H5CPP handle types are fully binary compatible with native HDF5 C API handles</strong>. The library does not invent a disconnected runtime identity for files, groups, datasets, dataspaces, datatypes, references, or property lists. Instead, it remains aligned with the underlying HDF5 <code>hid_t</code> handle model. That means H5CPP can be used as a modern C++ layer <strong>without giving up direct access to the HDF5 C API</strong>.</p>
-<p>Conceptually:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">h5</span><span class="o">::</span><span class="n">fd_t</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="s">&quot;data.h5&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">H5F_ACC_RDONLY</span><span class="p">);</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cm">/* direct native HDF5 call */</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">H5Fflush</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">hid_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fd</span><span class="p">),</span><span class="w"> </span><span class="n">H5F_SCOPE_GLOBAL</span><span class="p">);</span>
-</span></code></pre></div>
-<p>This is not a convenience feature added afterward. It is a foundational design decision.</p>
-<h2 id="the-deliberate-exception-h5pt_t">The deliberate exception: <code>h5::pt_t</code></h2>
-<p>The one intentional exception is:</p>
-<ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 3h14a2 2 0 0 1 2 2v7.08a6 6 0 0 0-4.32.92H12v4h1.08c-.11.68-.11 1.35 0 2H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2m0 4v4h6V7zm8 0v4h6V7zm-8 6v4h6v-4zm11.94 5.5h2v-4h2v4h2l-3 3z"/></svg></span> <code>h5::pt_t</code> — the packet table abstraction</li>
-</ul>
-<p>Unlike the rest of the handle layer, <code>h5::pt_t</code> is a higher-level convenience abstraction for append-oriented workflows. It is not a one-to-one mirror of a native HDF5 handle in the same strict sense as files, groups, datasets, dataspaces, datatypes, references, and property lists. That exception is deliberate and contained. Everywhere else, the design remains tightly aligned with the native HDF5 object model.</p>
-<h2 id="full-interoperability-with-the-hdf5-c-api">Full interoperability with the HDF5 C API</h2>
-<p>Because H5CPP preserves handle compatibility with the native API, users retain <strong>full interaction with the HDF5 C layer</strong>. That matters in real systems, because no wrapper can or should try to predict every advanced use case. Users often need to access:</p>
-<ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17v2h6v-2zM3 5v2h10V5zm10 16v-2h8v-2h-8v-2h-2v6zM7 9v2H3v2h4v2h2V9zm14 4v-2H11v2zm-6-4h2V7h4V5h-4V3h-2z"/></svg></span> low-level property-list tuning</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 17H7V7h10m4 4V9h-2V7a2 2 0 0 0-2-2h-2V3h-2v2h-2V3H9v2H7c-1.11 0-2 .89-2 2v2H3v2h2v2H3v2h2v2a2 2 0 0 0 2 2h2v2h2v-2h2v2h2v-2h2a2 2 0 0 0 2-2v-2h2v-2h-2v-2m-6 2h-2v-2h2m2-2H9v6h6z"/></svg></span> explicit storage and layout control</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3C7.58 3 4 4.79 4 7v10c0 1.2 1.06 2.27 2.73 3h10.54c1.67-.73 2.73-1.8 2.73-3V7c0-2.21-3.58-4-8-4m6 14c0 .5-2.13 2-6 2s-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23zm0-4.55c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2 6 1.5 6 2-2.13 2-6 2M7 22h2v2H7zm8 0h2v2h-2zm-4 0h2v2h-2z"/></svg></span> advanced dataset and datatype features</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 1c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2H1v2h12V9h-3c1.11 0 2-.89 2-2V3c0-1.11-.89-2-2-2zm0 2h6v4H4zM3 13v7h7v-2H5v-5zm11 0c-1.11 0-2 .89-2 2v4c0 1.11.89 2 2 2h-3v2h12v-2h-3c1.11 0 2-.89 2-2v-4c0-1.11-.89-2-2-2zm0 2h6v4h-6z"/></svg></span> MPI and parallel HDF5 integration details</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m22.61 19-9.08-9.09c.93-2.34.47-5.1-1.44-7C9.79.61 6.21.4 3.66 2.26L7.5 6.11 6.08 7.5 2.25 3.69C.39 6.23.6 9.82 2.9 12.11c1.86 1.86 4.57 2.35 6.89 1.48l9.11 9.11c.39.39 1.02.39 1.41 0l2.3-2.3c.39-.4.39-1.01 0-1.4m-3 1.59-9.46-9.46c-.61.45-1.29.72-2 .82-1.36.2-2.79-.21-3.83-1.25C3.37 9.76 2.93 8.5 3 7.26l3.09 3.09 4.24-4.24L7.24 3c1.26-.05 2.49.39 3.44 1.33a4.47 4.47 0 0 1 1.24 3.96 4.35 4.35 0 0 1-.88 1.96l9.46 9.45z"/></svg></span> niche or newly added HDF5 functionality not yet wrapped at the C++ level</li>
-</ul>
-<p>H5CPP does not block that path. It improves the common case while preserving the escape hatch. That is exactly what you want from a systems library: help where possible, and zero obstruction where precision matters.</p>
-<h2 id="a-thin-c-layer-not-a-competing-runtime">A thin C++ layer, not a competing runtime</h2>
-<p>H5CPP was never meant to create a second universe around HDF5. Its role is much narrower and more useful:</p>
-<ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 15H6l7-14v8h5l-7 14z"/></svg></span> reduce boilerplate</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> improve readability</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10.5 15.97.41 2.44c-.26.14-.68.27-1.24.39-.57.13-1.24.2-2.01.2-2.21-.04-3.87-.7-4.98-1.96Q1 15.135 1 12.21c.05-2.31.72-4.08 2-5.32C4.32 5.64 5.96 5 7.94 5c.75 0 1.4.07 1.94.19s.94.25 1.2.4l-.58 2.49-1.06-.34c-.4-.1-.86-.15-1.39-.15-1.16-.01-2.12.36-2.87 1.1-.76.73-1.15 1.85-1.18 3.34 0 1.36.37 2.42 1.08 3.2.71.77 1.71 1.17 2.99 1.18l1.33-.12c.43-.08.79-.19 1.1-.32M11 11h2V9h2v2h2v2h-2v2h-2v-2h-2zm7 0h2V9h2v2h2v2h-2v2h-2v-2h-2z"/></svg></span> integrate naturally with templates, containers, and RAII</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 5-5 5 5 0 0 0-5-5"/></svg></span> remain directly connected to the native HDF5 system</li>
-</ul>
-<p>That distinction matters. H5CPP should feel like a <strong>typed, modern C++ layer over HDF5</strong>, not a proprietary storage runtime with its own rules, identities, and blind spots. The storage format remains HDF5.
-The underlying runtime remains HDF5. The low-level escape path remains HDF5. So users gain convenience without surrendering control.</p>
-<h2 id="preserve-the-hdf5-mental-model">Preserve the HDF5 mental model</h2>
-<p>A compatibility-first design also means preserving the HDF5 mental model itself. H5CPP does not try to erase the underlying concepts:</p>
-<ul>
-<li>files</li>
-<li>groups</li>
-<li>datasets</li>
-<li>dataspaces</li>
-<li>datatypes</li>
-<li>attributes</li>
-<li>property lists</li>
-<li>references</li>
-</ul>
-<p>Those ideas remain visible because they are the real structure of the system. That has obvious practical value:</p>
-<ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9zm6.82 6L12 12.72 5.18 9 12 5.28zM17 16l-5 2.72L7 16v-3.73L12 15l5-2.73z"/></svg></span> developers familiar with HDF5 remain productive immediately</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14 3-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7v2l4-3-4-3v2H4V3zm7 7v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-2h2v2h11v-9h-5V7H8v6H6V7a2 2 0 0 1 2-2h8z"/></svg></span> existing HDF5 documentation stays relevant</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21 9-4-4v3h-7v2h7v3M7 11l-4 4 4 4v-3h7v-2H7z"/></svg></span> moving between H5CPP and the C API is straightforward</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 3c3.88 0 7 3.14 7 7 0 2.8-1.63 5.19-4 6.31V21H9v-3H8c-1.11 0-2-.89-2-2v-3H4.5c-.42 0-.66-.5-.42-.81L6 9.66A7.003 7.003 0 0 1 13 3m0-2C8.42 1 4.61 4.43 4.06 8.91L2.5 11c-.58.72-.68 1.72-.26 2.59.36.72 1 1.21 1.76 1.36V16c0 1.86 1.28 3.43 3 3.87V23h11v-5.53c2.5-1.64 4-4.41 4-7.47 0-4.96-4.04-9-9-9m3.1 8.42V9c0-.15 0-.24-.06-.38l.89-.66c.07-.04.07-.18.07-.28l-.82-1.36c-.05-.09-.18-.14-.28-.09l-.99.42c-.18-.19-.41-.33-.65-.42L14.1 5.2c-.03-.14-.1-.2-.22-.2h-1.59c-.1 0-.19.06-.19.2l-.14 1.03c-.23.09-.46.23-.66.42l-1.03-.42c-.09-.05-.17 0-.23.09l-.8 1.36c-.05.14-.05.24.05.28l.84.66c0 .14-.03.28-.03.38 0 .14.03.28.03.42l-.84.65c-.1.05-.1.14-.05.24l.8 1.4c.06.1.14.1.23.1l.99-.43c.24.19.42.29.7.38l.14 1.08c0 .09.09.16.19.16h1.59c.12 0 .19-.07.22-.16l.16-1.08c.24-.09.47-.19.65-.37l.99.42c.1 0 .23 0 .28-.1l.82-1.4c0-.1 0-.19-.07-.24zm-3 1.03c-.78 0-1.42-.66-1.42-1.45s.61-1.41 1.42-1.41c.78 0 1.44.61 1.44 1.41s-.66 1.45-1.44 1.45"/></svg></span> debugging is easier because the wrapper has not disguised the underlying model</li>
-</ul>
-<p>This is especially important in scientific computing, HPC, and quantitative research, where many users already know HDF5 from C, Fortran, Python, MATLAB, or Julia.</p>
-<h2 id="raii-without-sacrificing-control">RAII without sacrificing control</h2>
-<p>H5CPP brings modern C++ ergonomics to HDF5, but not at the price of opacity.</p>
-<p>A central design goal was to combine:</p>
-<ul>
-<li>the lifetime safety of RAII</li>
-<li>the explicitness of the HDF5 C API</li>
-<li>full interoperability with native HDF5 handles</li>
-</ul>
-<p>This gives users a better day-to-day interface:</p>
-<ul>
-<li>fewer manual cleanup paths</li>
-<li>less repetitive boilerplate</li>
-<li>safer resource handling</li>
-<li>more readable code</li>
-</ul>
-<p>while keeping native HDF5 semantics visible and accessible.</p>
-<p>That balance matters. In systems programming, abstraction that hides too much eventually turns into debugging tax, and nobody enjoys paying that invoice.</p>
-<h2 id="incremental-adoption-in-real-codebases">Incremental adoption in real codebases</h2>
-<p>Another consequence of the no-lock-in design is that H5CPP supports <strong>incremental adoption</strong>. A team does not need to rewrite an entire HDF5 codebase just to start benefiting from modern C++ improvements. Instead, they can:</p>
-<ul>
-<li>keep existing HDF5 C code where it already works</li>
-<li>use H5CPP in newly written modules</li>
-<li>gradually replace repetitive low-level code</li>
-<li>continue calling native HDF5 functions wherever needed</li>
-</ul>
-<p>That makes H5CPP practical for long-lived systems and production environments, not just toy examples and fresh repositories full of optimism.</p>
-<h2 id="why-this-matters-in-quantitative-and-hpc-systems">Why this matters in quantitative and HPC systems</h2>
-<p>This no-lock-in approach is particularly valuable in:</p>
-<ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m6 16.5-3 2.94V11h3m5 3.66-1.57-1.34L8 14.64V7h3m5 6-3 3V3h3m2.81 9.81L17 11h5v5l-1.79-1.79L13 21.36l-3.47-3.02L5.75 22H3l6.47-6.34L13 18.64"/></svg></span> quantitative research platforms</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 13h2.79l4.31-8.21 1.18 8.96 3.22-4.09L17.83 13H21v2h-4l-2.33-2.33-4.75 6.06-.98-7.42L7 15H3z"/></svg></span> market-data storage systems</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h2v18h18v2H2zm7 8a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m4-8a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m5 10a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3"/></svg></span> numerical analysis pipelines</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 19h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-7zM4 3h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1m5 4h1V5H9zm0 8h1v-2H9zM5 5v2h2V5zm0 8v2h2v-2z"/></svg></span> HPC batch and MPI workflows</li>
-</ul>
-<p>These environments tend to care deeply about:</p>
-<ul>
-<li>explicit control</li>
-<li>predictable performance</li>
-<li>interoperability</li>
-<li>stable storage formats</li>
-<li>incremental migration paths</li>
-<li>long-term maintainability</li>
-</ul>
-<p>A wrapper that forces a proprietary abstraction boundary works against those goals. H5CPP instead gives users a modern C++ interface while keeping them anchored to the stable and widely deployed HDF5 ecosystem.</p>
-<h2 id="design-summary">Design summary</h2>
-<p>The core design choices are simple:</p>
-<ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> <strong>MIT licensed</strong> for maximum freedom of use</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> preserve the native HDF5 object model</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> keep H5CPP handles binary compatible with HDF5 C API handles</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> guarantee direct interoperability with the native C API</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> use RAII to reduce cleanup boilerplate and improve safety</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> keep <code>h5::pt_t</code> as the intentional higher-level exception</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> support incremental adoption in existing HDF5 codebases</li>
-</ul>
+</div>
+</div>
+</div>
 <h2 id="bottom-line">Bottom line</h2>
-<p>H5CPP was designed to make HDF5 easier to use, <strong>not harder to leave</strong>. That is the real no-lock-in guarantee. The library is MIT licensed, stays fully grounded in the HDF5 C API, and preserves direct access to the native runtime. With the exception of the packet-table abstraction <code>h5::pt_t</code>, H5CPP handles remain binary compatible with HDF5 C API handles, so mixed C and C++ usage is not a workaround — it is part of the design.</p>
+<p>H5CPP was <strong>designed</strong> to make HDF5 easier to use <strong>without replacing the native model</strong> beneath it. That is the core design decision: modern C++ ergonomics on top, native HDF5 semantics underneath.</p>
 
 
 

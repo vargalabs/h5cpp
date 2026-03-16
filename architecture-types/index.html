@@ -1,0 +1,1066 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5">
+      
+      
+        <meta name="author" content="Steven Varga">
+      
+      
+        <link rel="canonical" href="https://steven-varga.ca/architecture-types/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+    
+    
+      
+        <title>Architecture types - VargaLABS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../styles/asciinema-player.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+      <link rel="stylesheet" href="../styles/custom.css">
+    
+      <link rel="stylesheet" href="../styles/mobile.css">
+    
+      <link rel="stylesheet" href="../styles/socials.css">
+    
+      <link rel="stylesheet" href="../styles/background.css">
+    
+      <link rel="stylesheet" href="../styles/blog.css">
+    
+      <link rel="stylesheet" href="../styles/asciinema.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+    
+    
+
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="VargaLABS" />
+    <meta property="og:title" content="VargaLABS" />
+    <meta property="og:description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
+    <meta property="og:url" content="https://steven-varga.ca/architecture-types/" />
+    <meta property="og:image" content="https://steven-varga.ca//assets/social/og-default.png" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="" />
+    <meta name="twitter:title" content="VargaLABS" />
+    <meta name="twitter:description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
+    <meta name="twitter:image" content="https://steven-varga.ca//assets/social/og-default.png" />
+
+    <!-- SEO -->
+    <link rel="canonical" href="https://steven-varga.ca/architecture-types/" />
+    <meta name="description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
+    <script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "VargaLABS",
+    "description": "H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5",
+    "url": "https://steven-varga.ca/architecture-types/",
+    "datePublished": "2010-01-01",
+    "author": {
+        "@type": "Person",
+        "name": "Steven Varga"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "VargaLABS",
+        "logo": {
+        "@type": "ImageObject",
+        "url": "https://steven-varga.ca//assets/logo.png"
+        }
+    },
+    "image": "https://steven-varga.ca//assets/social/og-default.png"
+    }
+    </script>    
+
+<link rel="alternate" type="application/rss+xml" title="VargaLABS RSS Feed" href="../rss.xml" />
+<link rel="alternate" type="application/feed+json" title="VargaLABS JSON Feed" href="../feed.json" />
+
+
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="solarized" data-md-color-primary="orange" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#linear-algebra" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://steven-varga.ca/" title="VargaLABS" class="md-header__button md-logo" aria-label="VargaLABS" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis"> H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5 </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Architecture types
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    <div class="md-social-inline">
+      
+      
+        
+        
+        
+        
+          
+          
+        
+        <a href="https://wa.me/16475611829" target="_blank" rel="noopener" title="wa.me" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.23 8.23 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23-1.48 0-2.93-.39-4.19-1.15l-.3-.17-3.12.82.83-3.04-.2-.32a8.2 8.2 0 0 1-1.26-4.38c.01-4.54 3.7-8.24 8.25-8.24M8.53 7.33c-.16 0-.43.06-.66.31-.22.25-.87.86-.87 2.07 0 1.22.89 2.39 1 2.56.14.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18s.21-1.07.15-1.18c-.07-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.53.07-.26-.13-1.06-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.27-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.11-.56-1.35-.77-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.47-.01"/></svg>
+        </a>
+      
+        
+        
+        
+        
+        <a href="mailto:steven@vargaconsulting.ca" target="_blank" rel="noopener" title="" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 5.5H9c-1.1 0-2 .9-2 2v9a2 2 0 0 0 2 2h13c1.11 0 2-.89 2-2v-9a2 2 0 0 0-2-2m0 3.67-6.5 3.33L9 9.17V7.5l6.5 3.31L22 7.5zM5 16.5c0 .17.03.33.05.5H1c-.552 0-1-.45-1-1s.448-1 1-1h4zM3 7h2.05c-.02.17-.05.33-.05.5V9H3c-.55 0-1-.45-1-1s.45-1 1-1m-2 5c0-.55.45-1 1-1h3v2H2c-.55 0-1-.45-1-1"/></svg>
+        </a>
+      
+        
+        
+        
+        
+          
+          
+        
+        <a href="https://x.com/vargaconsulting" target="_blank" rel="noopener" title="x.com" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.2 4.2 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.52 8.52 0 0 1-5.33 1.84q-.51 0-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23"/></svg>
+        </a>
+      
+        
+        
+        
+        
+          
+          
+        
+        <a href="https://www.linkedin.com/in/steven-varga-04224a19/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93zM6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37z"/></svg>
+        </a>
+      
+        
+        
+        
+        
+          
+          
+        
+        <a href="https://github.com/vargaconsulting" target="_blank" rel="noopener" title="github.com" class="md-header__button md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>
+        </a>
+      
+
+      
+      <span class="md-header__button md-icon" style="pointer-events: none; opacity: 0.4;">|</span>  
+    </div>
+  
+
+  
+  
+    
+    
+    
+
+    <input class="md-option"
+           data-md-color-media=""
+           data-md-color-scheme="solarized"
+           data-md-color-primary="orange"
+           data-md-color-accent="indigo"
+            aria-label="Switch to dark mode"
+           
+           type="radio" name="__palette" id="__palette_0">
+
+    
+      <label class="md-header__button md-icon"
+             title="Switch to dark mode"
+             for="__palette_1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+    
+    
+    
+
+    <input class="md-option"
+           data-md-color-media=""
+           data-md-color-scheme="slate"
+           data-md-color-primary="orange"
+           data-md-color-accent="indigo"
+            aria-label="Switch to light mode"
+           
+           type="radio" name="__palette" id="__palette_1">
+
+    
+      <label class="md-header__button md-icon"
+             title="Switch to light mode"
+             for="__palette_0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-icon lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+<!-- -->
+
+<!-- -->
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://steven-varga.ca/" title="VargaLABS" class="md-nav__button md-logo" aria-label="VargaLABS" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    VargaLABS
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HDF5 concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    I/O Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#linear-algebra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linear Algebra
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Linear Algebra">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#storage-layout-row-and-column-major-ordering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage Layout: Row- and Column-Major Ordering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sparse-matrices-and-vectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sparse Matrices and Vectors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-stl-and-classes-implementing-the-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The STL and classes implementing the interface
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The STL and classes implementing the interface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stdstrings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        std::strings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C Strings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raw-pointers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Raw Pointers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compound-datatypes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compound Datatypes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Compound Datatypes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pod-structrecords" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POD Struct/Records
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C++ Classes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#high-throughput-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High Throughput Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+
+
+
+
+<h3 id="linear-algebra"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h4v2H4v16h2v2H2zm18 2h-2V2h4v20h-4v-2h2zM9 5h1v5h1v1H8v-1h1V6l-1 .5v-1zm6 8h1v5h1v1h-3v-1h1v-4l-1 .5v-1zm-6 0c1.1 0 2 1.34 2 3s-.9 3-2 3-2-1.34-2-3 .9-3 2-3m0 1c-.55 0-1 .9-1 2s.45 2 1 2 1-.9 1-2-.45-2-1-2m6-9c1.1 0 2 1.34 2 3s-.9 3-2 3-2-1.34-2-3 .9-3 2-3m0 1c-.55 0-1 .9-1 2s.45 2 1 2 1-.9 1-2-.45-2-1-2"/></svg></span> Linear Algebra</h3>
+<p>H5CPP simplifies persistence for numerical objects by providing the full set of <a href="../#create">create</a>, <a href="../#read">read</a>, <a href="../#write">write</a>, and <a href="index.mdappend">append</a> operations for fixed-size and variable-length N-dimensional arrays. The library is header-only and supports <a href="https://en.wikipedia.org/wiki/C_(programming_language)#Pointers">raw pointers</a>, <a href="http://arma.sourceforge.net/">Armadillo</a>, <a href="http://www.boost.org/doc/libs/1_66_0/libs/numeric/ublas/doc/index.html">uBLAS</a>, <a href="http://eigen.tuxfamily.org/index.php?title=Main_Page#Documentation">Eigen3</a>, <a href="https://sourceforge.net/projects/blitz/">Blitz++</a>, <a href="https://sourceforge.net/projects/itpp/">IT++</a>, <a href="http://dlib.net/linear_algebra.html">dlib</a>, and <a href="https://bitbucket.org/blaze-lib/blaze">Blaze</a>. It operates directly on the underlying memory of supported objects, avoids unnecessary temporary allocations, and relies on copy elision where applicable when returning values.
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">open</span><span class="p">(</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">)</span><span class="w">       </span><span class="c1">// open dataset</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">arma</span><span class="o">::</span><span class="n">mat</span><span class="w"> </span><span class="n">M</span><span class="p">(</span><span class="n">n_rows</span><span class="p">,</span><span class="n">n_cols</span><span class="p">);</span><span class="w">         </span><span class="c1">// create placeholder, data-space is reserved on the heap</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">h5</span><span class="o">::</span><span class="n">count_t</span><span class="w">  </span><span class="n">count</span><span class="p">{</span><span class="n">n_rows</span><span class="p">,</span><span class="n">n_cols</span><span class="p">};</span><span class="w">  </span><span class="c1">// describe the memory region you are reading into</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">h5</span><span class="o">::</span><span class="n">offset_t</span><span class="w"> </span><span class="n">offset</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">};</span><span class="w">           </span><span class="c1">// position we reasing data from</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">// high performance loop with minimal memory operations</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">for</span><span class="p">(</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">i</span><span class="o">:</span><span class="w"> </span><span class="n">column_indices</span><span class="w"> </span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="n">h5</span><span class="o">::</span><span class="n">read</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">offset</span><span class="p">);</span><span class="w"> </span><span class="c1">// count, offset and other properties may be speciefied in any order</span>
+</span></code></pre></div></p>
+<p>List of objects supported in EBNF:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>T := ([unsigned] ( int8_t | int16_t | int32_t | int64_t )) | ( float | double  )
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>S := T | c/c++ struct | std::string
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>ref := std::vector&lt;S&gt; 
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    | arma::Row&lt;T&gt; | arma::Col&lt;T&gt; | arma::Mat&lt;T&gt; | arma::Cube&lt;T&gt; 
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    | Eigen::Matrix&lt;T,Dynamic,Dynamic&gt; | Eigen::Matrix&lt;T,Dynamic,1&gt; | Eigen::Matrix&lt;T,1,Dynamic&gt;
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    | Eigen::Array&lt;T,Dynamic,Dynamic&gt;  | Eigen::Array&lt;T,Dynamic,1&gt;  | Eigen::Array&lt;T,1,Dynamic&gt;
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    | blaze::DynamicVector&lt;T,rowVector&gt; |  blaze::DynamicVector&lt;T,colVector&gt;
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    | blaze::DynamicVector&lt;T,blaze::rowVector&gt; |  blaze::DynamicVector&lt;T,blaze::colVector&gt;
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    | blaze::DynamicMatrix&lt;T,blaze::rowMajor&gt;  |  blaze::DynamicMatrix&lt;T,blaze::colMajor&gt;
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    | itpp::Mat&lt;T&gt; | itpp::Vec&lt;T&gt;
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    | blitz::Array&lt;T,1&gt; | blitz::Array&lt;T,2&gt; | blitz::Array&lt;T,3&gt;
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    | dlib::Matrix&lt;T&gt;   | dlib::Vector&lt;T,1&gt; 
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    | ublas::matrix&lt;T&gt;  | ublas::vector&lt;T&gt;
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>ptr     := T* 
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>accept  := ref | ptr 
+</span></code></pre></div></p>
+<p>The following table summarizes how the supported linear algebra backends expose contiguous storage, report element counts, and map logical dimensions to physical layout. H5CPP uses these conventions to infer shape and perform direct I/O without intermediate copies.</p>
+<table>
+<thead>
+<tr>
+<th>backend</th>
+<th>data accessor</th>
+<th>element count</th>
+<th>vector layout</th>
+<th>matrix layout (row-major)</th>
+<th>matrix layout (column-major)</th>
+<th>cube / tensor layout</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Eigen</strong></td>
+<td><code>.data()</code></td>
+<td><code>size()</code></td>
+<td><code>rows():1, cols():0</code></td>
+<td><code>rows():0, cols():1</code></td>
+<td><code>cols():0, rows():1</code></td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><strong>Armadillo</strong></td>
+<td><code>.memptr()</code></td>
+<td><code>n_elem</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td><code>n_rows:0, n_cols:1</code></td>
+<td><code>n_slices:2, n_rows:0, n_cols:1</code></td>
+</tr>
+<tr>
+<td><strong>Blaze</strong></td>
+<td><code>.data()</code></td>
+<td>n/a</td>
+<td><code>columns():1, rows():0</code></td>
+<td><code>columns():1, rows():0</code></td>
+<td><code>rows():0, columns():1</code></td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><strong>Blitz++</strong></td>
+<td><code>.data()</code></td>
+<td><code>size()</code></td>
+<td><code>cols:1, rows:0</code></td>
+<td><code>cols:1, rows:0</code></td>
+<td>n/a</td>
+<td><code>slices:2, cols:1, rows:0</code></td>
+</tr>
+<tr>
+<td><strong>IT++</strong></td>
+<td><code>._data()</code></td>
+<td><code>length()</code></td>
+<td><code>cols():1, rows():0</code></td>
+<td><code>cols():1, rows():0</code></td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><strong>uBLAS</strong></td>
+<td><code>.data().begin()</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td><code>size2():1, size1():0</code></td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><strong>dlib</strong></td>
+<td><code>&amp;ref(0,0)</code></td>
+<td><code>size()</code></td>
+<td>n/a</td>
+<td><code>nc():1, nr():0</code></td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<h4 id="storage-layout-row-and-column-major-ordering"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 5v13h17V5zm10 2v9h-3V7zM6 7h3v9H6zm13 9h-3V7h3z"/></svg></span> Storage Layout: <a href="https://en.wikipedia.org/wiki/Row-_and_column-major_order">Row- and Column-Major Ordering</a></h4>
+<p>H5CPP preserves direct, zero-copy I/O for supported dense matrix types, while maintaining correct platform-independent storage semantics across the supported linear algebra backends. In practice, this means H5CPP respects the native memory layout of the source object instead of silently rearranging data behind the user’s back. Traditionally, dense linear algebra libraries have favored column-major layout, following the Fortran and BLAS/LAPACK convention. More recent systems often support row-major layout as well, either as a default or as a selectable storage policy. At present, H5CPP does not automatically transpose between row-major and column-major matrix layouts during I/O. For example, a column-major object such as <code>arma::mat</code> is stored according to its native memory order, and no implicit conversion to row-major layout is performed. In principle, such conversion could be implemented either through an explicit transpose step in the transfer path or through metadata that marks the object as logically transposed, similar in spirit to BLAS transpose flags. However, neither approach is directly supported by the HDF5 C API in a standard, interoperable way. For now, explicit user-controlled transpose remains the portable solution, and is supported by most linear algebra libraries.</p>
+<p>Here is a slightly cleaner, more book-like version:</p>
+<h4 id="sparse-matrices-and-vectors"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h2v18h18v2H2zm7 8a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m4-8a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m5 10a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3"/></svg></span> Sparse Matrices and Vectors</h4>
+<p>For sparse objects, H5CPP follows established storage conventions from numerical computing wherever practical. The supported layouts are aligned with the familiar Netlib taxonomy:</p>
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th><code>h5::dapl_t</code> selector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://www.netlib.org/utk/people/JackDongarra/etemplates/node373.html">Compressed Sparse Row</a></td>
+<td><code>h5::sparse::csr</code></td>
+</tr>
+<tr>
+<td><a href="http://www.netlib.org/utk/people/JackDongarra/etemplates/node374.html">Compressed Sparse Column</a></td>
+<td><code>h5::sparse::csc</code></td>
+</tr>
+<tr>
+<td><a href="http://www.netlib.org/utk/people/JackDongarra/etemplates/node375.html">Block Compressed Row Storage</a></td>
+<td><code>h5::sparse::bcrs</code></td>
+</tr>
+<tr>
+<td><a href="http://www.netlib.org/utk/people/JackDongarra/etemplates/node376.html">Compressed Diagonal Storage</a></td>
+<td><code>h5::sparse::cds</code></td>
+</tr>
+<tr>
+<td><a href="http://www.netlib.org/utk/people/JackDongarra/etemplates/node377.html">Jagged Diagonal Storage</a></td>
+<td><code>h5::sparse::jds</code></td>
+</tr>
+<tr>
+<td><a href="http://www.netlib.org/utk/people/JackDongarra/etemplates/node378.html">Skyline Storage</a></td>
+<td><code>h5::sparse::ss</code></td>
+</tr>
+</tbody>
+</table>
+<p>At present, H5CPP provides support for Compressed Sparse Row (<a href="https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_row_(CSR,_CRS_or_Yale_format)">CSR</a>) and Compressed Sparse Column (<a href="https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_column_(CSC_or_CCS)">CSC</a>). A sparse object may be represented physically either as a collection of datasets grouped under an <code>h5::gr_t</code> node—for example, with separate datasets for indices, offsets, and values—or as a single compound datatype used as a structured placeholder for the sparse representation. More specialized formats, such as block-diagonal, tridiagonal, or triangular storage, are not currently implemented. Whenever possible, H5CPP follows BLAS/LAPACK-style storage conventions so that sparse datasets remain familiar to users coming from established numerical libraries.</p>
+<h3 id="the-stl-and-classes-implementing-the-interface"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10.5 15.97.41 2.44c-.26.14-.68.27-1.24.39-.57.13-1.24.2-2.01.2-2.21-.04-3.87-.7-4.98-1.96Q1 15.135 1 12.21c.05-2.31.72-4.08 2-5.32C4.32 5.64 5.96 5 7.94 5c.75 0 1.4.07 1.94.19s.94.25 1.2.4l-.58 2.49-1.06-.34c-.4-.1-.86-.15-1.39-.15-1.16-.01-2.12.36-2.87 1.1-.76.73-1.15 1.85-1.18 3.34 0 1.36.37 2.42 1.08 3.2.71.77 1.71 1.17 2.99 1.18l1.33-.12c.43-.08.79-.19 1.1-.32M11 11h2V9h2v2h2v2h-2v2h-2v-2h-2zm7 0h2V9h2v2h2v2h-2v2h-2v-2h-2z"/></svg></span> The STL and classes implementing the interface</h3>
+<p>While it is possible to detect specific STL container instead a broader approach is considered: any class that provides STL like interfaces
+are identified with the detection idoim outlined in paper <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4436.pdf">WG21 N4421</a>. </p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">is_container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">disjunction</span><span class="o">&lt;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="n">is_detected</span><span class="o">&lt;</span><span class="n">has_container_t</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w">     </span><span class="c1">// is an adaptor?</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">conjunction</span><span class="o">&lt;</span><span class="w">                        </span><span class="c1">// or have these properties:</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="n">is_detected</span><span class="o">&lt;</span><span class="n">has_difference_t</span><span class="p">,</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="n">is_detected</span><span class="o">&lt;</span><span class="n">has_begin_t</span><span class="p">,</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">is_detected</span><span class="o">&lt;</span><span class="n">has_const_begin_t</span><span class="p">,</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="n">is_detected</span><span class="o">&lt;</span><span class="n">has_end_t</span><span class="p">,</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">is_detected</span><span class="o">&lt;</span><span class="n">has_const_end_t</span><span class="p">,</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="o">&gt;</span><span class="p">;</span>
+</span></code></pre></div>
+<p>From a storage perspective, there are three notable categories:</p>
+<ul>
+<li>
+<p><code>std::vector&lt;T&gt;</code>, <code>std::array&lt;T,N&gt;</code> have <code>.data()</code> accessors and H5CPP can directly load/save data from the objects. For efficient partial data transfer the data transfer size must match the element size of the objects.</p>
+</li>
+<li>
+<p><code>std::list&lt;T&gt;</code>, <code>std::forward_list&lt;T&gt;</code>, <code>std::deque&lt;T&gt;</code>, <code>std::set&lt;T&gt;</code>, <code>std::multiset&lt;T&gt;</code>,<code>std::unordered_set&lt;T&gt;</code>,<code>std::map&lt;K,V&gt;</code>,<code>std::multimap&lt;K,V&gt;</code>, <code>std::unordered_multimap&lt;K,V&gt;</code>
+don't have direct access to the underlying memory store and the provided iterators are used for data transfer between memory and disk. The IO transaction is broken into chunk-sized blocks and loaded into STL objects. This method has a maximum memory requirement of <code>element_size * ( container_size + chunk_size )</code></p>
+</li>
+<li>
+<p><code>std::stack</code>,<code>std::queue</code>,<code>std::priority_queue</code> are adaptors; the underlying data-structure determines how data transfers take place.</p>
+</li>
+</ul>
+<p>In addition to the following mapping is considered:</p>
+<ul>
+<li><code>vector | array</code>  of <code>vector | array</code> of ... -&gt; <code>HDF5 ragged/fractal array</code></li>
+</ul>
+<h4 id="stdstrings"><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10 7-2 4h3v6H5v-6l2-4zm8 0-2 4h3v6h-6v-6l2-4z"/></svg></span> std::strings</h4>
+<p>HDF5 supports variable- and fixed-length strings. The former is of interest, as the most common way for storing strings in a file: consecutive characters with a separator. The current storage layout is a heap data structure making it less suitable for massive Terabyte-scale storage. In addition, the <code>std::string</code> s have to be copied during <a href="../#read">read</a> operations. Both filtering, such as <code>h5::gzip{0-9}</code>, and encoding, such as <code>h5::utf8</code>, are supported.
+<img src="../assets/c-strings-inmemory.png" alt="string"
+   class="float-right w-2/5 border-2 border-solid border-red rounded-lg shadow-lg ml-4 transition-transform duration-500 hover:scale-110 bg-transparent"/></p>
+<h4 id="c-strings">C Strings</h4>
+<p>are actually one-dimensional array of characters terminated by a null character <code>\0</code>. Thus a null-terminated string contains the characters that comprise the string followed by a null. Am array of <code>char*</code> pointers is to describe a collection of c strings, the memory locations are not required to be
+contiguous. The beginning of the array is a <code>char**</code> type.</p>
+<p><code>h5::write&lt;char**&gt;(fd, char** ptr, h5::current_dims{n_elems}, ...);</code></p>
+<p><strong>not supported</strong>: <code>wchar_t _wchar char16_t _wchar16 char32_t _wchar32</code></p>
+<p><strong>TODO:</strong> work out a new efficient storage mechanism for strings.</p>
+<h3 id="raw-pointers">Raw Pointers</h3>
+<p>Currently only memory blocks are supported in consecutive/adjacent location of elementary or POD types. This method comes in handy when an object type is not supported. You need to find a way to grab a pointer to its internal datastore and the size, and then pass this as an argument. For <a href="../#read">read</a> operations, make sure there is enough memory reserved; for <a href="../#write">write</a> operations, you must specify the data transfer size with <code>h5::count</code>.</p>
+<p><strong>Example:</strong> Let's load data from an HDF5 dataset to a memory location
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">my_object</span><span class="w"> </span><span class="nf">obj</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">h5</span><span class="o">::</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;file.h5&quot;</span><span class="p">,</span><span class="s">&quot;dataset.dat&quot;</span><span class="p">,</span><span class="n">obj</span><span class="p">.</span><span class="n">ptr</span><span class="p">(),</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">count</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">},</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">offset</span><span class="p">{</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">});</span>
+</span></code></pre></div></p>
+<h3 id="compound-datatypes">Compound Datatypes</h3>
+<h4 id="pod-structrecords">POD Struct/Records</h4>
+<p>Arbitrarily deep and complex Plain Old Structured (POD) are supported either by the <a href="../compiler/">h5cpp compiler</a> or by manually writing the necessary shim code. The following example was generated with the <code>h5cpp</code> compiler. Note that in the first step you have to specialize <code>template&lt;class Type&gt; hid_t inline register_struct&lt;Type&gt;();</code> to the type you want to use it with and return an HDF5 CAPI <code>hid_t</code> type identifier. This <code>hid_t</code> object references a memory location inside the HDF5 system, and will be automatically released with <code>H5Tclose</code> when used with H5CPP templates. The final step is to register this new type with H5CPP type system : <code>H5CPP_REGISTER_STRUCT(Type);</code>.</p>
+<p><div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">sn</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">PODstruct</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="p">...</span><span class="w"> </span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">_bool</span><span class="p">;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="p">};</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">h5</span><span class="p">{</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="k">template</span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">hid_t</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">register_struct</span><span class="o">&lt;</span><span class="n">sn</span><span class="o">::</span><span class="n">PODstruct</span><span class="o">&gt;</span><span class="p">(){</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="n">hid_t</span><span class="w"> </span><span class="n">ct_00</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">H5Tcreate</span><span class="p">(</span><span class="n">H5T_COMPOUND</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="w"> </span><span class="p">(</span><span class="n">sn</span><span class="o">::</span><span class="n">PODstruct</span><span class="p">));</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="p">...</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="n">H5Tinsert</span><span class="p">(</span><span class="n">ct_00</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;_bool&quot;</span><span class="p">,</span><span class="w">   </span><span class="n">HOFFSET</span><span class="p">(</span><span class="n">sn</span><span class="o">::</span><span class="n">PODstruct</span><span class="p">,</span><span class="n">_bool</span><span class="p">),</span><span class="n">H5T_NATIVE_HBOOL</span><span class="p">);</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ct_00</span><span class="p">;</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="p">};</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="p">}</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="n">H5CPP_REGISTER_STRUCT</span><span class="p">(</span><span class="n">sn</span><span class="o">::</span><span class="n">PODstruct</span><span class="p">);</span>
+</span></code></pre></div>
+The internal typesystem for POD/Record types supports:</p>
+<ul>
+<li><code>std::is_integral</code> and <code>std::is_floating_point</code></li>
+<li><code>std::is_array</code> plain old array type, but not <code>std::array</code> or <code>std::vector</code> </li>
+<li>arrays of the the above, with arbitrary nesting</li>
+<li>POD structs of the above with arbitrary nesting</li>
+</ul>
+<h4 id="c-classes">C++ Classes</h4>
+<p>Work in progress. Requires modification to compiler as well as coordinated effort how to store complex objects such that other platforms capable of reading them.</p>
+<h1 id="high-throughput-pipeline">High Throughput Pipeline</h1>
+<p>HDF5 comes with a complex mechanism for type conversion, filtering, scatter/gather-funtions,etc. But what if you need to engineer a system to bare metal without frills? The <code>h5::high_throughput</code> data access property replaces the standard data processing mechanism with a BLAS level 3 blocking, a CPU cache-aware filter chain and delegates all calls to the <code>H5Dwrite_chunk</code> and <code>H5Dread_chunk</code> optimized calls.</p>
+<p><strong>Example:</strong> Let's save an <code>arma::mat M(16,32)</code> into an HDF5 data set using direct chunk write! First we pass the <code>h5::high_throughput</code> data access property when opening/creating data set and make certain to choose chunked layout 
+by setting <code>h5::chunk{...}</code>. Optional standard filters and fill values may be set, however, the data set element type <strong>must match</strong>
+the element type of <code>M</code>. No type conversion will be taking place!
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">h5</span><span class="o">::</span><span class="n">ds_t</span><span class="w"> </span><span class="n">ds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="s">&quot;bare metal IO&quot;</span><span class="p">,</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="n">h5</span><span class="o">::</span><span class="n">current_dims</span><span class="p">{</span><span class="mi">43</span><span class="p">,</span><span class="mi">57</span><span class="p">},</span><span class="w">     </span><span class="c1">// doesn&#39;t have to be multiple of chunks</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="n">h5</span><span class="o">::</span><span class="n">high_throughput</span><span class="p">,</span><span class="w">         </span><span class="c1">// request IO pipeline</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">h5</span><span class="o">::</span><span class="n">chunk</span><span class="p">{</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">fill_value</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">{</span><span class="mi">3</span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w">  </span><span class="n">h5</span><span class="o">::</span><span class="n">gzip</span><span class="p">{</span><span class="mi">9</span><span class="p">}</span><span class="w"> </span><span class="p">);</span>
+</span></code></pre></div>
+You <strong>must align all IO calls to chunk boundaries:</strong> <code>h5::offset % h5::chunk == 0</code>. However, the dataset may have non-aligned size: <code>h5::count % h5::chunk != 0 -&gt; OK</code>. Optionally, define the amount of data transferred with <code>h5::count{..}</code>. When <code>h5::count{...}</code> is not specified, the dimensions will be computed from the object. <strong>Notice</strong> <code>h5::offset{4,16}</code> is set to a chunk boundary.</p>
+<p>The bahviour of saving data near edges matches the behaviour of standard CAPI IO calls. The chunk within an edge boundary having the correct content, and the outside being undefined.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>h5::write( ds,  M, h5::count{4,8}, h5::offset{4,16} );
+</span></code></pre></div>
+<strong>Pros:</strong></p>
+<ul>
+<li>Fast IO with direct chunk write/read</li>
+<li>CPU cache aware filter chain</li>
+<li>Option for threaded + pipelined filter chain</li>
+<li>minimal code length, fast implementation</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li><code>h5::offset{..}</code> must be aligned with chunk boundaries</li>
+<li><code>h5::stride</code>, <code>h5::block</code> and other sub setting methods such as scatter - gather will not work</li>
+<li>disk and memory type must match - no type conversion</li>
+</ul>
+<p>The data set indeed is compressed, and readable from other systems:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>HDF5 &quot;arma.h5&quot; {
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>GROUP &quot;/&quot; {
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>   DATASET &quot;bare metal IO&quot; {
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>      DATATYPE  H5T_IEEE_F64LE
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>      DATASPACE  SIMPLE { ( 40, 40 ) / ( 40, H5S_UNLIMITED ) }
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>      STORAGE_LAYOUT {
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>         CHUNKED ( 4, 8 )
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>         SIZE 79 (162.025:1 COMPRESSION)
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>      }
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>      FILTERS {
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>         COMPRESSION DEFLATE { LEVEL 9 }
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>      }
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>      FILLVALUE {
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>         FILL_TIME H5D_FILL_TIME_IFSET
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>         VALUE  3
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>      }
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>      ALLOCATION_TIME {
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>         H5D_ALLOC_TIME_INCR
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>      }
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>   }
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>}
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>}
+</span></code></pre></div></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+
+
+  
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright custom-footer">
+        <div class="custom-footer-left">
+          Blockchain, cryptographic protocols, HPC, or trading systems in C++, Rust, Julia, Python, R and CUDA
+        </div>
+        <div class="custom-footer-right">
+          © 2017–2025 VargaLABS, Toronto, ON, Canada 🇨🇦
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "content.code.copy", "content.tooltips", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.tailwindcss.com"></script>
+      
+        <script src="../javascripts/tw-config.js"></script>
+      
+        <script src="../javascripts/asciinema-player.min.js"></script>
+      
+        <script src="https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"></script>
+      
+        <script src="https://unpkg.com/@popperjs/core@2"></script>
+      
+        <script src="https://unpkg.com/tippy.js@6"></script>
+      
+    
+  </body>
+</html>
