@@ -119,3 +119,17 @@ namespace h5::meta {
     /** semantic grouping: stl-like containers */
     template<class T> struct is_stl_like : std::bool_constant<is_sequential_like_v<T> || is_associative_like_v<T> || is_unordered_like_v<T>> {};
     template<class T> inline constexpr bool is_stl_like_v = is_stl_like<T>::value;
+
+    /** recursively compute semantic leaf element type */
+    template<class T, class = void> struct decay { using type = remove_cvref_t<T>; };
+    template<class T> struct decay<T, std::enable_if_t<fixed_text_like<remove_cvref_t<T>>::value>> { using type = char; };
+    template<class T> struct decay<T, std::enable_if_t<vl_text_like<remove_cvref_t<T>>::value>> {  using type = char; };
+    template<class T, std::size_t N> struct decay<T[N], void> { using type = typename decay<T>::type; };
+    template<class T, std::size_t N> struct decay<const T[N], void> { using type = typename decay<T>::type; };
+    template<class T, std::size_t N> struct decay<std::array<T,N>, void> { using type = typename decay<T>::type; };
+    
+    template<class T, class alloc_t> struct decay<std::vector<T,alloc_t>, void> { using type = typename decay<T>::type; };
+    template<class T, class traits_t> struct decay<std::basic_string_view<T,traits_t>, std::enable_if_t<std::is_same_v<T,char>>> { using type = char; };
+    template<class T, class traits_t, class alloc_t> struct decay<std::basic_string<T,traits_t,alloc_t>, std::enable_if_t<std::is_same_v<T,char>>> { using type = char; };
+    template<class alloc_t> struct decay<std::vector<bool,alloc_t>, void> { using type = bool; };
+    template<class T> using decay_t = typename decay<T>::type;
