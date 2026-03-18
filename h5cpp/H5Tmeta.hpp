@@ -133,3 +133,28 @@ namespace h5::meta {
     template<class T, class traits_t, class alloc_t> struct decay<std::basic_string<T,traits_t,alloc_t>, std::enable_if_t<std::is_same_v<T,char>>> { using type = char; };
     template<class alloc_t> struct decay<std::vector<bool,alloc_t>, void> { using type = bool; };
     template<class T> using decay_t = typename decay<T>::type;
+
+    /** bulk-transfer leaf: scalar, enum, or registered compound */
+    template<class T> struct is_contiguous_leaf : std::bool_constant<std::is_arithmetic_v<remove_cvref_t<T>> || std::is_enum_v<remove_cvref_t<T>> || h5::is_registered<remove_cvref_t<T>>::value> {};
+    template<class T> inline constexpr bool is_contiguous_leaf_v = is_contiguous_leaf<T>::value;
+    /** elements that break inline recursive embedding */
+    template<class T> struct breaks_inline_embedding : std::false_type {};
+    template<class T> struct breaks_inline_embedding<T*> : std::true_type {};
+    template<class char_t, class traits_t> struct breaks_inline_embedding<std::basic_string_view<char_t, traits_t>> : std::true_type {};
+    template<class char_t, class traits_t, class alloc_t> struct breaks_inline_embedding<std::basic_string<char_t, traits_t, alloc_t>> : std::true_type {};
+    template<class alloc_t> struct breaks_inline_embedding<std::vector<bool, alloc_t>> : std::true_type {};
+    template<class T> inline constexpr bool breaks_inline_embedding_v = breaks_inline_embedding<remove_cvref_t<T>>::value;
+    /** recursive bulk-transfer legality */
+    template<class T, class = void> struct has_legal_recursive_path : std::false_type {};
+    template<class T> struct has_legal_recursive_path<T, std::enable_if_t<is_contiguous_leaf_v<T>>> : std::true_type {}; // leaf
+    /** built-in and std::array preserve inline embedding */
+    template<class T, std::size_t N> struct has_legal_recursive_path<T[N], void> : has_legal_recursive_path<T> {};
+    template<class T, std::size_t N> struct has_legal_recursive_path<std::array<T, N>, void> : has_legal_recursive_path<T> {};
+    /** direct-access containers are legal only at level 1 and only iff their element recursively do so */
+    template<class T> struct has_legal_recursive_path<T, std::enable_if_t<has_direct_access_v<T> && is_detected_v<value_type_t, remove_cvref_t<T>> && !breaks_inline_embedding_v<T>>> : has_legal_recursive_path<typename remove_cvref_t<T>::value_type> {};
+    template<class T> inline constexpr bool has_legal_recursive_path_v = has_legal_recursive_path<T>::value;
+    /** top-level special case: text and BLAS objects are transferable as a single blob */
+    template<class T> struct is_top_level_contiguous : std::bool_constant<is_text_like_v<T> || is_blas_like_v<T>> {};
+    template<class T> inline constexpr bool is_top_level_contiguous_v = is_top_level_contiguous<T>::value;
+    template<class T> struct is_recursively_contiguous : std::bool_constant<is_top_level_contiguous_v<T> || has_legal_recursive_path_v<T>> {};
+    template<class T> inline constexpr bool is_recursively_contiguous_v = is_recursively_contiguous<T>::value;
