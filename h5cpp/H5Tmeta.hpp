@@ -13,6 +13,7 @@ namespace h5 {
     template<class T> struct is_registered : std::false_type {}; // is_supported<> is reserved for c++26 static reflection
     template<class T> hid_t inline register_struct();            // so is make_type<>()
 }
+// TODO: create detector for STL container types: direct access, iterable and container: direct access + iterable
 namespace h5::meta {
     /** canonical type helpers */
     template<class T> using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
@@ -41,6 +42,8 @@ namespace h5::meta {
     template<class T> using value_type_t = typename T::value_type;
     template<class T> using key_type_t = typename T::key_type;
     template<class T> using mapped_type_t = typename T::mapped_type;
+    template<class T> using key_compare_t = typename T::key_compare;
+    template<class T> using hasher_t = typename T::hasher;
 
     template<class T> using size_expr_t = decltype(std::declval<const T&>().size());
     template<class T> using data_expr_t = decltype(std::declval<const T&>().data());
@@ -91,12 +94,28 @@ namespace h5::meta {
     template<class T, std::size_t N> struct is_array<std::array<T, N>> : std::true_type {};// std::array family
     template<class T> struct array_like : is_array<std::remove_reference_t<T>> {};         //  references are semantically irrelevant
     template<class T> inline constexpr bool is_array_v = array_like<T>::value;
-    /** semantic grouping: is_iterable or not */
+    /** semantic grouping: is_iterable, has_direct_access or is_blas_like*/
     template<class T> struct is_iterable : std::bool_constant<is_detected_v<begin_expr_t, remove_cvref_t<T>> && is_detected_v<end_expr_t, remove_cvref_t<T>>>{};
     template<class T> inline constexpr bool is_iterable_v = is_iterable<T>::value;
     template<class T> struct has_direct_access : std::bool_constant< std::is_pointer_v<detected_or_t<void, data_expr_t, remove_cvref_t<T>> >> {};          
     template<class T> inline constexpr bool has_direct_access_v = has_direct_access<T>::value;
-   
     template<class T> struct is_blas_like : std::false_type{};
     template<class T> inline constexpr bool is_blas_like_v = is_blas_like<T>::value;
-}
+
+    /** semantic grouping: map-like / set-like */
+    template<class T> struct is_map_like : std::bool_constant<is_detected_v<key_type_t, remove_cvref_t<T>> && is_detected_v<mapped_type_t, remove_cvref_t<T>> && is_detected_v<value_type_t, remove_cvref_t<T>>> {};
+    template<class T> inline constexpr bool is_map_like_v = is_map_like<T>::value;
+    template<class T> struct is_set_like : std::bool_constant<is_detected_v<key_type_t, remove_cvref_t<T>> && is_detected_v<value_type_t, remove_cvref_t<T>> && !is_detected_v<mapped_type_t, remove_cvref_t<T>>> {};
+    template<class T> inline constexpr bool is_set_like_v = is_set_like<T>::value;
+    /** semantic grouping: sequential containers */
+    template<class T> struct is_sequential_like : std::bool_constant<is_iterable_v<T> && is_detected_v<value_type_t, remove_cvref_t<T>> && !is_detected_v<key_type_t, remove_cvref_t<T>> && !is_detected_v<mapped_type_t, remove_cvref_t<T>>> {};
+    template<class T> inline constexpr bool is_sequential_like_v = is_sequential_like<T>::value;
+    /** semantic grouping: ordered associative containers */
+    template<class T> struct is_associative_like : std::bool_constant<is_iterable_v<T> && is_detected_v<key_type_t, remove_cvref_t<T>> && is_detected_v<key_compare_t, remove_cvref_t<T>>> {};
+    template<class T> inline constexpr bool is_associative_like_v = is_associative_like<T>::value;
+    /** semantic grouping: unordered associative containers */
+    template<class T> struct is_unordered_like : std::bool_constant<is_iterable_v<T> && is_detected_v<key_type_t, remove_cvref_t<T>> && is_detected_v<hasher_t, remove_cvref_t<T>>> {};
+    template<class T> inline constexpr bool is_unordered_like_v = is_unordered_like<T>::value;
+    /** semantic grouping: stl-like containers */
+    template<class T> struct is_stl_like : std::bool_constant<is_sequential_like_v<T> || is_associative_like_v<T> || is_unordered_like_v<T>> {};
+    template<class T> inline constexpr bool is_stl_like_v = is_stl_like<T>::value;
