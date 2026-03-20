@@ -17,6 +17,17 @@ namespace h5 {
 namespace h5::meta {
     /** canonical type helpers */
     template<class T> using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
+    template<class> inline constexpr bool unreachable_v = false;
+    template<class> inline constexpr bool dependent_failure_v = false;
+    template<class> inline constexpr bool substitution_failure_v = false;
+    template<class> inline constexpr bool instantiation_error_v = false;
+    template<class> inline constexpr bool not_supported_v = false;
+    namespace blas {
+        template<class T> size_t n_elements(const remove_cvref_t<T>& value);
+        template<class T> size_t extent(const remove_cvref_t<T>& value);
+        template<class T> size_t data(remove_cvref_t<T>& value);
+        template<class T> size_t data(const remove_cvref_t<T>& value);
+    }    
     /** detection idiom */
     template<class...> using void_t = void;
     template<class default_t, class always_void, template<class...> class op, class... args_t>
@@ -44,11 +55,13 @@ namespace h5::meta {
     template<class T> using mapped_type_t = typename T::mapped_type;
     template<class T> using key_compare_t = typename T::key_compare;
     template<class T> using hasher_t = typename T::hasher;
-
+    
     template<class T> using size_expr_t = decltype(std::declval<const T&>().size());
+    template<class T> using resize_expr_t = decltype(std::declval<T&>().resize(std::declval<std::size_t>()));
     template<class T> using data_expr_t = decltype(std::declval<const T&>().data());
     template<class T> using begin_expr_t = decltype(std::declval<const T&>().begin());
     template<class T> using end_expr_t = decltype(std::declval<const T&>().end());
+
     /** semantic grouping: enumerated */
     template<class T> struct is_enumerated_like : std::is_enum<remove_cvref_t<T>> {};
     template<class T> inline constexpr bool is_enumerated_like_v = is_enumerated_like<T>::value;
@@ -68,37 +81,53 @@ namespace h5::meta {
     /** semantic grouping: compound */
     template<class T> struct is_compound_like : h5::is_registered<remove_cvref_t<T>> {};
     template<class T> inline constexpr bool is_compound_like_v = is_compound_like<T>::value;
+
     /** semantic grouping: fixed-size text */
     template<class T> struct fixed_text_like : std::false_type {};
     template<std::size_t N> struct fixed_text_like<char[N]> : std::true_type {};
     template<std::size_t N> struct fixed_text_like<const char[N]> : std::true_type {};
-    /** semantic grouping: variable-length text */
-    template<class T> struct vl_text_like : std::false_type {};
-    template<> struct vl_text_like<char*> : std::true_type {};                   // raw c-string pointers
-    template<> struct vl_text_like<const char*> : std::true_type {};
-    template<> struct vl_text_like<char* const> : std::true_type {};
-    template<> struct vl_text_like<const char* const> : std::true_type {};
-    template<> struct vl_text_like<char* volatile> : std::true_type {};
-    template<> struct vl_text_like<const char* volatile> : std::true_type {};
-    template<> struct vl_text_like<char* const volatile> : std::true_type {};
-    template<> struct vl_text_like<const char* const volatile> : std::true_type {};
-    template<class traits_t> struct vl_text_like<std::basic_string_view<char, traits_t>> : std::true_type {};               // std::string_view family
-    template<class traits_t, class alloc_t> struct vl_text_like<std::basic_string<char, traits_t, alloc_t>> : std::true_type {}; // std::basic_string family
+    template<class T> struct is_fixed_text_like : fixed_text_like<remove_cvref_t<T>> {};
+    template<class T> inline constexpr bool is_fixed_text_like_v = is_fixed_text_like<T>::value;    
+    /** semantic grouping: sentinel text are C-like text */
+    template<class T> struct sentinel_text_like : std::false_type {};
+    template<class T> struct sentinel_text_like<T*> : std::bool_constant<std::is_same_v<std::remove_cv_t<T>, char>> {};
+    template<class T> struct is_sentinel_text_like : sentinel_text_like<remove_cvref_t<T>> {};
+    template<class T> inline constexpr bool is_sentinel_text_like_v = is_sentinel_text_like<T>::value;
+    /** semantic grouping: dynamic text is std::string variant*/
+    template<class T> struct dynamic_text_like : std::false_type {};
+    template<class traits_t> struct dynamic_text_like<std::basic_string_view<char, traits_t>> : std::true_type {};
+    template<class traits_t, class alloc_t> struct dynamic_text_like<std::basic_string<char, traits_t, alloc_t>> : std::true_type {};
+    template<class T> struct is_dynamic_text_like : dynamic_text_like<remove_cvref_t<T>> {};
+    template<class T> inline constexpr bool is_dynamic_text_like_v = is_dynamic_text_like<T>::value;
+    /** semantic grouping: variable length string */
+    template<class T> struct vl_text_like : std::bool_constant<is_sentinel_text_like_v<T> || is_dynamic_text_like_v<T>> {};
+    template<class T> struct is_vl_text_like : vl_text_like<T> {};
+    template<class T> inline constexpr bool is_vl_text_like_v = is_vl_text_like<T>::value;    
     /** semantic grouping: text */
-    template<class T> struct text_like : std::bool_constant<fixed_text_like<T>::value || vl_text_like<T>::value> {};
-    template<class T> struct is_text_like : text_like<std::remove_reference_t<T>> {};
+    template<class T> struct text_like : std::bool_constant<is_fixed_text_like_v<T> || is_sentinel_text_like_v<T> || is_dynamic_text_like_v<T>>{};
+    template<class T> struct is_text_like : text_like<T> {};
     template<class T> inline constexpr bool is_text_like_v = is_text_like<T>::value;
+
     /** semantic grouping: fixed extent array-like */
+    template<class T> struct is_builtin_array : std::false_type {};
+    template<class T, std::size_t N> struct is_builtin_array<T[N]> : std::true_type {};
+    template<class T> inline constexpr bool is_builtin_array_v = is_builtin_array<remove_cvref_t<T>>::value;
     template<class T> struct is_array : std::false_type {};
     template<class T, std::size_t N> struct is_array<T[N]> : std::true_type {};            // built-in arrays
     template<class T, std::size_t N> struct is_array<std::array<T, N>> : std::true_type {};// std::array family
-    template<class T> struct array_like : is_array<std::remove_reference_t<T>> {};         //  references are semantically irrelevant
+    template<class T> struct array_like : is_array<remove_cvref_t<T>> {};         //  references are semantically irrelevant
     template<class T> inline constexpr bool is_array_v = array_like<T>::value;
-    /** semantic grouping: is_iterable, has_direct_access or is_blas_like*/
+    /** semantic grouping: is_iterable, has_direct_access, has_resize or is_blas_like*/
     template<class T> struct is_iterable : std::bool_constant<is_detected_v<begin_expr_t, remove_cvref_t<T>> && is_detected_v<end_expr_t, remove_cvref_t<T>>>{};
     template<class T> inline constexpr bool is_iterable_v = is_iterable<T>::value;
     template<class T> struct has_direct_access : std::bool_constant< std::is_pointer_v<detected_or_t<void, data_expr_t, remove_cvref_t<T>> >> {};          
     template<class T> inline constexpr bool has_direct_access_v = has_direct_access<T>::value;
+    template<class T> struct is_resizable : is_detected<resize_expr_t, remove_cvref_t<T>> {};
+    template<class T> inline constexpr bool is_resizable_v = is_resizable<T>::value;
+    template<class T> struct has_data : is_detected<data_expr_t, remove_cvref_t<T>> {};
+    template<class T> inline constexpr bool has_data_v = has_data<T>::value;
+    template<class T> struct has_size : is_detected<size_expr_t, remove_cvref_t<T>> {};
+    template<class T> inline constexpr bool has_size_v = has_size<T>::value;
     template<class T> struct is_blas_like : std::false_type{};
     template<class T> inline constexpr bool is_blas_like_v = is_blas_like<T>::value;
 
@@ -118,7 +147,7 @@ namespace h5::meta {
     template<class T> inline constexpr bool is_unordered_like_v = is_unordered_like<T>::value;
     /** semantic grouping: stl-like containers */
     template<class T> struct is_stl_like : std::bool_constant<is_sequential_like_v<T> || is_associative_like_v<T> || is_unordered_like_v<T>> {};
-    template<class T> inline constexpr bool is_stl_like_v = is_stl_like<T>::value;
+    template<class T> inline constexpr bool is_stl_like_v = is_stl_like<remove_cvref_t<T>>::value;
 
     /** recursively compute semantic leaf element type */
     template<class T, class = void> struct decay { using type = remove_cvref_t<T>; };
