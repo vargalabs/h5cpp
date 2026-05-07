@@ -5,11 +5,18 @@
 #include <h5cpp/H5Tmeta.hpp>
 #include <array>
 #include <complex>
+#include <deque>
+#include <forward_list>
 #include <initializer_list>
+#include <list>
+#include <map>
+#include <set>
 #include <string>
 #include <string_view>
 #include <tuple>
 #include <type_traits>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 
@@ -52,6 +59,9 @@ struct sized_value_t {
 struct value_type_only_t {
     using value_type = int;
 };
+
+enum capability_enum_unscoped { capability_enum_unscoped_a, capability_enum_unscoped_b };
+enum class capability_enum_scoped { a, b };
 
 TEST_CASE("H5Tmeta is_array detects C arrays and std::array") {
     CHECK(h5::meta::is_array<int[4]>::value);
@@ -388,4 +398,180 @@ TEST_CASE("H5Tmeta get_fields helpers are no-op and callable") {
     h5::meta::get_field_attributes(pod);
 
     CHECK(true);
+}
+
+// ============================================================
+// Capability-based type families (#86) — characterization tests
+// ============================================================
+
+TEST_CASE("H5Tmeta is_text_like covers char arrays pointers and string family") {
+    CHECK(h5::meta::is_text_like<char[5]>::value);
+    CHECK(h5::meta::is_text_like<const char[5]>::value);
+    CHECK(h5::meta::is_text_like<char*>::value);
+    CHECK(h5::meta::is_text_like<const char*>::value);
+    CHECK(h5::meta::is_text_like<std::string>::value);
+    CHECK(h5::meta::is_text_like<std::string_view>::value);
+
+    CHECK_FALSE(h5::meta::is_text_like<wchar_t[5]>::value);
+    CHECK_FALSE(h5::meta::is_text_like<int>::value);
+    CHECK_FALSE(h5::meta::is_text_like<std::vector<char>>::value);
+}
+
+TEST_CASE("H5Tmeta is_fixed_text_like detects char arrays only") {
+    CHECK(h5::meta::is_fixed_text_like<char[5]>::value);
+    CHECK(h5::meta::is_fixed_text_like<const char[5]>::value);
+
+    CHECK_FALSE(h5::meta::is_fixed_text_like<char*>::value);
+    CHECK_FALSE(h5::meta::is_fixed_text_like<std::string>::value);
+    CHECK_FALSE(h5::meta::is_fixed_text_like<std::string_view>::value);
+}
+
+TEST_CASE("H5Tmeta is_vl_text_like detects char pointers and string family") {
+    CHECK(h5::meta::is_vl_text_like<char*>::value);
+    CHECK(h5::meta::is_vl_text_like<const char*>::value);
+    CHECK(h5::meta::is_vl_text_like<std::string>::value);
+    CHECK(h5::meta::is_vl_text_like<std::string_view>::value);
+
+    CHECK_FALSE(h5::meta::is_vl_text_like<char[5]>::value);
+    CHECK_FALSE(h5::meta::is_vl_text_like<int>::value);
+}
+
+TEST_CASE("H5Tmeta is_array_like covers built-in arrays and std array cv ref stable") {
+    CHECK(h5::meta::is_array_like<int[3]>::value);
+    CHECK(h5::meta::is_array_like<std::array<int, 4>>::value);
+    CHECK(h5::meta::is_array_like<int(&)[3]>::value);
+    CHECK(h5::meta::is_array_like<const int[3]>::value);
+    CHECK((h5::meta::is_array_like<const std::array<int, 4>>::value));
+    CHECK((h5::meta::is_array_like<std::array<int, 4>&>::value));
+
+    CHECK_FALSE(h5::meta::is_array_like<int>::value);
+    CHECK_FALSE(h5::meta::is_array_like<std::vector<int>>::value);
+    CHECK_FALSE((h5::meta::is_array_like<int*>::value));
+}
+
+TEST_CASE("H5Tmeta is_iterable detects begin and end") {
+    CHECK(h5::meta::is_iterable<std::vector<int>>::value);
+    CHECK(h5::meta::is_iterable<std::string>::value);
+    CHECK(h5::meta::is_iterable<std::set<int>>::value);
+    CHECK((h5::meta::is_iterable<std::map<int, int>>::value));
+    CHECK(h5::meta::is_iterable<iterable_value_t>::value);
+
+    CHECK_FALSE(h5::meta::is_iterable<int>::value);
+    CHECK_FALSE(h5::meta::is_iterable<pod_value_t>::value);
+    CHECK_FALSE(h5::meta::is_iterable<sized_value_t>::value);
+}
+
+TEST_CASE("H5Tmeta is_resizable detects resize size_t method") {
+    CHECK(h5::meta::is_resizable<std::vector<int>>::value);
+    CHECK(h5::meta::is_resizable<std::string>::value);
+
+    CHECK_FALSE((h5::meta::is_resizable<std::array<int, 4>>::value));
+    CHECK_FALSE(h5::meta::is_resizable<int>::value);
+    CHECK_FALSE(h5::meta::is_resizable<std::set<int>>::value);
+}
+
+TEST_CASE("H5Tmeta is_sequential_like covers vector deque list forward_list array") {
+    CHECK(h5::meta::is_sequential_like<std::vector<int>>::value);
+    CHECK(h5::meta::is_sequential_like<std::deque<int>>::value);
+    CHECK(h5::meta::is_sequential_like<std::list<int>>::value);
+    CHECK(h5::meta::is_sequential_like<std::forward_list<int>>::value);
+    CHECK((h5::meta::is_sequential_like<std::array<int, 4>>::value));
+
+    CHECK_FALSE(h5::meta::is_sequential_like<std::set<int>>::value);
+    CHECK_FALSE((h5::meta::is_sequential_like<std::map<int, int>>::value));
+    CHECK_FALSE(h5::meta::is_sequential_like<int>::value);
+
+    // text-like types remain text-like, not sequential-like
+    CHECK_FALSE(h5::meta::is_sequential_like<std::string>::value);
+    CHECK_FALSE(h5::meta::is_stl_like<std::string>::value);
+    CHECK(h5::meta::is_text_like<std::string>::value);
+}
+
+TEST_CASE("H5Tmeta is_associative_like covers ordered set and map family") {
+    CHECK(h5::meta::is_associative_like<std::set<int>>::value);
+    CHECK((h5::meta::is_associative_like<std::map<int, int>>::value));
+    CHECK(h5::meta::is_associative_like<std::multiset<int>>::value);
+    CHECK((h5::meta::is_associative_like<std::multimap<int, int>>::value));
+
+    CHECK_FALSE(h5::meta::is_associative_like<std::unordered_set<int>>::value);
+    CHECK_FALSE(h5::meta::is_associative_like<std::vector<int>>::value);
+}
+
+TEST_CASE("H5Tmeta is_unordered_like covers unordered set and map family") {
+    CHECK(h5::meta::is_unordered_like<std::unordered_set<int>>::value);
+    CHECK((h5::meta::is_unordered_like<std::unordered_map<int, int>>::value));
+    CHECK(h5::meta::is_unordered_like<std::unordered_multiset<int>>::value);
+    CHECK((h5::meta::is_unordered_like<std::unordered_multimap<int, int>>::value));
+
+    CHECK_FALSE(h5::meta::is_unordered_like<std::set<int>>::value);
+    CHECK_FALSE(h5::meta::is_unordered_like<std::vector<int>>::value);
+}
+
+TEST_CASE("H5Tmeta is_set_like distinguishes sets from maps and sequences") {
+    CHECK(h5::meta::is_set_like<std::set<int>>::value);
+    CHECK(h5::meta::is_set_like<std::multiset<int>>::value);
+    CHECK(h5::meta::is_set_like<std::unordered_set<int>>::value);
+    CHECK(h5::meta::is_set_like<std::unordered_multiset<int>>::value);
+
+    CHECK_FALSE((h5::meta::is_set_like<std::map<int, int>>::value));
+    CHECK_FALSE(h5::meta::is_set_like<std::vector<int>>::value);
+}
+
+TEST_CASE("H5Tmeta is_map_like distinguishes maps from sets and sequences") {
+    CHECK((h5::meta::is_map_like<std::map<int, int>>::value));
+    CHECK((h5::meta::is_map_like<std::multimap<int, int>>::value));
+    CHECK((h5::meta::is_map_like<std::unordered_map<int, int>>::value));
+    CHECK((h5::meta::is_map_like<std::unordered_multimap<int, int>>::value));
+
+    CHECK_FALSE(h5::meta::is_map_like<std::set<int>>::value);
+    CHECK_FALSE(h5::meta::is_map_like<std::vector<int>>::value);
+}
+
+TEST_CASE("H5Tmeta is_stl_like is union of sequential associative and unordered") {
+    CHECK(h5::meta::is_stl_like<std::vector<int>>::value);
+    CHECK(h5::meta::is_stl_like<std::list<int>>::value);
+    CHECK(h5::meta::is_stl_like<std::set<int>>::value);
+    CHECK((h5::meta::is_stl_like<std::map<int, int>>::value));
+    CHECK((h5::meta::is_stl_like<std::unordered_map<int, int>>::value));
+
+    CHECK_FALSE(h5::meta::is_stl_like<int>::value);
+    CHECK_FALSE(h5::meta::is_stl_like<pod_value_t>::value);
+    CHECK_FALSE(h5::meta::is_stl_like<int[3]>::value);
+}
+
+TEST_CASE("H5Tmeta is_enumerated_like detects scoped and unscoped enums") {
+    CHECK(h5::meta::is_enumerated_like<capability_enum_unscoped>::value);
+    CHECK(h5::meta::is_enumerated_like<capability_enum_scoped>::value);
+
+    CHECK_FALSE(h5::meta::is_enumerated_like<int>::value);
+    CHECK_FALSE(h5::meta::is_enumerated_like<bool>::value);
+}
+
+TEST_CASE("H5Tmeta is_bitfield_like detects vector of bool") {
+    CHECK(h5::meta::is_bitfield_like<std::vector<bool>>::value);
+
+    CHECK_FALSE(h5::meta::is_bitfield_like<std::vector<int>>::value);
+    CHECK_FALSE(h5::meta::is_bitfield_like<bool>::value);
+    CHECK_FALSE(h5::meta::is_bitfield_like<int>::value);
+}
+
+TEST_CASE("H5Tmeta is_opaque_like detects void pointer family") {
+    CHECK(h5::meta::is_opaque_like<void*>::value);
+    CHECK(h5::meta::is_opaque_like<const void*>::value);
+    CHECK(h5::meta::is_opaque_like<void**>::value);
+    CHECK(h5::meta::is_opaque_like<const void**>::value);
+
+    CHECK_FALSE(h5::meta::is_opaque_like<int*>::value);
+    CHECK_FALSE(h5::meta::is_opaque_like<char*>::value);
+}
+
+TEST_CASE("H5Tmeta has_data_pointer is strict pointer-returning data method") {
+    CHECK(h5::meta::has_data_pointer<std::vector<int>>::value);
+    CHECK((h5::meta::has_data_pointer<std::array<int, 4>>::value));
+    CHECK(h5::meta::has_data_pointer<std::string>::value);
+
+    CHECK_FALSE(h5::meta::has_data_pointer<std::list<int>>::value);
+    CHECK_FALSE(h5::meta::has_data_pointer<std::set<int>>::value);
+    CHECK_FALSE((h5::meta::has_data_pointer<std::map<int, int>>::value));
+    CHECK_FALSE(h5::meta::has_data_pointer<int>::value);
 }

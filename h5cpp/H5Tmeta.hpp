@@ -89,6 +89,112 @@ namespace h5::meta {
     template <class T, class... Ts> struct is_linalg : std::false_type {};
     template <class C, class T, class... Cs> struct is_valid : std::false_type {};
 
+    // ------------------------------------------------------------
+    // Capability-based type families (#86)
+    // Additive predicate vocabulary used by the upcoming #87/#88/#89/#90
+    // refactors. Predicates only; no storage/shape/access traits, no recursive
+    // contiguity, no datatype synthesis, no dataset I/O changes. C++17 floor.
+    // Reuses existing detection primitives from H5meta.hpp; does not redeclare
+    // has_data, has_size, has_direct_access, has_value_type, has_iterator,
+    // or has_const_iterator.
+    // ------------------------------------------------------------
+
+    template <class T> using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
+
+    // Internal expression-detector aliases (consistent with H5meta.hpp `_f` style)
+    template <class T> using key_type_f    = typename T::key_type;
+    template <class T> using mapped_type_f = typename T::mapped_type;
+    template <class T> using key_compare_f = typename T::key_compare;
+    template <class T> using hasher_f      = typename T::hasher;
+    template <class T> using resize_f      = decltype(std::declval<T&>().resize(std::declval<std::size_t>()));
+
+    // text-like
+    template <class T> struct is_fixed_text_like : std::false_type {};
+    template <std::size_t N> struct is_fixed_text_like<char[N]>       : std::true_type {};
+    template <std::size_t N> struct is_fixed_text_like<const char[N]> : std::true_type {};
+
+    template <class T> struct is_vl_text_like : std::false_type {};
+    template <> struct is_vl_text_like<char*>       : std::true_type {};
+    template <> struct is_vl_text_like<const char*> : std::true_type {};
+    template <class Tr> struct is_vl_text_like<std::basic_string_view<char, Tr>> : std::true_type {};
+    template <class Tr, class A> struct is_vl_text_like<std::basic_string<char, Tr, A>> : std::true_type {};
+
+    template <class T> struct is_text_like
+        : std::bool_constant<is_fixed_text_like<remove_cvref_t<T>>::value
+                          || is_vl_text_like<remove_cvref_t<T>>::value> {};
+
+    // array-like (built-in arrays + std::array, cv/ref-stable)
+    namespace detail_capabilities {
+        template <class T> struct is_array_like_impl : std::false_type {};
+        template <class T, std::size_t N> struct is_array_like_impl<T[N]>            : std::true_type {};
+        template <class T, std::size_t N> struct is_array_like_impl<std::array<T,N>> : std::true_type {};
+    }
+    template <class T> struct is_array_like
+        : detail_capabilities::is_array_like_impl<remove_cvref_t<T>> {};
+
+    // iterable — derived from existing has_iterator (begin && end)
+    template <class T> struct is_iterable : has_iterator<remove_cvref_t<T>> {};
+
+    // resizable
+    template <class T> struct is_resizable : compat::is_detected<resize_f, remove_cvref_t<T>> {};
+
+    // sequential / associative / unordered / set / map / stl_like
+    // Text-like types (std::string, string_view) are excluded so they remain
+    // classified under is_text_like rather than leaking into is_stl_like.
+    template <class T> struct is_sequential_like
+        : std::bool_constant<is_iterable<T>::value
+                          && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value
+                          && !compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
+                          && !compat::is_detected<mapped_type_f, remove_cvref_t<T>>::value
+                          && !is_text_like<T>::value> {};
+
+    template <class T> struct is_associative_like
+        : std::bool_constant<is_iterable<T>::value
+                          && compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
+                          && compat::is_detected<key_compare_f, remove_cvref_t<T>>::value> {};
+
+    template <class T> struct is_unordered_like
+        : std::bool_constant<is_iterable<T>::value
+                          && compat::is_detected<key_type_f, remove_cvref_t<T>>::value
+                          && compat::is_detected<hasher_f,   remove_cvref_t<T>>::value> {};
+
+    template <class T> struct is_set_like
+        : std::bool_constant<compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
+                          && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value
+                          && !compat::is_detected<mapped_type_f, remove_cvref_t<T>>::value> {};
+
+    template <class T> struct is_map_like
+        : std::bool_constant<compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
+                          && compat::is_detected<mapped_type_f, remove_cvref_t<T>>::value
+                          && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value> {};
+
+    template <class T> struct is_stl_like
+        : std::bool_constant<is_sequential_like<T>::value
+                          || is_associative_like<T>::value
+                          || is_unordered_like<T>::value> {};
+
+    // enumerated / bitfield / opaque
+    template <class T> struct is_enumerated_like : std::is_enum<remove_cvref_t<T>> {};
+
+    template <class T> struct is_bitfield_like : std::false_type {};
+    template <class A> struct is_bitfield_like<std::vector<bool, A>> : std::true_type {};
+
+    template <class T> struct is_opaque_like : std::false_type {};
+    template <> struct is_opaque_like<void*>        : std::true_type {};
+    template <> struct is_opaque_like<const void*>  : std::true_type {};
+    template <> struct is_opaque_like<void**>       : std::true_type {};
+    template <> struct is_opaque_like<const void**> : std::true_type {};
+
+    // strict pointer-data capability:
+    //   true iff T::data() exists AND its return type is a pointer.
+    // Distinct from has_direct_access (which only detects existence of .data()).
+    template <class T> struct has_data_pointer
+        : std::bool_constant<std::is_pointer_v<
+              compat::detected_or_t<void, data_f, remove_cvref_t<T>>>> {};
+    // ------------------------------------------------------------
+    // End capability-based type families (#86)
+    // ------------------------------------------------------------
+
     // DEFAULT CASE
     template <class T> struct rank<T*>: public std::integral_constant<size_t,1>{};
     template <class T, class... Ts>
