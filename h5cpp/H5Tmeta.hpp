@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <stdexcept>
 
 namespace h5 {
     template<class T> struct is_registered : std::false_type {}; // is_supported<> is reserved for c++26 static reflection
@@ -15,6 +16,7 @@ namespace h5 {
 }
 // TODO: create detector for STL container types: direct access, iterable and container: direct access + iterable
 namespace h5::meta {
+
     /** canonical type helpers */
     template<class T> using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
     template<class> inline constexpr bool unreachable_v = false;
@@ -149,7 +151,7 @@ namespace h5::meta {
     template<class T> struct is_stl_like : std::bool_constant<is_sequential_like_v<T> || is_associative_like_v<T> || is_unordered_like_v<T>> {};
     template<class T> inline constexpr bool is_stl_like_v = is_stl_like<remove_cvref_t<T>>::value;
 
-    /** recursively compute semantic leaf element type */
+    /** recursively compute semantic leaf element type; FIXME: std::complex<T> must be a leaf type */
     template<class T, class = void> struct decay { using type = remove_cvref_t<T>; };
     template<class T> struct decay<T, std::enable_if_t<fixed_text_like<remove_cvref_t<T>>::value>> { using type = char; };
     template<class T> struct decay<T, std::enable_if_t<vl_text_like<remove_cvref_t<T>>::value>> {  using type = char; };
@@ -187,3 +189,155 @@ namespace h5::meta {
     template<class T> inline constexpr bool is_top_level_contiguous_v = is_top_level_contiguous<T>::value;
     template<class T> struct is_recursively_contiguous : std::bool_constant<is_top_level_contiguous_v<T> || has_legal_recursive_path_v<T>> {};
     template<class T> inline constexpr bool is_recursively_contiguous_v = is_recursively_contiguous<T>::value;
+
+    /** rank - recursively nested containers */
+    template<class T, class = void> struct rank : std::integral_constant<std::size_t, 0> {};
+    template<class T> struct rank<T, std::enable_if_t<is_text_like_v<T>>> : std::integral_constant<std::size_t, 0> {};
+    template<class T> struct rank<T, std::enable_if_t<is_map_like_v<T> || is_set_like_v<T> || is_associative_like_v<T> || is_unordered_like_v<T>>> : std::integral_constant<std::size_t, 0> {};
+    template<class T> struct rank<T, std::enable_if_t<std::is_array_v<T>>> : std::integral_constant<std::size_t, std::rank_v<remove_cvref_t<T>>> {};
+    template<class T> struct rank<T, std::enable_if_t<is_sequential_like_v<T> >> : std::integral_constant<std::size_t,1 + rank<typename remove_cvref_t<T>::value_type>::value> {};
+    template<class T>  inline constexpr std::size_t rank_v = rank<T>::value;
+
+    /** extent - recursively nested */
+    template<std::size_t... dims> struct extents_t {};
+    template<class T, std::size_t n, std::size_t... dims> struct extents_i : extents_i<T, n - 1, std::extent_v<T, n - 1>, dims...> {};
+    template<class T, std::size_t... dims> struct extents_i<T, 0, dims...> { using type = extents_t<dims...>; };
+    template<class T> using extents_of_t = typename extents_i<remove_cvref_t<T>, std::rank_v<remove_cvref_t<T>>>::type;
+    template<std::size_t... dims> constexpr auto to_array(extents_t<dims...>) { return std::array<hsize_t, sizeof...(dims)>{ static_cast<hsize_t>(dims)... }; }
+    template<class T> constexpr auto extents() { return to_array(extents_of_t<T>{});}
+
+    /** trait enums */
+    enum class storage_t { scalar, enumerated, bitfield, compound, array, fixed_text, vl_text, opaque, unsupported }; /*!< what am I storing? */
+    enum class shape_t { scalar, fixed_extents, runtime_extents, explicit_only };                                     /*!< how do I obtain extents? */
+    enum class access_t { direct, indirect, custom, unsupported };                                                    /*!< how do I transfer data? */
+    
+    enum class linalg_layout_t {none, contiguous, strided, packed };                                                  /*!< how is payload laid out? */
+    enum class linalg_order_t { none, row_major, column_major };
+    enum class matrix_structure_t { none, general, triangular, diagonal, symmetric, hermitian, banded };
+    enum class matrix_triangle_t { none, upper, lower };
+    enum class matrix_diagonal_t { none, explicit_nonunit, unit };
+    enum class matrix_transpose_t { none, transposed, conjugate_transposed };
+
+    /** storage traits */
+    template<class T, class = void> struct storage_traits_t {
+        using user_t = T; using value_t = remove_cvref_t<T>; using element_t = decay_t<T>;
+        static constexpr storage_t kind = is_opaque_like_v<value_t> ? storage_t::opaque : is_bitfield_like_v<value_t> ? storage_t::bitfield :
+            is_enumerated_like_v<value_t> ? storage_t::enumerated : is_compound_like_v<value_t> ? storage_t::compound :
+            fixed_text_like<value_t>::value? storage_t::fixed_text :  vl_text_like<value_t>::value   ? storage_t::vl_text :
+            is_array_v<value_t> ? storage_t::array : std::is_scalar<value_t>::value ? storage_t::scalar : storage_t::unsupported;
+    };
+    template<class T> inline constexpr storage_t storage_v = storage_traits_t<T>::kind;
+    /** shape traits */
+    template<class T, class = void> struct shape_traits_t {
+        using user_t = T; using value_t = remove_cvref_t<T>; using element_t = decay_t<T>;
+        static constexpr shape_t kind = std::is_scalar<value_t>::value || is_enumerated_like_v<value_t> ? shape_t::scalar :
+            fixed_text_like<value_t>::value ? shape_t::fixed_extents : is_array_v<value_t> ? shape_t::fixed_extents :
+            vl_text_like<value_t>::value ? shape_t::runtime_extents : is_blas_like_v<value_t> ? shape_t::runtime_extents :
+            (is_iterable_v<value_t> && is_detected_v<size_expr_t, value_t>) ? shape_t::runtime_extents : shape_t::explicit_only;
+    };
+    template<class T> inline constexpr shape_t shape_v = shape_traits_t<T>::kind;
+
+    /** access traits */
+    template<class T, class = void>
+    struct access_traits_t {
+        using user_t = T; using value_t = remove_cvref_t<T>; using element_t = decay_t<value_t>; using size_type = std::size_t;
+        static constexpr access_t kind = access_t::unsupported;
+        static constexpr std::size_t rank = 0; /*!< rank of the access-visible payload */
+        static size_type n_elements(const value_t&) = delete; /*!< logical element count */
+        static size_type size(const value_t&) = delete; /*!< n_elements * sizeof(element_t) */
+        static std::array<std::size_t, rank> extent(const value_t&) = delete; /*!< returns rank sized extents */
+        static const element_t* data(const value_t&) = delete; /*!< borrowed payload pointer */
+        static element_t* data(value_t&) = delete; /*!< borrowed mutable payload pointer */
+        static void scatter(const value_t&, element_t*) = delete; /*!< packs exactly size(x) leaf elements into canonical flat order */
+        static void gather(value_t&, const element_t*) = delete;  /*!< reconstructs object from exactly size(x) leaf elements in canonical flat order */    
+    };
+    
+    template<class T> struct access_traits_t<T, std::enable_if_t<is_recursively_contiguous_v<T> >> {
+        using user_t = T; using value_t = remove_cvref_t<T>; using element_t = decay_t<value_t>; using size_type = std::size_t;
+        static constexpr access_t kind = access_t::direct;
+        static constexpr std::size_t rank = rank_v<value_t>;
+        static size_type n_elements(const value_t& value) {
+            if constexpr (is_builtin_array_v<value_t>) {
+                constexpr auto extents = to_array(extents_of_t<value_t>{});
+                std::size_t product = 1; for (std::size_t i = 0; i < extents.size(); ++i) product *= extents[i];
+                return product;
+            } else if constexpr (is_blas_like_v<value_t> ) 
+                return blas::n_elements<value_t>(value);
+            else if constexpr (rank == 0) // note: string is 1 element/line
+                return 1; 
+            else if constexpr (has_size_v<value_t>)
+                return value.size();
+            else static_assert(not_supported_v<T>, "Could not infer size for type");
+        }
+        static size_type size(const value_t& value) {
+            if constexpr (is_dynamic_text_like_v<value_t> && has_size_v<value_t>)
+                return value.size() * sizeof(element_t);
+            if constexpr (is_sentinel_text_like_v<value_t>)
+                return std::strlen(value);
+            if constexpr (is_fixed_text_like_v<value_t> || is_builtin_array_v<value_t> )
+                return sizeof(value_t);
+            else return n_elements(value) * sizeof(element_t);
+        }
+        static std::array<std::size_t, rank> extent(const value_t& value){
+            if constexpr (is_blas_like_v<value_t> )
+                return blas::extent<value_t>(value);
+            else if constexpr (is_builtin_array_v<value_t>)
+                return to_array(extents_of_t<value_t>{});
+            else if constexpr (rank == 0) 
+                return {};
+            else if constexpr (rank == 1 && has_size_v<value_t>)
+                return { value.size() };
+            else static_assert(not_supported_v<T>, "access_traits_t<T>::extent(): could not infer extents for type");
+        }
+        template<class U> static auto data_impl(U& value) ->decltype(auto) {
+            using data_ptr_t = std::conditional_t<std::is_const_v<std::remove_reference_t<U>>, const element_t*, element_t*>;
+            if constexpr (is_blas_like_v<value_t>) {
+                return blas::data<value_t>(value);
+            } else if constexpr (rank == 0) {
+                if constexpr (is_dynamic_text_like_v<value_t>) return value.empty() ? nullptr : value.data();
+                if constexpr (is_fixed_text_like_v<value_t> || is_sentinel_text_like_v<value_t>) return value;
+                return reinterpret_cast<data_ptr_t>(&value);
+            } else if constexpr (is_builtin_array_v<value_t>) // T[]..
+                return reinterpret_cast<data_ptr_t>(&value);
+            else if constexpr (has_data_v<value_t>) // vector like contoners
+                return value.data();
+            else  static_assert(not_supported_v<T>, "access_traits_t<T>::data(): could not obtain mutable data pointer");
+        }
+
+        static element_t* data(value_t& value) { return data_impl(value); }
+        static const element_t* data(const value_t& value) { return data_impl(value); }
+        static void scatter(const value_t&, element_t*) = delete;
+        static void gather(value_t&, const element_t*) = delete;        
+    };
+    
+    template<class T> struct access_traits_t<T, std::enable_if_t<!is_recursively_contiguous_v<T> >> {
+        using user_t = T; using value_t = remove_cvref_t<T>; using element_t = decay_t<value_t>; using size_type = std::size_t;
+        static constexpr access_t kind = access_t::indirect;
+        static constexpr std::size_t rank = rank_v<value_t>;
+    };
+
+
+
+} // namespace h5::meta
+
+/*
+direct, indirect, custom, unsupported
+reference, address, accessor, indirect, custom, reference
+contiguous, indirect, custom, unsupported
+
+template struct<class T> type {
+    using storage = storage_trait_t<T>;
+    using shape = shape_traits<T>;
+    using access = access_traits<T>;
+
+};
+
+void read([...]){
+    if constexpr (access::kind == access_traits_t::direct){
+        using meta::type
+    } else if constexpr (access::kind == access_traits_t::indirect){
+    } [..]
+}
+
+
+*/
