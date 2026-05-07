@@ -155,6 +155,7 @@ if(H5CPP_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
+enable_testing()
 if(H5CPP_BUILD_TESTS AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt)
     add_subdirectory(test)
 endif()
