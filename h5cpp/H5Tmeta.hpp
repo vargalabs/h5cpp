@@ -195,6 +195,69 @@ namespace h5::meta {
     // End capability-based type families (#86)
     // ------------------------------------------------------------
 
+    // ------------------------------------------------------------
+    // Storage representation categories (#88)
+    // Representation vocabulary only; no access/materialization strategy,
+    // datatype synthesis, or dataset I/O dispatch.
+    // ------------------------------------------------------------
+
+    enum class storage_representation_t {
+        unsupported,
+        linear_value_dataset,
+        key_value_dataset,
+        ragged_vlen_dataset,
+        fixed_inner_extent_dataset,
+        vlen_text_dataset
+    };
+
+    namespace detail_capabilities {
+    template <class T> struct storage_representation_impl
+        : std::integral_constant<storage_representation_t, storage_representation_t::unsupported> {};
+
+    template <class T, class A> struct storage_representation_impl<std::deque<T,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+    template <class T, class A> struct storage_representation_impl<std::list<T,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+    template <class T, class A> struct storage_representation_impl<std::forward_list<T,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+    template <class T, class C, class A> struct storage_representation_impl<std::set<T,C,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+    template <class T, class C, class A> struct storage_representation_impl<std::multiset<T,C,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+    template <class T, class H, class E, class A> struct storage_representation_impl<std::unordered_set<T,H,E,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+    template <class T, class H, class E, class A> struct storage_representation_impl<std::unordered_multiset<T,H,E,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+
+    template <class K, class V, class C, class A> struct storage_representation_impl<std::map<K,V,C,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::key_value_dataset> {};
+    template <class K, class V, class C, class A> struct storage_representation_impl<std::multimap<K,V,C,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::key_value_dataset> {};
+    template <class K, class V, class H, class E, class A> struct storage_representation_impl<std::unordered_map<K,V,H,E,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::key_value_dataset> {};
+    template <class K, class V, class H, class E, class A> struct storage_representation_impl<std::unordered_multimap<K,V,H,E,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::key_value_dataset> {};
+
+    template <class T, class A0, class A1> struct storage_representation_impl<std::vector<std::vector<T,A0>,A1>>
+        : std::integral_constant<storage_representation_t,
+              (!is_text_like<T>::value && !is_stl_like<T>::value)
+                  ? storage_representation_t::ragged_vlen_dataset
+                  : storage_representation_t::unsupported> {};
+    template <class Tr, class A0, class A1> struct storage_representation_impl<std::vector<std::basic_string<char, Tr, A0>,A1>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::vlen_text_dataset> {};
+    template <class T, std::size_t N, class A> struct storage_representation_impl<std::vector<std::array<T,N>,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::fixed_inner_extent_dataset> {};
+    }
+
+    template <class T> struct storage_representation
+        : detail_capabilities::storage_representation_impl<remove_cvref_t<T>> {};
+
+    template <class T> constexpr storage_representation_t storage_representation_v =
+        storage_representation<T>::value;
+    // ------------------------------------------------------------
+    // End storage representation categories (#88)
+    // ------------------------------------------------------------
+
     // DEFAULT CASE
     template <class T> struct rank<T*>: public std::integral_constant<size_t,1>{};
     template <class T, class... Ts>
