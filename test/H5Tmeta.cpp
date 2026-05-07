@@ -575,3 +575,47 @@ TEST_CASE("H5Tmeta has_data_pointer is strict pointer-returning data method") {
     CHECK_FALSE((h5::meta::has_data_pointer<std::map<int, int>>::value));
     CHECK_FALSE(h5::meta::has_data_pointer<int>::value);
 }
+
+TEST_CASE("H5Tmeta storage_representation classifies sequential non-contiguous containers as linear value datasets") {
+    CHECK(h5::meta::storage_representation_v<std::list<int>> == h5::meta::storage_representation_t::linear_value_dataset);
+    CHECK((h5::meta::storage_representation<const std::list<int>&>::value == h5::meta::storage_representation_t::linear_value_dataset));
+    CHECK(h5::meta::storage_representation_v<std::forward_list<int>> == h5::meta::storage_representation_t::linear_value_dataset);
+    CHECK(h5::meta::storage_representation_v<std::deque<int>> == h5::meta::storage_representation_t::linear_value_dataset);
+}
+
+TEST_CASE("H5Tmeta storage_representation classifies ordered set containers as linear value datasets") {
+    CHECK(h5::meta::storage_representation_v<std::set<int>> == h5::meta::storage_representation_t::linear_value_dataset);
+    CHECK(h5::meta::storage_representation_v<std::multiset<int>> == h5::meta::storage_representation_t::linear_value_dataset);
+}
+
+TEST_CASE("H5Tmeta storage_representation classifies unordered set containers as unordered linear value datasets") {
+    CHECK(h5::meta::storage_representation_v<std::unordered_set<int>> == h5::meta::storage_representation_t::linear_value_dataset);
+    CHECK(h5::meta::storage_representation_v<std::unordered_multiset<int>> == h5::meta::storage_representation_t::linear_value_dataset);
+}
+
+TEST_CASE("H5Tmeta storage_representation classifies ordered map containers as key value record datasets") {
+    CHECK((h5::meta::storage_representation_v<std::map<int, double>> == h5::meta::storage_representation_t::key_value_dataset));
+    CHECK((h5::meta::storage_representation_v<std::multimap<int, double>> == h5::meta::storage_representation_t::key_value_dataset));
+}
+
+TEST_CASE("H5Tmeta storage_representation classifies unordered map containers as unordered key value record datasets") {
+    CHECK((h5::meta::storage_representation_v<std::unordered_map<int, double>> == h5::meta::storage_representation_t::key_value_dataset));
+    CHECK((h5::meta::storage_representation_v<std::unordered_multimap<int, double>> == h5::meta::storage_representation_t::key_value_dataset));
+}
+
+TEST_CASE("H5Tmeta storage_representation classifies nested vector containers") {
+    CHECK((h5::meta::storage_representation_v<std::vector<std::vector<int>>> == h5::meta::storage_representation_t::ragged_vlen_dataset));
+    CHECK((h5::meta::storage_representation_v<std::vector<std::vector<double>>> == h5::meta::storage_representation_t::ragged_vlen_dataset));
+    CHECK((h5::meta::storage_representation_v<std::vector<std::vector<std::string>>> == h5::meta::storage_representation_t::unsupported));
+    CHECK((h5::meta::storage_representation_v<std::vector<std::vector<std::vector<int>>>> == h5::meta::storage_representation_t::unsupported));
+    CHECK((h5::meta::storage_representation_v<std::vector<std::string>> == h5::meta::storage_representation_t::vlen_text_dataset));
+    CHECK((h5::meta::storage_representation_v<std::vector<std::array<int, 3>>> == h5::meta::storage_representation_t::fixed_inner_extent_dataset));
+}
+
+TEST_CASE("H5Tmeta storage_representation leaves bitfield and opaque pointer storage unsupported") {
+    CHECK(h5::meta::storage_representation_v<std::vector<bool>> == h5::meta::storage_representation_t::unsupported);
+    CHECK(h5::meta::storage_representation_v<void*> == h5::meta::storage_representation_t::unsupported);
+    CHECK(h5::meta::storage_representation_v<const void*> == h5::meta::storage_representation_t::unsupported);
+    CHECK(h5::meta::storage_representation_v<void**> == h5::meta::storage_representation_t::unsupported);
+    CHECK(h5::meta::storage_representation_v<const void**> == h5::meta::storage_representation_t::unsupported);
+}
