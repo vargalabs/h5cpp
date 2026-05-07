@@ -51,8 +51,7 @@ endfunction()
 add_test_case(example)
 
 # test content lands in issue/94
-# add_test_case(H5names)
-# add_test_case(H5compat)
-# add_test_case(H5meta)
-# add_test_case(H5Tmeta)
+add_test_case(H5compat)
+add_test_case(H5meta)
+add_test_case(H5Tmeta)
 # add_test_case(H5Iall)
