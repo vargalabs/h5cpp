@@ -3,8 +3,21 @@
  Author: Varga, Steven <steven@vargaconsulting.ca>
 --->
 
+[![CI](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml/badge.svg)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
+[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/vargalabs/h5cpp.svg)](https://github.com/vargalabs/h5cpp/releases)
+[![Documentation](https://img.shields.io/badge/docs-stable-blue)](https://vargalabs.github.io/h5cpp)
+
 Easy to use  [HDF5][hdf5] C++ templates for Serial and Paralell HDF5  
 ----------------------------------------------------------------------
+
+## Build Matrix
+
+| OS / Compiler | GCC 13       | GCC 14       | GCC 15       | Clang 17       | Clang 18       | Clang 19       | Clang 20       |
+|---------------|--------------|--------------|--------------|----------------|----------------|----------------|----------------|
+| Ubuntu 22.04  |![gcc13][200] |![gcc14][201] |![gcc15][202] |![clang17][250] |![clang18][251] |![clang19][252] |![clang20][253] |
+| Ubuntu 24.04  |![gcc13][300] |![gcc14][301] |![gcc15][302] |![clang17][350] |![clang18][351] |![clang19][352] |![clang20][353] |
+
 **News:**
 **optional custom dataype** is added to `h5::create` to allow custom dataypes passed along the other arguments. 
 ```cpp
@@ -27,7 +40,6 @@ H5Sselect_all(file_space);
 
 H5Dwrite( ds[idx], hdf5_data_type, mem_space, file_space, H5P_DEFAULT, data.data());
 ```
-
 
 
 
@@ -100,8 +112,8 @@ template <typename T> h5::err_t write( dataset,  const T& ref
 template <typename T> void h5::append(h5::pt_t& ds, const T& ref) [noexcept];
 ```
 
-All **file and dataset io** descriptors implement [raii idiom][301] and close underlying resource when going out of scope, 
-and may be seamlessly passed to HDF5 CAPI calls when implicit conversion enabled. Similarly templates can take CAPI `hid_t` identifiers as arguments where applicable provided conversion policy allows. See [conversion policy][301] for details.
+All **file and dataset io** descriptors implement [raii idiom][601] and close underlying resource when going out of scope, 
+and may be seamlessly passed to HDF5 CAPI calls when implicit conversion enabled. Similarly templates can take CAPI `hid_t` identifiers as arguments where applicable provided conversion policy allows. See [conversion policy][601] for details.
 
 install:
 -----------
@@ -211,22 +223,33 @@ while( having_a_good_day ){
 [105]: http://dlib.net/linear_algebra.html
 [106]: https://bitbucket.org/blaze-lib/blaze
 [107]: https://github.com/wichtounet/etl
-[200]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_profiling_README.html
-[201]: http://h5cpp.org/examples.html
-[202]: http://h5cpp.org/modules.html
-[305]: md__home_steven_Documents_projects_h5cpp_docs_pages_compiler_trial.html#link_try_compiler
-[400]: https://www.meetup.com/Chicago-C-CPP-Users-Group/events/250655716/
-[401]: https://www.hdfgroup.org/2018/07/cpp-has-come-a-long-way-and-theres-plenty-in-it-for-users-of-hdf5/
-[999]: http://h5cpp.org/cgi/redirect.py
-[301]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_conversion.html
-[302]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_exceptions.html
 [303]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_compiler.html
 [304]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_linalg.html
 [305]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_install.html
 [400]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_error_handling.html
+[401]: https://www.hdfgroup.org/2018/07/cpp-has-come-a-long-way-and-theres-plenty-in-it-for-users-of-hdf5/
 [500]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_blog.html
 [501]: http://h5cpp.org/modules.html
 [502]: http://h5cpp.org/examples.html
 [503]: http://h5cpp.org/independent_8cpp-example.html
 [504]: http://h5cpp.org/collective_8cpp-example.html
 [505]: http://h5cpp.org/throughput_8cpp-example.html
+[601]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_conversion.html
+
+<!-- Ubuntu 22.04 -->
+[200]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-gcc-13.svg
+[201]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-gcc-14.svg
+[202]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-gcc-15.svg
+[250]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-17.svg
+[251]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-18.svg
+[252]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-19.svg
+[253]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-20.svg
+
+<!-- Ubuntu 24.04 -->
+[300]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-gcc-13.svg
+[301]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-gcc-14.svg
+[302]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-gcc-15.svg
+[350]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-17.svg
+[351]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-18.svg
+[352]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-19.svg
+[353]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-20.svg
