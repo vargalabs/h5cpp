@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <iterator>
 
-namespace h5 { namespace impl {
+namespace h5::impl {
 	/* proxy object that gets converted to property_id with restriction that 
 	 * only same class properties may be daisy chained */
 	template <class Derived, class phid_t>
@@ -139,7 +139,7 @@ namespace h5 { namespace impl {
 	// only data control property list set_value has this pattern, lets allow to define CAPI argument lists 
 	// the same way as with others
 	template <class capi, typename capi::fn_t capi_call, class T> using dcpl_tcall = tprop_t<h5::dcpl_t,default_dcpl, capi, capi_call, T>;
-}}
+}
 
 namespace h5::impl {
 	template <bool version, class capi, typename capi::fn_t capi_call  > 
@@ -375,7 +375,7 @@ const static h5::dxpl_mpiio_collective_opt individual_io{H5FD_MPIO_INDIVIDUAL_IO
 #endif
 }
 
-namespace h5 { namespace notimplemented_yet { // OBJECT COPY PROPERTY LISTS
+namespace h5::notimplemented_yet { // OBJECT COPY PROPERTY LISTS
 	//using char_encoding_ =              = impl::fapl_call< impl::fapl_args<hid_t, >,H5Pset_char_encoding, H5T_cset_t)
 	//static h5::char_encoding_ ascii{H5T_CSET_ASCII};
 	//static h5::char_encoding_ utf8{H5T_CSET_UTF8};
@@ -385,7 +385,7 @@ namespace h5 { namespace notimplemented_yet { // OBJECT COPY PROPERTY LISTS
 	//NOT MAPPED: fapl_direct, mpiposix, fapl_multi
 	//MISSING:	H5CPP__PROPERTYLIST_FLAG(fapl, fapl_windows)
 	//MISSING:	using file_image_callbacks, H5_file_image_callbacks_t* >;
-}}
+}
 
 
 namespace h5 {

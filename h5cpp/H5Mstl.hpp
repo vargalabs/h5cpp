@@ -11,7 +11,7 @@
 #include <initializer_list>
 #include <type_traits>
 
-namespace h5 { namespace impl {
+namespace h5::impl {
 /*STL: */
 	// 2.) filter is_xxx_type
 	// 4.) write access
@@ -19,21 +19,21 @@ namespace h5 { namespace impl {
 	// 6.) ctor with right dimensions
 
 	// 1.) object -> H5T_xxx
-	template <class T, class...> struct decay{ typedef T type; };
+	template <class T, class...> struct decay{ using type = T; };
 
-	template <class T> struct decay<const T>{ typedef T type; };
-	template <class T> struct decay<const T*>{ typedef T* type; };
-	template <class T> struct decay<std::basic_string<T>>{ typedef const T* type; };
-	template <class T, signed N> struct decay<const T[N]>{ typedef T* type; };
-	template <class T, signed N> struct decay<T[N]>{ typedef T* type; };
+	template <class T> struct decay<const T>{ using type = T; };
+	template <class T> struct decay<const T*>{ using type = T*; };
+	template <class T> struct decay<std::basic_string<T>>{ using type = const T*; };
+	template <class T, signed N> struct decay<const T[N]>{ using type = T*; };
+	template <class T, signed N> struct decay<T[N]>{ using type = T*; };
 
-	template <class T> struct decay<std::initializer_list<const T*>>{ typedef const T* type; };
-	template <class T> struct decay<std::initializer_list<T*>>{ typedef T* type; };
-	template <class T> struct decay<std::initializer_list<T>>{ typedef T type; };
+	template <class T> struct decay<std::initializer_list<const T*>>{ using type = const T*; };
+	template <class T> struct decay<std::initializer_list<T*>>{ using type = T*; };
+	template <class T> struct decay<std::initializer_list<T>>{ using type = T; };
 
-	template <class T> struct decay<std::vector<const T*>>{ typedef const T* type; };
-	template <class T> struct decay<std::vector<T*>>{ typedef T* type; };
-	template <class T> struct decay<std::vector<T>>{ typedef T type; };
+	template <class T> struct decay<std::vector<const T*>>{ using type = const T*; };
+	template <class T> struct decay<std::vector<T*>>{ using type = T*; };
+	template <class T> struct decay<std::vector<T>>{ using type = T; };
 
 	// helpers
 	template <class T>
@@ -84,5 +84,5 @@ namespace h5 { namespace impl {
 		static inline std::vector<T> ctor( std::array<size_t,1> dims ){
 			return std::vector<T>( dims[0] );
 	}};
-}}
+}
 #endif

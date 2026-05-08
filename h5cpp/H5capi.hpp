@@ -10,9 +10,6 @@
 #include <memory>
 #include <cstdlib>
 
-/* rules:
- * h5::id_t{ hid_t } or direct initialization  doesn't increment reference count
- */
 namespace h5 {
 	inline ::hid_t get_access_plist( const ds_t& ds ){
 		return ds.dapl;
