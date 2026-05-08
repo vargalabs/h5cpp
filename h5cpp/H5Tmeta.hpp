@@ -25,6 +25,8 @@
 #include <any>
 #include <tuple>
 #include <complex>
+#include <cstddef>
+#include <cstdint>
 
 //FIXME: move it elsewhere
 #define H5CPP_supported_elementary_types "supported elementary types ::= pod_struct | float | double |  [signed](int8 | int16 | int32 | int64)"
@@ -90,26 +92,14 @@ namespace h5::meta {
     template <class T, class... Ts> struct is_linalg : std::false_type {};
     template <class C, class T, class... Cs> struct is_valid : std::false_type {};
 
-    // ------------------------------------------------------------
-    // Capability-based type families (#86)
-    // Additive predicate vocabulary used by the upcoming #87/#88/#89/#90
-    // refactors. Predicates only; no storage/shape/access traits, no recursive
-    // contiguity, no datatype synthesis, no dataset I/O changes. C++17 floor.
-    // Reuses existing detection primitives from H5meta.hpp; does not redeclare
-    // has_data, has_size, has_direct_access, has_value_type, has_iterator,
-    // or has_const_iterator.
-    // ------------------------------------------------------------
-
     template <class T> using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
-    // Internal expression-detector aliases (consistent with H5meta.hpp `_f` style)
     template <class T> using key_type_f    = typename T::key_type;
     template <class T> using mapped_type_f = typename T::mapped_type;
     template <class T> using key_compare_f = typename T::key_compare;
     template <class T> using hasher_f      = typename T::hasher;
     template <class T> using resize_f      = decltype(std::declval<T&>().resize(std::declval<std::size_t>()));
 
-    // text-like
     template <class T> struct is_fixed_text_like : std::false_type {};
     template <std::size_t N> struct is_fixed_text_like<char[N]>       : std::true_type {};
     template <std::size_t N> struct is_fixed_text_like<const char[N]> : std::true_type {};
@@ -124,7 +114,6 @@ namespace h5::meta {
         : std::bool_constant<is_fixed_text_like<remove_cvref_t<T>>::value
                           || is_vl_text_like<remove_cvref_t<T>>::value> {};
 
-    // array-like (built-in arrays + std::array, cv/ref-stable)
     namespace detail_capabilities {
         template <class T> struct is_array_like_impl : std::false_type {};
         template <class T, std::size_t N> struct is_array_like_impl<T[N]>            : std::true_type {};
@@ -133,15 +122,10 @@ namespace h5::meta {
     template <class T> struct is_array_like
         : detail_capabilities::is_array_like_impl<remove_cvref_t<T>> {};
 
-    // iterable — derived from existing has_iterator (begin && end)
     template <class T> struct is_iterable : has_iterator<remove_cvref_t<T>> {};
 
-    // resizable
     template <class T> struct is_resizable : compat::is_detected<resize_f, remove_cvref_t<T>> {};
 
-    // sequential / associative / unordered / set / map / stl_like
-    // Text-like types (std::string, string_view) are excluded so they remain
-    // classified under is_text_like rather than leaking into is_stl_like.
     template <class T> struct is_sequential_like
         : std::bool_constant<is_iterable<T>::value
                           && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value
@@ -174,7 +158,6 @@ namespace h5::meta {
                           || is_associative_like<T>::value
                           || is_unordered_like<T>::value> {};
 
-    // enumerated / bitfield / opaque
     template <class T> struct is_enumerated_like : std::is_enum<remove_cvref_t<T>> {};
 
     template <class T> struct is_bitfield_like : std::false_type {};
@@ -186,21 +169,9 @@ namespace h5::meta {
     template <> struct is_opaque_like<void**>       : std::true_type {};
     template <> struct is_opaque_like<const void**> : std::true_type {};
 
-    // strict pointer-data capability:
-    //   true iff T::data() exists AND its return type is a pointer.
-    // Distinct from has_direct_access (which only detects existence of .data()).
     template <class T> struct has_data_pointer
         : std::bool_constant<std::is_pointer_v<
               compat::detected_or_t<void, data_f, remove_cvref_t<T>>>> {};
-    // ------------------------------------------------------------
-    // End capability-based type families (#86)
-    // ------------------------------------------------------------
-
-    // ------------------------------------------------------------
-    // Storage representation categories (#88)
-    // Representation vocabulary only; no access/materialization strategy,
-    // datatype synthesis, or dataset I/O dispatch.
-    // ------------------------------------------------------------
 
     enum class storage_representation_t {
         unsupported,
@@ -255,9 +226,174 @@ namespace h5::meta {
 
     template <class T> constexpr storage_representation_t storage_representation_v =
         storage_representation<T>::value;
-    // ------------------------------------------------------------
-    // End storage representation categories (#88)
-    // ------------------------------------------------------------
+
+    inline constexpr std::uint32_t metadata_version = 1;
+
+    /** Base class for compiler-emitted reflected field descriptors. */
+    template <class owner_t, class field_t>
+    struct field_descriptor_t {
+        using owner_type = owner_t;
+        using field_type = field_t;
+    };
+
+    /** Specialize to std::true_type for any struct described by compiler_meta_t<T>. */
+    template <class T>
+    struct is_reflected_compound_t : std::false_type {};
+
+    /** Specialize to provide the field-descriptor tuple for a reflected compound. */
+    template <class T>
+    struct compiler_meta_t;
+
+    template <class T, class = void>
+    struct storage_traits_impl_t;
+    template <class T, class = void>
+    struct is_transport_contiguous_impl_t;
+
+    template <class T>
+    using storage_traits_t = storage_traits_impl_t<remove_cvref_t<T>>;
+    template <class T>
+    struct is_transport_contiguous_t : is_transport_contiguous_impl_t<remove_cvref_t<T>> {};
+    template <class T>
+    inline constexpr bool is_transport_contiguous_v = is_transport_contiguous_t<T>::value;
+
+    template <class T, class>
+    struct storage_traits_impl_t {
+        static constexpr bool supported   = false;
+        static constexpr bool owns_handle = false;
+    };
+
+    template <class T>
+    struct storage_traits_impl_t<T, std::enable_if_t<std::is_arithmetic_v<T>>> {
+        static constexpr bool supported   = true;
+        static constexpr bool owns_handle = false;
+        static hid_t create_type() noexcept {
+            if constexpr      (std::is_same_v<T, bool>)               return H5T_NATIVE_HBOOL;
+            else if constexpr (std::is_same_v<T, char>)               return H5T_NATIVE_CHAR;
+            else if constexpr (std::is_same_v<T, unsigned char>)      return H5T_NATIVE_UCHAR;
+            else if constexpr (std::is_same_v<T, short>)              return H5T_NATIVE_SHORT;
+            else if constexpr (std::is_same_v<T, unsigned short>)     return H5T_NATIVE_USHORT;
+            else if constexpr (std::is_same_v<T, int>)                return H5T_NATIVE_INT;
+            else if constexpr (std::is_same_v<T, unsigned int>)       return H5T_NATIVE_UINT;
+            else if constexpr (std::is_same_v<T, long>)               return H5T_NATIVE_LONG;
+            else if constexpr (std::is_same_v<T, unsigned long>)      return H5T_NATIVE_ULONG;
+            else if constexpr (std::is_same_v<T, long long>)          return H5T_NATIVE_LLONG;
+            else if constexpr (std::is_same_v<T, unsigned long long>) return H5T_NATIVE_ULLONG;
+            else if constexpr (std::is_same_v<T, float>)              return H5T_NATIVE_FLOAT;
+            else if constexpr (std::is_same_v<T, double>)             return H5T_NATIVE_DOUBLE;
+            else if constexpr (std::is_same_v<T, long double>)        return H5T_NATIVE_LDOUBLE;
+            else return H5I_INVALID_HID;
+        }
+    };
+
+    template <class T>
+    struct storage_traits_impl_t<T, std::enable_if_t<is_vl_text_like<T>::value>> {
+        static constexpr bool supported   = true;
+        static constexpr bool owns_handle = true;
+        static hid_t create_type() noexcept {
+            hid_t dt = H5Tcopy(H5T_C_S1);
+            H5Tset_size(dt, H5T_VARIABLE);
+            H5Tset_cset(dt, H5T_CSET_UTF8);
+            return dt;
+        }
+    };
+
+    template <class T>
+    struct storage_traits_impl_t<T, std::enable_if_t<is_fixed_text_like<T>::value>> {
+        static constexpr bool supported   = true;
+        static constexpr bool owns_handle = true;
+        static hid_t create_type() noexcept {
+            hid_t dt = H5Tcopy(H5T_C_S1);
+            H5Tset_size(dt, sizeof(T));
+            return dt;
+        }
+    };
+
+    template <class T>
+    struct storage_traits_impl_t<T, std::enable_if_t<
+        is_array_like<T>::value && !is_text_like<T>::value>> {
+        using elem_t = typename meta::decay<T>::type;
+        static constexpr bool supported   = storage_traits_t<elem_t>::supported;
+        static constexpr bool owns_handle = true;
+        static hid_t create_type() noexcept {
+            if constexpr (std::is_array_v<T>)
+                return make_c_array(std::make_index_sequence<std::rank_v<T>>{});
+            else
+                return make_std_array();
+        }
+    private:
+        template <std::size_t... Is>
+        static hid_t make_c_array(std::index_sequence<Is...>) noexcept {
+            using scalar_t = std::remove_all_extents_t<T>;
+            hid_t base = storage_traits_t<scalar_t>::create_type();
+            hsize_t dims[] = { static_cast<hsize_t>(std::extent_v<T, Is>)... };
+            hid_t dt = H5Tarray_create2(base, sizeof...(Is), dims);
+            if constexpr (storage_traits_t<scalar_t>::owns_handle) H5Tclose(base);
+            return dt;
+        }
+        static hid_t make_std_array() noexcept {
+            hid_t base = storage_traits_t<elem_t>::create_type();
+            hsize_t dims[] = { static_cast<hsize_t>(std::tuple_size_v<T>) };
+            hid_t dt = H5Tarray_create2(base, 1, dims);
+            if constexpr (storage_traits_t<elem_t>::owns_handle) H5Tclose(base);
+            return dt;
+        }
+    };
+
+    template <class T>
+    struct storage_traits_impl_t<T, std::enable_if_t<is_reflected_compound_t<T>::value>> {
+        static_assert(compiler_meta_t<T>::version == metadata_version,
+            "H5CPP compiler metadata version mismatch");
+        static constexpr bool supported   = true;
+        static constexpr bool owns_handle = true;
+        static hid_t create_type() noexcept {
+            using fields_t = typename compiler_meta_t<T>::fields_t;
+            hid_t dt = H5Tcreate(H5T_COMPOUND, sizeof(T));
+            insert_fields<fields_t>(dt,
+                std::make_index_sequence<std::tuple_size_v<fields_t>>{});
+            return dt;
+        }
+    private:
+        template <class Fields, std::size_t... Is>
+        static void insert_fields(hid_t dt, std::index_sequence<Is...>) noexcept {
+            (insert_field<std::tuple_element_t<Is, Fields>>(dt), ...);
+        }
+        template <class FieldDesc>
+        static void insert_field(hid_t dt) noexcept {
+            using field_t = typename FieldDesc::field_type;
+            hid_t field_dt = storage_traits_t<field_t>::create_type();
+            H5Tinsert(dt, FieldDesc::name(), FieldDesc::offset, field_dt);
+            if constexpr (storage_traits_t<field_t>::owns_handle) H5Tclose(field_dt);
+        }
+    };
+
+    template <class T, class>
+    struct is_transport_contiguous_impl_t : std::false_type {};
+
+    template <class T>
+    struct is_transport_contiguous_impl_t<T, std::enable_if_t<std::is_arithmetic_v<T>>> : std::true_type {};
+
+    template <class T>
+    struct is_transport_contiguous_impl_t<T, std::enable_if_t<is_fixed_text_like<T>::value>> : std::true_type {};
+
+    template <class T>
+    struct is_transport_contiguous_impl_t<T, std::enable_if_t<
+        is_array_like<T>::value && !is_text_like<T>::value>>
+        : is_transport_contiguous_t<typename meta::decay<T>::type> {};
+
+    template <class T>
+    struct is_transport_contiguous_impl_t<T, std::enable_if_t<is_reflected_compound_t<T>::value>> {
+    private:
+        static_assert(compiler_meta_t<T>::version == metadata_version,
+            "H5CPP compiler metadata version mismatch");
+        using fields_t = typename compiler_meta_t<T>::fields_t;
+        template <std::size_t... Is>
+        static constexpr bool check_contiguous(std::index_sequence<Is...>) noexcept {
+            return (... && is_transport_contiguous_v<
+                typename std::tuple_element_t<Is, fields_t>::field_type>);
+        }
+    public:
+        static constexpr bool value = check_contiguous(std::make_index_sequence<std::tuple_size_v<fields_t>>{});
+    };
 
     // DEFAULT CASE
     template <class T> struct rank<T*>: public std::integral_constant<size_t,1>{};
