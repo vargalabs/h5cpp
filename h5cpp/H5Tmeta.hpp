@@ -343,7 +343,26 @@ namespace h5::meta {
         static_assert(compiler_meta_t<T>::version == metadata_version,
             "H5CPP compiler metadata version mismatch");
         static constexpr bool supported   = true;
-        static constexpr bool owns_handle = true;  // H5Tcreate compound — implemented in 87.5
+        static constexpr bool owns_handle = true;
+        static hid_t create_type() noexcept {
+            using fields_t = typename compiler_meta_t<T>::fields_t;
+            hid_t dt = H5Tcreate(H5T_COMPOUND, sizeof(T));
+            insert_fields<fields_t>(dt,
+                std::make_index_sequence<std::tuple_size_v<fields_t>>{});
+            return dt;
+        }
+    private:
+        template <class Fields, std::size_t... Is>
+        static void insert_fields(hid_t dt, std::index_sequence<Is...>) noexcept {
+            (insert_field<std::tuple_element_t<Is, Fields>>(dt), ...);
+        }
+        template <class FieldDesc>
+        static void insert_field(hid_t dt) noexcept {
+            using field_t = typename FieldDesc::field_type;
+            hid_t field_dt = storage_traits_t<field_t>::create_type();
+            H5Tinsert(dt, FieldDesc::name(), FieldDesc::offset, field_dt);
+            if constexpr (storage_traits_t<field_t>::owns_handle) H5Tclose(field_dt);
+        }
     };
 
     template <class T, class>

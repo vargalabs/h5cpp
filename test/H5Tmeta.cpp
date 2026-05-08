@@ -925,3 +925,73 @@ TEST_CASE("H5Tmeta storage_traits_t nested std::array create_type produces neste
     H5Tclose(inner);
     H5Tclose(dt);
 }
+
+// ============================================================
+// 87.5 — compound synthesis: create_type() for reflected structs
+// ============================================================
+
+TEST_CASE("H5Tmeta storage_traits_t all-scalar compound create_type owns H5T_COMPOUND with correct members") {
+    using tr = h5::meta::storage_traits_t<point87_t>;
+    static_assert(tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(dt >= 0);
+    CHECK(H5Tget_class(dt) == H5T_COMPOUND);
+    CHECK(H5Tget_size(dt) == sizeof(point87_t));
+    CHECK(H5Tget_nmembers(dt) == 2);
+
+    // member names
+    char* name0 = H5Tget_member_name(dt, 0);
+    char* name1 = H5Tget_member_name(dt, 1);
+    CHECK(std::string(name0) == "x");
+    CHECK(std::string(name1) == "y");
+    H5free_memory(name0);
+    H5free_memory(name1);
+
+    // member offsets
+    CHECK(H5Tget_member_offset(dt, 0) == offsetof(point87_t, x));
+    CHECK(H5Tget_member_offset(dt, 1) == offsetof(point87_t, y));
+
+    // member types are floating-point
+    hid_t mx = H5Tget_member_type(dt, 0);
+    hid_t my = H5Tget_member_type(dt, 1);
+    CHECK(H5Tget_class(mx) == H5T_FLOAT);
+    CHECK(H5Tget_class(my) == H5T_FLOAT);
+    H5Tclose(mx);
+    H5Tclose(my);
+    H5Tclose(dt);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t compound with vl field create_type produces H5T_COMPOUND with VL member") {
+    using tr = h5::meta::storage_traits_t<vl_point87_t>;
+    static_assert(tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(dt >= 0);
+    CHECK(H5Tget_class(dt) == H5T_COMPOUND);
+    CHECK(H5Tget_nmembers(dt) == 2);
+
+    int label_idx = H5Tget_member_index(dt, "label");
+    CHECK(label_idx >= 0);
+    hid_t label_dt = H5Tget_member_type(dt, static_cast<unsigned>(label_idx));
+    CHECK(H5Tget_class(label_dt) == H5T_STRING);
+    CHECK(H5Tis_variable_str(label_dt) > 0);
+    H5Tclose(label_dt);
+    H5Tclose(dt);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t nested compound create_type produces H5T_COMPOUND with compound member") {
+    using tr = h5::meta::storage_traits_t<nested87_outer_t>;
+    static_assert(tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(dt >= 0);
+    CHECK(H5Tget_class(dt) == H5T_COMPOUND);
+    CHECK(H5Tget_nmembers(dt) == 2);
+
+    int inner_idx = H5Tget_member_index(dt, "inner");
+    CHECK(inner_idx >= 0);
+    hid_t inner_dt = H5Tget_member_type(dt, static_cast<unsigned>(inner_idx));
+    CHECK(H5Tget_class(inner_dt) == H5T_COMPOUND);
+    CHECK(H5Tget_nmembers(inner_dt) == 2);
+    CHECK(H5Tget_size(inner_dt) == sizeof(nested87_inner_t));
+    H5Tclose(inner_dt);
+    H5Tclose(dt);
+}
