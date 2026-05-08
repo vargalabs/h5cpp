@@ -104,7 +104,7 @@ namespace h5 { namespace impl {
     struct free {
         template <typename T>
         void operator()(T *p) const {
-            using T_ = typename std::remove_const<T>::type;
+            using T_ = std::remove_const_t<T>;
             std::free( const_cast<T_*>(p) );
         }
     };

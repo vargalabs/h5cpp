@@ -32,7 +32,7 @@ namespace h5::compat { // C++11 shim to lower from c++17
 
     template <class F, class Tuple>
     constexpr herr_t apply(F&& f, Tuple&& t){
-        using TP = typename std::decay<Tuple>::type;
+        using TP = std::decay_t<Tuple>;
         return apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
             compat::make_index_sequence<std::tuple_size<TP>::value>{});
     }
