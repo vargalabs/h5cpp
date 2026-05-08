@@ -78,7 +78,7 @@ namespace h5{ namespace impl {
 		void push( filter::call_t filter );
 		void pop();
 
-		std::unique_ptr<char> ptr0, ptr1; // will call std::free on dtor
+		h5::impl::unique_ptr<char> ptr0, ptr1;
 		filter::call_t filter[H5CPP_MAX_FILTER];
 		hsize_t n,
 				C[H5CPP_MAX_RANK], D[H5CPP_MAX_RANK],
@@ -162,8 +162,8 @@ inline void h5::impl::pipeline_t<Derived>::set_cache( const h5::dcpl_t& dcpl, si
 			filter::get_callback( H5Pget_filter2( dcpl, i, &flags[i], &cd_size[i], cd_values[i], 0, nullptr, &filter_config )));
 	}
 
-	ptr0 = std::move( std::unique_ptr<char>{ (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size )} );
-	ptr1 = std::move( std::unique_ptr<char>{ (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size )} );
+	ptr0.reset( (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size ) );
+	ptr1.reset( (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size ) );
 	// get an alias to smart ptr
 	if( (chunk0 = ptr0.get()) == NULL || (chunk1 = ptr1.get()) == NULL )
 	   	throw h5::error::io::dataset::open( H5CPP_ERROR_MSG("CTOR: couldn't allocate memory for caching chunks, invalid/check size?"));

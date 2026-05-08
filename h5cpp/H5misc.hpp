@@ -99,5 +99,17 @@ namespace h5::utils {
 	}
 
 }
+
+namespace h5 { namespace impl {
+    struct free {
+        template <typename T>
+        void operator()(T *p) const {
+            using T_ = typename std::remove_const<T>::type;
+            std::free( const_cast<T_*>(p) );
+        }
+    };
+    template <typename T>
+        using unique_ptr = std::unique_ptr<T, h5::impl::free>;
+}}
 #endif
 
