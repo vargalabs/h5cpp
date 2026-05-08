@@ -23,7 +23,7 @@ namespace h5 {
 	inline void write( const h5::ds_t& ds, const h5::sp_t& mem_space, const h5::sp_t& file_space, const h5::dxpl_t& dxpl, const T* ptr  ){
 		H5CPP_CHECK_PROP( dxpl, h5::error::io::dataset::write, "invalid data transfer property" );
 		using element_t = typename h5::impl::decay<T>::type;
-		h5::dt_t<element_t> type;
+		h5::meta::resolved_type_t<element_t> type;
 		H5CPP_CHECK_NZ(
 			H5Dwrite( static_cast<hid_t>( ds ), type, mem_space, file_space, static_cast<hid_t>(dxpl), ptr),
 				h5::error::io::dataset::write, h5::error::msg::write_dataset);
