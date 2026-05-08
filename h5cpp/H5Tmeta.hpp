@@ -84,6 +84,7 @@ namespace h5::meta {
     template <size_t N> struct is_contiguous <const char*[N]> : std::false_type {};
 
     template <class T> struct is_contiguous <std::complex<T>> : std::true_type{};
+    template <class... Ts> struct is_contiguous <std::vector<bool,Ts...>> : std::false_type {};
     template <class T, class... Ts> struct is_contiguous <std::vector<T,Ts...>> :
         std::integral_constant<bool, std::is_trivial<T>::value && std::is_standard_layout<T>::value>{};
     template <class T, size_t N> struct is_contiguous <std::array<T,N>> :
@@ -175,6 +176,8 @@ namespace h5::meta {
 
     enum class storage_representation_t {
         unsupported,
+        scalar,
+        c_array,
         linear_value_dataset,
         key_value_dataset,
         ragged_vlen_dataset,
@@ -183,8 +186,31 @@ namespace h5::meta {
     };
 
     namespace detail_capabilities {
-    template <class T> struct storage_representation_impl
+    template <class T, class = void> struct storage_representation_impl
         : std::integral_constant<storage_representation_t, storage_representation_t::unsupported> {};
+
+    // arithmetic and enum scalars
+    template <class T> struct storage_representation_impl<T,
+        typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value>::type>
+        : std::integral_constant<storage_representation_t, storage_representation_t::scalar> {};
+
+    // C arrays — ranks 1, 2, 3
+    template <class T, std::size_t N> struct storage_representation_impl<T[N]>
+        : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
+    template <class T, std::size_t N, std::size_t M> struct storage_representation_impl<T[N][M]>
+        : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
+    template <class T, std::size_t N, std::size_t M, std::size_t P> struct storage_representation_impl<T[N][M][P]>
+        : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
+
+    // contiguous sequence containers — generic vector<T> and array<T,N>
+    // more-specific specializations (vector<vector<T>>, vector<string>, vector<array<T,N>>) take priority
+    // std::vector<bool> is a bit-packing specialization with no contiguous bool* — must be unsupported
+    template <class A> struct storage_representation_impl<std::vector<bool,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::unsupported> {};
+    template <class T, class A> struct storage_representation_impl<std::vector<T,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+    template <class T, std::size_t N> struct storage_representation_impl<std::array<T,N>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
 
     template <class T, class A> struct storage_representation_impl<std::deque<T,A>>
         : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
