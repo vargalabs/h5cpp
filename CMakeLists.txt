@@ -71,8 +71,6 @@ if(MPI_FOUND AND HDF5_IS_PARALLEL)
     message(STATUS "MPI and PHDF5 found: Parallel H5CPP enabled")
 endif()
 
-option(H5CPP_BUILD_TESTS "Build tests" OFF)
-
 # Header-only target
 add_library(h5cpp INTERFACE)
 add_library(h5cpp::h5cpp ALIAS h5cpp)
