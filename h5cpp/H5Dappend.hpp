@@ -6,6 +6,11 @@
 #ifndef H5CPP_DAPPEND_HPP
 #define H5CPP_DAPPEND_HPP
 #include <zlib.h>
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <type_traits>
+#include <ostream>
 
 namespace h5 {
 	struct pt_t;

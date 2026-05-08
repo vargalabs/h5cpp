@@ -5,6 +5,9 @@
 
 #ifndef  H5CPP_SALL_HPP
 #define  H5CPP_SALL_HPP
+#include <array>
+#include <tuple>
+#include <initializer_list>
 
 namespace h5{ namespace impl {
 	struct max_dims_t{}; struct current_dims_t{};

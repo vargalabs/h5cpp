@@ -3,8 +3,9 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_DOPEN_HPP 
+#ifndef  H5CPP_DOPEN_HPP
 #define  H5CPP_DOPEN_HPP
+#include <string>
 
 namespace h5{
 	/** \ingroup file-io 

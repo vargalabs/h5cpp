@@ -4,6 +4,11 @@
  */
 #ifndef  H5CPP_CAPI_HPP
 #define  H5CPP_CAPI_HPP
+#include <type_traits>
+#include <stdexcept>
+#include <string>
+#include <memory>
+#include <cstdlib>
 
 /* rules:
  * h5::id_t{ hid_t } or direct initialization  doesn't increment reference count

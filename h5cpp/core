@@ -22,7 +22,7 @@
 #include <functional>
 #include <complex>
 #include <cstring>
-#include <stdlib.h>
+#include <cstdlib>
 
 #ifdef H5CPP_WITH_GLOG
    #include <glog/logging.h>

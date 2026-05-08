@@ -2,11 +2,11 @@
  * Copyright (c) 2018-2021 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#include <initializer_list>
-
-
-#ifndef  H5CPP_RALL_HPP 
+#ifndef  H5CPP_RALL_HPP
 #define  H5CPP_RALL_HPP
+#include <initializer_list>
+#include <string>
+#include <tuple>
 
 namespace h5 {
     template <class... args_t>

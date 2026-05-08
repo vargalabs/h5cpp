@@ -5,6 +5,10 @@
 
 #ifndef  H5CPP_AWRITE_HPP
 #define  H5CPP_AWRITE_HPP
+#include <string>
+#include <stdexcept>
+#include <type_traits>
+#include <initializer_list>
 namespace h5 {
 
 	template <class T>

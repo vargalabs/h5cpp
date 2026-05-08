@@ -4,6 +4,8 @@
  */
 #ifndef  H5CPP_AOPEN_HPP
 #define  H5CPP_AOPEN_HPP
+#include <string>
+#include <type_traits>
 namespace h5 {
 	template<class HID_T>
 	inline typename std::enable_if<h5::impl::is_valid_attr<HID_T>::value,

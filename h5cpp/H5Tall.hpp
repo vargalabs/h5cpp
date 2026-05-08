@@ -4,6 +4,10 @@
  */
 #ifndef H5CPP_TALL_HPP
 #define H5CPP_TALL_HPP
+#include <type_traits>
+#include <ostream>
+#include <vector>
+#include <initializer_list>
 
 namespace h5 {
     template<class T> hid_t register_struct(){ return H5I_UNINIT; }

@@ -4,6 +4,9 @@
  */
 #ifndef  H5CPP_EALL_HPP
 #define  H5CPP_EALL_HPP
+#include <stdexcept>
+#include <string>
+#include <iostream>
 namespace h5{
 	using herr_t = ::herr_t;
 

@@ -4,6 +4,13 @@
  */
 #ifndef  H5CPP_PIPELINE_HPP
 #define  H5CPP_PIPELINE_HPP
+#include <memory>
+#include <stdexcept>
+#include <algorithm>
+#include <ostream>
+#include <cstring>
+#include <cstdlib>
+#include <utility>
 
 namespace h5 {
 	int get_chunk_dims( const h5::dcpl_t& dcpl,  h5::chunk_t& chunk_dims );

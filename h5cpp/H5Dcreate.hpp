@@ -2,8 +2,12 @@
  * Copyright (c) 2018-2021 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_DCREATE_HPP 
+#ifndef  H5CPP_DCREATE_HPP
 #define  H5CPP_DCREATE_HPP
+#include <string>
+#include <stdexcept>
+#include <tuple>
+#include <utility>
 
 //TODO: if constexpr(..){} >= c++17
 namespace h5 {

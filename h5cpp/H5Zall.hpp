@@ -6,8 +6,10 @@
 #define  H5CPP_ZALL_HPP
 
 #include <iomanip>
+#include <string>
+#include <stdexcept>
 #include <zlib.h>
-#include <math.h>
+#include <cmath>
 
 namespace h5 { namespace impl { namespace filter {
 	// TODO: figure something out to map c++ filters to C calls? 

@@ -4,6 +4,11 @@
  */
 #ifndef  H5CPP_STD_COUT
 #define  H5CPP_STD_COUT
+#include <ostream>
+#include <string>
+#include <vector>
+#include <limits>
+#include <cstdlib>
 
 inline std::ostream& operator<< (std::ostream& os, const h5::dxpl_t& dxpl) {
 	os <<"handle: " << static_cast<hid_t>( dxpl );
