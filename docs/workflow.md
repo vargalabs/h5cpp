@@ -65,13 +65,20 @@ bash scripts/new-worktree.sh h5cpp --issue 85 --slug detection-idiom \
 Current example: `85-refactor-normalize-detection-idiom-usage-across-meta-layer`
 is based on `87-datatype-synthesis`.
 
-## Merge targets
+## Merge targets and flow
+
+```
+<number>-<slug>  →  staging  →  release
+```
+
+Issue branches PR into `staging`. Once the staging CI matrix is green and the
+batch is reviewed, `staging` is merged into `release` for the official cut.
 
 | Branch | Purpose | PR target |
 |--------|---------|-----------|
 | `release` | Stable, tagged releases | — |
-| `staging` | Integration / pre-release testing | `release` |
-| `<number>-<slug>` | Issue work | `release` |
+| `staging` | Integration / pre-release validation | `release` |
+| `<number>-<slug>` | Issue work | `staging` |
 
 CI runs on push to `release` and `staging`, and on all PRs targeting those branches.
 
