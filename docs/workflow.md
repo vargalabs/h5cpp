@@ -88,13 +88,37 @@ CI runs on push to `release` and `staging`, and on all PRs targeting those branc
 - **Body:** include `Closes #N` so GitHub links and auto-closes the issue on merge
 - **One issue per PR.** Split unrelated fixes into separate branches.
 
-## Commit message prefix
+## Commit message convention
+
+Every commit in a PR **and the PR title itself** must use the same format:
 
 ```
-[#N]:author: verb, description
+[#N]:author:topic, details
 ```
 
-Example: `[#91]:amelia: fix aligned_alloc UB in pipeline_t`
+Where:
+- `#N` — the issue number the branch resolves
+- `author` — short handle of the committer (`amelia`, `svarga`, `murat`, etc.)
+- `topic, details` — **copied verbatim from the issue title** (the `<category>, <description>` pattern)
+
+Spacing rules:
+- **No space** between `:author:` and `topic`
+- **One space** after the comma in `topic, details`
+
+Examples (commit messages and PR titles are identical in format):
+
+```
+[#117]:amelia:test, port h5::test::fill<T> random data generator into test support layer
+[#89]:amelia:refactor, dataset create/read/write to consume the new type engine
+[#80]:svarga:fix, release pt_t chunk-cache memory on destruction when opened via h5::open
+```
+
+**Rules:**
+
+1. All commits in the branch carry the same `[#N]` prefix — including fixup commits made during review.
+2. The topic+details line must match the issue title exactly. If the issue title is wrong, fix the issue title first, then use the corrected text.
+3. PR title uses the **exact same format** as commit messages: `[#N]:author:topic, details`.
+4. Squash-merging is not used; each commit in the branch lands in `staging` individually.
 
 ## Parallel work
 
