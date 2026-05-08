@@ -769,3 +769,85 @@ TEST_CASE("H5Tmeta storage_traits_t recursive contiguity across nested compounds
     static_assert(h5::meta::is_transport_contiguous_v<nested87_outer_t>);
     CHECK(true);
 }
+
+// ============================================================
+// 87.2 — scalar synthesis: create_type() for arithmetic types
+// ============================================================
+
+TEST_CASE("H5Tmeta storage_traits_t arithmetic create_type returns borrowed native integer handle") {
+    using tr = h5::meta::storage_traits_t<int>;
+    static_assert(!tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(H5Tget_class(dt) == H5T_INTEGER);
+    CHECK(H5Tget_size(dt) == sizeof(int));
+}
+
+TEST_CASE("H5Tmeta storage_traits_t arithmetic create_type returns borrowed native float handle") {
+    using tr = h5::meta::storage_traits_t<double>;
+    static_assert(!tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(H5Tget_class(dt) == H5T_FLOAT);
+    CHECK(H5Tget_size(dt) == sizeof(double));
+}
+
+TEST_CASE("H5Tmeta storage_traits_t arithmetic create_type covers full native type table") {
+    static_assert(!h5::meta::storage_traits_t<bool>::owns_handle);
+    static_assert(!h5::meta::storage_traits_t<float>::owns_handle);
+    static_assert(!h5::meta::storage_traits_t<long double>::owns_handle);
+    static_assert(!h5::meta::storage_traits_t<unsigned long long>::owns_handle);
+
+    CHECK(H5Tget_class(h5::meta::storage_traits_t<bool>::create_type())        == H5T_INTEGER);
+    CHECK(H5Tget_class(h5::meta::storage_traits_t<char>::create_type())        == H5T_INTEGER);
+    CHECK(H5Tget_class(h5::meta::storage_traits_t<float>::create_type())       == H5T_FLOAT);
+    CHECK(H5Tget_class(h5::meta::storage_traits_t<long double>::create_type()) == H5T_FLOAT);
+
+    CHECK(H5Tget_size(h5::meta::storage_traits_t<float>::create_type())             == sizeof(float));
+    CHECK(H5Tget_size(h5::meta::storage_traits_t<long long>::create_type())         == sizeof(long long));
+    CHECK(H5Tget_size(h5::meta::storage_traits_t<unsigned long long>::create_type()) == sizeof(unsigned long long));
+}
+
+// ============================================================
+// 87.3 — string synthesis: create_type() for text types
+// ============================================================
+
+TEST_CASE("H5Tmeta storage_traits_t fixed char array create_type owns H5T_STRING of correct size") {
+    using tr = h5::meta::storage_traits_t<char[8]>;
+    static_assert(tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(dt >= 0);
+    CHECK(H5Tget_class(dt) == H5T_STRING);
+    CHECK(H5Tget_size(dt) == 8);
+    CHECK(H5Tis_variable_str(dt) == 0);
+    H5Tclose(dt);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t fixed const char array create_type owns H5T_STRING of correct size") {
+    using tr = h5::meta::storage_traits_t<const char[5]>;
+    static_assert(tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(dt >= 0);
+    CHECK(H5Tget_class(dt) == H5T_STRING);
+    CHECK(H5Tget_size(dt) == 5);
+    CHECK(H5Tis_variable_str(dt) == 0);
+    H5Tclose(dt);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t vl text create_type owns variable-length UTF-8 H5T_STRING") {
+    auto check_vl = [](hid_t dt) {
+        CHECK(dt >= 0);
+        CHECK(H5Tget_class(dt) == H5T_STRING);
+        CHECK(H5Tis_variable_str(dt) > 0);
+        CHECK(H5Tget_cset(dt) == H5T_CSET_UTF8);
+        H5Tclose(dt);
+    };
+
+    static_assert(h5::meta::storage_traits_t<char*>::owns_handle);
+    static_assert(h5::meta::storage_traits_t<const char*>::owns_handle);
+    static_assert(h5::meta::storage_traits_t<std::string>::owns_handle);
+    static_assert(h5::meta::storage_traits_t<std::string_view>::owns_handle);
+
+    check_vl(h5::meta::storage_traits_t<char*>::create_type());
+    check_vl(h5::meta::storage_traits_t<const char*>::create_type());
+    check_vl(h5::meta::storage_traits_t<std::string>::create_type());
+    check_vl(h5::meta::storage_traits_t<std::string_view>::create_type());
+}

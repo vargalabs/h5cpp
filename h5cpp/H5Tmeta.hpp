@@ -257,36 +257,70 @@ namespace h5::meta {
 
     template <class T, class>
     struct storage_traits_impl_t {
-        static constexpr bool supported = false;
+        static constexpr bool supported   = false;
+        static constexpr bool owns_handle = false;
     };
 
     template <class T>
     struct storage_traits_impl_t<T, std::enable_if_t<std::is_arithmetic_v<T>>> {
-        static constexpr bool supported = true;
+        static constexpr bool supported   = true;
+        static constexpr bool owns_handle = false;
+        static hid_t create_type() noexcept {
+            if constexpr      (std::is_same_v<T, bool>)               return H5T_NATIVE_HBOOL;
+            else if constexpr (std::is_same_v<T, char>)               return H5T_NATIVE_CHAR;
+            else if constexpr (std::is_same_v<T, unsigned char>)      return H5T_NATIVE_UCHAR;
+            else if constexpr (std::is_same_v<T, short>)              return H5T_NATIVE_SHORT;
+            else if constexpr (std::is_same_v<T, unsigned short>)     return H5T_NATIVE_USHORT;
+            else if constexpr (std::is_same_v<T, int>)                return H5T_NATIVE_INT;
+            else if constexpr (std::is_same_v<T, unsigned int>)       return H5T_NATIVE_UINT;
+            else if constexpr (std::is_same_v<T, long>)               return H5T_NATIVE_LONG;
+            else if constexpr (std::is_same_v<T, unsigned long>)      return H5T_NATIVE_ULONG;
+            else if constexpr (std::is_same_v<T, long long>)          return H5T_NATIVE_LLONG;
+            else if constexpr (std::is_same_v<T, unsigned long long>) return H5T_NATIVE_ULLONG;
+            else if constexpr (std::is_same_v<T, float>)              return H5T_NATIVE_FLOAT;
+            else if constexpr (std::is_same_v<T, double>)             return H5T_NATIVE_DOUBLE;
+            else if constexpr (std::is_same_v<T, long double>)        return H5T_NATIVE_LDOUBLE;
+            else return H5I_INVALID_HID;
+        }
     };
 
     template <class T>
     struct storage_traits_impl_t<T, std::enable_if_t<is_vl_text_like<T>::value>> {
-        static constexpr bool supported = true;
+        static constexpr bool supported   = true;
+        static constexpr bool owns_handle = true;
+        static hid_t create_type() noexcept {
+            hid_t dt = H5Tcopy(H5T_C_S1);
+            H5Tset_size(dt, H5T_VARIABLE);
+            H5Tset_cset(dt, H5T_CSET_UTF8);
+            return dt;
+        }
     };
 
     template <class T>
     struct storage_traits_impl_t<T, std::enable_if_t<is_fixed_text_like<T>::value>> {
-        static constexpr bool supported = true;
+        static constexpr bool supported   = true;
+        static constexpr bool owns_handle = true;
+        static hid_t create_type() noexcept {
+            hid_t dt = H5Tcopy(H5T_C_S1);
+            H5Tset_size(dt, sizeof(T));
+            return dt;
+        }
     };
 
     template <class T>
     struct storage_traits_impl_t<T, std::enable_if_t<
         is_array_like<T>::value && !is_text_like<T>::value>> {
         using elem_t = typename meta::decay<T>::type;
-        static constexpr bool supported = storage_traits_t<elem_t>::supported;
+        static constexpr bool supported   = storage_traits_t<elem_t>::supported;
+        static constexpr bool owns_handle = true;  // H5Tarray_create2 — implemented in 87.4
     };
 
     template <class T>
     struct storage_traits_impl_t<T, std::enable_if_t<is_reflected_compound_t<T>::value>> {
         static_assert(compiler_meta_t<T>::version == metadata_version,
             "H5CPP compiler metadata version mismatch");
-        static constexpr bool supported = true;
+        static constexpr bool supported   = true;
+        static constexpr bool owns_handle = true;  // H5Tcreate compound — implemented in 87.5
     };
 
     template <class T, class>
