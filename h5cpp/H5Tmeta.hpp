@@ -312,7 +312,30 @@ namespace h5::meta {
         is_array_like<T>::value && !is_text_like<T>::value>> {
         using elem_t = typename meta::decay<T>::type;
         static constexpr bool supported   = storage_traits_t<elem_t>::supported;
-        static constexpr bool owns_handle = true;  // H5Tarray_create2 — implemented in 87.4
+        static constexpr bool owns_handle = true;
+        static hid_t create_type() noexcept {
+            if constexpr (std::is_array_v<T>)
+                return make_c_array(std::make_index_sequence<std::rank_v<T>>{});
+            else
+                return make_std_array();
+        }
+    private:
+        template <std::size_t... Is>
+        static hid_t make_c_array(std::index_sequence<Is...>) noexcept {
+            using scalar_t = std::remove_all_extents_t<T>;
+            hid_t base = storage_traits_t<scalar_t>::create_type();
+            hsize_t dims[] = { static_cast<hsize_t>(std::extent_v<T, Is>)... };
+            hid_t dt = H5Tarray_create2(base, sizeof...(Is), dims);
+            if constexpr (storage_traits_t<scalar_t>::owns_handle) H5Tclose(base);
+            return dt;
+        }
+        static hid_t make_std_array() noexcept {
+            hid_t base = storage_traits_t<elem_t>::create_type();
+            hsize_t dims[] = { static_cast<hsize_t>(std::tuple_size_v<T>) };
+            hid_t dt = H5Tarray_create2(base, 1, dims);
+            if constexpr (storage_traits_t<elem_t>::owns_handle) H5Tclose(base);
+            return dt;
+        }
     };
 
     template <class T>

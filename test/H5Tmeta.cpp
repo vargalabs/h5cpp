@@ -851,3 +851,77 @@ TEST_CASE("H5Tmeta storage_traits_t vl text create_type owns variable-length UTF
     check_vl(h5::meta::storage_traits_t<std::string>::create_type());
     check_vl(h5::meta::storage_traits_t<std::string_view>::create_type());
 }
+
+// ============================================================
+// 87.4 — array synthesis: create_type() for array-like types
+// ============================================================
+
+TEST_CASE("H5Tmeta storage_traits_t C array create_type owns rank-1 H5T_ARRAY with correct dims") {
+    using tr = h5::meta::storage_traits_t<int[3]>;
+    static_assert(tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(dt >= 0);
+    CHECK(H5Tget_class(dt) == H5T_ARRAY);
+    CHECK(H5Tget_array_ndims(dt) == 1);
+    hsize_t dims[1];
+    H5Tget_array_dims2(dt, dims);
+    CHECK(dims[0] == 3);
+    hid_t base = H5Tget_super(dt);
+    CHECK(H5Tget_class(base) == H5T_INTEGER);
+    CHECK(H5Tget_size(base) == sizeof(int));
+    H5Tclose(base);
+    H5Tclose(dt);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t multidimensional C array create_type owns rank-2 H5T_ARRAY") {
+    using tr = h5::meta::storage_traits_t<double[2][4]>;
+    static_assert(tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(dt >= 0);
+    CHECK(H5Tget_class(dt) == H5T_ARRAY);
+    CHECK(H5Tget_array_ndims(dt) == 2);
+    hsize_t dims[2];
+    H5Tget_array_dims2(dt, dims);
+    CHECK(dims[0] == 2);
+    CHECK(dims[1] == 4);
+    hid_t base = H5Tget_super(dt);
+    CHECK(H5Tget_class(base) == H5T_FLOAT);
+    CHECK(H5Tget_size(base) == sizeof(double));
+    H5Tclose(base);
+    H5Tclose(dt);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t std::array create_type owns H5T_ARRAY with correct dims") {
+    using tr = h5::meta::storage_traits_t<std::array<int, 5>>;
+    static_assert(tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(dt >= 0);
+    CHECK(H5Tget_class(dt) == H5T_ARRAY);
+    CHECK(H5Tget_array_ndims(dt) == 1);
+    hsize_t dims[1];
+    H5Tget_array_dims2(dt, dims);
+    CHECK(dims[0] == 5);
+    hid_t base = H5Tget_super(dt);
+    CHECK(H5Tget_class(base) == H5T_INTEGER);
+    H5Tclose(base);
+    H5Tclose(dt);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t nested std::array create_type produces nested H5T_ARRAY") {
+    using tr = h5::meta::storage_traits_t<std::array<std::array<int, 3>, 2>>;
+    static_assert(tr::owns_handle);
+    hid_t dt = tr::create_type();
+    CHECK(dt >= 0);
+    CHECK(H5Tget_class(dt) == H5T_ARRAY);
+    CHECK(H5Tget_array_ndims(dt) == 1);
+    hsize_t outer_dims[1];
+    H5Tget_array_dims2(dt, outer_dims);
+    CHECK(outer_dims[0] == 2);
+    hid_t inner = H5Tget_super(dt);
+    CHECK(H5Tget_class(inner) == H5T_ARRAY);
+    hsize_t inner_dims[1];
+    H5Tget_array_dims2(inner, inner_dims);
+    CHECK(inner_dims[0] == 3);
+    H5Tclose(inner);
+    H5Tclose(dt);
+}
