@@ -30,7 +30,7 @@ You can then invoke the compiler which will create the HDF5 datatype definitions
 ```bash
 h5cpp  struct.cpp --  -I../path/to/h5cpp-llvm  -Dddl.h
 ```
-Besides `h5::create`, there are other convenient IO operators, such as `h5::read | h5::write | h5::append`, provided, who work independently from `h5::create` and are equally capable of producing the right output. Please follow [these instructions](@ref link_h5cpp_install) to set up llvm 7.0.0 and to compile the tool.
+Besides `h5::create`, there are other convenient IO operators, such as `h5::read | h5::write | h5::append`, provided, who work independently from `h5::create` and are equally capable of producing the right output. Please follow [these instructions](https://github.com/vargalabs/h5cpp-compiler) to set up Clang/LLVM 14, 15, or 17 and to compile the tool.
 
 **CAVEAT:**
 LLVM/CLANG++ **error messages are suppressed**, that is, if an invalid translation unit (a set of C++17 files) is passed, no error message is produced. This is because the compilation is done in two passes:
