@@ -5,6 +5,15 @@
 
 #ifndef  H5CPP_MISC_HPP
 #define  H5CPP_MISC_HPP
+#include <complex>
+#include <string>
+#include <vector>
+#include <random>
+#include <algorithm>
+#include <iterator>
+#include <type_traits>
+#include <memory>
+#include <cstdlib>
 namespace h5{
 	using cx_double =  std::complex<double>; /**< scientific type */
 	using cx_float = std::complex<float>;    /**< scientific type */

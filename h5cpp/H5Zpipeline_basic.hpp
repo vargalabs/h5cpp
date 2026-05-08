@@ -4,7 +4,8 @@
  */
 #ifndef  H5CPP_PIPELINE_BASIC_HPP
 #define  H5CPP_PIPELINE_BASIC_HPP
-
+#include <stdexcept>
+#include <iostream>
 
 inline void h5::impl::basic_pipeline_t::write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* data ){
 

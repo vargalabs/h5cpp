@@ -6,6 +6,11 @@
 #ifndef  H5CPP_DREAD_HPP
 #define  H5CPP_DREAD_HPP
 #include "H5Dopen.hpp" // be sure this precedes error handling macro-s !!!
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <type_traits>
+#include <tuple>
 
 namespace h5 {
 /***************************  REFERENCE *****************************/

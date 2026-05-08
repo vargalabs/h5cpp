@@ -4,6 +4,12 @@
  */
 #ifndef  H5CPP_PALL_HPP
 #define  H5CPP_PALL_HPP
+#include <array>
+#include <tuple>
+#include <initializer_list>
+#include <type_traits>
+#include <algorithm>
+#include <iterator>
 
 namespace h5 { namespace impl {
 	/* proxy object that gets converted to property_id with restriction that 

@@ -5,6 +5,9 @@
 
 #ifndef  H5CPPI_ALGORITHM_HPP
 #define  H5CPPI_ALGORITHM_HPP
+#include <string>
+#include <vector>
+#include <stdexcept>
 
 namespace h5 { namespace impl {
 	inline static herr_t iterate_callback( ::hid_t gid, const char *name, const H5L_info_t *info, void *op_data){

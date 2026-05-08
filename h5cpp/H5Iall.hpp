@@ -5,6 +5,10 @@
 
 #ifndef  H5CPP_IALL_HPP
 #define  H5CPP_IALL_HPP
+#include <string>
+#include <vector>
+#include <tuple>
+#include <initializer_list>
 
 #ifdef H5CPP_CONVERSION_IMPLICIT
 	#define H5CPP__EXPLICIT

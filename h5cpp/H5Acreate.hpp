@@ -4,6 +4,9 @@
  */
 #ifndef  H5CPP_ACREATE_HPP
 #define  H5CPP_ACREATE_HPP
+#include <string>
+#include <stdexcept>
+#include <type_traits>
 namespace h5 {
 	namespace impl {
 		/*this template defines what HDF5 object types may have attributes */

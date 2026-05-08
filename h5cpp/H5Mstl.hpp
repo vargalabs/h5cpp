@@ -3,8 +3,13 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_STL_HPP 
+#ifndef  H5CPP_STL_HPP
 #define  H5CPP_STL_HPP
+#include <string>
+#include <vector>
+#include <array>
+#include <initializer_list>
+#include <type_traits>
 
 namespace h5 { namespace impl {
 /*STL: */

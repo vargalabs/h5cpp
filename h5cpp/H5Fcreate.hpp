@@ -4,9 +4,10 @@
  */
 
 #ifndef  H5CPP_FCREATE_HPP
-#define H5CPP_FCREATE_HPP
+#define  H5CPP_FCREATE_HPP
+#include <string>
 
-/**  
+/**
  * @namespace h5
  * @brief public namespace
  */

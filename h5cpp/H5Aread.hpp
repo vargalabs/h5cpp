@@ -4,6 +4,8 @@
  */
 #ifndef  H5CPP_AREAD_HPP
 #define  H5CPP_AREAD_HPP
+#include <string>
+#include <type_traits>
 namespace h5 {
 
 	//ARITHMETIC ELEMENT TYPES 

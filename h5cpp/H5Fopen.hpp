@@ -4,8 +4,10 @@
  */
 #ifndef  H5CPP_FOPEN_HPP
 #define  H5CPP_FOPEN_HPP
+#include <string>
+#include <memory>
 
-/**  
+/**
  * @namespace h5
  * @brief public namespace
  */
