@@ -100,7 +100,7 @@ namespace h5::utils {
 
 }
 
-namespace h5 { namespace impl {
+namespace h5::impl {
     struct free {
         template <typename T>
         void operator()(T *p) const {
@@ -110,6 +110,6 @@ namespace h5 { namespace impl {
     };
     template <typename T>
         using unique_ptr = std::unique_ptr<T, h5::impl::free>;
-}}
+}
 #endif
 

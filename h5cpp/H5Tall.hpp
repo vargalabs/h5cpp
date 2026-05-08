@@ -50,7 +50,7 @@ namespace h5::impl::detail {
  */
 
 #define H5CPP_REGISTER_TYPE_( C_TYPE, H5_TYPE )                                           \
-namespace h5 { namespace impl { namespace detail { 	                                      \
+namespace h5::impl::detail { 	                                      \
 	template <> struct hid_t<C_TYPE,H5Tclose,true,true,hdf5::type> : public dt_p<C_TYPE> {\
 		using parent = dt_p<C_TYPE>;                                                      \
 		using dt_p<C_TYPE>::hid_t;                                                              \
@@ -61,7 +61,7 @@ namespace h5 { namespace impl { namespace detail { 	                            
 					H5Tset_size (id,H5T_VARIABLE), H5Tset_cset(id, H5T_CSET_UTF8);        \
 		}                                                                                 \
 	};                                                                                    \
-}}}                                                                                       \
+}                                                                                         \
 namespace h5 {                                                                            \
 	template <> struct name<C_TYPE> {                                                     \
 		static constexpr char const * value = #C_TYPE;                                    \
