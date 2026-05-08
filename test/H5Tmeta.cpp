@@ -637,3 +637,16 @@ TEST_CASE("H5Tmeta storage_representation c_array covers ranks 1 2 and 3") {
     CHECK(h5::meta::storage_representation_v<double[2][3]>   == sr_t::c_array);
     CHECK(h5::meta::storage_representation_v<float[2][2][2]> == sr_t::c_array);
 }
+
+TEST_CASE("H5Tmeta storage_representation vector and array cover contiguous linear") {
+    using sr_t = h5::meta::storage_representation_t;
+    CHECK(h5::meta::storage_representation_v<std::vector<int>>    == sr_t::linear_value_dataset);
+    CHECK(h5::meta::storage_representation_v<std::vector<double>> == sr_t::linear_value_dataset);
+    CHECK(h5::meta::storage_representation_v<std::vector<float>>  == sr_t::linear_value_dataset);
+    CHECK((h5::meta::storage_representation_v<std::array<int,4>>)    == sr_t::linear_value_dataset);
+    CHECK((h5::meta::storage_representation_v<std::array<double,8>>)  == sr_t::linear_value_dataset);
+    // more-specific specializations must still win
+    CHECK((h5::meta::storage_representation_v<std::vector<std::vector<int>>>)    == sr_t::ragged_vlen_dataset);
+    CHECK((h5::meta::storage_representation_v<std::vector<std::array<int,4>>>)   == sr_t::fixed_inner_extent_dataset);
+    CHECK((h5::meta::storage_representation_v<std::vector<std::string>>)         == sr_t::vlen_text_dataset);
+}

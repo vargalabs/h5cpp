@@ -201,6 +201,13 @@ namespace h5::meta {
     template <class T, std::size_t N, std::size_t M, std::size_t P> struct storage_representation_impl<T[N][M][P]>
         : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
 
+    // contiguous sequence containers — generic vector<T> and array<T,N>
+    // more-specific specializations (vector<vector<T>>, vector<string>, vector<array<T,N>>) take priority
+    template <class T, class A> struct storage_representation_impl<std::vector<T,A>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+    template <class T, std::size_t N> struct storage_representation_impl<std::array<T,N>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+
     template <class T, class A> struct storage_representation_impl<std::deque<T,A>>
         : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
     template <class T, class A> struct storage_representation_impl<std::list<T,A>>
