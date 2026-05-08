@@ -13,11 +13,13 @@
         <meta name="author" content="Steven Varga">
       
       
-        <link rel="canonical" href="https://steven-varga.ca/examples/">
+        <link rel="canonical" href="https://vargalabs.github.io/h5cpp/examples/">
       
       
-        <link rel="prev" href="../architecture-io/">
+        <link rel="prev" href="../compiler/">
       
+      
+        <link rel="next" href="../design/">
       
       
         
@@ -83,17 +85,17 @@
     <meta property="og:site_name" content="VargaLABS" />
     <meta property="og:title" content="VargaLABS" />
     <meta property="og:description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
-    <meta property="og:url" content="https://steven-varga.ca/examples/" />
-    <meta property="og:image" content="https://steven-varga.ca//assets/social/og-default.png" />
+    <meta property="og:url" content="https://vargalabs.github.io/h5cpp/examples/" />
+    <meta property="og:image" content="https://vargalabs.github.io/h5cpp//assets/social/og-default.png" />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="" />
     <meta name="twitter:title" content="VargaLABS" />
     <meta name="twitter:description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
-    <meta name="twitter:image" content="https://steven-varga.ca//assets/social/og-default.png" />
+    <meta name="twitter:image" content="https://vargalabs.github.io/h5cpp//assets/social/og-default.png" />
 
     <!-- SEO -->
-    <link rel="canonical" href="https://steven-varga.ca/examples/" />
+    <link rel="canonical" href="https://vargalabs.github.io/h5cpp/examples/" />
     <meta name="description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
     <script type="application/ld+json">
     {
@@ -101,7 +103,7 @@
     "@type": "BlogPosting",
     "headline": "VargaLABS",
     "description": "H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5",
-    "url": "https://steven-varga.ca/examples/",
+    "url": "https://vargalabs.github.io/h5cpp/examples/",
     "datePublished": "2010-01-01",
     "author": {
         "@type": "Person",
@@ -112,10 +114,10 @@
         "name": "VargaLABS",
         "logo": {
         "@type": "ImageObject",
-        "url": "https://steven-varga.ca//assets/logo.png"
+        "url": "https://vargalabs.github.io/h5cpp//assets/logo.png"
         }
     },
-    "image": "https://steven-varga.ca//assets/social/og-default.png"
+    "image": "https://vargalabs.github.io/h5cpp//assets/social/og-default.png"
     }
     </script>    
 
@@ -372,32 +374,7 @@
       
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../design/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
     
-  
-    Design
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
   
   
   
@@ -406,21 +383,21 @@
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Architecture
+    Getting Started
   
 
     
@@ -431,12 +408,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Architecture
+    Getting Started
   
 
           </label>
@@ -449,14 +426,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../architecture-core/" class="md-nav__link">
+      <a href="../stl/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    HDF5 concepts
+    Supported Types
   
 
     
@@ -477,14 +454,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../architecture-io/" class="md-nav__link">
+      <a href="../compiler/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    I/O Operations
+    Compiler Tool
   
 
     
@@ -498,15 +475,8 @@
 
               
             
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
+              
+                
   
   
     
@@ -841,6 +811,236 @@
     </ul>
   
 </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HDF5 Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    I/O Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Type System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linalg & STL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture-parallelism/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parallel I/O
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -4387,7 +4587,7 @@ This mechanism comes handy when dealing with many attributes. Typing IO operator
 </span><span id="__span-21-153"><a id="__codelineno-21-153" name="__codelineno-21-153"></a><span class="w">                        </span><span class="p">}</span>
 </span><span id="__span-21-154"><a id="__codelineno-21-154" name="__codelineno-21-154"></a>
 </span><span id="__span-21-155"><a id="__codelineno-21-155" name="__codelineno-21-155"></a><span class="w">                        </span><span class="kt">int</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">){</span>
-</span><span id="__span-21-156"><a id="__codelineno-21-156" name="__codelineno-21-156"></a><span class="w">                                </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">fread</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="p">);</span>
+</span><span id="__span-21-156"><a id="__codelineno-21-156" name="__codelineno-21-156"></a><span class="w">                                </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">fread</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="p">));</span>
 </span><span id="__span-21-157"><a id="__codelineno-21-157" name="__codelineno-21-157"></a><span class="w">                        </span><span class="p">}</span>
 </span><span id="__span-21-158"><a id="__codelineno-21-158" name="__codelineno-21-158"></a>
 </span><span id="__span-21-159"><a id="__codelineno-21-159" name="__codelineno-21-159"></a><span class="w">                        </span><span class="o">~</span><span class="n">OwningStdIOByteSourceBase</span><span class="p">(){</span>
@@ -4404,7 +4604,7 @@ This mechanism comes handy when dealing with many attributes. Typing IO operator
 </span><span id="__span-21-170"><a id="__codelineno-21-170" name="__codelineno-21-170"></a>
 </span><span id="__span-21-171"><a id="__codelineno-21-171" name="__codelineno-21-171"></a><span class="w">                        </span><span class="kt">int</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">){</span>
 </span><span id="__span-21-172"><a id="__codelineno-21-172" name="__codelineno-21-172"></a><span class="w">                                </span><span class="n">in</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
-</span><span id="__span-21-173"><a id="__codelineno-21-173" name="__codelineno-21-173"></a><span class="w">                                </span><span class="k">return</span><span class="w"> </span><span class="n">in</span><span class="p">.</span><span class="n">gcount</span><span class="p">();</span>
+</span><span id="__span-21-173"><a id="__codelineno-21-173" name="__codelineno-21-173"></a><span class="w">                                </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">in</span><span class="p">.</span><span class="n">gcount</span><span class="p">());</span>
 </span><span id="__span-21-174"><a id="__codelineno-21-174" name="__codelineno-21-174"></a><span class="w">                        </span><span class="p">}</span>
 </span><span id="__span-21-175"><a id="__codelineno-21-175" name="__codelineno-21-175"></a>
 </span><span id="__span-21-176"><a id="__codelineno-21-176" name="__codelineno-21-176"></a><span class="w">                        </span><span class="o">~</span><span class="n">NonOwningIStreamByteSource</span><span class="p">(){}</span>
@@ -4420,7 +4620,7 @@ This mechanism comes handy when dealing with many attributes. Typing IO operator
 </span><span id="__span-21-186"><a id="__codelineno-21-186" name="__codelineno-21-186"></a><span class="w">                        </span><span class="kt">int</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">desired_byte_count</span><span class="p">){</span>
 </span><span id="__span-21-187"><a id="__codelineno-21-187" name="__codelineno-21-187"></a><span class="w">                                </span><span class="kt">int</span><span class="w"> </span><span class="n">to_copy_byte_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">desired_byte_count</span><span class="p">;</span>
 </span><span id="__span-21-188"><a id="__codelineno-21-188" name="__codelineno-21-188"></a><span class="w">                                </span><span class="k">if</span><span class="p">(</span><span class="n">remaining_byte_count</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">to_copy_byte_count</span><span class="p">)</span>
-</span><span id="__span-21-189"><a id="__codelineno-21-189" name="__codelineno-21-189"></a><span class="w">                                        </span><span class="n">to_copy_byte_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">remaining_byte_count</span><span class="p">;</span>
+</span><span id="__span-21-189"><a id="__codelineno-21-189" name="__codelineno-21-189"></a><span class="w">                                        </span><span class="n">to_copy_byte_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">remaining_byte_count</span><span class="p">);</span>
 </span><span id="__span-21-190"><a id="__codelineno-21-190" name="__codelineno-21-190"></a><span class="w">                                </span><span class="n">std</span><span class="o">::</span><span class="n">memcpy</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="n">to_copy_byte_count</span><span class="p">);</span>
 </span><span id="__span-21-191"><a id="__codelineno-21-191" name="__codelineno-21-191"></a><span class="w">                                </span><span class="n">remaining_byte_count</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">to_copy_byte_count</span><span class="p">;</span>
 </span><span id="__span-21-192"><a id="__codelineno-21-192" name="__codelineno-21-192"></a><span class="w">                                </span><span class="n">str</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">to_copy_byte_count</span><span class="p">;</span>
@@ -7136,11 +7336,7 @@ GROUP "/" {
 <span class="normal"><a href="#__codelineno-44-40">40</a></span>
 <span class="normal"><a href="#__codelineno-44-41">41</a></span>
 <span class="normal"><a href="#__codelineno-44-42">42</a></span>
-<span class="normal"><a href="#__codelineno-44-43">43</a></span>
-<span class="normal"><a href="#__codelineno-44-44">44</a></span>
-<span class="normal"><a href="#__codelineno-44-45">45</a></span>
-<span class="normal"><a href="#__codelineno-44-46">46</a></span>
-<span class="normal"><a href="#__codelineno-44-47">47</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1"></a><span class="cm">/*</span>
+<span class="normal"><a href="#__codelineno-44-43">43</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1"></a><span class="cm">/*</span>
 </span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2"></a><span class="cm"> * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada</span>
 </span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3"></a><span class="cm"> * Author: Varga, Steven &lt;steven@vargaconsulting.ca&gt;</span>
 </span><span id="__span-44-4"><a id="__codelineno-44-4" name="__codelineno-44-4"></a><span class="cm"> */</span>
@@ -7152,41 +7348,37 @@ GROUP "/" {
 </span><span id="__span-44-10"><a id="__codelineno-44-10" name="__codelineno-44-10"></a>
 </span><span id="__span-44-11"><a id="__codelineno-44-11" name="__codelineno-44-11"></a><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;001.h5&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">H5F_ACC_TRUNC</span><span class="p">);</span>
 </span><span id="__span-44-12"><a id="__codelineno-44-12" name="__codelineno-44-12"></a><span class="w">    </span><span class="p">{</span><span class="w">   </span><span class="c1">// create intermediate groups</span>
-</span><span id="__span-44-13"><a id="__codelineno-44-13" name="__codelineno-44-13"></a><span class="w">        </span><span class="c1">// NOTICE: const static h5::lcpl_t lcpl = h5::char_encoding{H5T_CSET_UTF8} | h5::create_intermediate_group{1};</span>
-</span><span id="__span-44-14"><a id="__codelineno-44-14" name="__codelineno-44-14"></a><span class="w">        </span><span class="c1">// the default h5::default_lcpl will create immediate path and the encoding is set to utf8</span>
-</span><span id="__span-44-15"><a id="__codelineno-44-15" name="__codelineno-44-15"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="w"> </span><span class="n">gr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gcreate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my-group/sub/path&quot;</span><span class="p">);</span>
-</span><span id="__span-44-16"><a id="__codelineno-44-16" name="__codelineno-44-16"></a>
-</span><span id="__span-44-17"><a id="__codelineno-44-17" name="__codelineno-44-17"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">lcpl_t</span><span class="w"> </span><span class="n">lcpl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create_intermediate_group</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
-</span><span id="__span-44-18"><a id="__codelineno-44-18" name="__codelineno-44-18"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">gcreate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/mygroup&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lcpl</span><span class="p">);</span><span class="w"> </span><span class="c1">// passing lcpl type explicitly</span>
-</span><span id="__span-44-19"><a id="__codelineno-44-19" name="__codelineno-44-19"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-44-20"><a id="__codelineno-44-20" name="__codelineno-44-20"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="c1">// exceptions</span>
-</span><span id="__span-44-21"><a id="__codelineno-44-21" name="__codelineno-44-21"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">mute</span><span class="p">();</span><span class="w"> </span><span class="c1">// mute CAPI error handler</span>
-</span><span id="__span-44-22"><a id="__codelineno-44-22" name="__codelineno-44-22"></a><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// this group already exists, will throw `h5::error::io::group::create` exception</span>
-</span><span id="__span-44-23"><a id="__codelineno-44-23" name="__codelineno-44-23"></a><span class="w">            </span><span class="n">h5</span><span class="o">::</span><span class="n">gcreate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/mygroup&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dont_create_path</span><span class="p">);</span>
-</span><span id="__span-44-24"><a id="__codelineno-44-24" name="__codelineno-44-24"></a><span class="w">        </span><span class="p">}</span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">error</span><span class="o">::</span><span class="n">io</span><span class="o">::</span><span class="n">group</span><span class="o">::</span><span class="n">create</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">){</span>
-</span><span id="__span-44-25"><a id="__codelineno-44-25" name="__codelineno-44-25"></a><span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
-</span><span id="__span-44-26"><a id="__codelineno-44-26" name="__codelineno-44-26"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-44-27"><a id="__codelineno-44-27" name="__codelineno-44-27"></a>
-</span><span id="__span-44-28"><a id="__codelineno-44-28" name="__codelineno-44-28"></a><span class="w">        </span><span class="c1">// catching all exceptions </span>
-</span><span id="__span-44-29"><a id="__codelineno-44-29" name="__codelineno-44-29"></a><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// this group already exists, will throw `h5::error::io::group::create` exception</span>
-</span><span id="__span-44-30"><a id="__codelineno-44-30" name="__codelineno-44-30"></a><span class="w">            </span><span class="n">h5</span><span class="o">::</span><span class="n">gcreate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/mygroup&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">dont_create_path</span><span class="p">);</span>
-</span><span id="__span-44-31"><a id="__codelineno-44-31" name="__codelineno-44-31"></a><span class="w">        </span><span class="p">}</span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">error</span><span class="o">::</span><span class="n">any</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">){</span>
-</span><span id="__span-44-32"><a id="__codelineno-44-32" name="__codelineno-44-32"></a><span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
-</span><span id="__span-44-33"><a id="__codelineno-44-33" name="__codelineno-44-33"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-44-34"><a id="__codelineno-44-34" name="__codelineno-44-34"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">unmute</span><span class="p">();</span><span class="w"> </span><span class="c1">// re-enable CAPI error handling</span>
-</span><span id="__span-44-35"><a id="__codelineno-44-35" name="__codelineno-44-35"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-44-36"><a id="__codelineno-44-36" name="__codelineno-44-36"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="c1">// opening a group and adding attributes</span>
-</span><span id="__span-44-37"><a id="__codelineno-44-37" name="__codelineno-44-37"></a><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">gr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">gopen</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/mygroup&quot;</span><span class="p">);</span>
-</span><span id="__span-44-38"><a id="__codelineno-44-38" name="__codelineno-44-38"></a><span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">initializer_list</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">};</span>
-</span><span id="__span-44-39"><a id="__codelineno-44-39" name="__codelineno-44-39"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">awrite</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_tuple</span><span class="p">(</span>
-</span><span id="__span-44-40"><a id="__codelineno-44-40" name="__codelineno-44-40"></a><span class="w">            </span><span class="s">&quot;temperature&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">42.0</span><span class="p">,</span>
-</span><span id="__span-44-41"><a id="__codelineno-44-41" name="__codelineno-44-41"></a><span class="w">            </span><span class="s">&quot;unit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="p">,</span>
-</span><span id="__span-44-42"><a id="__codelineno-44-42" name="__codelineno-44-42"></a><span class="w">            </span><span class="s">&quot;vector of ints&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">}),</span>
-</span><span id="__span-44-43"><a id="__codelineno-44-43" name="__codelineno-44-43"></a><span class="w">            </span><span class="s">&quot;initializer list&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">list</span><span class="p">,</span>
-</span><span id="__span-44-44"><a id="__codelineno-44-44" name="__codelineno-44-44"></a><span class="w">            </span><span class="s">&quot;strings&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">initializer_list</span><span class="p">({</span><span class="s">&quot;first&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;second&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;third&quot;</span><span class="p">,</span><span class="s">&quot;...&quot;</span><span class="p">})</span>
-</span><span id="__span-44-45"><a id="__codelineno-44-45" name="__codelineno-44-45"></a><span class="w">        </span><span class="p">));</span>
-</span><span id="__span-44-46"><a id="__codelineno-44-46" name="__codelineno-44-46"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-44-47"><a id="__codelineno-44-47" name="__codelineno-44-47"></a><span class="p">}</span>
+</span><span id="__span-44-13"><a id="__codelineno-44-13" name="__codelineno-44-13"></a><span class="w">        </span><span class="c1">// the default h5::default_lcpl will create immediate path and the encoding is set to utf8</span>
+</span><span id="__span-44-14"><a id="__codelineno-44-14" name="__codelineno-44-14"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="w"> </span><span class="n">gr</span><span class="p">{</span><span class="n">H5Gcreate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my-group/sub/path&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">hid_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">h5</span><span class="o">::</span><span class="n">default_lcpl</span><span class="p">),</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">)};</span>
+</span><span id="__span-44-15"><a id="__codelineno-44-15" name="__codelineno-44-15"></a>
+</span><span id="__span-44-16"><a id="__codelineno-44-16" name="__codelineno-44-16"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">lcpl_t</span><span class="w"> </span><span class="n">lcpl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">char_encoding</span><span class="p">{</span><span class="n">H5T_CSET_UTF8</span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">create_intermediate_group</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+</span><span id="__span-44-17"><a id="__codelineno-44-17" name="__codelineno-44-17"></a><span class="w">        </span><span class="n">H5Gcreate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/mygroup&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">hid_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">lcpl</span><span class="p">),</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">);</span>
+</span><span id="__span-44-18"><a id="__codelineno-44-18" name="__codelineno-44-18"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-44-19"><a id="__codelineno-44-19" name="__codelineno-44-19"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="c1">// exceptions</span>
+</span><span id="__span-44-20"><a id="__codelineno-44-20" name="__codelineno-44-20"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">mute</span><span class="p">();</span><span class="w"> </span><span class="c1">// mute CAPI error handler</span>
+</span><span id="__span-44-21"><a id="__codelineno-44-21" name="__codelineno-44-21"></a><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// this group already exists, will throw exception</span>
+</span><span id="__span-44-22"><a id="__codelineno-44-22" name="__codelineno-44-22"></a><span class="w">            </span><span class="n">H5Gcreate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/mygroup&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">);</span>
+</span><span id="__span-44-23"><a id="__codelineno-44-23" name="__codelineno-44-23"></a><span class="w">        </span><span class="p">}</span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">error</span><span class="o">::</span><span class="n">any</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">){</span>
+</span><span id="__span-44-24"><a id="__codelineno-44-24" name="__codelineno-44-24"></a><span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+</span><span id="__span-44-25"><a id="__codelineno-44-25" name="__codelineno-44-25"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-44-26"><a id="__codelineno-44-26" name="__codelineno-44-26"></a>
+</span><span id="__span-44-27"><a id="__codelineno-44-27" name="__codelineno-44-27"></a><span class="w">        </span><span class="c1">// catching all exceptions </span>
+</span><span id="__span-44-28"><a id="__codelineno-44-28" name="__codelineno-44-28"></a><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// this group already exists, will throw exception</span>
+</span><span id="__span-44-29"><a id="__codelineno-44-29" name="__codelineno-44-29"></a><span class="w">            </span><span class="n">H5Gcreate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/mygroup&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">);</span>
+</span><span id="__span-44-30"><a id="__codelineno-44-30" name="__codelineno-44-30"></a><span class="w">        </span><span class="p">}</span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">h5</span><span class="o">::</span><span class="n">error</span><span class="o">::</span><span class="n">any</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">){</span>
+</span><span id="__span-44-31"><a id="__codelineno-44-31" name="__codelineno-44-31"></a><span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+</span><span id="__span-44-32"><a id="__codelineno-44-32" name="__codelineno-44-32"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-44-33"><a id="__codelineno-44-33" name="__codelineno-44-33"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">unmute</span><span class="p">();</span><span class="w"> </span><span class="c1">// re-enable CAPI error handling</span>
+</span><span id="__span-44-34"><a id="__codelineno-44-34" name="__codelineno-44-34"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-44-35"><a id="__codelineno-44-35" name="__codelineno-44-35"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="c1">// opening a group and adding attributes</span>
+</span><span id="__span-44-36"><a id="__codelineno-44-36" name="__codelineno-44-36"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">gr_t</span><span class="w"> </span><span class="n">gr</span><span class="p">{</span><span class="n">H5Gopen</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/mygroup&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">H5P_DEFAULT</span><span class="p">)};</span>
+</span><span id="__span-44-37"><a id="__codelineno-44-37" name="__codelineno-44-37"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">awrite</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;temperature&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">42.0</span><span class="p">);</span>
+</span><span id="__span-44-38"><a id="__codelineno-44-38" name="__codelineno-44-38"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">awrite</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;unit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="p">);</span>
+</span><span id="__span-44-39"><a id="__codelineno-44-39" name="__codelineno-44-39"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">awrite</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;vector of ints&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">}));</span>
+</span><span id="__span-44-40"><a id="__codelineno-44-40" name="__codelineno-44-40"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">awrite</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;initializer list&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">initializer_list</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">}));</span>
+</span><span id="__span-44-41"><a id="__codelineno-44-41" name="__codelineno-44-41"></a><span class="w">        </span><span class="n">h5</span><span class="o">::</span><span class="n">awrite</span><span class="p">(</span><span class="n">gr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;strings&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">initializer_list</span><span class="p">({</span><span class="s">&quot;first&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;second&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;third&quot;</span><span class="p">,</span><span class="s">&quot;...&quot;</span><span class="p">}));</span>
+</span><span id="__span-44-42"><a id="__codelineno-44-42" name="__codelineno-44-42"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-44-43"><a id="__codelineno-44-43" name="__codelineno-44-43"></a><span class="p">}</span>
 </span></code></pre></div></td></tr></table></div></p>
 <p><strong>README.md</strong>
 <div class="language-md highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-45-1"> 1</a></span>

@@ -13,7 +13,7 @@
         <meta name="author" content="Steven Varga">
       
       
-        <link rel="canonical" href="https://vargalabs.github.io/h5cpp/examples/datasets/">
+        <link rel="canonical" href="https://vargalabs.github.io/h5cpp/filtering-pipeline-rework-report/">
       
       
       
@@ -21,19 +21,19 @@
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Datasets - VargaLABS</title>
+        <title>H5CPP Filtering Pipeline Rework Report - VargaLABS</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -52,23 +52,23 @@
       
     
     
-      <link rel="stylesheet" href="../../styles/asciinema-player.css">
+      <link rel="stylesheet" href="../styles/asciinema-player.css">
     
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
-      <link rel="stylesheet" href="../../styles/custom.css">
+      <link rel="stylesheet" href="../styles/custom.css">
     
-      <link rel="stylesheet" href="../../styles/mobile.css">
+      <link rel="stylesheet" href="../styles/mobile.css">
     
-      <link rel="stylesheet" href="../../styles/socials.css">
+      <link rel="stylesheet" href="../styles/socials.css">
     
-      <link rel="stylesheet" href="../../styles/background.css">
+      <link rel="stylesheet" href="../styles/background.css">
     
-      <link rel="stylesheet" href="../../styles/blog.css">
+      <link rel="stylesheet" href="../styles/blog.css">
     
-      <link rel="stylesheet" href="../../styles/asciinema.css">
+      <link rel="stylesheet" href="../styles/asciinema.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
   
@@ -81,7 +81,7 @@
     <meta property="og:site_name" content="VargaLABS" />
     <meta property="og:title" content="VargaLABS" />
     <meta property="og:description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
-    <meta property="og:url" content="https://vargalabs.github.io/h5cpp/examples/datasets/" />
+    <meta property="og:url" content="https://vargalabs.github.io/h5cpp/filtering-pipeline-rework-report/" />
     <meta property="og:image" content="https://vargalabs.github.io/h5cpp//assets/social/og-default.png" />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -91,7 +91,7 @@
     <meta name="twitter:image" content="https://vargalabs.github.io/h5cpp//assets/social/og-default.png" />
 
     <!-- SEO -->
-    <link rel="canonical" href="https://vargalabs.github.io/h5cpp/examples/datasets/" />
+    <link rel="canonical" href="https://vargalabs.github.io/h5cpp/filtering-pipeline-rework-report/" />
     <meta name="description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
     <script type="application/ld+json">
     {
@@ -99,7 +99,7 @@
     "@type": "BlogPosting",
     "headline": "VargaLABS",
     "description": "H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5",
-    "url": "https://vargalabs.github.io/h5cpp/examples/datasets/",
+    "url": "https://vargalabs.github.io/h5cpp/filtering-pipeline-rework-report/",
     "datePublished": "2010-01-01",
     "author": {
         "@type": "Person",
@@ -117,8 +117,8 @@
     }
     </script>    
 
-<link rel="alternate" type="application/rss+xml" title="VargaLABS RSS Feed" href="../../rss.xml" />
-<link rel="alternate" type="application/feed+json" title="VargaLABS JSON Feed" href="../../feed.json" />
+<link rel="alternate" type="application/rss+xml" title="VargaLABS RSS Feed" href="../rss.xml" />
+<link rel="alternate" type="application/feed+json" title="VargaLABS JSON Feed" href="../feed.json" />
 
 
 
@@ -141,7 +141,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#datasets" class="md-skip">
+        <a href="#h5cpp-filtering-pipeline-rework-report" class="md-skip">
           Skip to content
         </a>
       
@@ -175,7 +175,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Datasets
+              H5CPP Filtering Pipeline Rework Report
             
           </span>
         </div>
@@ -344,7 +344,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   
@@ -418,7 +418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../stl/" class="md-nav__link">
+      <a href="../stl/" class="md-nav__link">
         
   
   
@@ -446,7 +446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../compiler/" class="md-nav__link">
+      <a href="../compiler/" class="md-nav__link">
         
   
   
@@ -474,7 +474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../examples/" class="md-nav__link">
         
   
   
@@ -556,7 +556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../design/" class="md-nav__link">
+      <a href="../design/" class="md-nav__link">
         
   
   
@@ -584,7 +584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture-core/" class="md-nav__link">
+      <a href="../architecture-core/" class="md-nav__link">
         
   
   
@@ -612,7 +612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture-io/" class="md-nav__link">
+      <a href="../architecture-io/" class="md-nav__link">
         
   
   
@@ -640,7 +640,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture-types/" class="md-nav__link">
+      <a href="../architecture-types/" class="md-nav__link">
         
   
   
@@ -668,7 +668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture-integration/" class="md-nav__link">
+      <a href="../architecture-integration/" class="md-nav__link">
         
   
   
@@ -696,7 +696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture-parallelism/" class="md-nav__link">
+      <a href="../architecture-parallelism/" class="md-nav__link">
         
   
   
@@ -741,6 +741,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -749,22 +751,99 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#datasets" class="md-nav__link">
+  <a href="#scope" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Datasets
+        Scope
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Datasets">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-correctness-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current Correctness Gaps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#iex2h5-vendored-h5cpp-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iex2h5 Vendored H5CPP Review
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proposed-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proposed Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-phases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Phases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation Phases">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#dataspace" class="md-nav__link">
+  <a href="#phase-1-correct-serial-engine" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dataspace
+        Phase 1: Correct serial engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-threaded-chunk-scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Threaded chunk scheduler
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-simd-and-advanced-codecs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: SIMD and advanced codecs
       
     </span>
   </a>
@@ -773,6 +852,28 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-platform-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-Platform Considerations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommendation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommendation
+      
+    </span>
+  </a>
   
 </li>
       
@@ -793,66 +894,219 @@
 
 
 
-  <h1>Datasets</h1>
-
-<h2 id="datasets">Datasets<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></h2>
-<p>A dataset is stored in a file in two parts: a header and a data array.</p>
-<p>The header contains information that is needed to interpret the array portion of the dataset, as well as metadata (or pointers to metadata) that describes or annotates the dataset. Header information includes the name of the object, its dimensionality, its number-type, information about how the data itself is stored on disk, and other information used by the library to speed up access to the dataset or maintain the file's integrity.</p>
-<p>There are four essential classes of information in any header: name, datatype, dataspace, and storage layout:</p>
-<ul>
-<li><strong>Name</strong> A dataset name is a sequence of alphanumeric ASCII characters.</li>
-<li>
-<p><strong>Datatype</strong> HDF5 allows one to define many different kinds of datatypes. There are two categories of datatypes:</p>
-<ul>
-<li>atomic datatype: currently only <strong>NATIVE</strong> byte order supported on H5CPP</li>
-<li>compound datatypes: see h5cpp compiler assisted reflection</li>
-</ul>
-</li>
-<li>
-<p><strong>Dataspace</strong> A dataset dataspace describes the dimensionality of the dataset. The dimensions of a dataset can be fixed (unchanging), or they may be  unlimited, which means that they are extendible (i.e. they can grow larger). </p>
-</li>
-<li>
-<p><strong>Storage layout</strong> The HDF5 format makes it possible to store data in a variety of ways. The default storage layout format is contiguous, meaning that data is stored in the same linear way that it is organized in memory. Two other storage layout formats are currently defined for HDF5: compact, and chunked.</p>
-<ul>
-<li><strong>Chunked storage</strong> involves dividing the dataset into equal-sized "chunks" that are stored separately. Chunking <strong>has three important benefits</strong>.<ol>
-<li>It makes it possible to achieve good performance when accessing subsets of the datasets, even when the subset to be chosen is orthogonal to the normal storage order of the dataset.</li>
-<li>It makes it possible to compress large datasets and still achieve good performance when accessing subsets of the dataset.</li>
-<li>It makes it possible efficiently to extend the dimensions of a dataset in any direction.</li>
-</ol>
-</li>
-<li><strong>Compact storage is</strong> used when the amount of data is small and can be stored directly in the object header. And is <strong>NOT SUPPORTED by H5CPP</strong> directly</li>
-</ul>
-</li>
-</ul>
-<h3 id="dataspace">Dataspace</h3>
-<p>Properties of a dataspace consist of the rank (number of dimensions) of the data array, the actual sizes of the dimensions of the array, and the maximum sizes of the dimensions of the array. For a fixed-dimension dataset, the actual size is the same as the maximum size of a dimension. When a dimension is unlimited, the maximum size is set to the value H5P_UNLIMITED. 
-A dataspace can also describe portions of a dataset, making it possible to do partial I/O operations on selections. Selection is supported by the dataspace interface (H5S). Given an n-dimensional dataset, there are currently four ways to do partial selection:</p>
-<ul>
-<li>Select a logically contiguous n-dimensional hyperslab.</li>
-<li>Select a non-contiguous hyperslab consisting of elements or blocks of elements (hyperslabs) that are equally spaced.</li>
-</ul>
-<p>List to describe dimensions of a dataset:</p>
-<ul>
-<li><code>h5::current_dims{i,j,k,..}</code> - actual dimension <code>i,j,k \in {1 - max}</code></li>
-<li><code>h5::max_dims{...}</code> - maximum dimension, use <code>H5S_UNLIMITED</code> for infinite </li>
-<li><code>h5::chunk{...}</code> - define block size, clever blocking arrangement increases throughout</li>
-</ul>
-<p>List how to select from datasets for read or write:</p>
-<ul>
-<li><code>h5::offset{...}</code> - start coordinates of data selection</li>
-<li><code>h5::stride{...}</code> - every <code>n</code> considered </li>
-<li><code>h5::block{...}</code> - every <code>m</code> block is considered</li>
-<li><code>h5::count{...}</code> - the amount of data </li>
-</ul>
-<p><strong>Note:</strong> <code>h5::stride</code>, <code>h5::block</code> and scatter - gather operations doesn't work when <code>h5::high_throughput</code> set, due to performance reasons.</p>
-<div class="footnote">
-<hr />
+<h1 id="h5cpp-filtering-pipeline-rework-report">H5CPP Filtering Pipeline Rework Report</h1>
+<h2 id="scope">Scope</h2>
+<p>This report captures the current state of the H5CPP filtering pipeline and proposes a C++17-compatible path toward a SIMD- and multithreaded chunk filtering engine. The target platforms are Linux, macOS, and Windows. The design should keep the current C++17 surface stable while leaving room for later C++23 cleanup and eventual C++26 reflection integration.</p>
+<h2 id="current-architecture">Current Architecture</h2>
+<p>H5CPP already has the right architectural interception point for high-throughput filtering:</p>
 <ol>
-<li id="fn:1">
-<p>Lifted from HDF5 CAPI documentation&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
+<li>Users express storage layout and filters through the existing property-list syntax, for example <code>h5::chunk{1024} | h5::shuffle | h5::gzip{6}</code>.</li>
+<li>Dataset creation property lists keep standard HDF5-compatible filter metadata.</li>
+<li><code>h5::high_throughput</code> is intended to install a custom dataset access property-list entry.</li>
+<li><code>h5::write</code> and <code>h5::read</code> detect that DAPL entry and route transfers through <code>pipeline_t</code>.</li>
+<li><code>pipeline_t</code> tiles user memory into chunk-sized blocks and calls <code>H5Dwrite_chunk</code> / <code>H5Dread_chunk</code>.</li>
 </ol>
-</div>
+<p>That model is sound: keep HDF5 compatibility at the file boundary, but own the CPU-side transform chain inside H5CPP.</p>
+<h2 id="current-correctness-gaps">Current Correctness Gaps</h2>
+<p>The current implementation is an experimental skeleton rather than a production replacement for HDF5's filter chain.</p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Current State</th>
+<th>Required State</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Activation</td>
+<td><code>h5::high_throughput</code> does not install its DAPL property on the current HDF5 1.10.9 baseline</td>
+<td>Reliable cross-version activation or explicit unsupported-version diagnostics</td>
+</tr>
+<tr>
+<td>Deflate/gzip</td>
+<td>Compress-only callback</td>
+<td>Encode and decode with correct zlib buffer sizing</td>
+</tr>
+<tr>
+<td>Shuffle</td>
+<td>Placeholder copy</td>
+<td>Element-size-aware shuffle and unshuffle</td>
+</tr>
+<tr>
+<td>Fletcher32</td>
+<td>Placeholder copy</td>
+<td>Checksum generation and verification</td>
+</tr>
+<tr>
+<td>N-bit / scale-offset</td>
+<td>Placeholder copy</td>
+<td>Correct implementation or explicit unsupported-filter error</td>
+</tr>
+<tr>
+<td>Multi-filter read</td>
+<td>Throws for more than one filter</td>
+<td>Reverse-order decode through the complete filter plan</td>
+</tr>
+<tr>
+<td>Buffer sizing</td>
+<td>Uses chunk-sized scratch buffers</td>
+<td>Encoded buffers must allow compression expansion</td>
+</tr>
+<tr>
+<td>Filter mask</td>
+<td>Partial handling</td>
+<td>Preserve HDF5 chunk filter-mask semantics</td>
+</tr>
+<tr>
+<td>Threading</td>
+<td><code>threaded_pipeline_t</code> is a placeholder</td>
+<td>Worker-local state and bounded chunk scheduling</td>
+</tr>
+<tr>
+<td>Portability</td>
+<td>Linux path is the only recently verified path</td>
+<td>Linux, macOS, and Windows allocation/build behavior</td>
+</tr>
+</tbody>
+</table>
+<p>Focused baseline probes confirmed two important failures:</p>
+<ol>
+<li><code>h5::high_throughput</code> does not currently activate the DAPL property with HDF5 1.10.9.</li>
+<li>The gzip callback can encode data, but it cannot decode using the reverse filter path.</li>
+</ol>
+<h2 id="iex2h5-vendored-h5cpp-review">iex2h5 Vendored H5CPP Review</h2>
+<p>The vendored copy at <code>/home/steven/projects/iex2h5/thirdparty/h5cpp/v1.10.8/include/h5cpp/</code> was reviewed from the filtering pipeline angle. Its filter callbacks and chunk read/write logic are effectively the same experimental pipeline: gzip remains encode-only, shuffle/Fletcher32/N-bit/scale-offset remain placeholder copies, multi-filter read still throws, and <code>h5::high_throughput</code> remains gated to older HDF5 versions.</p>
+<p>The useful difference is in scratch-buffer ownership: the vendored copy introduced a named aligned-allocation helper instead of open-coding <code>aligned_alloc</code> at the call site. That idea is worth keeping, but the vendored implementation is Linux-oriented and does not round allocation sizes or handle Windows. The #160 branch borrows the helper pattern and hardens it for C++17 portability:</p>
+<ul>
+<li>central <code>make_aligned(alignment, size)</code> helper,</li>
+<li>size rounded up to the requested alignment,</li>
+<li><code>posix_memalign</code> on Linux/macOS,</li>
+<li><code>_aligned_malloc</code> / <code>_aligned_free</code> on Windows,</li>
+<li>RAII deleter matched to the allocation API.</li>
+</ul>
+<h2 id="proposed-architecture">Proposed Architecture</h2>
+<p>Replace the thin filter function-pointer model with a first-class filter plan:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DCPL metadata
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  -&gt; filter_plan
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  -&gt; chunk_iterator
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  -&gt; execution_policy
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  -&gt; chunk_io_backend
+</span></code></pre></div>
+<p>Responsibilities:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filter_plan</code></td>
+<td>Decode DCPL filters into validated encode/decode operations</td>
+</tr>
+<tr>
+<td><code>chunk_iterator</code></td>
+<td>Walk chunk coordinates, handle edges, and map memory to chunks</td>
+</tr>
+<tr>
+<td><code>execution_policy</code></td>
+<td>Select serial, threaded, and later SIMD-aware execution</td>
+</tr>
+<tr>
+<td><code>chunk_io_backend</code></td>
+<td>Use HDF5 chunk APIs now; keep room for native storage later</td>
+</tr>
+</tbody>
+</table>
+<p>Each filter operation should carry:</p>
+<ul>
+<li>HDF5 filter id</li>
+<li>flags and client data values</li>
+<li>element size where required</li>
+<li><code>max_encoded_size(input_size)</code></li>
+<li><code>encode(src, dst)</code></li>
+<li><code>decode(src, dst)</code></li>
+<li>clear error behavior for unsupported filters</li>
+</ul>
+<p>This avoids guessing filter direction from a single callback and gives the scheduler enough information to size scratch buffers safely.</p>
+<h2 id="implementation-phases">Implementation Phases</h2>
+<h3 id="phase-1-correct-serial-engine">Phase 1: Correct serial engine</h3>
+<p>Deliver a boring, testable serial implementation before adding SIMD or threads.</p>
+<p>Initial #160 progress:</p>
+<ul>
+<li>Deflate/gzip callbacks now encode and decode zlib-compatible streams.</li>
+<li>libdeflate is used when configured/present; zlib remains the fallback because HDF5 already requires it.</li>
+<li>CMake exposes <code>H5CPP_USE_LIBDEFLATE</code>, <code>H5CPP_REQUIRE_LIBDEFLATE</code>, and <code>H5CPP_INSTALL_LIBDEFLATE</code>.</li>
+<li>The test thirdparty layer has a libdeflate interface target for doctest coverage.</li>
+<li>Pipeline scratch allocation now reserves deflate-bound capacity rather than raw chunk bytes.</li>
+</ul>
+<p>Required work:</p>
+<ol>
+<li>Restore reliable <code>h5::high_throughput</code> activation or emit a clear unsupported-version error.</li>
+<li>Implement deflate/gzip encode and decode using <code>compressBound</code>, <code>compress2</code>, and inflate/uncompress. <strong>Status: initial callback-level implementation complete, with libdeflate fast path and zlib fallback.</strong></li>
+<li>Implement byte shuffle and unshuffle using the dataset element size.</li>
+<li>Implement Fletcher32 generation and verification.</li>
+<li>Make N-bit and scale-offset explicit: either implement them correctly or reject them loudly.</li>
+<li>Implement reverse-order read for multi-filter chains.</li>
+<li>Allocate scratch buffers by maximum encoded size, not raw chunk size.</li>
+<li>Preserve and test filter-mask behavior.</li>
+</ol>
+<p>Acceptance tests should prove:</p>
+<ul>
+<li>H5CPP pipeline write can be read through normal HDF5/H5CPP read.</li>
+<li>Normal HDF5 filtered write can be read through the H5CPP pipeline.</li>
+<li><code>shuffle | gzip</code> round-trips.</li>
+<li><code>shuffle | gzip | fletcher32</code> round-trips and detects corruption where feasible.</li>
+<li>Unsupported filters fail with useful diagnostics instead of silently copying.</li>
+</ul>
+<h3 id="phase-2-threaded-chunk-scheduler">Phase 2: Threaded chunk scheduler</h3>
+<p>Once serial correctness is proven, add a bounded chunk scheduler:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>source memory
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  -&gt; chunk gather/tile
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  -&gt; prefilters
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  -&gt; compressor
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  -&gt; checksum
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  -&gt; H5Dwrite_chunk
+</span></code></pre></div>
+<p>Read path:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>H5Dread_chunk
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  -&gt; checksum verify
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  -&gt; decompressor
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  -&gt; reverse prefilters
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  -&gt; scatter to user memory
+</span></code></pre></div>
+<p>Design rules:</p>
+<ul>
+<li>No shared mutable scratch buffers across workers.</li>
+<li>Each worker owns aligned scratch memory.</li>
+<li>HDF5 calls should be isolated behind the backend so thread-safety policy is explicit.</li>
+<li>The scheduler should be bounded to prevent memory blowups on large datasets.</li>
+<li>Serial and threaded paths must share the same <code>filter_plan</code>.</li>
+</ul>
+<h3 id="phase-3-simd-and-advanced-codecs">Phase 3: SIMD and advanced codecs</h3>
+<p>After correctness and scheduler boundaries are stable, add optimized filters:</p>
+<ul>
+<li>SIMD shuffle/unshuffle</li>
+<li>bitshuffle</li>
+<li>delta and XOR filters for numeric/time-series data</li>
+<li>zstd and lz4 backends</li>
+<li>blosc-style composed filter bundles</li>
+<li>optional adaptive codec selection by sampled chunk entropy</li>
+</ul>
+<p>These should remain optional and feature-detected. The baseline must stay C++17 and portable.</p>
+<h2 id="cross-platform-considerations">Cross-Platform Considerations</h2>
+<p>The pipeline should hide platform allocation differences behind one internal aligned-buffer helper:</p>
+<ul>
+<li>Linux/macOS: use a safe aligned allocation path that rounds size as required.</li>
+<li>Windows: use <code>_aligned_malloc</code> / <code>_aligned_free</code>.</li>
+<li>Never require raw chunk bytes to already be a multiple of alignment.</li>
+</ul>
+<p>Threading should initially use C++17 standard library primitives. Avoid platform-specific thread pools until benchmarks prove the need.</p>
+<h2 id="recommendation">Recommendation</h2>
+<p>Start with correctness, not SIMD. The highest-value first milestone is a serial <code>filter_plan</code> that can round-trip standard HDF5 filters and reject unsupported filters explicitly. Once that foundation is correct, SIMD and multithreading become execution-policy improvements rather than a risky rewrite.</p>
+<p>The strategic direction is to make H5CPP's filtering chain a modern CPU execution engine while preserving HDF5-compatible metadata and file interoperability.</p>
 
 
 
@@ -904,20 +1158,20 @@ A dataspace can also describe portions of a dataset, making it possible to do pa
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["search.suggest", "content.code.copy", "content.tooltips", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "content.code.copy", "content.tooltips", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
-        <script src="../../javascripts/mathjax.js"></script>
+        <script src="../javascripts/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
         <script src="https://cdn.tailwindcss.com"></script>
       
-        <script src="../../javascripts/tw-config.js"></script>
+        <script src="../javascripts/tw-config.js"></script>
       
-        <script src="../../javascripts/asciinema-player.min.js"></script>
+        <script src="../javascripts/asciinema-player.min.js"></script>
       
         <script src="https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"></script>
       

@@ -13,13 +13,9 @@
         <meta name="author" content="Steven Varga">
       
       
-        <link rel="canonical" href="https://vargalabs.github.io/h5cpp/design/">
+        <link rel="canonical" href="https://vargalabs.github.io/h5cpp/thirdparty/">
       
       
-        <link rel="prev" href="../examples/">
-      
-      
-        <link rel="next" href="../architecture-core/">
       
       
         
@@ -30,7 +26,7 @@
     
     
       
-        <title>Design Philosophy - VargaLABS</title>
+        <title>Vendored Third-Party Linear Algebra Dependencies - VargaLABS</title>
       
     
     
@@ -85,7 +81,7 @@
     <meta property="og:site_name" content="VargaLABS" />
     <meta property="og:title" content="VargaLABS" />
     <meta property="og:description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
-    <meta property="og:url" content="https://vargalabs.github.io/h5cpp/design/" />
+    <meta property="og:url" content="https://vargalabs.github.io/h5cpp/thirdparty/" />
     <meta property="og:image" content="https://vargalabs.github.io/h5cpp//assets/social/og-default.png" />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -95,7 +91,7 @@
     <meta name="twitter:image" content="https://vargalabs.github.io/h5cpp//assets/social/og-default.png" />
 
     <!-- SEO -->
-    <link rel="canonical" href="https://vargalabs.github.io/h5cpp/design/" />
+    <link rel="canonical" href="https://vargalabs.github.io/h5cpp/thirdparty/" />
     <meta name="description" content="H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5" />
     <script type="application/ld+json">
     {
@@ -103,7 +99,7 @@
     "@type": "BlogPosting",
     "headline": "VargaLABS",
     "description": "H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5",
-    "url": "https://vargalabs.github.io/h5cpp/design/",
+    "url": "https://vargalabs.github.io/h5cpp/thirdparty/",
     "datePublished": "2010-01-01",
     "author": {
         "@type": "Person",
@@ -145,7 +141,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bottom-line" class="md-skip">
+        <a href="#vendored-third-party-linear-algebra-dependencies" class="md-skip">
           Skip to content
         </a>
       
@@ -179,7 +175,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Design Philosophy
+              Vendored Third-Party Linear Algebra Dependencies
             
           </span>
         </div>
@@ -320,8 +316,6 @@
         <div class="md-main__inner md-grid">
           
             
-              
-                
               
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
@@ -512,20 +506,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -546,7 +538,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -561,35 +553,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Design Philosophy
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
         
   
   
@@ -605,35 +572,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#bottom-line" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Bottom line
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -794,9 +732,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -804,6 +740,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+  
+    
   
   
     <label class="md-nav__title" for="__toc">
@@ -813,10 +751,215 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#bottom-line" class="md-nav__link">
+  <a href="#design-philosophy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bottom line
+        Design Philosophy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#library-classification-header-only-vs-compiled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Library Classification: Header-Only vs Compiled
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Library Classification: Header-Only vs Compiled">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#licensing-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Licensing &amp; Compliance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vendoring-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vendoring Policy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vendoring Policy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-vendoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why vendoring?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#future-direction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future direction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-cadence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update cadence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#library-selection-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Library selection criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#armadillo-v1267-v1526-header-only-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Armadillo: v12.6.7 → v15.2.6 Header-Only Migration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Armadillo: v12.6.7 → v15.2.6 Header-Only Migration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Motivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#business-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Business impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-blaslapack-are-still-needed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When BLAS/LAPACK are still needed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#systemic-risk-other-libraries-and-cmake-4x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Systemic Risk: Other Libraries and CMake 4.x
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#future-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future Work
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommendations-for-downstream-consumers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommendations for Downstream Consumers
       
     </span>
   </a>
@@ -837,51 +980,301 @@
               <article class="md-content__inner md-typeset">
                 
                   
-  
 
 
 
-
-  <h1>Design Philosophy</h1>
-
-<p>H5CPP is designed as a <strong>thin modern C++ layer over the native HDF5 handle model</strong>, not as a replacement object system. Its goal is to reduce boilerplate, improve readability, and make HDF5 feel natural in modern C++ — <strong>without cutting users off from the underlying HDF5 C API</strong>.</p>
-<p>Many wrapper libraries take the opposite approach: they reduce boilerplate by imposing a private object model, and once you adopt it, getting back to the underlying system becomes awkward or impossible. H5CPP was built to avoid that trap. With one deliberate exception, <strong>all H5CPP handle types are fully binary compatible with native HDF5 C API handles</strong>, remaining aligned with the underlying <code>hid_t</code> model rather than inventing a disconnected runtime identity for files, groups, datasets, dataspaces, datatypes, references, or property lists. The deliberate exception is <code>h5::pt_t</code>, a higher-level packet-table abstraction introduced where a dedicated wrapper genuinely improves usability.</p>
-<p>This design keeps mixed C and C++ usage straightforward, preserves the relevance of existing HDF5 documentation and expertise, and supports incremental adoption in existing codebases. It also means that H5CPP reduces abstraction lock-in in the technical sense, while the <strong>MIT license</strong> removes it in the legal one. For infrastructure libraries that tend to live for years inside research platforms, market-data pipelines, simulation engines, and HPC systems, that is a design choice with long-term consequences.</p>
+<h1 id="vendored-third-party-linear-algebra-dependencies">Vendored Third-Party Linear Algebra Dependencies</h1>
+<blockquote>
+<p><strong>Audience:</strong> This guide is for downstream packagers, CI maintainers, and H5CPP users choosing which linear algebra adapter to depend on.</p>
+</blockquote>
+<p>H5CPP provides optional adapters for popular C++ linear algebra libraries, allowing seamless HDF5 I/O for matrix, vector, and array types. The adapters are located in <code>h5cpp/H5M*.hpp</code> and the corresponding library sources are vendored under <code>thirdparty/</code>.</p>
+<h2 id="design-philosophy">Design Philosophy</h2>
+<p>Our goal is to <strong>prove that linear algebra objects work with H5CPP I/O</strong>, not to build or ship full-featured linear algebra distributions. H5CPP adapters only need a small, stable subset of each library's API:</p>
+<ul>
+<li><code>data()</code> / <code>memptr()</code> — raw pointer access to contiguous storage</li>
+<li><code>size()</code> / <code>n_elem</code>, <code>n_rows</code>, <code>n_cols</code> — dimension queries</li>
+<li><code>ctor(dims)</code> — constructors that allocate from dimensions</li>
+<li><code>begin()</code> / <code>end()</code> — iterator access (where applicable)</li>
+</ul>
+<p>Because our surface area is so small, many libraries that traditionally ship as compiled libraries can be used in <strong>header-only mode</strong>. This eliminates CMake build-time complexity, avoids version-lock issues with obsolete <code>cmake_minimum_required</code> declarations, and removes cross-platform wrapper-library headaches. The result is faster CI, fewer system-package dependencies, and reduced support burden.</p>
 <hr />
-<div class="flex gap-4 w-full">
-<div class="w-1/2 border border-solid border-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col">
-<div class="bg-gray-400 text-white px-4 h-9 rounded-t flex items-center">
-<p><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="m99.3 256.1 69.4-119.9c-5.6-12.2-8.8-25.8-8.8-40.2 0-53 43-96 96-96s96 43 96 96c0 14.3-3.1 27.9-8.8 40.2l44.4 76.7c-23.1 26-53.7 45.1-88.4 53.8L256 191.9l-68.1 117.6c21.5 6.8 44.3 10.5 68.1 10.5 70.7 0 133.8-32.7 174.9-84 11.1-13.8 31.2-16 45-5s16 31.2 5 45C428.2 341.8 347 384 256.1 384c-35.4 0-69.4-6.4-100.7-18.1l-56.7 97.8c-4.7 8.1-11.7 14.7-20.1 18.9l-55.4 27.7c-5 2.5-10.9 2.2-15.6-.7S0 501.5 0 496v-55.4c0-8.4 2.2-16.7 6.5-24.1l60-103.7c-12.8-11.2-24.6-23.5-35.3-36.8-11.1-13.8-8.8-33.9 5-45s33.9-8.8 45 5c5.7 7.1 11.8 13.8 18.2 20.1zm281.8 151.8c32.5-13 62.4-31 88.9-52.9l35.6 61.5c4.2 7.3 6.5 15.6 6.5 24.1V496c0 5.5-2.9 10.7-7.6 13.6s-10.6 3.2-15.6.7l-55.4-27.7c-8.4-4.2-15.4-10.8-20.1-18.9zM256 128a32 32 0 1 0 0-64 32 32 0 1 0 0 64"/></svg></span> What H5CPP Adds</p>
-</div>
-<div class="p-4 flex-1">
+<h2 id="library-classification-header-only-vs-compiled">Library Classification: Header-Only vs Compiled</h2>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Vendored Version</th>
+<th>H5CPP Adapter</th>
+<th>Build Mode</th>
+<th>Header-Only?</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Eigen3</strong></td>
+<td>v3.4.0</td>
+<td><code>H5Meigen.hpp</code></td>
+<td><code>INTERFACE</code></td>
+<td>✅ Yes</td>
+<td>By design. Pure templates, no compiled runtime.</td>
+</tr>
+<tr>
+<td><strong>Blaze</strong></td>
+<td>v3.8</td>
+<td><code>H5Mblaze.hpp</code></td>
+<td><code>INTERFACE</code></td>
+<td>✅ Yes</td>
+<td>By design. Pure templates, no compiled runtime.</td>
+</tr>
+<tr>
+<td><strong>Boost.uBLAS</strong></td>
+<td>v1.74.0</td>
+<td><code>H5Mublas.hpp</code></td>
+<td><code>INTERFACE</code></td>
+<td>✅ Yes</td>
+<td>By design. Header-only subset of Boost.</td>
+</tr>
+<tr>
+<td><strong>Armadillo</strong></td>
+<td><strong>v15.2.6</strong></td>
+<td><code>H5Marma.hpp</code></td>
+<td><code>INTERFACE</code></td>
+<td>✅ <strong>Yes</strong>¹</td>
+<td><code>ARMA_DONT_USE_WRAPPER</code> disables the BLAS/LAPACK wrapper library. Headers contain fallback implementations for basic operations (creation, element access, <code>memptr()</code>, <code>print()</code>). Verified by compile-and-run test without linking BLAS/LAPACK.</td>
+</tr>
+<tr>
+<td><strong>Blitz++</strong></td>
+<td>v1.0.2</td>
+<td><code>H5Mblitz.hpp</code></td>
+<td>Compiled (<code>libblitz.a</code>)</td>
+<td>❌ No</td>
+<td>Requires <code>globals.cpp</code> (global variable instantiation) and a generated <code>bzconfig.h</code> produced by its CMake configure step.</td>
+</tr>
+<tr>
+<td><strong>dlib</strong></td>
+<td>v19.24</td>
+<td><code>H5Mdlib.hpp</code></td>
+<td>Compiled (<code>libdlib.a</code>)</td>
+<td>❌ No</td>
+<td>Matrix headers pull in ODR-violation check symbols (<code>USER_ERROR__inconsistent_build_configuration__see_dlib_faq_*</code>) that require linking the compiled <code>libdlib</code>.</td>
+</tr>
+<tr>
+<td><strong>IT++</strong></td>
+<td>v4.3.1</td>
+<td><code>H5Mitpp.hpp</code></td>
+<td><strong>Disabled</strong></td>
+<td>❌ No</td>
+<td>Adapter code exists in <code>h5cpp/H5Mitpp.hpp</code> but is excluded from all CMake targets and test suites. It is not compiled or installed. Disabled because upstream v4.3.1 uses the <code>register</code> keyword extensively, which was removed in C++17, causing build failures with GCC 14.</td>
+</tr>
+</tbody>
+</table>
+<p>¹ <strong>BLAS/LAPACK still required</strong> for high-performance linear algebra operations (matrix multiplication, inversion, SVD, eigenvalue decomposition) if exercised by downstream code. H5CPP examples do not use these paths.</p>
+<h3 id="summary">Summary</h3>
 <ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 15H6l7-14v8h5l-7 14z"/></svg></span> reduces descriptor and cleanup boilerplate</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> makes HDF5 code easier to read and maintain</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10.5 15.97.41 2.44c-.26.14-.68.27-1.24.39-.57.13-1.24.2-2.01.2-2.21-.04-3.87-.7-4.98-1.96Q1 15.135 1 12.21c.05-2.31.72-4.08 2-5.32C4.32 5.64 5.96 5 7.94 5c.75 0 1.4.07 1.94.19s.94.25 1.2.4l-.58 2.49-1.06-.34c-.4-.1-.86-.15-1.39-.15-1.16-.01-2.12.36-2.87 1.1-.76.73-1.15 1.85-1.18 3.34 0 1.36.37 2.42 1.08 3.2.71.77 1.71 1.17 2.99 1.18l1.33-.12c.43-.08.79-.19 1.1-.32M11 11h2V9h2v2h2v2h-2v2h-2v-2h-2zm7 0h2V9h2v2h2v2h-2v2h-2v-2h-2z"/></svg></span> fits naturally into modern C++ templates, containers, and RAII</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10 17-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9m-6-8L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5z"/></svg></span> improves safety through scoped resource management</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9zm6.82 6L12 12.72 5.18 9 12 5.28zM17 16l-5 2.72L7 16v-3.73L12 15l5-2.73z"/></svg></span> keeps existing HDF5 knowledge immediately useful</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 3h14a2 2 0 0 1 2 2v7.08a6 6 0 0 0-4.32.92H12v4h1.08c-.11.68-.11 1.35 0 2H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2m0 4v4h6V7zm8 0v4h6V7zm-8 6v4h6v-4zm11.94 5.5h2v-4h2v4h2l-3 3z"/></svg></span> introduces higher-level abstractions such as <code>h5::pt_t</code> only where they provide clear value</li>
+<li><strong>4 of 7 libraries</strong> are already or can be header-only (Eigen3, Blaze, uBLAS, Armadillo).</li>
+<li><strong>3 libraries genuinely need compiled libraries</strong> (Blitz++, dlib, IT++).</li>
+<li>IT++ is <strong>disabled</strong> due to upstream C++17 incompatibility.</li>
 </ul>
-</div>
-</div>
-<div class="w-1/2 border border-solid border-gray-300 rounded-lg shadow-lg overflow-hidden flex flex-col">
-<div class="bg-gray-400 text-white px-4 h-9 rounded-t flex items-center">
-<p><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> What H5CPP Preserves</p>
-</div>
-<div class="p-4 flex-1">
+<hr />
+<h2 id="licensing-compliance">Licensing &amp; Compliance</h2>
+<p>H5CPP itself is distributed under the <strong>MIT License</strong>. Each vendored library retains its original license.</p>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>License</th>
+<th>Copyleft</th>
+<th>Vendored Path</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Armadillo</td>
+<td>Apache-2.0</td>
+<td>No</td>
+<td><code>thirdparty/armadillo/</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Blaze</td>
+<td>BSD-3-Clause</td>
+<td>No</td>
+<td><code>thirdparty/blaze/</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Blitz++</td>
+<td>Artistic-2.0 <strong>or</strong> BSD <strong>or</strong> LGPL-3.0+</td>
+<td>Yes (LGPL option)</td>
+<td><code>thirdparty/blitz/</code></td>
+<td>Triple-licensed; choose the license that best fits your distribution policy.</td>
+</tr>
+<tr>
+<td>dlib</td>
+<td>BSL-1.0</td>
+<td>No</td>
+<td><code>thirdparty/dlib/</code></td>
+<td>Boost Software License</td>
+</tr>
+<tr>
+<td>Eigen3</td>
+<td>MPL-2.0</td>
+<td>Weak</td>
+<td><code>thirdparty/eigen3/</code></td>
+<td>File-level copyleft</td>
+</tr>
+<tr>
+<td>IT++</td>
+<td>GPL-3.0+</td>
+<td><strong>Strong</strong></td>
+<td><code>thirdparty/itpp/</code></td>
+<td><strong>Disabled by default.</strong> If you require a fully non-copyleft build, ensure IT++ sources are excluded from your distribution.</td>
+</tr>
+<tr>
+<td>Boost.uBLAS</td>
+<td>BSL-1.0</td>
+<td>No</td>
+<td><code>thirdparty/ublas/</code></td>
+<td>Boost Software License</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>For Distribution Packagers:</strong> H5CPP vendors these libraries solely so that examples compile out-of-the-box without system package manager dependencies. The core <code>h5cpp/</code> headers do not depend on any third-party linear algebra library. If your distribution policy prohibits vendored dependencies, the <code>thirdparty/</code> directory may be removed; the adapter headers in <code>h5cpp/H5M*.hpp</code> are self-contained and will compile against system packages when the corresponding headers are available on the include path.</p>
+</blockquote>
+<hr />
+<h2 id="vendoring-policy">Vendoring Policy</h2>
+<h3 id="why-vendoring">Why vendoring?</h3>
+<p>Vendoring guarantees that H5CPP examples compile out-of-the-box on any platform with a C++17 compiler and CMake 3.22+, without requiring users to install Eigen3, Armadillo, or Blaze through apt, Homebrew, vcpkg, or Conan. This is especially important for CI reproducibility and for users evaluating H5CPP for the first time.</p>
+<h3 id="future-direction">Future direction</h3>
+<p>Future releases may add <code>H5CPP_USE_SYSTEM_&lt;LIB&gt;</code> CMake options (e.g., <code>H5CPP_USE_SYSTEM_EIGEN3</code>) to allow builds against system packages when available. The default will remain vendored to preserve the zero-dependency experience.</p>
+<h3 id="update-cadence">Update cadence</h3>
+<p>Vendored dependencies are reviewed quarterly. Security-critical updates are applied within 30 days of upstream release. Header-only libraries are preferred for new adapters because they eliminate compiled-library maintenance overhead.</p>
+<h3 id="library-selection-criteria">Library selection criteria</h3>
+<p>A new linear algebra adapter is considered when the target library meets at least two of the following:</p>
+<ol>
+<li><strong>Popularity:</strong> Top-tier usage in C++ scientific computing (GitHub stars, Conan/vcpkg downloads, citation count).</li>
+<li><strong>Active maintenance:</strong> Upstream releases within the last 24 months.</li>
+<li><strong>Low build complexity:</strong> Header-only preferred; compiled library acceptable only if build is CMake-native and cross-platform.</li>
+<li><strong>User demand:</strong> Explicit request via GitHub issue with demonstrated use case.</li>
+</ol>
+<hr />
+<h2 id="armadillo-v1267-v1526-header-only-migration">Armadillo: v12.6.7 → v15.2.6 Header-Only Migration</h2>
+<h3 id="motivation">Motivation</h3>
+<p>Armadillo v12.6.7's <code>CMakeLists.txt</code> declared <code>cmake_minimum_required(VERSION 2.8.12)</code>, which CMake 4.x (shipped on macOS via Homebrew) rejects outright. This broke macOS CI runners. Rather than patch the obsolete minimum version in-place, we upgraded to the latest upstream release and switched to header-only usage.</p>
+<h3 id="business-impact">Business impact</h3>
 <ul>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1M8 13h8v-2H8zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 5-5 5 5 0 0 0-5-5"/></svg></span> direct interoperability with the native HDF5 C API</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg></span> alignment with the native <code>hid_t</code> handle model</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17v2h6v-2zM3 5v2h10V5zm10 16v-2h8v-2h-8v-2h-2v6zM7 9v2H3v2h4v2h2V9zm14 4v-2H11v2zm-6-4h2V7h4V5h-4V3h-2z"/></svg></span> access to low-level property-list tuning and layout control</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3C7.58 3 4 4.79 4 7v10c0 1.2 1.06 2.27 2.73 3h10.54c1.67-.73 2.73-1.8 2.73-3V7c0-2.21-3.58-4-8-4m6 14c0 .5-2.13 2-6 2s-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23zm0-4.55c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2 6 1.5 6 2-2.13 2-6 2M7 22h2v2H7zm8 0h2v2h-2zm-4 0h2v2h-2z"/></svg></span> use of advanced dataset and datatype features without wrapper lock-in</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21 9-4-4v3h-7v2h7v3M7 11l-4 4 4 4v-3h7v-2H7z"/></svg></span> straightforward incremental adoption in existing HDF5 codebases</li>
-<li><span class="twemoji icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 10a3.04 3.04 0 0 1 3-3 3.04 3.04 0 0 1 3 3 3.04 3.04 0 0 1-3 3 3.04 3.04 0 0 1-3-3m3 9 4 1v-3.08A7.54 7.54 0 0 1 12 18a7.54 7.54 0 0 1-4-1.08V20m4-16a5.78 5.78 0 0 0-4.24 1.74A5.78 5.78 0 0 0 6 10a5.78 5.78 0 0 0 1.76 4.23A5.78 5.78 0 0 0 12 16a5.78 5.78 0 0 0 4.24-1.77A5.78 5.78 0 0 0 18 10a5.78 5.78 0 0 0-1.76-4.26A5.78 5.78 0 0 0 12 4m8 6a8 8 0 0 1-.57 2.8A7.8 7.8 0 0 1 18 15.28V23l-6-2-6 2v-7.72A7.9 7.9 0 0 1 4 10a7.68 7.68 0 0 1 2.33-5.64A7.73 7.73 0 0 1 12 2a7.73 7.73 0 0 1 5.67 2.36A7.68 7.68 0 0 1 20 10"/></svg></span> MIT-licensed use in open-source, research, commercial, and internal systems</li>
+<li>Eliminated a CMake 4.x configuration failure on macOS CI runners.</li>
+<li>Removed the need for CMake version pinning workarounds in CI.</li>
+<li>Reduced vendored Armadillo footprint from ~1,000+ files (including docs, tests, examples, MEX interface, and wrapper source) to ~650 headers (~6.7 MB as of v15.2.6).</li>
 </ul>
-</div>
-</div>
-</div>
-<h2 id="bottom-line">Bottom line</h2>
-<p>H5CPP was <strong>designed</strong> to make HDF5 easier to use <strong>without replacing the native model</strong> beneath it. That is the core design decision: modern C++ ergonomics on top, native HDF5 semantics underneath.</p>
+<h3 id="what-changed">What changed</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Before (v12.6.7)</th>
+<th>After (v15.2.6)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Distribution</td>
+<td>Full source: CMake, docs, examples, <code>src/wrapper*.cpp</code>, tests, MEX interface</td>
+<td>Headers only: <code>include/armadillo</code> + <code>include/armadillo_bits/</code></td>
+</tr>
+<tr>
+<td>Build</td>
+<td><code>add_subdirectory(v12.6.7)</code> → builds <code>libarmadillo</code> wrapper library</td>
+<td><code>add_library(libarmadillo INTERFACE)</code> with <code>ARMA_DONT_USE_WRAPPER</code></td>
+</tr>
+<tr>
+<td>CMake minimum</td>
+<td><code>2.8.12</code> (breaks CMake 4.x)</td>
+<td>N/A — no CMake sub-build</td>
+</tr>
+<tr>
+<td>Linking</td>
+<td>Examples link <code>libarmadillo</code> (transitively pulls BLAS/LAPACK)</td>
+<td>Examples link <code>libarmadillo</code> (INTERFACE target; provides includes + compile definition)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="verification">Verification</h3>
+<ul>
+<li>✅ <code>examples-arma</code> (CTest target) compiles and links.</li>
+<li>✅ <code>examples-reference</code> (CTest target) compiles, links, and runs correctly.</li>
+<li>✅ <code>examples-nbit</code> (CTest target) compiles and links.</li>
+<li>✅ Standalone test (<code>arma::mat</code>, <code>M.ones()</code>, <code>M.print()</code>, <code>M.begin()</code>, <code>memptr()</code>) compiles and runs without BLAS/LAPACK.</li>
+<li>✅ CMake configure succeeds (no <code>cmake_minimum_required</code> error).</li>
+</ul>
+<h3 id="when-blaslapack-are-still-needed">When BLAS/LAPACK are still needed</h3>
+<p><code>ARMA_DONT_USE_WRAPPER</code> only affects whether Armadillo uses its runtime wrapper library. Operations that internally call BLAS/LAPACK (matrix multiplication, inversion, SVD, eigenvalue decomposition, etc.) still require linking <code>-lblas -llapack</code> (or <code>-framework Accelerate</code> on macOS) if used by downstream code. H5CPP's examples do not exercise these paths.</p>
+<p>If your downstream code needs high-performance linear algebra from Armadillo, link BLAS/LAPACK explicitly:</p>
+<div class="language-cmake highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">BLAS</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">find_package</span><span class="p">(</span><span class="s">LAPACK</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">my_target</span><span class="w"> </span><span class="s">BLAS::BLAS</span><span class="w"> </span><span class="s">LAPACK::LAPACK</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="systemic-risk-other-libraries-and-cmake-4x">Systemic Risk: Other Libraries and CMake 4.x</h2>
+<p>Armadillo was the first vendored library to break on CMake 4.x, but it may not be the last. Blitz++ (v1.0.2) and dlib (v19.24) also declare legacy <code>cmake_minimum_required</code> versions in their own build systems. Because H5CPP builds these libraries via <code>execute_process()</code> during the CMake configure step, they are vulnerable to the same CMake 4.x rejection.</p>
+<p><strong>Mitigation plan:</strong></p>
+<ul>
+<li><strong>Blitz++:</strong> Adapter deprecated. Will be removed in a future release unless a maintainer steps forward. Upstream development has ceased.</li>
+<li><strong>dlib:</strong> Candidate for upgrade to v20.x, which may have a higher <code>cmake_minimum_required</code>. Tracked as future work.</li>
+</ul>
+<hr />
+<h2 id="future-work">Future Work</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Status</th>
+<th>Owner / Tracking</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Blitz++ adapter removal</td>
+<td>Planned</td>
+<td><a href="https://github.com/vargalabs/h5cpp/issues/150">#150</a> — Adapter deprecated. Will be removed in a subsequent release unless a maintainer steps forward.</td>
+</tr>
+<tr>
+<td>dlib upgrade to v20.x</td>
+<td>Under evaluation</td>
+<td>Evaluate v20.x for Clang 20 compatibility (<code>-Wmissing-template-arg-list-after-template-kw</code>) and CMake 4.x support.</td>
+</tr>
+<tr>
+<td>IT++ adapter removal</td>
+<td>Planned</td>
+<td>Remove disabled <code>H5Mitpp.hpp</code> and <code>thirdparty/itpp/</code> from source tree in next major release.</td>
+</tr>
+<tr>
+<td>System-package fallback</td>
+<td>Proposed</td>
+<td>Add <code>H5CPP_USE_SYSTEM_*</code> CMake options for header-only libraries (Eigen3, Blaze, Armadillo).</td>
+</tr>
+<tr>
+<td>CMake 4.x CI gate</td>
+<td>Proposed</td>
+<td>Add a CI matrix entry with the latest CMake version to catch <code>cmake_minimum_required</code> breakages early.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="recommendations-for-downstream-consumers">Recommendations for Downstream Consumers</h2>
+<p>If you are building H5CPP from source and want to use the vendored linear algebra libraries:</p>
+<ol>
+<li><strong>Header-only libraries</strong> (Eigen3, Blaze, uBLAS, Armadillo) require no extra system dependencies for basic I/O.</li>
+<li><strong>Compiled libraries</strong> (Blitz++, dlib) are built automatically during the CMake configure step; no manual intervention is required.</li>
+<li><strong>Armadillo consumers</strong> who need high-performance linear algebra (matrix multiply, decompositions) should link BLAS/LAPACK explicitly in their own build.</li>
+</ol>
+<hr />
+<p><em>Document version: 2026-05-12. Armadillo version references are current as of v15.2.6.</em></p>
+
+
 
 
 
@@ -890,14 +1283,7 @@
 
 
   
-  
 
-
-
-  
-
-
-  
 
 
 
