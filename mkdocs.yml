@@ -1,17 +1,22 @@
 site_name: VargaLABS
-site_url: https://steven-varga.ca
+site_url: https://vargalabs.github.io/h5cpp
 site_description: H5CPP — Easy-to-Use Modern C++ Templates for Serial and Parallel HDF5
 site_author: Steven Varga
 copyright: Steven Varga
 docs_dir: docs
 nav:
   - Overview: index.md
-  - Design: design.md
+  - Getting Started:
+    - Supported Types: stl.md
+    - Compiler Tool: compiler.md
+    - Examples: examples.md
   - Architecture:
-    - HDF5 concepts: architecture-core.md
+    - Design Philosophy: design.md
+    - HDF5 Concepts: architecture-core.md
     - I/O Operations: architecture-io.md
-
-  - Examples: examples.md
+    - Type System: architecture-types.md
+    - Linalg & STL: architecture-integration.md
+    - Parallel I/O: architecture-parallelism.md
 theme:
   name: material
   custom_dir: docs/overrides
