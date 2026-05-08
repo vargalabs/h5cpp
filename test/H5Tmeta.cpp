@@ -5,6 +5,7 @@
 #include <h5cpp/H5Tmeta.hpp>
 #include <array>
 #include <complex>
+#include <cstddef>
 #include <deque>
 #include <forward_list>
 #include <initializer_list>
@@ -618,4 +619,153 @@ TEST_CASE("H5Tmeta storage_representation leaves bitfield and opaque pointer sto
     CHECK(h5::meta::storage_representation_v<const void*> == h5::meta::storage_representation_t::unsupported);
     CHECK(h5::meta::storage_representation_v<void**> == h5::meta::storage_representation_t::unsupported);
     CHECK(h5::meta::storage_representation_v<const void**> == h5::meta::storage_representation_t::unsupported);
+}
+
+struct point87_t        { double x; double y; };
+struct vl_point87_t     { double x; const char* label; };
+struct nested87_inner_t { int a; float b; };
+struct nested87_outer_t { nested87_inner_t inner; double z; };
+
+namespace h5::meta {
+
+template <> struct is_reflected_compound_t<point87_t> : std::true_type {};
+template <> struct compiler_meta_t<point87_t> {
+    static constexpr std::uint32_t version = metadata_version;
+    struct x_t : field_descriptor_t<point87_t, double> {
+        static constexpr const char* name() noexcept { return "x"; }
+        static constexpr std::size_t offset = offsetof(point87_t, x);
+    };
+    struct y_t : field_descriptor_t<point87_t, double> {
+        static constexpr const char* name() noexcept { return "y"; }
+        static constexpr std::size_t offset = offsetof(point87_t, y);
+    };
+    using fields_t = std::tuple<x_t, y_t>;
+};
+
+template <> struct is_reflected_compound_t<vl_point87_t> : std::true_type {};
+template <> struct compiler_meta_t<vl_point87_t> {
+    static constexpr std::uint32_t version = metadata_version;
+    struct x_t : field_descriptor_t<vl_point87_t, double> {
+        static constexpr const char* name() noexcept { return "x"; }
+        static constexpr std::size_t offset = offsetof(vl_point87_t, x);
+    };
+    struct label_t : field_descriptor_t<vl_point87_t, const char*> {
+        static constexpr const char* name() noexcept { return "label"; }
+        static constexpr std::size_t offset = offsetof(vl_point87_t, label);
+    };
+    using fields_t = std::tuple<x_t, label_t>;
+};
+
+template <> struct is_reflected_compound_t<nested87_inner_t> : std::true_type {};
+template <> struct compiler_meta_t<nested87_inner_t> {
+    static constexpr std::uint32_t version = metadata_version;
+    struct a_t : field_descriptor_t<nested87_inner_t, int> {
+        static constexpr const char* name() noexcept { return "a"; }
+        static constexpr std::size_t offset = offsetof(nested87_inner_t, a);
+    };
+    struct b_t : field_descriptor_t<nested87_inner_t, float> {
+        static constexpr const char* name() noexcept { return "b"; }
+        static constexpr std::size_t offset = offsetof(nested87_inner_t, b);
+    };
+    using fields_t = std::tuple<a_t, b_t>;
+};
+
+template <> struct is_reflected_compound_t<nested87_outer_t> : std::true_type {};
+template <> struct compiler_meta_t<nested87_outer_t> {
+    static constexpr std::uint32_t version = metadata_version;
+    struct inner_t : field_descriptor_t<nested87_outer_t, nested87_inner_t> {
+        static constexpr const char* name() noexcept { return "inner"; }
+        static constexpr std::size_t offset = offsetof(nested87_outer_t, inner);
+    };
+    struct z_t : field_descriptor_t<nested87_outer_t, double> {
+        static constexpr const char* name() noexcept { return "z"; }
+        static constexpr std::size_t offset = offsetof(nested87_outer_t, z);
+    };
+    using fields_t = std::tuple<inner_t, z_t>;
+};
+
+} // namespace h5::meta
+
+TEST_CASE("H5Tmeta storage_traits_t arithmetic scalars are supported") {
+    static_assert(h5::meta::storage_traits_t<int>::supported);
+    static_assert(h5::meta::is_transport_contiguous_v<int>);
+    static_assert(h5::meta::is_transport_contiguous_v<double>);
+    static_assert(h5::meta::is_transport_contiguous_v<float>);
+    static_assert(h5::meta::is_transport_contiguous_v<bool>);
+    static_assert(h5::meta::is_transport_contiguous_v<long long>);
+    static_assert(h5::meta::is_transport_contiguous_v<const int>);
+    static_assert(h5::meta::is_transport_contiguous_v<int&>);
+    static_assert(!h5::meta::storage_traits_t<void*>::supported);
+    CHECK(true);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t vl text is supported but transport segmented") {
+    static_assert(h5::meta::storage_traits_t<std::string>::supported);
+    static_assert(!h5::meta::is_transport_contiguous_v<std::string>);
+    static_assert(!h5::meta::is_transport_contiguous_v<std::string_view>);
+    static_assert(!h5::meta::is_transport_contiguous_v<char*>);
+    static_assert(!h5::meta::is_transport_contiguous_v<const char*>);
+    CHECK(true);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t fixed char array is supported and contiguous") {
+    static_assert(h5::meta::storage_traits_t<char[8]>::supported);
+    static_assert(h5::meta::is_transport_contiguous_v<char[8]>);
+    static_assert(h5::meta::is_transport_contiguous_v<const char[8]>);
+    CHECK(true);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t array types inherit element contiguity") {
+    static_assert(h5::meta::storage_traits_t<int[3]>::supported);
+    static_assert(h5::meta::is_transport_contiguous_v<int[3]>);
+    static_assert(h5::meta::is_transport_contiguous_v<double[2][4]>);
+    static_assert((h5::meta::is_transport_contiguous_v<std::array<int, 3>>));
+    static_assert(!(h5::meta::is_transport_contiguous_v<std::array<std::string, 3>>));
+    CHECK(true);
+}
+
+TEST_CASE("H5Tmeta is_reflected_compound_t defaults false specializes to true") {
+    static_assert(!h5::meta::is_reflected_compound_t<int>::value);
+    static_assert(!h5::meta::is_reflected_compound_t<std::string>::value);
+    static_assert(h5::meta::is_reflected_compound_t<point87_t>::value);
+    static_assert(h5::meta::is_reflected_compound_t<vl_point87_t>::value);
+    CHECK(true);
+}
+
+TEST_CASE("H5Tmeta field_descriptor_t exposes owner_type and field_type") {
+    using x_desc = h5::meta::compiler_meta_t<point87_t>::x_t;
+    static_assert(std::is_same_v<x_desc::owner_type, point87_t>);
+    static_assert(std::is_same_v<x_desc::field_type, double>);
+    using label_desc = h5::meta::compiler_meta_t<vl_point87_t>::label_t;
+    static_assert(std::is_same_v<label_desc::field_type, const char*>);
+    CHECK(true);
+}
+
+TEST_CASE("H5Tmeta field_descriptor_t name and offset are accessible at compile time") {
+    using meta_t = h5::meta::compiler_meta_t<point87_t>;
+    static_assert(meta_t::version == h5::meta::metadata_version);
+    static_assert(std::tuple_size_v<meta_t::fields_t> == 2);
+
+    CHECK(std::string(meta_t::x_t::name()) == "x");
+    CHECK(std::string(meta_t::y_t::name()) == "y");
+    CHECK(meta_t::x_t::offset == offsetof(point87_t, x));
+    CHECK(meta_t::y_t::offset == offsetof(point87_t, y));
+}
+
+TEST_CASE("H5Tmeta storage_traits_t all-scalar compound is supported and contiguous") {
+    static_assert(h5::meta::storage_traits_t<point87_t>::supported);
+    static_assert(h5::meta::is_transport_contiguous_v<point87_t>);
+    CHECK(true);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t compound with vl field is not contiguous") {
+    static_assert(h5::meta::storage_traits_t<vl_point87_t>::supported);
+    static_assert(!h5::meta::is_transport_contiguous_v<vl_point87_t>);
+    CHECK(true);
+}
+
+TEST_CASE("H5Tmeta storage_traits_t recursive contiguity across nested compounds") {
+    static_assert(h5::meta::is_transport_contiguous_v<nested87_inner_t>);
+    static_assert(h5::meta::is_transport_contiguous_v<nested87_outer_t>);
+    CHECK(true);
 }
