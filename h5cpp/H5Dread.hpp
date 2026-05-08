@@ -30,8 +30,8 @@ namespace h5 {
  	*/ 
 
 	template<class T, class... args_t>
-	inline typename std::enable_if<!std::is_same<T,char**>::value,
-	void>::type read( const h5::ds_t& ds, T* ptr, args_t&&... args ) try {
+	inline std::enable_if_t<!std::is_same_v<T,char**>,
+	void> read( const h5::ds_t& ds, T* ptr, args_t&&... args ) try {
 		using tcount   = typename arg::tpos<const h5::count_t&,const args_t&...>;
 		static_assert( tcount::present, "h5::count_t{ ... } must be specified" );
 		static_assert( utils::is_supported<T>, "error: " H5CPP_supported_elementary_types );
@@ -193,8 +193,8 @@ namespace h5 {
 	* \par_ds \par_offset \par_stride \par_count \par_block \tpar_T \returns_object 
  	*/
 	template<class T, class D=typename impl::decay<T>::type, class... args_t>
-	inline typename std::enable_if<!std::is_same<D,std::string>::value,
-	T>::type read( const h5::ds_t& ds, args_t&&... args ){
+	inline std::enable_if_t<!std::is_same_v<D,std::string>,
+	T> read( const h5::ds_t& ds, args_t&&... args ){
 	// if 'count' isn't specified use the one inside the hdf5 file, once it is obtained
 	// collapse dimensions to the rank of the object returned and create this T object
 	// update the content by we're good to go, since stride and offset can be processed in the 
@@ -234,8 +234,8 @@ namespace h5 {
  	*/
 
 	template<class T, class D=typename impl::decay<T>::type, class... args_t>
-	inline typename std::enable_if<std::is_same<D,std::string>::value,
-	T>::type read( const h5::ds_t& ds, args_t&&... args ){
+	inline std::enable_if_t<std::is_same_v<D,std::string>,
+	T> read( const h5::ds_t& ds, args_t&&... args ){
 	// if 'count' isn't specified use the one inside the hdf5 file, once it is obtained
 	// collapse dimensions to the rank of the object returned and create this T object
 	// update the content by we're good to go, since stride and offset can be processed in the 
