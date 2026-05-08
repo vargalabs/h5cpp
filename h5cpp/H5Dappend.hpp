@@ -48,8 +48,8 @@ namespace h5 {
                 this->chunk_dims[i] = pt.chunk_dims[i];
                 this->count[i] = pt.count[i];
             }
-            // since pt.rank = 0, we can skip 
-			return pt;
+            // since pt.rank = 0, we can skip
+			return *this;
 		}
 		friend std::ostream& ::operator<<(std::ostream &os, const h5::pt_t& pt);
 		template<class T>
@@ -155,13 +155,30 @@ inline void h5::pt_t::append( const std::string& ref ) {
 	h5::sp_t file_space{H5Dget_space( static_cast<::hid_t>(ds) )};
 	h5::select_all( mem_space );
 	H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, NULL, &block, &count);
-	
-	H5Dwrite( static_cast<hid_t>( ds ), 
+
+	H5Dwrite( static_cast<hid_t>( ds ),
 		dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
 	n = 0;
 }
-/*
-*/
+template <>
+inline void h5::pt_t::append( const char* const& ref ) {
+	static_cast<const char**>( ptr )[n++] = ref;
+	if( n != N ) return;
+
+	*offset = *current_dims;
+	*current_dims += *chunk_dims;
+	h5::set_extent(ds, current_dims);
+
+	hsize_t block = 1, count = n;
+	h5::sp_t mem_space{H5Screate_simple(rank, &count, nullptr )};
+	h5::sp_t file_space{H5Dget_space( static_cast<::hid_t>(ds) )};
+	h5::select_all( mem_space );
+	H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, NULL, &block, &count);
+
+	H5Dwrite( static_cast<hid_t>( ds ),
+		dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
+	n = 0;
+}
 
 
 template<class T> inline typename std::enable_if< h5::impl::is_scalar<T>::value && !std::is_pointer<T>::value,
@@ -224,9 +241,7 @@ inline
 void h5::pt_t::flush(){
 	if( n == 0 ) return;
 	*offset = *current_dims;
-	*current_dims += *current_dims % *chunk_dims;
-	hsize_t r=1; for(hsize_t i=1; i<rank; i++) r*=chunk_dims[i];
-	*current_dims += (n % r) ? n / r + 1 : n / r;
+	*current_dims += *chunk_dims;
 	h5::set_extent(ds, current_dims);
 
 	if( H5Tis_variable_str(this->dt)) {
