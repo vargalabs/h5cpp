@@ -92,16 +92,11 @@ namespace h5 {
 		space_id =  tmax_dims::present ?
 			std::move( h5::create_simple( current_dims, max_dims ) ) :  std::move( h5::create_simple( current_dims ) );
 		using element_t = typename impl::decay<T>::type;
-		// create a base HDF5 type from decayed template T type, then over write this 
-		// if custom dt_t<T> type is present in the passed `args...`
-		h5::dt_t<element_t> type;
-		// since the underlying type is binary compatible with `hid_t` we are circumventing 
-		// H5CPP compile time enforced type system; as impl::decay<T> ?!= T !!!
+		h5::meta::resolved_type_t<element_t> type;
 		if constexpr (tdt_t::present)
-			type = static_cast<hid_t>(
-				std::get<tdt_t::value>( std::forward_as_tuple( args...))); 
-		// we have the correct type, either the decayed one, or the custom	
-		return h5::createds(fd, dataset_path, type, space_id, lcpl, dcpl, dapl);
+			type = static_cast<::hid_t>(
+				std::get<tdt_t::value>( std::forward_as_tuple( args...)));
+		return h5::createds(fd, dataset_path, static_cast<::hid_t>(type), space_id, lcpl, dcpl, dapl);
 	} catch( const std::runtime_error& err ) {
 			throw h5::error::io::dataset::create( err.what() );
 	}

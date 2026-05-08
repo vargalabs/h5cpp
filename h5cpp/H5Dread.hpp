@@ -60,7 +60,7 @@ namespace h5 {
 
 		if( rank != count.rank ) throw h5::error::io::dataset::read( H5CPP_ERROR_MSG( h5::error::msg::rank_mismatch ));
 		using element_t = typename impl::decay<T>::type;
-		h5::dt_t<element_t> mem_type;
+		h5::meta::resolved_type_t<element_t> mem_type;
 		hid_t dapl = h5::get_access_plist( ds );
 		if( H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT) ){
 			h5::impl::pipeline_t<impl::basic_pipeline_t>* filters;

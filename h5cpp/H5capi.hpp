@@ -166,11 +166,10 @@ namespace h5 {
 		H5CPP_CHECK_NZ(
 				H5Pset_chunk(static_cast<::hid_t>(dcpl), chunk.rank, *chunk ), std::runtime_error,	 h5::error::msg::set_chunk );
 	}
-	template<class T>
-	inline h5::ds_t createds(const h5::fd_t& fd, const std::string& path, const h5::dt_t<T>& type,
+	inline h5::ds_t createds(const h5::fd_t& fd, const std::string& path, ::hid_t type_id,
 		  const h5::sp_t& sp, const h5::lcpl_t& lcpl, const h5::dcpl_t& dcpl, const h5::dapl_t& dapl ){
 		hid_t ds;
-		H5CPP_CHECK_NZ(( ds = H5Dcreate2( static_cast<hid_t>(fd), path.data(), type, static_cast<hid_t>(sp),
+		H5CPP_CHECK_NZ(( ds = H5Dcreate2( static_cast<hid_t>(fd), path.data(), type_id, static_cast<hid_t>(sp),
 								static_cast<hid_t>(lcpl), static_cast<hid_t>(dcpl), static_cast<hid_t>( dapl )  )),
 			   std::runtime_error,	h5::error::msg::create_dataset );
 		//FIXME: hack to carry prop over
@@ -184,8 +183,8 @@ namespace h5 {
 					// grab pointer to uninitialized pipeline
 					h5::impl::pipeline_t<impl::basic_pipeline_t>* ptr;
 					H5Pget(dapl, H5CPP_DAPL_HIGH_THROUGHPUT, &ptr);
-					hid_t type_id = H5Dget_type( static_cast<::hid_t>(ds) );
-					size_t element_size = H5Tget_size( type_id );
+					hid_t elem_type_id = H5Dget_type( static_cast<::hid_t>(ds) );
+					size_t element_size = H5Tget_size( elem_type_id );
 					ptr->set_cache(dcpl, element_size);
 				}
 				break;
@@ -193,6 +192,12 @@ namespace h5 {
 		}
 		ds_.dapl = static_cast<::hid_t>( dapl );
 		return ds_;
+	}
+
+	template<class T>
+	inline h5::ds_t createds(const h5::fd_t& fd, const std::string& path, const h5::dt_t<T>& type,
+		  const h5::sp_t& sp, const h5::lcpl_t& lcpl, const h5::dcpl_t& dcpl, const h5::dapl_t& dapl ){
+		return h5::createds(fd, path, static_cast<::hid_t>(type), sp, lcpl, dcpl, dapl);
 	}
 
 	inline void * get_fill_value(const h5::dcpl_t& dcpl, const h5::dt_t<void*>& type, size_t size){

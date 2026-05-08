@@ -6,6 +6,7 @@
 #define H5CPP_TALL_HPP
 #include <type_traits>
 #include <ostream>
+#include <optional>
 #include <vector>
 #include <initializer_list>
 
@@ -190,5 +191,41 @@ inline std::ostream& operator<<(std::ostream &os, const h5::dt_t<T>& dt) {
 
 	return os;
 }
+
+namespace h5::meta {
+// Dispatch wrapper: prefers new type engine when supported, falls back to dt_t<T> for
+// unregistered compound types registered via H5CPP_REGISTER_STRUCT.
+template <class T>
+class resolved_type_t {
+    ::hid_t id_;
+    bool    owns_;
+    std::optional<h5::dt_t<T>> fallback_;
+public:
+    resolved_type_t() noexcept {
+        if constexpr (storage_traits_t<T>::supported) {
+            id_   = storage_traits_t<T>::create_type();
+            owns_ = storage_traits_t<T>::owns_handle;
+        } else {
+            fallback_.emplace();
+            id_   = static_cast<::hid_t>(*fallback_);
+            owns_ = false;
+        }
+    }
+    ~resolved_type_t() noexcept {
+        if (owns_ && H5Iis_valid(id_)) H5Tclose(id_);
+    }
+    operator ::hid_t() const noexcept { return id_; }
+    // Allows H5Dcreate's custom dt_t override path: type = static_cast<hid_t>(custom_dt)
+    resolved_type_t& operator=(::hid_t id) noexcept {
+        if (owns_ && H5Iis_valid(id_)) H5Tclose(id_);
+        fallback_.reset();
+        id_   = id;
+        owns_ = H5Iis_valid(id_);
+        return *this;
+    }
+    resolved_type_t(const resolved_type_t&) = delete;
+    resolved_type_t& operator=(const resolved_type_t&) = delete;
+};
+} // namespace h5::meta
 
 #endif
