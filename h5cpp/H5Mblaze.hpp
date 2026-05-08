@@ -18,6 +18,13 @@ namespace h5::blaze {
 			|| std::is_same_v<Object,rowvec<T>> ||  std::is_same_v<Object,colvec<T>>>;
 }
 
+namespace h5::meta {
+    template <class T> struct is_contiguous<h5::blaze::rowvec<T>> : std::true_type {};
+    template <class T> struct is_contiguous<h5::blaze::colvec<T>> : std::true_type {};
+    template <class T> struct is_contiguous<h5::blaze::rowmat<T>> : std::true_type {};
+    template <class T> struct is_contiguous<h5::blaze::colmat<T>> : std::true_type {};
+}
+
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
 	template <class T> struct decay<h5::blaze::rowvec<T>>{ using type = T; };
