@@ -30,13 +30,13 @@ namespace h5::meta::detail { // feature detection
     };
     // templated classes are tagged for identification 
     template <class T, class TagOrClass> struct is_value_type <T, TagOrClass,
-        typename std::enable_if<has_value_type<T>::value>::type > {
-        constexpr static bool value = std::is_convertible<typename detail::get_value_type<T>::type, TagOrClass>::value;
+        std::enable_if_t<has_value_type<T>::value> > {
+        constexpr static bool value = std::is_convertible_v<typename detail::get_value_type<T>::type, TagOrClass>;
     };
     // enum classes can't be tagged, nor pods may need tagging
     template <class T, class TagOrClass> struct is_value_type <T, TagOrClass,
-        typename std::enable_if<!has_value_type<T>::value>::type > {
-        constexpr static bool value = std::is_convertible<T, TagOrClass>::value;
+        std::enable_if_t<!has_value_type<T>::value> > {
+        constexpr static bool value = std::is_convertible_v<T, TagOrClass>;
     };
 }
 
@@ -59,8 +59,8 @@ namespace h5::meta {
     template <typename T> using has_cbegin = compat::is_detected<cbegin_f, T>;
     template <typename T> using has_cend = compat::is_detected<cend_f, T>;
 
-    template <typename T> using has_iterator = std::integral_constant<bool, has_begin<T>::value && has_end<T>::value >;
-    template <typename T> using has_const_iterator = std::integral_constant<bool, has_cbegin<T>::value && has_cend<T>::value >;
+    template <typename T> using has_iterator = std::bool_constant<has_begin<T>::value && has_end<T>::value >;
+    template <typename T> using has_const_iterator = std::bool_constant<has_cbegin<T>::value && has_cend<T>::value >;
 }
 
 // STATIC FOR_LOOP
@@ -95,7 +95,7 @@ namespace h5::meta {
         // recursive case 
         template<class S, int P, int C, class not_used, class Head, class... Tail >
         struct tuple_pos<S, P,C,false, not_used, std::tuple<Head, Tail...>>
-            : tuple_pos<S, P+1,C, std::is_same<Head,S>::value, Head, std::tuple<Tail...>> { };
+            : tuple_pos<S, P+1,C, std::is_same_v<Head,S>, Head, std::tuple<Tail...>> { };
         // match case 
         template<class S, int P, int C, class Type, class... Tail >
         struct tuple_pos<S, P,C,true, Type, std::tuple<Tail...>>
@@ -131,7 +131,7 @@ namespace h5::arg {
         // recursive case 
         template<class S, int P, int C, class not_used, class Head, class... Tail >
         struct tuple_pos<S, P,C,false, not_used, std::tuple<Head, Tail...>>
-            : tuple_pos<S, P+1,C, std::is_convertible<Head,S>::value, Head, std::tuple<Tail...>> { };
+            : tuple_pos<S, P+1,C, std::is_convertible_v<Head,S>, Head, std::tuple<Tail...>> { };
         // match case 
         template<class S, int P, int C, class Type, class... Tail >
         struct tuple_pos<S, P,C,true, Type, std::tuple<Tail...>>

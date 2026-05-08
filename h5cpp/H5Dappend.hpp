@@ -64,12 +64,12 @@ namespace h5 {
 		void init(const h5::ds_t& ds_);
 		void flush();
 
-		template<class T> inline typename std::enable_if<h5::impl::is_scalar<T>::value,
-		void>::type append( const T* ptr );
-		template<class T> inline typename std::enable_if< h5::impl::is_scalar<T>::value && !std::is_pointer<T>::value,
-		void>::type append( const T& ref );
-		template<class T> inline typename std::enable_if< !h5::impl::is_scalar<T>::value,
-		void>::type append( const T& ref );
+		template<class T> inline std::enable_if_t<h5::impl::is_scalar<T>::value,
+		void> append( const T* ptr );
+		template<class T> inline std::enable_if_t< h5::impl::is_scalar<T>::value && !std::is_pointer_v<T>,
+		void> append( const T& ref );
+		template<class T> inline std::enable_if_t< !h5::impl::is_scalar<T>::value,
+		void> append( const T& ref );
 
 		impl::pipeline_t<impl::basic_pipeline_t> pipeline;
 		h5::dxpl_t dxpl;
@@ -136,8 +136,8 @@ void h5::pt_t::init( const h5::ds_t& handle ){
 		throw h5::error::io::packet_table::misc( H5CPP_ERROR_MSG("CTOR: unable to create handle from dataset..."));
 	}
 }
-template<class T> inline typename std::enable_if< h5::impl::is_scalar<T>::value,
-void>::type h5::pt_t::append( const T* ptr ) try {
+template<class T> inline std::enable_if_t< h5::impl::is_scalar<T>::value,
+void> h5::pt_t::append( const T* ptr ) try {
 	//PTR: write directly chunk size from provided buffer/ptr
 	*offset = *current_dims;
 	*current_dims += *chunk_dims;
@@ -186,8 +186,8 @@ inline void h5::pt_t::append( const char* const& ref ) {
 }
 
 
-template<class T> inline typename std::enable_if< h5::impl::is_scalar<T>::value && !std::is_pointer<T>::value,
-void>::type h5::pt_t::append( const T& ref ) try {
+template<class T> inline std::enable_if_t< h5::impl::is_scalar<T>::value && !std::is_pointer_v<T>,
+void> h5::pt_t::append( const T& ref ) try {
 //SCALAR: store inbound data directly in pipeline cache
 	static_cast<T*>( ptr )[n++] = ref;
 	if( n != N ) return;
@@ -201,8 +201,8 @@ void>::type h5::pt_t::append( const T& ref ) try {
 	throw h5::error::io::dataset::append( err.what() );
 }
 
-template<class T> inline typename std::enable_if< !h5::impl::is_scalar<T>::value,
-void>::type h5::pt_t::append( const T& ref ) try {
+template<class T> inline std::enable_if_t< !h5::impl::is_scalar<T>::value,
+void> h5::pt_t::append( const T& ref ) try {
 	auto dims = impl::size( ref );
 
 	*offset = *current_dims;

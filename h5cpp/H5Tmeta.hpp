@@ -56,7 +56,7 @@ namespace h5::meta {
     template<class U, std::size_t N> struct rank<U*[N]> : public std::integral_constant<std::size_t, rank<U*>::value>{};
     template <size_t N> struct rank<char[N]> : public std::integral_constant<int,0>{}; // character literals
 
-    template<class T, int N, class... Ts> using is_rank = std::integral_constant<bool, rank<T, Ts...>::value == N >;
+    template<class T, int N, class... Ts> using is_rank = std::bool_constant<rank<T, Ts...>::value == N >;
     // helpers for is_rank<T>, don't need specialization, instead define 'rank'
     template<class T, class... Ts> using is_scalar = is_rank<T,0,Ts...>; // numerical | pod 
     template<class T, class... Ts> using is_vector = is_rank<T,1,Ts...>;
@@ -64,21 +64,19 @@ namespace h5::meta {
     template<class T, class... Ts> using is_cube   = is_rank<T,3,Ts...>;
 
     template <class T, class D=typename meta::decay<T>::type>
-    using is_string = typename std::integral_constant<bool,
-        std::is_same<T,std::basic_string<char>>::value || std::is_same<D, std::basic_string<char>>::value || 
-        std::is_same<T,std::basic_string<wchar_t>>::value || std::is_same<D, std::basic_string<wchar_t>>::value || 
-        std::is_same<T,std::basic_string<char16_t>>::value || std::is_same<D, std::basic_string<char16_t>>::value || 
-        std::is_same<T,std::basic_string<char32_t>>::value || std::is_same<D, std::basic_string<char32_t>>::value ||
-        std::is_same<T,std::basic_string_view<char>>::value || std::is_same<D, std::basic_string<char>>::value || 
-        std::is_same<T,std::basic_string_view<wchar_t>>::value || std::is_same<D, std::basic_string_view<wchar_t>>::value || 
-        std::is_same<T,std::basic_string_view<char16_t>>::value || std::is_same<D, std::basic_string_view<char16_t>>::value || 
-        std::is_same<T,std::basic_string_view<char32_t>>::value || std::is_same<D, std::basic_string_view<char32_t>>::value>;
+    using is_string = typename std::bool_constant<std::is_same_v<T,std::basic_string<char>> || std::is_same_v<D, std::basic_string<char>> || 
+        std::is_same_v<T,std::basic_string<wchar_t>> || std::is_same_v<D, std::basic_string<wchar_t>> || 
+        std::is_same_v<T,std::basic_string<char16_t>> || std::is_same_v<D, std::basic_string<char16_t>> || 
+        std::is_same_v<T,std::basic_string<char32_t>> || std::is_same_v<D, std::basic_string<char32_t>> ||
+        std::is_same_v<T,std::basic_string_view<char>> || std::is_same_v<D, std::basic_string<char>> || 
+        std::is_same_v<T,std::basic_string_view<wchar_t>> || std::is_same_v<D, std::basic_string_view<wchar_t>> || 
+        std::is_same_v<T,std::basic_string_view<char16_t>> || std::is_same_v<D, std::basic_string_view<char16_t>> || 
+        std::is_same_v<T,std::basic_string_view<char32_t>> || std::is_same_v<D, std::basic_string_view<char32_t>>>;
 
 
     /* Objects may reside in continuous memory region such as vectors, matrices, POD structures can be saved/loaded in a single transfer,
      * the rest needs to be handled on a member variable bases*/
-    template <class T, class... Ts> struct is_contiguous : std::integral_constant<bool,
-        std::is_trivial<T>::value && std::is_standard_layout<T>::value> {};
+    template <class T, class... Ts> struct is_contiguous : std::bool_constant<std::is_pod_v<T>> {};
     template <class T, class... Ts> struct is_contiguous <std::basic_string<T,Ts...>> : std::true_type {};
     template <class T, class... Ts> struct is_contiguous <std::basic_string_view<T,Ts...>> : std::true_type {};
     template <size_t N> struct is_contiguous <const char*[N]> : std::false_type {};
@@ -86,9 +84,9 @@ namespace h5::meta {
     template <class T> struct is_contiguous <std::complex<T>> : std::true_type{};
     template <class... Ts> struct is_contiguous <std::vector<bool,Ts...>> : std::false_type {};
     template <class T, class... Ts> struct is_contiguous <std::vector<T,Ts...>> :
-        std::integral_constant<bool, std::is_trivial<T>::value && std::is_standard_layout<T>::value>{};
+        std::bool_constant<std::is_pod_v<T>>{};
     template <class T, size_t N> struct is_contiguous <std::array<T,N>> :
-        std::integral_constant<bool, std::is_trivial<T>::value && std::is_standard_layout<T>::value>{};
+        std::bool_constant<std::is_pod_v<T>>{};
 
     template <class T, class... Ts> struct is_linalg : std::false_type {};
     template <class C, class T, class... Cs> struct is_valid : std::false_type {};
@@ -424,10 +422,10 @@ namespace h5::meta {
     // DEFAULT CASE
     template <class T> struct rank<T*>: public std::integral_constant<size_t,1>{};
     template <class T, class... Ts>
-        typename std::enable_if<!std::is_array<T>::value, const T*>::type data(const T& ref ){ return &ref; };
+        std::enable_if_t<!std::is_array_v<T>, const T*> data(const T& ref ){ return &ref; };
     template <class T, class... Ts> 
-        typename std::enable_if<meta::has_size<T>::value, std::array<size_t,1>
-        >::type size(const T& ref){
+        std::enable_if_t<meta::has_size<T>::value, std::array<size_t,1>
+        > size(const T& ref){
         return {ref.size()};
     };
     template <class T, size_t N>

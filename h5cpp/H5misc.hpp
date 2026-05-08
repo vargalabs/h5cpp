@@ -26,8 +26,8 @@ namespace h5{
 
 namespace h5::utils {
 	template <class T>
-	static constexpr bool is_supported = std::is_class<T>::value | std::is_arithmetic<T>::value;
-	//static constexpr bool is_supported = std::is_pod<T>::value && std::is_class<T>::value | std::is_arithmetic<T>::value;
+	static constexpr bool is_supported = std::is_class_v<T> | std::is_arithmetic_v<T>;
+	//static constexpr bool is_supported = std::is_pod_v<T> && std::is_class_v<T> | std::is_arithmetic_v<T>;
 }
 
 
@@ -104,7 +104,7 @@ namespace h5::impl {
     struct free {
         template <typename T>
         void operator()(T *p) const {
-            using T_ = typename std::remove_const<T>::type;
+            using T_ = std::remove_const_t<T>;
             std::free( const_cast<T_*>(p) );
         }
     };
