@@ -10,23 +10,6 @@
 #include <memory>
 #include <cstdlib>
 
-/* rules:
- * h5::id_t{ hid_t } or direct initialization  doesn't increment reference count
- */ 
-namespace h5::impl {
-	struct free {
-		template <typename T>
-		void operator()(T *p) const {
-			using T_ = typename std::remove_const<T>::type;
-			std::free( const_cast<T_*>(p) );
-		}
-	};
-
-	template <typename T>
-		using unique_ptr = std::unique_ptr<T,h5::impl::free>;
-}
-
-
 namespace h5 {
 	inline ::hid_t get_access_plist( const ds_t& ds ){
 		return ds.dapl;
