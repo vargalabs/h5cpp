@@ -26,10 +26,10 @@ namespace h5::meta {
     template<class T,int R,int C, int O> struct is_contiguous<::Eigen::Array<T,R,C,O>> : std::true_type {};
 }
 
-namespace h5 { namespace impl {
+namespace h5::impl {
 	// 1.) object -> H5T_xxx
-	template<class T,int R,int C, int O> struct decay<::Eigen::Matrix<T,R,C,O>>{ typedef T type; };
-	template<class T,int R,int C, int O> struct decay<::Eigen::Array<T,R,C,O>>{ typedef T type; };
+	template<class T,int R,int C, int O> struct decay<::Eigen::Matrix<T,R,C,O>>{ using type = T; };
+	template<class T,int R,int C, int O> struct decay<::Eigen::Array<T,R,C,O>>{ using type = T; };
 	    
 
 	// TODO: remove const_cast
@@ -118,7 +118,7 @@ namespace h5 { namespace impl {
 		static inline ::Eigen::Array<T,R,C,::Eigen::ColMajor,MR,MC> ctor( std::array<size_t,2> dims ){
 			return ::Eigen::Array<T,R,C,::Eigen::ColMajor,MR,MC>( dims[1], dims[0] );
 	}};
-}}
+}
 
 #endif
 #endif
