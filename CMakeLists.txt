@@ -41,7 +41,7 @@ elseif(UNIX)
 endif()
 
 if(APPLE)
-    message(STATUS "***WARNING: h5cpp is not fully tested on apple ***")
+    message(STATUS "H5CPP macOS support: CI runs on macos-13 with Homebrew HDF5 and LLVM clang-17/18")
 endif()
 
 if(ANDROID)

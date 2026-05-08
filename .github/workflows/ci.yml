@@ -5,164 +5,238 @@ on:
     branches: [ release, staging ]
   pull_request:
     branches: [ release, staging ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: ${{ matrix.os }} / ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
-        compiler: [gcc-13, gcc-14, gcc-15, clang-17, clang-18, clang-19, clang-20]
         include:
+          # Ubuntu 22.04
+          - os: ubuntu-22.04
+            compiler: gcc-13
+            compiler-version: 13
+ 
+          - os: ubuntu-22.04
+            compiler: clang-17
+            compiler-version: 17
+ 
+          - os: ubuntu-22.04
+            compiler: clang-18
+            compiler-version: 18
+ 
+          - os: ubuntu-22.04
+            compiler: clang-19
+            compiler-version: 19
+ 
+          - os: ubuntu-22.04
+            compiler: clang-20
+            compiler-version: 20
+ 
+          # Ubuntu 24.04
+          - os: ubuntu-24.04
+            compiler: gcc-13
+            compiler-version: 13
+ 
+          - os: ubuntu-24.04
+            compiler: gcc-14
+            compiler-version: 14
+ 
+          - os: ubuntu-24.04
+            compiler: clang-18
+            compiler-version: 18
+ 
+          - os: ubuntu-24.04
+            compiler: clang-19
+            compiler-version: 19
+ 
+          - os: ubuntu-24.04
+            compiler: clang-20
+            compiler-version: 20
+ 
+          # macOS native toolchain
+          - os: macos-15
+            compiler: apple-clang
+            compiler-version: native
+ 
+          # Windows native toolchain
           - os: windows-latest
             compiler: msvc
-          - compiler: gcc-13
-            compiler-version: 13
-          - compiler: gcc-14
-            compiler-version: 14
-          - compiler: gcc-15
-            compiler-version: 15
-          - compiler: clang-17
-            compiler-version: 17
-          - compiler: clang-18
-            compiler-version: 18
-          - compiler: clang-19
-            compiler-version: 19
-          - compiler: clang-20
-            compiler-version: 20
+            compiler-version: native
+ 
     steps:
-    - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-    - name: Set badge output directory
-      id: path
-      shell: bash
-      run: |
-        if [[ "${GITHUB_REF##*/}" == "staging" ]]; then
-          echo "dir=status-staging" >> $GITHUB_OUTPUT
-        else
-          echo "dir=status" >> $GITHUB_OUTPUT
-        fi
+      - name: Install system dependencies on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euxo pipefail
 
-    - name: Check skip list
-      id: skip_check
-      shell: bash
-      run: |
-        skip_list=(
-          "ubuntu-22.04:gcc-14"
-          "ubuntu-22.04:gcc-15"
-          "ubuntu-24.04:gcc-15"
-          "ubuntu-24.04:clang-17"
-          "macos-13:gcc-13"
-          "macos-13:gcc-14"
-          "macos-13:gcc-15"          
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build wget gnupg lsb-release software-properties-common libhdf5-dev
+
+      - name: Setup compiler on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          compiler="${{ matrix.compiler }}"
+          version="${{ matrix.compiler-version }}"
+
+          if [[ "$compiler" == clang-* ]]; then
+            wget https://apt.llvm.org/llvm.sh
+            chmod +x llvm.sh
+            sudo ./llvm.sh "$version" all
+
+            echo "CC=$(command -v clang-$version)" >> "$GITHUB_ENV"
+            echo "CXX=$(command -v clang++-$version)" >> "$GITHUB_ENV"
+
+            clang++-"$version" --version
+
+          elif [[ "$compiler" == gcc-* ]]; then
+            sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+            sudo apt-get update
+            sudo apt-get install -y "gcc-$version" "g++-$version"
+
+            echo "CC=$(command -v gcc-$version)" >> "$GITHUB_ENV"
+            echo "CXX=$(command -v g++-$version)" >> "$GITHUB_ENV"
+
+            g++-"$version" --version
+          fi
+
+      - name: Install system dependencies on macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          brew update
+          brew install cmake ninja hdf5
+
+          HDF5_PREFIX="$(brew --prefix hdf5)"
+
+          echo "CC=clang" >> "$GITHUB_ENV"
+          echo "CXX=clang++" >> "$GITHUB_ENV"
+
+          echo "HDF5_ROOT=${HDF5_PREFIX}" >> "$GITHUB_ENV"
+          echo "CMAKE_PREFIX_PATH=${HDF5_PREFIX}" >> "$GITHUB_ENV"
+          echo "HDF5_C_COMPILER_EXECUTABLE=${HDF5_PREFIX}/bin/h5cc" >> "$GITHUB_ENV"
+
+          if [[ -x "${HDF5_PREFIX}/bin/h5c++" ]]; then
+            echo "HDF5_CXX_COMPILER_EXECUTABLE=${HDF5_PREFIX}/bin/h5c++" >> "$GITHUB_ENV"
+          fi
+
+          echo "${HDF5_PREFIX}/bin" >> "$GITHUB_PATH"
+
+          clang++ --version
+          brew info hdf5
+          test -x "${HDF5_PREFIX}/bin/h5cc"
+          "${HDF5_PREFIX}/bin/h5cc" -show
+
+          if [[ -x "${HDF5_PREFIX}/bin/h5c++" ]]; then
+            "${HDF5_PREFIX}/bin/h5c++" -show
+          fi
+
+          ls -la "${HDF5_PREFIX}/include/hdf5.h"
+          ls -la "${HDF5_PREFIX}/lib"/libhdf5*
+
+      - name: Install dependencies on Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          vcpkg install hdf5
+
+      - name: Configure
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          cmake_args=(
+            -S .
+            -B build
+            -G Ninja
+            -DCMAKE_C_COMPILER="$CC"
+            -DCMAKE_CXX_COMPILER="$CXX"
+            -DCMAKE_CXX_STANDARD=23
+            -DCMAKE_BUILD_TYPE=Release
+            -DH5CPP_BUILD_TESTS=ON
           )
 
-        combo="${{ matrix.os }}:${{ matrix.compiler }}"
-        echo "Checking combination: $combo"
-        for skip in "${skip_list[@]}"; do
-          if [[ "$combo" == "$skip" ]]; then
-            echo "SKIP_COMPILE=true" >> "$GITHUB_ENV"
-            exit 0
+          if [[ -n "${HDF5_ROOT:-}" ]]; then
+            cmake_args+=(-DHDF5_ROOT="$HDF5_ROOT")
           fi
-        done
-          echo "SKIP_COMPILE=false" >> "$GITHUB_ENV"
 
-    - name: Setup compiler on macOS
-      if: ${{ env.SKIP_COMPILE == 'false' && runner.os == 'macOS' }}
-      run: |
-        brew install llvm@${{ matrix.compiler-version }}
-        echo "CC=$(brew --prefix llvm@${{ matrix.compiler-version }})/bin/clang" >> $GITHUB_ENV
-        echo "CXX=$(brew --prefix llvm@${{ matrix.compiler-version }})/bin/clang++" >> $GITHUB_ENV
+          if [[ -n "${CMAKE_PREFIX_PATH:-}" ]]; then
+            cmake_args+=(-DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH")
+          fi
 
-    - name: Setup compiler on Linux
-      if: ${{ env.SKIP_COMPILE == 'false' && runner.os == 'Linux' }}
-      run: |
-        compiler="${{ matrix.compiler }}"
-        version="${{ matrix.compiler-version }}"
+          if [[ -n "${HDF5_C_COMPILER_EXECUTABLE:-}" ]]; then
+            cmake_args+=(-DHDF5_C_COMPILER_EXECUTABLE="$HDF5_C_COMPILER_EXECUTABLE")
+          fi
 
-        if [[ "$compiler" == clang-* ]]; then
-          sudo apt-get update
-          sudo apt-get install -y wget gnupg lsb-release software-properties-common
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo DISTRIB_CODENAME=jammy ./llvm.sh "$version" all
-          CXX="clang++-$version"
-        elif [[ "$compiler" == gcc-* ]]; then
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-          sudo apt-get update
-          sudo apt-get install -y g++-"$version"
-          CXX="g++-$version"
-        else
-          CXX="g++"
-        fi
+          if [[ -n "${HDF5_CXX_COMPILER_EXECUTABLE:-}" ]]; then
+            cmake_args+=(-DHDF5_CXX_COMPILER_EXECUTABLE="$HDF5_CXX_COMPILER_EXECUTABLE")
+          fi
 
-        which "$CXX" || { echo "$CXX not found in PATH"; exit 1; }
-        echo "CXX=$(which $CXX)" >> "$GITHUB_ENV"
+          cmake "${cmake_args[@]}"
 
-    - name: Checkout
-      uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
+      - name: Configure Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          cmake -S . -B build `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake" `
+            -DCMAKE_CXX_STANDARD=23 `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DH5CPP_BUILD_TESTS=ON `
+            -DH5CPP_BUILD_EXAMPLES=ON
 
-    - name: Install system dependencies on macOS
-      if: ${{ env.SKIP_COMPILE == 'false' && runner.os == 'macOS' }}
-      run: |
-        brew update
-        brew install hdf5
+      - name: Build
+        run: cmake --build build --parallel --config Release
 
-    - name: Install system dependencies on Linux
-      if: ${{ env.SKIP_COMPILE == 'false' && runner.os == 'Linux' }}
-      run: sudo apt-get update && sudo apt-get install -y libhdf5-dev
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
 
+      - name: Record Badge Status
+        if: always()
+        shell: bash
+        run: |
+          set -euxo pipefail
 
-    - name: Install dependencies (Windows)
-      if: runner.os == 'Windows'
-      run: vcpkg install hdf5
-      shell: powershell
+          mkdir -p badge-status
 
-    - name: Configure
-      if: env.SKIP_COMPILE == 'false' && runner.os != 'Windows'
-      run: cmake -B build -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_STANDARD=23 -DCMAKE_BUILD_TYPE=Release -DH5CPP_BUILD_TESTS=ON
+          cat <<EOF > "badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json"
+          {
+            "os": "${{ matrix.os }}",
+            "compiler": "${{ matrix.compiler }}",
+            "status": "${{ job.status }}"
+          }
+          EOF
 
-    - name: Configure (Windows)
-      if: runner.os == 'Windows'
-      run: cmake -B build -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake" -DCMAKE_BUILD_TYPE=Release -DH5CPP_BUILD_TESTS=ON -DH5CPP_BUILD_EXAMPLES=ON
-      shell: powershell
-
-    - name: Build
-      if: env.SKIP_COMPILE == 'false'
-      run: cmake --build build --parallel --config Release
-
-    - name: Test
-      if: env.SKIP_COMPILE == 'false'
-      run: ctest --test-dir build -C Release --output-on-failure
-
-    - name: Record Badge Status
-      if: always()
-      shell: bash
-      run: |
-        mkdir -p badge-status
-        status="skipped"
-        if [[ "$SKIP_COMPILE" == "false" ]]; then
-          status="${{ job.status }}"
-        fi
-
-        cat <<EOF > badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
-        {
-          "os": "${{ matrix.os }}",
-          "compiler": "${{ matrix.compiler }}",
-          "status": "$status"
-        }
-        EOF
-    - name: Upload Status Artifact
-      if: always()
-      uses: actions/upload-artifact@v6
-      with:
-        name: status-${{ matrix.os }}-${{ matrix.compiler }}
-        path: badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
+      - name: Upload Status Artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: status-${{ matrix.os }}-${{ matrix.compiler }}
+          path: badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
 
   generate-badges:
     name: Generate SVG Badges
@@ -171,48 +245,89 @@ jobs:
     if: always()
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install badge tools
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          sudo apt-get update
+          sudo apt-get install -y jq curl
 
       - name: Determine badge target directory
         id: badge_dir
+        shell: bash
         run: |
+          set -euxo pipefail
+
           if [[ "${GITHUB_REF##*/}" == "staging" ]]; then
-            echo "dir=badges-staging" >> $GITHUB_OUTPUT
+            echo "dir=badges-staging" >> "$GITHUB_OUTPUT"
           else
-            echo "dir=badges" >> $GITHUB_OUTPUT
+            echo "dir=badges" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Download all badge status artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: badge-status
           pattern: status-*
           merge-multiple: true
 
       - name: Generate SVG Badges
+        shell: bash
         run: |
-          mkdir -p ${{ steps.badge_dir.outputs.dir }}
+          set -euxo pipefail
+
+          mkdir -p "${{ steps.badge_dir.outputs.dir }}"
+
+          shopt -s nullglob
+
           for f in badge-status/*.json; do
-            echo "file name: $f"
-            [[ ! -f "$f" ]] && continue
-            os=$(jq -r .os "$f")
-            compiler=$(jq -r .compiler "$f")
-            status=$(jq -r .status "$f")
+            echo "Processing $f"
 
-            color="gray"
-            symbol="□"
+            os="$(jq -r .os "$f")"
+            compiler="$(jq -r .compiler "$f")"
+            status="$(jq -r .status "$f")"
 
-            [[ "$status" == "success" ]] && { symbol="✔"; color="green"; prefix="ok"; }
-            [[ "$status" == "skipped" ]] && { symbol="○"; color="gray";  prefix="na"; }
-            [[ "$status" == "failure" ]] && { symbol="✘"; color="red";   prefix="failed"; }
+            prefix="unknown"
+            symbol="%3F"
+            color="lightgrey"
+
+            case "$status" in
+              success)
+                prefix="ok"
+                symbol="%E2%9C%94"
+                color="green"
+                ;;
+              failure)
+                prefix="failed"
+                symbol="%E2%9C%98"
+                color="red"
+                ;;
+              cancelled)
+                prefix="cancelled"
+                symbol="%E2%97%87"
+                color="yellow"
+                ;;
+              skipped)
+                prefix="na"
+                symbol="%E2%97%8B"
+                color="gray"
+                ;;
+            esac
 
             label="${os}-${compiler}"
             badge="${{ steps.badge_dir.outputs.dir }}/${label}.svg"
-            echo "https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg  $badge"
-            curl -s "https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg" -o "$badge"
+            url="https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg"
+
+            echo "$url -> $badge"
+            curl -fsSL "$url" -o "$badge"
           done
 
       - name: Upload badge folder to GitHub Pages
+        if: github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -222,6 +337,7 @@ jobs:
   coverage:
     name: coverage / ubuntu-24.04 / gcc-14
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
 
     env:
       CC: gcc-14
@@ -230,19 +346,31 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Install dependencies
         shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake ninja-build gcc-14 g++-14 lcov libhdf5-dev
+          set -euxo pipefail
 
-      - name: Configure
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            gcc-14 \
+            g++-14 \
+            lcov \
+            libhdf5-dev
+
+      - name: Clean and configure
         shell: bash
         run: |
+          set -euxo pipefail
+
+          rm -rf build coverage*.info
+
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_CXX_STANDARD=17 \
@@ -255,18 +383,39 @@ jobs:
       - name: Build
         shell: bash
         run: |
+          set -euxo pipefail
           cmake --build build --parallel
 
       - name: Test
         shell: bash
         run: |
+          set -euxo pipefail
           ctest --test-dir build --output-on-failure --parallel
 
       - name: Capture coverage
         shell: bash
         run: |
-          lcov --gcov-tool /usr/bin/gcov-14 --rc geninfo_unexecuted_blocks=1 --directory build --capture --output-file coverage.full.info
-          lcov --gcov-tool /usr/bin/gcov-14 --remove coverage.full.info '/usr/*' '*/test/*' '*/thirdparty/*' '*/examples/*' --ignore-errors unused --output-file coverage.info
+          set -euxo pipefail
+
+          lcov \
+            --gcov-tool /usr/bin/gcov-14 \
+            --rc geninfo_unexecuted_blocks=1 \
+            --ignore-errors mismatch,inconsistent \
+            --no-function-coverage \
+            --directory build \
+            --capture \
+            --output-file coverage.full.info
+
+          lcov \
+            --gcov-tool /usr/bin/gcov-14 \
+            --remove coverage.full.info \
+            '/usr/*' \
+            '*/test/*' \
+            '*/thirdparty/*' \
+            '*/examples/*' \
+            --ignore-errors unused,mismatch,inconsistent \
+            --output-file coverage.info
+
           rm coverage.full.info
           lcov --gcov-tool /usr/bin/gcov-14 --list coverage.info
 
