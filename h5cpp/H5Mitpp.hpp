@@ -12,7 +12,7 @@ namespace h5::itpp {
 			using is_supported = std::bool_constant<std::is_same_v<Object,h5::itpp::rowmat<T>>>;
 }
 namespace h5::meta {
-    template <class T> struct is_contiguous<h5::itpp::rowmat<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::itpp::rowmat<T>> : std::true_type {};
 }
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
@@ -46,7 +46,7 @@ namespace h5::itpp {
 			using is_supported_v = std::bool_constant<std::is_same_v<Object,h5::itpp::rowvec<T>>>;
 }
 namespace h5::meta {
-    template <class T> struct is_contiguous<h5::itpp::rowvec<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::itpp::rowvec<T>> : std::true_type {};
 }
 namespace h5::impl {
 	template <class T> struct decay<h5::itpp::rowvec<T>>{ using type = T; };
