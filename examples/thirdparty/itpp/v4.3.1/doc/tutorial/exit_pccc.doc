@@ -1,0 +1,26 @@
+/*!
+\page exit_pccc EXIT chart of PCCCs
+
+This program computes the EXtrinsic Information Transfer (EXIT) chart for
+Parallel Concatenated Convolutional Codes (PCCCs) of coding rate 1/3. Actually the Transfer Characteristics
+(TCs) of the two SISO RSC modules used in the turbo decoder are computed at a given Signal to Noise Ratio (SNR).
+
+Reference: S. ten Brink, ''Convergence behavior of iteratively decoded parallel concatenated codes,`` IEEE Transactions on Communications, vol. 49, pp. 1727-1737, Oct. 2001
+
+\include exit_pccc.cpp
+
+When you run this program, the results (mutual a priori and extrinsic information, EbN0_dB, etc.) are saved into exit_pccc.it file.
+Using the following MATLAB script
+\code
+clear all
+itload('exit_pccc.it')
+plot(IA, IE, 'LineWidth', 3)
+hold on
+plot(IE_p, IA, 'LineWidth', 3)
+xlabel('I_A^{(up)}, I_E^{(low)}')
+ylabel('I_E^{(up)}, I_A^{(low)}')
+grid on
+title(['E_b/N_0 = ' num2str(EbN0_dB) ' dB'])
+\endcode
+the EXIT chart can be displayed.
+*/

@@ -1,0 +1,219 @@
+//=================================================================================================
+//
+//  Parameter file for the dense vector/dense vector inner product benchmark
+//
+//  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+//
+//  This file is part of the Blaze library. You can redistribute it and/or modify it under
+//  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+//  forms, with or without modification, are permitted provided that the following conditions
+//  are met:
+//
+//  1. Redistributions of source code must retain the above copyright notice, this list of
+//     conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice, this list
+//     of conditions and the following disclaimer in the documentation and/or other materials
+//     provided with the distribution.
+//  3. Neither the names of the Blaze development group nor the names of its contributors
+//     may be used to endorse or promote products derived from this software without specific
+//     prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+//  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+//  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+//  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+//  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+//  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+//  DAMAGE.
+//
+//=================================================================================================
+
+
+//=================================================================================================
+// This parameter file configures the dense vector/dense vector inner product benchmark runs.
+// The individual runs are specified via tuples of the form
+//
+//                                     ( <size> [, <steps>] ),
+//
+// where 'size' specifies the size of the two vectors and the optional parameter 'steps' specifies
+// the number of steps the benchmark is repeated. In case 'steps' is omitted, the number of steps
+// is automatically evaluated.
+//
+// Note that it is possible to use comments. A single-line comment can be started with '//', a
+// multiline commend can be started with '/*' and ended with '*/'.
+//=================================================================================================
+
+// Selected vector sizes
+(     100)
+(    1000)
+(   10000)
+(  100000)
+( 1000000)
+(10000000)
+
+// Logarithmic performance graph
+/*
+(       1)
+(       2)
+(       3)
+(       4)
+(       5)
+(       6)
+(       7)
+(       8)
+(       9)
+(      10)
+(      11)
+(      12)
+(      13)
+(      14)
+(      15)
+(      16)
+(      17)
+(      18)
+(      19)
+(      20)
+(      22)
+(      24)
+(      26)
+(      28)
+(      30)
+(      33)
+(      36)
+(      39)
+(      42)
+(      46)
+(      50)
+(      55)
+(      60)
+(      66)
+(      72)
+(      79)
+(      86)
+(      94)
+(     103)
+(     113)
+(     124)
+(     136)
+(     149)
+(     163)
+(     179)
+(     196)
+(     215)
+(     236)
+(     259)
+(     284)
+(     312)
+(     343)
+(     377)
+(     414)
+(     455)
+(     500)
+(     550)
+(     605)
+(     665)
+(     731)
+(     804)
+(     884)
+(     972)
+(    1069)
+(    1175)
+(    1292)
+(    1421)
+(    1563)
+(    1719)
+(    1890)
+(    2079)
+(    2286)
+(    2514)
+(    2765)
+(    3041)
+(    3345)
+(    3679)
+(    4046)
+(    4450)
+(    4895)
+(    5384)
+(    5922)
+(    6514)
+(    7165)
+(    7881)
+(    8669)
+(    9535)
+(   10488)
+(   11536)
+(   12689)
+(   13957)
+(   15352)
+(   16887)
+(   18575)
+(   20432)
+(   22475)
+(   24722)
+(   27194)
+(   29913)
+(   32904)
+(   36194)
+(   39813)
+(   43794)
+(   48173)
+(   52990)
+(   58289)
+(   64117)
+(   70528)
+(   77580)
+(   85338)
+(   93871)
+(  103258)
+(  113583)
+(  124941)
+(  137435)
+(  151178)
+(  166295)
+(  182924)
+(  201216)
+(  221337)
+(  243470)
+(  267817)
+(  294598)
+(  324057)
+(  356462)
+(  392108)
+(  431318)
+(  474449)
+(  521893)
+(  574082)
+(  631490)
+(  694639)
+(  764102)
+(  840512)
+(  924563)
+( 1017019)
+( 1118720)
+( 1230592)
+( 1353651)
+( 1489016)
+( 1637917)
+( 1801708)
+( 1981878)
+( 2180065)
+( 2398071)
+( 2637878)
+( 2901665)
+( 3191831)
+( 3511014)
+( 3862115)
+( 4248326)
+( 4673158)
+( 5140474)
+( 5654521)
+( 6219973)
+( 6841970)
+( 7526167)
+( 8278784)
+( 9106663)
+(10000000)
+*/

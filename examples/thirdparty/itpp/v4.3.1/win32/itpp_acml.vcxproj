@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C069ECD3-26E8-437C-8B20-3A5D68B22F2A}</ProjectGuid>
+    <RootNamespace>itpp_acml</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_build\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)_build\$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">itpp</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">itpp</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..;$(INCLUDE);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;HAVE_ACML;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(SolutionDir)\lib\itpp_debug.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..;$(INCLUDE);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN32;NDEBUG;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;HAVE_ACML;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(SolutionDir)\lib\itpp.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\itpp\base\bessel.cpp" />
+    <ClCompile Include="..\itpp\base\binary.cpp" />
+    <ClCompile Include="..\itpp\base\binfile.cpp" />
+    <ClCompile Include="..\itpp\base\converters.cpp" />
+    <ClCompile Include="..\itpp\base\copy_vector.cpp" />
+    <ClCompile Include="..\itpp\base\fastmath.cpp" />
+    <ClCompile Include="..\itpp\base\gf2mat.cpp" />
+    <ClCompile Include="..\itpp\base\help_functions.cpp" />
+    <ClCompile Include="..\itpp\base\itassert.cpp" />
+    <ClCompile Include="..\itpp\base\itcompat.cpp" />
+    <ClCompile Include="..\itpp\base\itfile.cpp" />
+    <ClCompile Include="..\itpp\base\mat.cpp" />
+    <ClCompile Include="..\itpp\base\matfunc.cpp" />
+    <ClCompile Include="..\itpp\base\operators.cpp" />
+    <ClCompile Include="..\itpp\base\parser.cpp" />
+    <ClCompile Include="..\itpp\base\random.cpp" />
+    <ClCompile Include="..\itpp\base\smat.cpp" />
+    <ClCompile Include="..\itpp\base\specmat.cpp" />
+    <ClCompile Include="..\itpp\base\svec.cpp" />
+    <ClCompile Include="..\itpp\base\timing.cpp" />
+    <ClCompile Include="..\itpp\base\vec.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\airy.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\chbevl.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\gamma.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\hyperg.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\i0.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\i1.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\iv.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\jv.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\k0.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\k1.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\kn.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\polevl.cpp" />
+    <ClCompile Include="..\itpp\base\bessel\struve.cpp" />
+    <ClCompile Include="..\itpp\base\algebra\cholesky.cpp" />
+    <ClCompile Include="..\itpp\base\algebra\det.cpp" />
+    <ClCompile Include="..\itpp\base\algebra\eigen.cpp" />
+    <ClCompile Include="..\itpp\base\algebra\inv.cpp" />
+    <ClCompile Include="..\itpp\base\algebra\ls_solve.cpp" />
+    <ClCompile Include="..\itpp\base\algebra\lu.cpp" />
+    <ClCompile Include="..\itpp\base\algebra\qr.cpp" />
+    <ClCompile Include="..\itpp\base\algebra\schur.cpp" />
+    <ClCompile Include="..\itpp\base\algebra\svd.cpp" />
+    <ClCompile Include="..\itpp\base\math\elem_math.cpp" />
+    <ClCompile Include="..\itpp\base\math\error.cpp" />
+    <ClCompile Include="..\itpp\base\math\integration.cpp" />
+    <ClCompile Include="..\itpp\base\math\log_exp.cpp" />
+    <ClCompile Include="..\itpp\base\math\misc.cpp" />
+    <ClCompile Include="..\itpp\base\math\trig_hyp.cpp" />
+    <ClCompile Include="..\itpp\comm\bch.cpp" />
+    <ClCompile Include="..\itpp\comm\channel.cpp" />
+    <ClCompile Include="..\itpp\comm\commfunc.cpp" />
+    <ClCompile Include="..\itpp\comm\convcode.cpp" />
+    <ClCompile Include="..\itpp\comm\crc.cpp" />
+    <ClCompile Include="..\itpp\comm\egolay.cpp" />
+    <ClCompile Include="..\itpp\comm\error_counters.cpp" />
+    <ClCompile Include="..\itpp\comm\exit.cpp" />
+    <ClCompile Include="..\itpp\comm\galois.cpp" />
+    <ClCompile Include="..\itpp\comm\hammcode.cpp" />
+    <ClCompile Include="..\itpp\comm\interleave.cpp" />
+    <ClCompile Include="..\itpp\comm\ldpc.cpp" />
+    <ClCompile Include="..\itpp\comm\llr.cpp" />
+    <ClCompile Include="..\itpp\comm\modulator.cpp" />
+    <ClCompile Include="..\itpp\comm\modulator_nd.cpp" />
+    <ClCompile Include="..\itpp\comm\ofdm.cpp" />
+    <ClCompile Include="..\itpp\comm\pulse_shape.cpp" />
+    <ClCompile Include="..\itpp\comm\punct_convcode.cpp" />
+    <ClCompile Include="..\itpp\comm\rec_syst_conv_code.cpp" />
+    <ClCompile Include="..\itpp\comm\reedsolomon.cpp" />
+    <ClCompile Include="..\itpp\comm\sequence.cpp" />
+    <ClCompile Include="..\itpp\comm\siso_dem.cpp" />
+    <ClCompile Include="..\itpp\comm\siso_eq.cpp" />
+    <ClCompile Include="..\itpp\comm\siso_mud.cpp" />
+    <ClCompile Include="..\itpp\comm\siso_nsc.cpp" />
+    <ClCompile Include="..\itpp\comm\siso_rsc.cpp" />
+    <ClCompile Include="..\itpp\comm\spread.cpp" />
+    <ClCompile Include="..\itpp\comm\stc.cpp" />
+    <ClCompile Include="..\itpp\comm\turbo.cpp" />
+    <ClCompile Include="..\itpp\srccode\audiofile.cpp" />
+    <ClCompile Include="..\itpp\srccode\gmm.cpp" />
+    <ClCompile Include="..\itpp\srccode\lpcfunc.cpp" />
+    <ClCompile Include="..\itpp\srccode\pnm.cpp" />
+    <ClCompile Include="..\itpp\srccode\vq.cpp" />
+    <ClCompile Include="..\itpp\srccode\vqtrain.cpp" />
+    <ClCompile Include="..\itpp\fixed\cfix.cpp" />
+    <ClCompile Include="..\itpp\fixed\cfixed.cpp" />
+    <ClCompile Include="..\itpp\fixed\fix.cpp" />
+    <ClCompile Include="..\itpp\fixed\fix_base.cpp" />
+    <ClCompile Include="..\itpp\fixed\fix_factory.cpp" />
+    <ClCompile Include="..\itpp\fixed\fix_functions.cpp" />
+    <ClCompile Include="..\itpp\fixed\fix_operators.cpp" />
+    <ClCompile Include="..\itpp\fixed\fixed.cpp" />
+    <ClCompile Include="..\itpp\protocol\events.cpp" />
+    <ClCompile Include="..\itpp\protocol\front_drop_queue.cpp" />
+    <ClCompile Include="..\itpp\protocol\packet_channel.cpp" />
+    <ClCompile Include="..\itpp\protocol\packet_generator.cpp" />
+    <ClCompile Include="..\itpp\protocol\selective_repeat.cpp" />
+    <ClCompile Include="..\itpp\protocol\tcp.cpp" />
+    <ClCompile Include="..\itpp\signal\fastica.cpp" />
+    <ClCompile Include="..\itpp\signal\filter.cpp" />
+    <ClCompile Include="..\itpp\signal\filter_design.cpp" />
+    <ClCompile Include="..\itpp\signal\freq_filt.cpp" />
+    <ClCompile Include="..\itpp\signal\poly.cpp" />
+    <ClCompile Include="..\itpp\signal\resampling.cpp" />
+    <ClCompile Include="..\itpp\signal\sigfun.cpp" />
+    <ClCompile Include="..\itpp\signal\source.cpp" />
+    <ClCompile Include="..\itpp\signal\transforms.cpp" />
+    <ClCompile Include="..\itpp\signal\window.cpp" />
+    <ClCompile Include="..\itpp\stat\misc_stat.cpp" />
+    <ClCompile Include="..\itpp\stat\mog_diag.cpp" />
+    <ClCompile Include="..\itpp\stat\mog_diag_em.cpp" />
+    <ClCompile Include="..\itpp\stat\mog_diag_kmeans.cpp" />
+    <ClCompile Include="..\itpp\stat\mog_generic.cpp" />
+    <ClCompile Include="..\itpp\optim\newton_search.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\itpp\config_msvc.h" />
+    <ClInclude Include="..\itpp\itbase.h" />
+    <ClInclude Include="..\itpp\itcomm.h" />
+    <ClInclude Include="..\itpp\itfixed.h" />
+    <ClInclude Include="..\itpp\itmex.h" />
+    <ClInclude Include="..\itpp\itoptim.h" />
+    <ClInclude Include="..\itpp\itprotocol.h" />
+    <ClInclude Include="..\itpp\itsignal.h" />
+    <ClInclude Include="..\itpp\itsrccode.h" />
+    <ClInclude Include="..\itpp\itstat.h" />
+    <ClInclude Include="..\itpp\base\array.h" />
+    <ClInclude Include="..\itpp\base\bessel.h" />
+    <ClInclude Include="..\itpp\base\binary.h" />
+    <ClInclude Include="..\itpp\base\binfile.h" />
+    <ClInclude Include="..\itpp\base\blas.h" />
+    <ClInclude Include="..\itpp\base\circular_buffer.h" />
+    <ClInclude Include="..\itpp\base\converters.h" />
+    <ClInclude Include="..\itpp\base\copy_vector.h" />
+    <ClInclude Include="..\itpp\base\factory.h" />
+    <ClInclude Include="..\itpp\base\fastmath.h" />
+    <ClInclude Include="..\itpp\base\gf2mat.h" />
+    <ClInclude Include="..\itpp\base\help_functions.h" />
+    <ClInclude Include="..\itpp\base\itassert.h" />
+    <ClInclude Include="..\itpp\base\itcompat.h" />
+    <ClInclude Include="..\itpp\base\itfile.h" />
+    <ClInclude Include="..\itpp\base\ittypes.h" />
+    <ClInclude Include="..\itpp\base\mat.h" />
+    <ClInclude Include="..\itpp\base\matfunc.h" />
+    <ClInclude Include="..\itpp\base\operators.h" />
+    <ClInclude Include="..\itpp\base\parser.h" />
+    <ClInclude Include="..\itpp\base\random.h" />
+    <ClInclude Include="..\itpp\base\smat.h" />
+    <ClInclude Include="..\itpp\base\sort.h" />
+    <ClInclude Include="..\itpp\base\specmat.h" />
+    <ClInclude Include="..\itpp\base\stack.h" />
+    <ClInclude Include="..\itpp\base\svec.h" />
+    <ClInclude Include="..\itpp\base\timing.h" />
+    <ClInclude Include="..\itpp\base\vec.h" />
+    <ClInclude Include="..\itpp\base\bessel\bessel_internal.h" />
+    <ClInclude Include="..\itpp\base\algebra\cholesky.h" />
+    <ClInclude Include="..\itpp\base\algebra\det.h" />
+    <ClInclude Include="..\itpp\base\algebra\eigen.h" />
+    <ClInclude Include="..\itpp\base\algebra\inv.h" />
+    <ClInclude Include="..\itpp\base\algebra\lapack.h" />
+    <ClInclude Include="..\itpp\base\algebra\ls_solve.h" />
+    <ClInclude Include="..\itpp\base\algebra\lu.h" />
+    <ClInclude Include="..\itpp\base\algebra\qr.h" />
+    <ClInclude Include="..\itpp\base\algebra\schur.h" />
+    <ClInclude Include="..\itpp\base\algebra\svd.h" />
+    <ClInclude Include="..\itpp\base\math\elem_math.h" />
+    <ClInclude Include="..\itpp\base\math\error.h" />
+    <ClInclude Include="..\itpp\base\math\integration.h" />
+    <ClInclude Include="..\itpp\base\math\log_exp.h" />
+    <ClInclude Include="..\itpp\base\math\min_max.h" />
+    <ClInclude Include="..\itpp\base\math\misc.h" />
+    <ClInclude Include="..\itpp\base\math\trig_hyp.h" />
+    <ClInclude Include="..\itpp\comm\bch.h" />
+    <ClInclude Include="..\itpp\comm\channel.h" />
+    <ClInclude Include="..\itpp\comm\channel_code.h" />
+    <ClInclude Include="..\itpp\comm\commfunc.h" />
+    <ClInclude Include="..\itpp\comm\convcode.h" />
+    <ClInclude Include="..\itpp\comm\crc.h" />
+    <ClInclude Include="..\itpp\comm\egolay.h" />
+    <ClInclude Include="..\itpp\comm\error_counters.h" />
+    <ClInclude Include="..\itpp\comm\exit.h" />
+    <ClInclude Include="..\itpp\comm\galois.h" />
+    <ClInclude Include="..\itpp\comm\hammcode.h" />
+    <ClInclude Include="..\itpp\comm\interleave.h" />
+    <ClInclude Include="..\itpp\comm\ldpc.h" />
+    <ClInclude Include="..\itpp\comm\llr.h" />
+    <ClInclude Include="..\itpp\comm\modulator.h" />
+    <ClInclude Include="..\itpp\comm\modulator_nd.h" />
+    <ClInclude Include="..\itpp\comm\ofdm.h" />
+    <ClInclude Include="..\itpp\comm\pulse_shape.h" />
+    <ClInclude Include="..\itpp\comm\punct_convcode.h" />
+    <ClInclude Include="..\itpp\comm\rec_syst_conv_code.h" />
+    <ClInclude Include="..\itpp\comm\reedsolomon.h" />
+    <ClInclude Include="..\itpp\comm\sequence.h" />
+    <ClInclude Include="..\itpp\comm\siso.h" />
+    <ClInclude Include="..\itpp\comm\spread.h" />
+    <ClInclude Include="..\itpp\comm\stc.h" />
+    <ClInclude Include="..\itpp\comm\turbo.h" />
+    <ClInclude Include="..\itpp\srccode\audiofile.h" />
+    <ClInclude Include="..\itpp\srccode\gmm.h" />
+    <ClInclude Include="..\itpp\srccode\lpcfunc.h" />
+    <ClInclude Include="..\itpp\srccode\pnm.h" />
+    <ClInclude Include="..\itpp\srccode\vq.h" />
+    <ClInclude Include="..\itpp\srccode\vqtrain.h" />
+    <ClInclude Include="..\itpp\fixed\cfix.h" />
+    <ClInclude Include="..\itpp\fixed\cfixed.h" />
+    <ClInclude Include="..\itpp\fixed\fix.h" />
+    <ClInclude Include="..\itpp\fixed\fix_base.h" />
+    <ClInclude Include="..\itpp\fixed\fix_factory.h" />
+    <ClInclude Include="..\itpp\fixed\fix_functions.h" />
+    <ClInclude Include="..\itpp\fixed\fix_operators.h" />
+    <ClInclude Include="..\itpp\fixed\fixed.h" />
+    <ClInclude Include="..\itpp\protocol\events.h" />
+    <ClInclude Include="..\itpp\protocol\front_drop_queue.h" />
+    <ClInclude Include="..\itpp\protocol\packet.h" />
+    <ClInclude Include="..\itpp\protocol\packet_channel.h" />
+    <ClInclude Include="..\itpp\protocol\packet_generator.h" />
+    <ClInclude Include="..\itpp\protocol\selective_repeat.h" />
+    <ClInclude Include="..\itpp\protocol\signals_slots.h" />
+    <ClInclude Include="..\itpp\protocol\tcp.h" />
+    <ClInclude Include="..\itpp\protocol\tcp_client_server.h" />
+    <ClInclude Include="..\itpp\signal\fastica.h" />
+    <ClInclude Include="..\itpp\signal\filter.h" />
+    <ClInclude Include="..\itpp\signal\filter_design.h" />
+    <ClInclude Include="..\itpp\signal\freq_filt.h" />
+    <ClInclude Include="..\itpp\signal\poly.h" />
+    <ClInclude Include="..\itpp\signal\resampling.h" />
+    <ClInclude Include="..\itpp\signal\sigfun.h" />
+    <ClInclude Include="..\itpp\signal\source.h" />
+    <ClInclude Include="..\itpp\signal\transforms.h" />
+    <ClInclude Include="..\itpp\signal\window.h" />
+    <ClInclude Include="..\itpp\stat\histogram.h" />
+    <ClInclude Include="..\itpp\stat\misc_stat.h" />
+    <ClInclude Include="..\itpp\stat\mog_diag.h" />
+    <ClInclude Include="..\itpp\stat\mog_diag_em.h" />
+    <ClInclude Include="..\itpp\stat\mog_diag_kmeans.h" />
+    <ClInclude Include="..\itpp\stat\mog_generic.h" />
+    <ClInclude Include="..\itpp\optim\newton_search.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\AUTHORS" />
+    <None Include="..\ChangeLog" />
+    <None Include="..\COPYING" />
+    <None Include="..\NEWS" />
+    <None Include="..\README" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,11 @@
+=============================================
+           Starting Simulation               
+ Extrinsic Mutual Information (IE) as a function of A priori Mutual Information (IA) 
+=============================================
+  Block length = 1000
+  Generator polynomials = [7 5]
+  Turbo encoder rate 1/3 (plus tail bits)
+=============================================
+IA = [0.000018 0.485944 0.912822 0.999023]
+IE = [0.574743 0.790818 0.981918 0.997540]
+IE^p = [0.031706 0.338378 0.932759 0.997101]

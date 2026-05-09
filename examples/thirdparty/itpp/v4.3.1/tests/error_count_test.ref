@@ -1,0 +1,13 @@
+==========================
+    BERC and BLER test    
+==========================
+
+BLER = 0.8
+Block errors = 80
+Correct blocks = 20
+Total blocks = 100
+
+BER = 0.16
+Bit errors = 320
+Correct bits = 1680
+Total bits = 2000

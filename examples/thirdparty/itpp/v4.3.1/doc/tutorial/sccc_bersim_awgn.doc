@@ -1,0 +1,22 @@
+/*!
+\page sccc_bersim_awgn Simulation of SCCCs in an AWGN channel
+
+This program simulates Serially Concatenated Convolutional Codes (SCCCs) of coding rate 1/4
+using a turbo decoder with a SISO NSC module and a SISO RSC module.
+
+Reference: S. Benedetto, D. Divsalar, G. Motorsi and F. Pollara, "A Soft-Input Soft-Output Maximum A posteriori (MAP) Module to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
+
+\include sccc_bersim_awgn.cpp
+
+When you run this program, the results (BER and EbN0_dB) are saved into sccc_bersim_awgn.it file. Using the following MATLAB script
+\code
+clear all
+itload('sccc_bersim_awgn.it');
+figure
+semilogy(EbN0_dB, BER, 'o-')
+grid on
+xlabel('E_b/N_0 [dB]')
+ylabel('BER')
+\endcode
+the results can be displayed.
+*/

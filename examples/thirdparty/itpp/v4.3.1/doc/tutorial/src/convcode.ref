@@ -1,0 +1,10 @@
+Now simulating point 1 out of 5
+Breaking on point 1 with 3297 errors.
+Now simulating point 2 out of 5
+Breaking on point 2 with 781 errors.
+Now simulating point 3 out of 5
+Breaking on point 3 with 112 errors.
+Now simulating point 4 out of 5
+Now simulating point 5 out of 5
+BER    = [0.330858 0.0783743 0.00280983 0 0]
+EbN0dB = [-2 0 2 4 6]

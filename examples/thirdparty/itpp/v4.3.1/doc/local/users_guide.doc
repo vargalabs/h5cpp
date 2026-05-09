@@ -1,0 +1,631 @@
+/*!
+\page users_guide Users Guide
+
+\section toc Table of Contents
+- \ref introduction
+- \ref predefined_types
+  - \ref scalar_types
+  - \ref vector_types
+  - \ref matrix_types
+- \ref using_vectors
+  - \ref defining_vectors
+  - \ref vector_manipulation
+  - \ref vector_converters
+  - \ref vector_functions
+- \ref using_matrices
+  - \ref matrix_converters
+- \ref array_class
+- \ref random_variables
+  - \ref random_vec_mat
+  - \ref rng
+- \ref deterministic_sources
+- \ref filters
+- \ref signal_processing
+- \ref timer_class
+- \ref itfile_class
+
+
+\section introduction Introduction
+
+The \c itbase library is the core of \c IT++ and it contains classes and
+functions for mathematics with scalars, vectors, and matrices. This document
+does not cover all the aspects of the \c itbase library. It does however
+explain the most important things you need to know in order to start using
+IT++. Once you are more familiar with the \c itbase library you will find
+the online reference manual more useful.
+
+
+\section predefined_types Predefined Data Types
+
+
+\subsection scalar_types Predefined Scalar Types
+
+Apart from the standard C++ types e.g. \c char, \c short, \c int, \c long,
+\c double, \c float, and \c long \c long, the following types are specific
+for \c IT++:
+- \c complex<double>: Contains real and imaginary parts of type \c double
+- \c bin: Used for binary (0,1) data
+
+
+\subsection vector_types Prepared Vector Types
+
+A vector can in principle be of arbitrary type (that support addition,
+subtraction, multiplication and division), since the general vector class \c
+Vec<TYPE> is templated. However, the most commonly used vector types are
+predefined. These predefined vector types are:
+
+- \c vec: Basic vector type containing \c double
+- \c cvec: Vector type containing \c complex<double>
+- \c ivec: Vector type containing \c int
+- \c bvec: Vector type containing \c bin
+- \c svec: Vector type containing \c short
+
+The general vector class is used to define the specialized classes above.
+The \c vec class is actually a \c Vec<double>. We urge you to use these
+predefined classes instead of \c Vec<TYPE> when ever possible.
+
+
+\subsection matrix_types Prepared Matrix Types
+
+The general matrix class is called \c Mat<TYPE>. These predefined matrix
+types are:
+
+- \c mat: Basic matrix type containing double
+- \c cmat: Matrix type containing \c complex<double>
+- \c imat: Matrix type containing \c int
+- \c bmat: Matrix type containing \c bin
+- \c smat: Matrix type containing \c short
+
+As with vector, the general matrix class is used to define the specialized
+classes above. The \c mat class is thus a \c Mat<double>. We urge you to use
+these predefined classes instead of \c Mat<TYPE> whenever possible.
+
+
+\section using_vectors Using Vectors
+
+Vectors and matrices in \c IT++ are very similar. We therefore begin to
+describe the vector class in detail and then briefly explain the differences
+regarding matrices in the next section.
+
+
+\subsection defining_vectors Defining a Vector
+
+A vector containing elements of type \c double is defined with:
+
+\code
+vec my_vector;
+\endcode
+
+However, this will not assign a size (memory) to the vector. To assign size
+10 to the vector we may use:
+
+\code
+vec my_vector(10);
+\endcode
+
+or
+
+\code
+vec my_vector;
+my_vector.set_size(10,false);
+\endcode
+
+where the second parameter in the \c set_size call (\c true or \c false)
+determines if you want to copy the contents of the old data area into the
+new resized one, or not. This may be useful when down-sizing a vector, but
+in this case it is not. It is also equivalent to use
+
+\code
+my_vector.set_length(10,false);
+\endcode
+
+instead of \c set_size.
+
+Observe that a declared vector (or matrix) is not cleared (the element
+values are undefined). To clear a vector we simply write
+
+\code
+my_vector.clear();
+\endcode
+
+or
+
+\code
+my_vector.zeros();
+\endcode
+
+To fill the vector with ones we write
+
+\code
+my_vector.ones();
+\endcode
+
+It is possible to retrieve the length (size) of a vector in any of the
+following ways:
+
+\code
+length_of_vector = my_vector.length();
+length_of_vector = my_vector.size();
+length_of_vector = length(my_vector);
+\endcode
+
+To assign values to a vector
+
+\code
+vec  a = "0 0.7 5 9.3";        // that is a = [0 0.7 5 9.3]
+ivec b = "0:5";                // that is b = [0 1 2 3 4 5]
+vec  c = "3:2.5:13";           // that is c = [3 5.5 8 10.5 13]
+ivec d = "1:3:5,0:2:4";        // that is d = [1 3 5 0 2 4]
+vec e("1.2,3.4,5.6");          // that is e = [1.2 3.4 5.6]
+vec f;
+f.set("1.0 2.0 3.0 4.0");      // that is f = [1.0 2.0 3.0 4.0]
+vec g;
+g = f;                         // that is g is a copy of f
+\endcode
+
+A comma or a space character separates the vector elements. When assigning
+or retrieving a specific vector element use
+
+\code
+a(i) = 3.14;
+double p = a(i);
+\endcode
+
+for element number \a i. Vector elements are numbered such that \a a(0)
+denotes the first element. It is also possible to use square brackets as in
+the C language, i.e.
+
+\code
+a[i] = 3.14;
+double p = a[i];
+\endcode
+
+Parts or a vector are retrieved by
+
+\code
+a.left(3);   // a vector containing the first 3 elements of a
+a.right(2);  // a vector containing the last 2 elements of a
+a.mid(1,2);  // a vector containing the 2 elements starting with a(1)
+a(2,4);      // a vector containing all elements from a(2) to a(4)
+a(2,-1);     // a vector containing all elements from a(2) to the end of a
+\endcode
+
+Alternatively you can use \a get() methods instead of () or [] operators, e.g.
+
+\code
+a.get(4);
+a.get(5,-1);
+\endcode
+
+If you have a vector called \a index_list containing indexes (\a ivec) you
+may write
+
+\code
+// these give a vector containing elements with indexes in index_list
+a(index_list);
+a.get(index_list);
+\endcode
+
+If you have a \c bvec called e.g. \a bin_list you may write
+
+\code
+// these give a vector containing all elements a(i) for which bin_list(i) equals 1
+a(bin_list);
+a.get(bin_list);
+\endcode
+
+Have a look at the following example:
+
+\code
+#include <itpp/itbase.h>
+using namespace itpp;
+using namespace std;
+
+int main() {
+  vec a = linspace(0,1,11);
+  ivec index_list = "3 5 2 2";
+  bvec bin_list = "1 0 1 0 1 0 1 0 1 0 1";
+
+  cout << "a = " << a << endl;
+  cout << "a(index_list) = " << a(index_list) << endl;
+  cout << "a.get(bin_list) = " << a.get(bin_list) << endl;
+}
+\endcode
+
+When you run this program you will see
+
+\code
+a = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+a(index_list) = [0.3 0.5 0.2 0.2]
+a.get(bin_list) = [0.0 0.2 0.4 0.6 0.8 1.0]
+\endcode
+
+
+\subsection vector_manipulation Vector Manipulation
+
+Below follows a listing of the most common vector manipulation commands that
+are available. All examples are given for an \c ivec denoted \a my_ivec, but
+of course this will work for other vector types as well.
+
+- \c shift_right:
+\code
+// Shift in scalar data (10) at position 0
+my_ivec.shift_right(10);
+
+// Shift in vector at position 0
+my_ivec.shift_right("10 4");
+\endcode
+
+- \c shift_left:
+\code
+// Shift in scalar data (10) at position Size()-1
+my_ivec.shift_left(10);
+
+// Shift in vector at position Size()-1
+my_ivec.shift_left("10 4");
+\endcode
+
+- \c set_subvector:
+\code
+// Replace part of vector from position (10) with the vector "11 13"
+my_ivec.set_subvector(10,"11 13");
+\endcode
+
+- \c del:
+\code
+// Delete element at index (10), making vector size one less
+my_ivec.del(10);
+\endcode
+
+- \c ins:
+\code
+// Insert element at index (10), making vector size one extra
+my_ivec.ins(10);
+\endcode
+
+- \c split:
+\code
+// Splits vector at pos (10). Returns first part, keep second part.
+ivec first_part = my_ivec.split(10);
+\endcode
+
+- \c elem_mult:
+\code
+// Multiply two vectors element wise.
+ivec my_product = elem_mult(my_invec1,my_ivec2);
+\endcode
+
+- \c elem_div:
+\code
+// Dividide two vectors element wise.
+ivec my_product = elem_div(my_invec1,my_ivec2);
+\endcode
+
+- Calculation: +, -, *, /
+\code
+a = my_ivec1 + my_ivec2;  // Addition of vectors
+a = my_ivec + 10;         // Addition of vector and scalar
+a = my_ivec1 - my_ivec2;  // Subtraction of vectors
+a = my_ivec - 10;         // Subtraction of vector and scalar
+a = my_ivec * 10;         // Multiplication of vector and scalar
+a = my_ivec / 10;         // Division of vector and scalar
+\endcode
+
+- Calculation: +=, -=, *=, /=, |=
+\code
+a += my_ivec;  // Addition of vectors (a = a+my_ivec)
+my_ivec += 10; // Addition of vector and scalar (10)
+a -= my_ivec;  // Subtraction of vectors (a = a-my_ivec)
+my_ivec -= 10; // Subtraction of vector and scalar (10)
+my_ivec *= 10; // Multiplication of vector and scalar (10)
+my_ivec /= 10; // Divsion of vector and scalar (10)
+my_ivec |= a;  // Element wise division
+\endcode
+
+- \c concat
+\code
+a = concat(my_ivec1, my_ivec2);  // concatenation of two vectors
+\endcode
+
+
+\subsection vector_converters Vector Converters
+
+In order to convert e.g an \c ivec to a \c vec we can write some thing like
+\c my_vec = \c to_vec(my_ivec). The following converters are available:
+- \c to_bvec,
+- \c to_svec,
+- \c to_ivec,
+- \c to_vec,
+- \c to_cvec.
+
+
+\subsection vector_functions Vector Functions
+
+There are several functions that operate on vectors. Some examples are:
+\c max, \c max_index, \c min, \c min_index, \c product, \c energy,
+\c geometric_mean, \c mean, \c median, \c norm, \c round, \c variance,
+\c ceil_i, \c floor_i, \c round_i, \c find.
+
+Examples of functions that generate different kinds of vectors are:
+\c linspace, \c ones_b, \c ones_c, \c ones_i, \c ones \c zeros_b. There
+are several more than these. Please refer to the IT++ reference manual
+for a description of these.
+
+
+\section using_matrices Using Matrices
+
+Matrices are two-dimensional arrays, and most of their functionality is
+similar to that of vectors. The predefined matrix types are:
+
+- \c mat,
+- \c cmat,
+- \c imat,
+- \c smat,
+- \c bmat.
+
+Below follows some examples that are specific for matrices only:
+
+<ul>
+<li> Define a matrix of type \c double with 3 rows and 4 columns
+\code
+mat a(3,4);
+\endcode
+</li>
+
+<li> Define a matrix of type \c int with 2 rows and 3 columns. A comma (,)
+or space is used to separate columns and a semicolon (;) is used to separate
+rows.
+\code
+imat a = "1 2 3;4 5 6";
+\endcode
+</li>
+
+<li> Access to rows and columns with \c get_row and \c get_col
+\code
+a.get_row(1); // Returns the second row of the matrix b
+a.get_col(0); // Returns the first column of the matrix b
+\endcode
+</li>
+
+<li> Set rows and columns with \c set_row and \c set_col
+\code
+a.set_row(1,"9 8 7"); // Set second row to "9 8 7"
+a.set_col(0,"7 2");   // Set first column to "7 2"
+\endcode
+</li>
+
+<li> The size of a matrix
+\code
+// Set the size. "false" means "do not copy"
+a.set_size(4,5,false);
+int nr_of_rows = a.rows();    // return the number of rows
+int nr_of_columns = a.cols(); // return the number of columns
+\endcode
+</li>
+
+<li> Access to parts of a matrix
+\code
+a(r,c); // Access to a single element.
+a(i);   // Access to a single element. Linear addressing, by rows.
+
+// Returns the sub-matrix from rows r1 to r2 and columns c1 to c2.
+a(r1,r2,c1,c2);
+\endcode
+</li>
+
+<li> Copy rows and columns
+\code
+// Copy row number "from" to row number "to"
+a.copy_row(to,from)
+
+// Copy column number "from" to column number "to"
+a.copy_col(to,from)
+\endcode
+</li>
+
+<li> Swap rows and columns
+\code
+// Swap rows number r1 and r2
+a.swap_rows(r1,r2)
+
+// Swap columns number c1 and c2
+a.swap_cols(c1,c2)
+\endcode
+</li>
+
+<li> Horizontal and vertical concatenation
+\code
+// Equivalent to the MATLAB command c = [a b]
+c = concat_horizontal(a,b);
+
+// Equivalent to the MATLAB command c = [a;b]
+c = concat_vertical(a,b);
+\endcode
+</li>
+</ul>
+
+
+\subsection matrix_converters Matrix Converters
+
+The following converters are available:
+
+- \c to_mat,
+- \c to_imat,
+- \c to_cmat,
+- \c to_bmat.
+
+
+\section array_class The Array Class
+
+The \c itbase library contains, among other things, the \c Array class. An
+\c Array can contain any type of data. Below is an example of an \c Array
+containing vectors (\c vec):
+
+\code
+#include <itpp/itbase.h>
+
+using namespace itpp;
+using namespace std;
+
+int main() {
+  Array<vec> my_vec_array(2);
+  my_vec_array(0) = linspace(0,1,4);
+  my_vec_array(1) = "0.1 0.2 0.3 0.4 0.3 0.2 0.1";
+  cout << "my_vec_array = " << my_vec_array << endl;
+
+  return 0;
+}
+\endcode
+
+
+\section random_variables Random Vectors, Matrices, and Generators
+
+
+\subsection random_vec_mat Random Vectors and Matrices
+
+Random vectors and matrices are easily obtained by using these predefined
+functions:
+
+- \c randb: Generates a random bit vector or matrix
+- \c randu: Generates a random uniform vector or matrix
+- \c randi: Generates a random index vector or matrix
+- \c randray: Generates a random Rayleigh vector or matrix
+- \c randrice: Generates a random Rice vector or matrix
+- \c randexp: Generates a random Exponential vector or matrix
+- \c randn: Generates a random Gaussian vector or matrix
+- \c randn_c: Generates a random complex Gaussian vector or matrix
+
+
+\subsection rng Random Number Generators (RNG)
+
+The following discrete valued random number generators are available. More
+information about these can be found in the IT++ reference manual.
+
+- \c Bernoulli_RNG
+- \c I_Uniform_RNG
+
+The following continuous valued random number generators are available.
+
+- \c Uniform_RNG
+- \c Exponential_RNG
+- \c Normal_RNG
+- \c Complex_Normal_RNG
+- \c AR1_Normal_RNG
+- \c Weibull_RNG
+- \c Rayleigh_RNG
+- \c Rice_RNG
+
+
+\section deterministic_sources Deterministic Sources
+
+The following deterministic sources are available:
+
+- \c Sine_Source
+- \c Square_Source
+- \c Triangle_Source
+- \c Sawtooth_Source
+- \c Impulse_Source
+- \c Pattern_Source
+
+
+\section filters Filter Classes and Functions
+
+The following filter classes are available:
+
+- \c AR_Filter
+- \c MA_Filter
+- \c ARMA_Filter
+- \c Freq_Filt
+
+The following filter functions are available:
+
+- \c filter
+
+
+\subsection signal_processing Signal Processing Functions
+
+The following signal processing functions are available:
+
+- \c a2k, \c k2a, \c a2lar, \c k2lar, \c lpc, \c levinsson, \c lerouxguegen
+- \c fft, \c ifft, \c fft_real, \c ifft_real
+- \c dct, \c idct
+- \c spectrum
+- \c cov, \c xcorr
+- \c chirp
+- \c dht, \c dht2, \c dwht, \c dhwt2, \c self_dht, \c self_dwht
+- \c filter_spectrum
+- \c filter_whiteness
+
+
+\section timer_class Timer Classes
+
+The \c Real_Timer class can be used to measure execution time of a program
+as in the following example:
+
+\code
+#include <itpp/itbase.h>
+
+using namespace itpp;
+using namespace std;
+
+int main() {
+  long sum = 0;
+  Real_Timer my_timer;
+
+  my_timer.tic();
+  for (int i=0; i<10000000; i++) {
+    sum += i;
+  }
+  my_timer.toc_print();
+
+  cout << "The sum is " << sum << endl;
+
+  return 0;
+}
+\endcode
+
+
+\section itfile_class Reading and Writing to Files
+
+The following example saves the variable \a a to the file
+\c my_file_name.it:
+
+\code
+#include <itpp/itbase.h>
+
+using namespace itpp;
+
+int main() {
+  it_file my_file("my_file_name.it");
+  vec a = "1.0 2.0 3.0 4.0";
+  my_file << Name("a") << a;
+
+  return 0;
+}
+\endcode
+
+The following example reads the variable \a a from the file
+\c my_file_name.it and prints it:
+\code
+#include <itpp/itbase.h>
+
+using namespace itpp;
+using namespace std;
+
+int main() {
+  it_file my_file("my_file_name.it");
+  vec a;
+  my_file >> Name("a") >> a;
+  cout << "a = " << a << endl;
+
+  return 0;
+}
+\endcode
+
+Note that <tt>*.it</tt> files can be read and written in Matlab/Octave by
+using the \c itload.m and \c itsave.m functions.
+
+Also available is the class \c it_ifile that can only be used for reading of
+files.
+
+*/

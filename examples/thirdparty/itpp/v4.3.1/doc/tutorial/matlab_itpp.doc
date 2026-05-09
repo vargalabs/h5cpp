@@ -1,0 +1,89 @@
+/*!
+\page matlab_itpp Conversion table between IT++ syntax and Matlab/Octave
+
+Here we provide a conversion table between Matlab/Octave and IT++
+syntax.  This table is intended to help with the transition from
+Matlab/Octave programming to IT++, but it is not an exhaustive list of
+possible operations.
+
+<br><br>
+In what follows,
+<ul>
+<li>a, b denote vectors (assumed to be column vectors in Matlab/Octave notation),</li>
+<li>A, B denote matrices, </li>
+<li>x is a scalar,</li>
+<li>k, l, n are indices</li>
+</ul>
+<br>
+<b>Vector indexing and manipulation:</b>
+\code
+a.length()                           // length(a)
+a(0)                                 // a(1)
+a(1)                                 // a(2)
+a(k-1)                               // a(k)
+a(k-1)=x;  or a.set(k-1,x);          // a(k)=x;
+a.left(k)                            // a(1:k)
+a.right(k)                           // a(end-k+1:end)
+a.mid(k,l)                           // a(k:k+l-1)
+a.del(k);                            // a=[a(1:k-1); a(k+1:end)];
+concat(a,b)                          // [a; b] (or [a.' b.'].')
+a.clear();                           // a=zeros(size(a));  (or a=complex(zeros(size(a)));)
+to_cmat(a)                           // complex(a)   (assuming a real-valued)
+\endcode
+Note that indexing in  IT++ starts at 0, whereas indexing in Matlab starts at 1. Also
+note that Matlab/Octave does distinguish between column and row
+vectors, whereas IT++ does not.
+<br><br>
+<b>Matrix indexing and manipulation:</b>
+\code
+A.rows()                             // size(A,1)
+A.cols()                             // size(A,2)
+A(k-1,l-1)                           // A(k,l)
+A.set(k-1,l-1,x)                     // A(k,l)=x
+A.get_col(k-1)                       // A(:,k)
+A.get_row(k-1)                       // A(k,:)
+A.set_col(k-1,a)                     // A(:,k)=a
+A.set_row(k-1,a)                     // A(k,:)=a
+A.append_row(a)                      // A=[A; a.']
+A.append_col(a)                      // A=[A a]
+A.transpose()                        // A.'
+A.hermitian_transpose()              // A'
+A.clear()                            // A=zeros(size(A))  [or A=complex(zeros(size(A)))]
+to_cmat(A)                           // complex(A)   (assuming a real-valued)
+\endcode
+<br><br>
+<b>Some vector and matrix algebra:</b>
+\code
+a+b                                  // a+b
+a-b                                  // a-b
+elem_mult(a,b)                       // a.*b  (elementwise product)
+a*b                                  // a.'*b (inner product)
+conj(a)*b                            // a'*b (inner product)
+outer_product(a,b)                   // a*b.' (outer product)
+elem_div(a,b)                        // a./b
+A+B                                  // A+B
+A-B                                  // A-B
+A*B                                  // A*B
+elem_mul(A,B)                        // A.*B
+elem_div(A,B)                        // A./B
+ls_solve_od(A,b)                     // A\b    (assuming the system is overdetermined)
+\endcode
+<br><br>
+<b>Special matrices and vectors:</b>
+\code
+zeros(n,n)                           // zeros(n,n)
+zeros_c(n,n)                         // complex(zeros(n,n))
+eye(n)                               // eye(n)
+eye_c(n)                             // complex(eye(n))
+linspace(alpha,beta,n)               // linspace(alpha,beta,n)
+\endcode
+<br><br>
+<b>Hardcoded initializations:</b>
+\code
+mat X="1.1 1.2; 2.1; 2.2";           // X=[1.1 1.2; 2.1 2.2];
+ivec a="1 2 3 4 5";                  // a=[1; 2; 3; 4; 5]; (or a=[1 2 3 4 5].';)
+ivec a="1:-3:-8";                    // a=1:-3:-8;
+\endcode
+
+
+*/

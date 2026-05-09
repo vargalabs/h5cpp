@@ -1,0 +1,8 @@
+*.d
+*.o
+AlignedPaddedTest
+AlignedUnpaddedTest
+IncludeTest
+UnalignedPaddedTest
+UnalignedUnpaddedTest
+

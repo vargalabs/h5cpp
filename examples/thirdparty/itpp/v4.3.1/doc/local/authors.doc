@@ -1,0 +1,69 @@
+/*!
+\page authors IT++ People
+
+\section admins Project Admins
+
+- Bogdan Cristea (cristeab)
+- Tony Ottosson (tonyottosson)
+- Adam Piątyszek (ediap)
+
+
+\section developers Developers
+
+- Mirsad Čirkić (mirsadcirkic)
+- Johan Bergman (emwjohb)
+- Thomas Eriksson (thomases2)
+- Pål Frenger (frenger)
+- Fredrik Huss (frehu)
+- Erik G. Larsson (erik_g_larsson)
+- Stephan Ludwig (donludovico)
+- Robert Orzechowski (tytusz)
+- Andy Panov (andypanov)
+- Conrad Sanderson (conrad_s)
+- Andreas Wolfgang (andreas-w)
+- Simon Wood (sgwoodjr)
+
+
+\section retired Retired Developers
+
+- Håkan Eriksson (hakanbe)
+- Thomas Lemaire
+- Anders Persson
+- Tobias Ringstrom
+- Jonas Samuelsson
+
+
+\section contributors Contributors
+
+- Mattias Andersson
+- Kumar Appaiah
+- Francois Cayre
+- Zbigniew Długaszewski
+- Mark Dobossy
+- Sean Finney
+- Teddy Furon
+- Bjorn Furugard
+- Kenneth Hilmersson
+- Peter Klotz
+- Krister Norlund
+- Steve Peters
+- Gorka Prieto
+- Martin Senst
+- Svante Signell
+- Vasek Smidl
+- Erik Stoy
+- Tobias Tynderfeldt
+
+
+\section distributors Distribution Maintainers
+
+- Kumar Appaiah <akumar (at) debian.org> -
+  <a href="http://www.debian.org/">Debian GNU/Linux</a>
+- Günter Dannoritzer (dannori) -
+  <a href="http://www.opensuse.org/">openSUSE</a>
+- Markus Dittrich <markusle (at) gentoo.org> -
+  <a href="http://www.gentoo.org/">Gentoo Linux</a>
+- Ed Hill (edhill) -
+  <a href="http://fedoraproject.org/">Fedora</a>
+
+*/

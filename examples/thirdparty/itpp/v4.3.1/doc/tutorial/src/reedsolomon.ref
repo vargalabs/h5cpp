@@ -1,0 +1,9 @@
+Number of Reed-Solomon code-words to simulate: 1000
+BSC Error probability : 0.01
+RS m: 3
+RS t: 2
+Simulating an Reed-Solomon code with the following parameters:
+n = 7
+k = 3
+q = 8
+The bit error probability after decoding is 0.000333333

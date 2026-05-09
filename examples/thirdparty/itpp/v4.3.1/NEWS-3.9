@@ -1,0 +1,128 @@
+===============================================================================
+IT++ version 3.9.1                                         Released: 2006-01-28
+-------------------------------------------------------------------------------
+
+This is a bug-fix release. Therefore, no new features have been added
+since release 3.9.0. Only minor modifications and bug-fixes have been done.
+
+
+Bug-fixes:
+---------
+
+* Fixed a few test programs that use LAPACK, so now they are robust to
+  non-unique results and floating-point precision differences on different
+  platforms.
+
+* Protocol sources are now included in the MSVC++ project file.
+
+* Fixed bug [1412383]. The dec2bin() functions appended en extra zero in
+  front of the bit vector. This wrong behaviour has been fixed.
+
+* Fixed bug [1399822]. The problem was caused by explicit specialisation of
+  some templated operators, when HAVE_CBLAS or HAVE_MKL are defined. In such
+  a case, the following forward declarations of explicit instantiations
+  (with extern) of these operators should be switched off.
+
+* Fixed bug [1396020]. Now itsave() works properly in both Matlab and
+  Octave. Thanks to Jordy Potman for providing a patch.
+
+* A lot of other minor bug-fixes. For a full list of them, please check the
+  ChangeLog file.
+
+
+===============================================================================
+IT++ version 3.9.0                                         Released: 2005-12-28
+-------------------------------------------------------------------------------
+
+New features:
+-------------
+
+* Completely new configuration, compilation and installation approach based
+  on the GNU Autotools: Autoconf, Automake and Libtool. External libraries
+  (FFTW, CBLAS and LAPACK) installed system-wide are detected by the
+  configure script.
+
+* Instead of `itpp-config' script, the `pkg-config'
+  (http://pkgconfig.freedesktop.org/wiki/) tool can be used for  linking
+  with the IT++ library.
+
+* Implementation of `erf(z)' function for complex argument `z' added.
+
+* New statistical functions `within_tolerance(x, xref, tol)' added.
+
+* New GF2 matrix class added, which is designed for a memory efficient
+  representation of binary matrices.
+
+* Polynomials support and filter design functions added.
+
+* Added real Toeplitz matrices using the function toeplitz(mat, mat).
+  Generalized also to be valid for non-square matrices.
+
+
+Modifications:
+--------------
+
+* Removed support for libharu PDF generation library. External tools can be
+  used instead, for instance:
+  - Gnuplot - http://www.gnuplot.info/
+  - Mathplotlib - http://matplotlib.sourceforge.net/
+  - Asymptote - http://asymptote.sourceforge.net/
+
+* Documentation is now provided in HTML format only. It is generated and
+  installed automatically if the following tools are available: Doxygen,
+  LaTeX, Dvips and Ghostscript.
+
+* BLERC class improved by adding setup and clear flags and non default
+  constructor. Now it is possible to measure BLER for changing block sizes,
+  e.g. in an adaptive transmission.
+
+* diag() function now takes a second argument stating which diagonal to fill
+  with values (Matlab compatible).
+
+* Implemented feature request [1167378]. An error message is displayed if
+  the Parser's init() functions can not open a file.
+
+
+Bug-fixes:
+---------
+
+* Fixed bug [1388024]. `fft_real()' and `ifft_real()' functions now work
+  correctly for both external libraries: FFTW3 and MKL. They are also
+  compatible to Matlab's implementation.
+
+* Fixed test programs failures due to minor precision differences on
+  different platforms.
+
+* Fixed bug [1333897]. The problem with	infinite loop in
+  `it_file::seek(...)' function has been solved by fixing
+  `it_file::write_data_header(...)' function.
+
+* Fixed	bug [1358858]. Now it is possible to use decode_tailbite() method
+  for a punctured code.
+
+* Fixed bug [1358861]. Now the destructor properly deletes the fading
+  generators dynamically created.
+
+* Fixed bug [1302350]. Corrected behavior of operator<< in `itpp/itconfig.h'
+  when the imaginary part equals "minus zero".
+
+* Fixed a bug in the oversampling of the OFDM class.
+
+* Fixed bug [1254814]. Added `itpp::' explicit scope for `it_assert_f',
+  `it_warning_f' and `it_error_f' functions. Now the macros that use them
+  work properly without `using namespace itpp' in the application file.
+
+* Fixed reopened bug [1094934]. Now endianity of x86_64 platforms can be
+  successfully detected.
+
+* Fixed bug [1251878]. `min' and `max' functions did not return indexes
+  properly due to the lack of references in functions' arguments.
+
+* Fixed bug [1084246]. Operators and other functions in Vec, Mat and Array
+  revised to follow standard C++ conventions. Now operators provide an
+  lvalue and also check against self-assignment.
+
+* A lot of other minor bug-fixes. For a full list of them, please check the
+  ChangeLog file.
+
+===============================================================================

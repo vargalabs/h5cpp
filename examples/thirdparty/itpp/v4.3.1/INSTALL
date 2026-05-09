@@ -1,0 +1,210 @@
+IT++ Installation
+*****************
+
+
+IT++ Requirements
+=================
+
+IT++ should compile without errors or warnings on most GNU/Linux, BSD and
+UNIX systems, and on POSIX based environments for Microsoft Windows like
+Cygwin or MinGW with MSYS. It can be also built on Microsoft Windows NT/2000/
+XP/Vista/7/8 using Microsoft's Visual C++ (or Express). 
+For GNU/Linux, FreeBSD, Solaris SunOS, Cygwin and MinGW
+we assume that you have at least the following GNU software installed on your
+computer:
+
+  o GNU make, version 3.77 or later (check version with `make --version' or
+    `gmake --version`)
+  o GCC - GNU Compilers Collection including C (gcc) and C++ (g++) compilers,
+    version 3.3.x or later (check version with `gcc --version')
+
+In most cases, a Fortran compiler is also required for proper linking of IT++
+with external BLAS and LAPACK libraries. GCC provides g77 (versions 3.x.x) or
+gfortran (versions 4.x.x) compilers.
+
+We strongly recommend that you use recent stable releases of the GCC, if
+possible. We do not actively work on supporting older versions of the GCC,
+and they may therefore (without prior notice) become unsupported in future
+releases of IT++.
+
+Instead of using GCC, you might try to build and link the IT++ library using
+other C/C++/Fortran compilers. For instance, Intel C++ (icpc) and Fortran
+(ifc) compilers are known to work well.
+
+To perform tests you need Google C++ Testing Framework sources 
+(https://code.google.com/p/googletest/).
+Optionally, you might need a few additional programs, i.e. Doxygen, LaTeX,
+Dvips and Ghostscript, to generate the HTML documentation. The HTML
+documentation for each release is also available as separate packages for
+download, so you do not need to generate it during the installation.
+
+In order to use all functionality provided by the IT++ library, it is
+recommended that you have some external libraries compiled and installed in
+your computer. The basic set of them is: BLAS, LAPACK and FFTW (version 3.0.0
+or later).
+
+Instead of NetLib's reference BLAS and LAPACK implementations, some optimized
+platform-specific libraries can be used as well, i.e.:
+
+  o ATLAS (Automatically Tuned Linear Algebra Software) - includes optimised
+    BLAS and a limited set of LAPACK routines (version 3.6.0 or later)
+  o MKL (Intel Math Kernel Library) - includes all required BLAS, LAPACK and
+    FFT routines (version 8.1.1 or later; FFTW not required)
+  o ACML (AMD Core Math Library) - includes BLAS, LAPACK and FFT routines
+    (version 2.5.3 or later; FFTW not required)
+
+Except the Intel MKL, the above mentioned BLAS/LAPACK implementations require
+additional support libraries provided by a Fortran compiler. To use them with
+IT++, please make sure that you have the compatible Fortran compiler
+installed. For instance, if your system BLAS and LAPACK libraries were
+compiled and linked with GNU g77, you should have the same compiler installed
+on your system before starting the IT++ configuration process.
+
+It is possible to compile and use IT++ without these external libraries, but
+the functionality will be reduced. Therefore, we recommend that you take some
+time and effort to provide these external libraries in your system. Please
+note that the basic set of them (FFTW, BLAS and LAPACK) is usually included
+in most modern Linux distributions.
+
+
+Obtaining the IT++ Source Codes
+===============================
+
+IT++ is released under the terms of the GNU General Public License (GPL) and
+hence the source code of the IT++ library is available for free download. To
+obtain the IT++ source code, visit the project pages on SourceForge:
+
+ o http://sourceforge.net/projects/itpp/
+
+and download the file named itpp-<VERSION>.tar.gz or itpp-<VERSION>.tar.bz2,
+where <VERSION> is the latest release number, e.g. 4.3.0.
+
+
+IT++ Configuration and Installation Instructions
+================================================
+
+Assuming that you have already downloaded the latest IT++ sources, untar and
+unpack the sources, and enter the unpacked directory. Depending on the
+package type you have downloaded, use the following commands:
+
+  % gzip -cd itpp-<VERSION>.tar.gz | tar xf -
+  % cd itpp-<VERSION>
+
+  % bzip2 -cd itpp-<VERSION>.tar.bz2 | tar xf -
+  % cd itpp-<VERSION>
+
+Since version 4.3.0, the IT++ library uses cmake compilation system for
+preparing Makefiles, so the compilation procedure is as follows:
+
+  % mkdir build && cd build
+  % cmake ..
+
+The `cmake' command can be invoked with additional switches and options
+(see cmake help for a full list of them). The most important are:
+
+  o `-DITPP_SHARED_LIB=off', allows to compile the static version of IT++ library. By default this option is
+    set to `on'.
+  o `-DBLA_VENDOR=vendor', where vendor can be `ACML', `Intel11' or `ATLAS'. This is helpful in selecting a specific 
+    external library (ACML or MKL 11). If these libraries are installed in nonstandard locations, on Linux, set 
+    `LD_LIBRARY_PATH' environment variable to the location where the libraries are installed. For Windows `PATH' environment 
+    variable should be set, while Mac OS X users should use `DYLD_LIBRARY_PATH'.
+  o `-DGTEST_DIR=/path/to/gtest/sources' is used to specify the path to
+    Google unit test framework (gtest) sources. Thus the unit tests are compiled and can be
+    run separately to check IT++ library.
+  o `-DOLD_TESTS=on' is used to activate the compilation of older unit tests (no unit test framework required). By default
+    this option is set to `off'. These tests are no longer maintained, so it is recommended to use the tests based on Google
+    framework. In order to run these tests use `check_tests.py' script found in extras folder (Python is required).
+  o `-DHTML_DOCS=off' allows to disable the generation of HTML documentation. Default option is `on' provided that
+    Doxygen is found.
+  o `-DCMAKE_BUILD_TYPE=Release' allows to specify the build type: Release (default) or Debug. The library name in Debug
+    mode is itpp_debug.*, so that both Release and Debug versions could exist in the installation folder.
+  o `-DCMAKE_INSTALL_PREFIX=/install/path' allows to specify the installation path. This is used when installing IT++,
+    either from command line, with 'make install', either using the INSTALL project from Visual Studio. Note that the user
+    should have write permissions to the installation folder.
+
+
+External Libraries
+------------------
+
+By default, cmake checks for a few external libraries, which
+might be used by the IT++ library (cf. IT++ Requirements). The detection
+procedure is as follows:
+
+ 1. First, the presence of a BLAS library among MKL, ACML, ATLAS and NetLib's
+    reference BLAS is checked. If one of the above mentioned can be used,
+    HAVE_BLAS is defined.
+
+ 2. Next, some LAPACK library is being searched, but only if BLAS is
+    available. Full set of LAPACK routines can be found in the MKL, ACML and
+    NetLib's reference LAPACK libraries. Besides, ATLAS contains a subset of
+    optimised LAPACK routines, which can be used with NetLib's LAPACK library
+    (this is described in the ATLAS documentation). If some LAPACK library
+    can be found, HAVE_LAPACK is defined.
+
+ 3. Finally, a set of separate checks for FFT libraries is executed.
+    Currently three different libraries providing FFT/IFFT routines can be
+    used: MKL, ACML and FFTW. If at least one of them is found, HAVE_FFT id
+    defined. Besides, one of the following: HAVE_FFT_MKL, HAVE_FFT_ACML or
+    HAVE_FFTW3 is defined, respectively.
+
+If some external libraries are installed in a non-standard location in your
+system, e.g. MKL in `/opt/intel/mkl/9.1', cmake will not
+detect them automatically. In such a case, you should use LD_LIBRARY_PATH
+environment variable to define additional directories to be
+searched for libraries and headers. For instance, to configure IT++ to link to 32-bit version 
+of MKL 11.0 external libraries, you should use the following commands:
+
+  % export LD_LIBRARY_PATH=/opt/intel/composer_xe_2013.2.146/mkl/lib/intel64/
+  % cmake .. -DBLA_VENDOR=Intel11
+
+
+Compilation
+-----------
+
+Now, it is time for compiling and linking the IT++ library. To do so, please
+simply run the following command:
+
+  % make
+
+IT++ should compile without any errors or warnings. If this is not the case,
+please report the problem on the IT++ Help forum at SourceForge. Please
+include information about your OS, compiler version, external libraries and
+their versions, etc.
+
+
+Testing the Compiled Library
+----------------------------
+
+It is recommended that you check if your library has been compiled and linked
+properly and works as expected. To do so, you need to specify the path to the
+Google C++ Test Framework sources as:
+
+  % cmake .. -DGTEST_DIR=/path/to/gtest
+  % make
+  % gtests/itpp_gtests
+
+As a result, you should obtain a report with test results.
+
+If not all tests passed please report the problem on the IT++ Help forum.
+
+
+Installation
+------------
+
+Finally, you should install the compiled and linked library, include files
+and HTML documentation (optionally) by typing:
+
+  % make install
+
+Depending on the CMAKE_INSTALL_PREFIX settings during configuration, you might need the
+root (administrator) access to perform this step.
+
+Eventually, you might invoke the following command
+
+  % make clean
+
+to remove all files created during compilation process. Alternatively you could remove
+build folder:
+  % cd ..
+  % rm -rf build
+

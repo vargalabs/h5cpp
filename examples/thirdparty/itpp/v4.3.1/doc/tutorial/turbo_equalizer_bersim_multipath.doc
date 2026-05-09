@@ -1,0 +1,24 @@
+/*!
+\page turbo_equalizer_bersim_multipath Simulation of turbo equalizer in multipath channels
+
+The turbo equalizer uses a SISO NSC module and a SISO equalizer module. Optionally a precoder can be used at the channel input 
+(by default the precoder is enabled).
+
+ Reference: R. Koetter, A. C. Singer, and M. Tuchler, ''Turbo equalization: an iterative equalization and decoding 
+ technique for coded data transmision,`` IEEE Signal Processing Magazine, pp. 67-80, Jan. 2004
+
+\include turbo_equalizer_bersim_multipath.cpp
+
+When you run this program, the results (BER and EbN0_dB) are saved into turbo_equalizer_bersim_multipath.it file. 
+Using the following MATLAB script
+\code
+clear all
+itload('turbo_equalizer_bersim_multipath.it');
+figure
+semilogy(EbN0_dB, BER, 'o-')
+grid on
+xlabel('E_b/N_0 [dB]')
+ylabel('BER')
+\endcode
+the results can be displayed.
+*/

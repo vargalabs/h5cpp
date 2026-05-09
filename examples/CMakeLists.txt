@@ -23,8 +23,7 @@ endif()
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/"
-	"${CMAKE_SOURCE_DIR}/cmake/eigen3"  "${CMAKE_SOURCE_DIR}/cmake/dlib" )
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 set(CMAKE_CXX_STANDARD 17)
 
 if(WIN32)
@@ -39,8 +38,7 @@ find_package(Doxygen QUIET)
 
 list(APPEND CMAKE_INCLUDE_PATH "/usr/include")
 list(APPEND CMAKE_INCLUDE_PATH "/usr/local/include" )
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/" 
-	"${CMAKE_SOURCE_DIR}/cmake/eigen3"  "${CMAKE_SOURCE_DIR}/cmake/dlib" )
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_program(H5CPP 
 	NAME h5cpp
@@ -74,17 +72,8 @@ endif()
 
 find_package(ZLIB REQUIRED QUIET)
 
-find_package(dlib QUIET)
-find_package(Eigen3 QUIET)
-find_package(Armadillo QUIET)
-find_package(blaze QUIET)
-find_package(ublas QUIET )
-find_package(Boost QUIET)
-
-
-# these ones are pkg-config based
-pkg_check_modules(ITPP QUIET itpp)
-pkg_check_modules(Blitz QUIET blitz)
+# Vendored linear algebra third-party dependencies
+add_subdirectory(thirdparty)
 
 list(APPEND LIBS ${HDF5_C_LIBRARIES} ${ZLIB_LIBRARIES})
 list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR} ${HDF5_INCLUDE_DIRS}  ${ZLIB_INCLUDE_DIRS})
@@ -98,76 +87,52 @@ if( H5CPP_COMPILER_FOUND )
 		COMMAND	${H5CPP}  ${CMAKE_CURRENT_SOURCE_DIR}/multi-tu/tu-01.cpp -- ${CMAKE_CXXFLAGS} -D${CMAKE_CURRENT_SOURCE_DIR}/multi-tu/tu-01.h
 		COMMAND	${H5CPP}  ${CMAKE_CURRENT_SOURCE_DIR}/multi-tu/tu-02.cpp -- ${CMAKE_CXXFLAGS} -D${CMAKE_CURRENT_SOURCE_DIR}/multi-tu/tu-02.h
 		COMMENT "-- generating hdf5 compound type descriptors with h5cpp compiler ...")
-	if( ${Eigen3_FOUND} )
-		add_custom_target(h5cpp-compiler-generated-eigen ALL
-			${H5CPP} ${CMAKE_CURRENT_SOURCE_DIR}/packet-table/packettable.cpp -- 
-			${CMAKE_CXXFLAGS}  -I${EIGEN3_INCLUDE_DIR} -D${CMAKE_CURRENT_SOURCE_DIR}/packet-table/generated.h
-		COMMENT "-- generating hdf5 compound type descriptors with h5cpp compiler ...")
-		add_custom_target(examples ALL DEPENDS h5cpp-compiler-generated h5cpp-compiler-generated-eigen )
-	else()
-		add_custom_target(examples ALL DEPENDS h5cpp-compiler-generated )
-	endif()
+	get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+	add_custom_target(h5cpp-compiler-generated-eigen ALL
+		${H5CPP} ${CMAKE_CURRENT_SOURCE_DIR}/packet-table/packettable.cpp -- 
+		${CMAKE_CXXFLAGS}  -I${EIGEN3_INCLUDE_DIR} -D${CMAKE_CURRENT_SOURCE_DIR}/packet-table/generated.h
+	COMMENT "-- generating hdf5 compound type descriptors with h5cpp compiler ...")
+	add_custom_target(examples ALL DEPENDS h5cpp-compiler-generated h5cpp-compiler-generated-eigen )
 else()
 	add_custom_target(examples ALL)
 	message("-- H5CPP compiler NOT found: using `generated.h` already present...")
 endif()
 
-if( ${dlib_FOUND} )
-	message( "-- Found: dlib library, added to examples" )
-	add_executable(examples-dlib EXCLUDE_FROM_ALL "linalg/dlib.cpp")
-	# dlib doesn't like c++17
-	target_compile_options(examples-dlib PRIVATE "-w")
-	target_link_libraries(examples-dlib ${LIBS} dlib::dlib)
-	set_property(TARGET examples-dlib PROPERTY CXX_STANDARD 14)
-	add_dependencies(examples examples-dlib)
-endif()
+message( "-- Vendored: dlib library, added to examples" )
+add_executable(examples-dlib EXCLUDE_FROM_ALL "linalg/dlib.cpp")
+target_compile_options(examples-dlib PRIVATE "-w")
+target_link_libraries(examples-dlib ${LIBS} libdlib)
+add_dependencies(examples examples-dlib)
 
-if( ${Eigen3_FOUND} )
-	message( "-- Found: eigen3 ${Eigen3_VERSION} added to examples" )
-	add_executable(examples-eigen3 EXCLUDE_FROM_ALL "linalg/eigen3.cpp")
-	target_include_directories(examples-eigen3 PRIVATE ${EIGEN3_INCLUDE_DIR})
-	target_link_libraries(examples-eigen3 ${LIBS} Eigen3::Eigen )
-	add_dependencies(examples examples-eigen3)
-endif()
+message( "-- Vendored: eigen3 added to examples" )
+add_executable(examples-eigen3 EXCLUDE_FROM_ALL "linalg/eigen3.cpp")
+target_link_libraries(examples-eigen3 ${LIBS} Eigen3::Eigen)
+add_dependencies(examples examples-eigen3)
 
-if( ${ARMADILLO_FOUND} )
-	message( "-- Found: armadillo ${ARMADILLO_VERSION_STRING} added to examples" )
-	add_executable(examples-arma EXCLUDE_FROM_ALL "linalg/arma.cpp")
-	target_link_libraries(examples-arma ${LIBS})
-	add_dependencies(examples examples-arma)
-endif()
+message( "-- Vendored: armadillo added to examples" )
+add_executable(examples-arma EXCLUDE_FROM_ALL "linalg/arma.cpp")
+target_link_libraries(examples-arma ${LIBS} libarmadillo)
+add_dependencies(examples examples-arma)
 
-if( ${blaze_FOUND} )
-	message( "-- Found: blaze ${blaze_VERSION} added to examples" )
-	add_executable(examples-blaze EXCLUDE_FROM_ALL "linalg/blaze.cpp")
-	target_link_libraries(examples-blaze ${LIBS})
-	add_dependencies(examples examples-blaze)
-endif()
+message( "-- Vendored: blaze added to examples" )
+add_executable(examples-blaze EXCLUDE_FROM_ALL "linalg/blaze.cpp")
+target_link_libraries(examples-blaze ${LIBS} libblaze)
+add_dependencies(examples examples-blaze)
 
-if( ${ITPP_FOUND} )
-	message( "-- Found: itpp ${ITPP_VERSION}, added to examples" )
-	add_executable(examples-itpp EXCLUDE_FROM_ALL "linalg/itpp.cpp")
-	target_link_libraries(examples-itpp ${LIBS}  ${ITPP_LDFLAGS}  )
-	add_dependencies(examples examples-itpp)
-endif()
+message( "-- Vendored: itpp added to examples" )
+add_executable(examples-itpp EXCLUDE_FROM_ALL "linalg/itpp.cpp")
+target_link_libraries(examples-itpp ${LIBS} libitpp)
+add_dependencies(examples examples-itpp)
 
-if( ${Blitz_FOUND} )
-	message( "-- Found: blitz ${Blitz_VERSION}, added to examples" )
-	#add_executable(examples-blitz EXCLUDE_FROM_ALL "linalg/blitz.cpp")
-	#target_link_libraries(examples-blitz ${LIBS}  ${Blitz_LDFLAGS} )
-	#TODO: re-add example for blitz++ 
-	#add_dependencies(examples examples-blitz)
-endif()
+message( "-- Vendored: blitz added to examples" )
+add_executable(examples-blitz EXCLUDE_FROM_ALL "linalg/blitz.cpp")
+target_link_libraries(examples-blitz ${LIBS} libblitz)
+add_dependencies(examples examples-blitz)
 
-if( ${Boost_FOUND} )
-	if(EXISTS "${Boost_INCLUDE_DIRS}/boost/numeric/ublas")
-		set(ublas_DIR "${Boost_INCLUDE_DIRS}/boost/numeric/ublas" CACHE PATH "path to ublas includes" FORCE)
-		message( "-- Found: ublas ${Boost_VERSION}" )
-		add_executable(examples-ublas EXCLUDE_FROM_ALL "linalg/ublas.cpp")
-		target_link_libraries(examples-ublas ${LIBS} )
-		add_dependencies(examples examples-ublas)
-	endif()
-endif()
+message( "-- Vendored: ublas added to examples" )
+add_executable(examples-ublas EXCLUDE_FROM_ALL "linalg/ublas.cpp")
+target_link_libraries(examples-ublas ${LIBS} libublas)
+add_dependencies(examples examples-ublas)
 
 include(FindMPI)
 if( MPI_FOUND AND HDF5_IS_PARALLEL )
@@ -243,13 +208,10 @@ target_link_libraries(examples-datasets ${LIBS} )
 add_dependencies(examples examples-datasets)
 endif()
 
-if( ${Eigen3_FOUND} AND ${ARMADILLO_FOUND} )
 ## datatypes nbit ###
-	add_executable(examples-nbit EXCLUDE_FROM_ALL "datatypes/n-bit.cpp")
-	target_link_libraries(examples-nbit ${LIBS}  )
-	target_include_directories(examples-nbit PRIVATE ${EIGEN3_INCLUDE_DIR})
-	add_dependencies(examples examples-nbit)
-endif()
+add_executable(examples-nbit EXCLUDE_FROM_ALL "datatypes/n-bit.cpp")
+target_link_libraries(examples-nbit ${LIBS} libarmadillo Eigen3::Eigen)
+add_dependencies(examples examples-nbit)
 
 ## datatypes twobit ###
 add_executable(examples-twobit EXCLUDE_FROM_ALL "datatypes/two-bit.cpp")
@@ -271,13 +233,10 @@ target_link_libraries(examples-optimized ${LIBS} )
 add_dependencies(examples examples-optimized)
 endif()
 
-if( ${Eigen3_FOUND} AND ${ARMADILLO_FOUND} )
-	## packet-table ###
-	add_executable(examples-packet-table EXCLUDE_FROM_ALL "packet-table/packettable.cpp")
-	target_include_directories(examples-packet-table PRIVATE ${EIGEN3_INCLUDE_DIR})
-	target_link_libraries(examples-packet-table ${LIBS} )
-	add_dependencies(examples examples-packet-table)
-endif()
+## packet-table ###
+add_executable(examples-packet-table EXCLUDE_FROM_ALL "packet-table/packettable.cpp")
+target_link_libraries(examples-packet-table ${LIBS} libarmadillo Eigen3::Eigen)
+add_dependencies(examples examples-packet-table)
 
 ## raw memory ###
 add_executable(examples-raw EXCLUDE_FROM_ALL "raw_memory/raw.cpp")
@@ -307,11 +266,9 @@ target_link_libraries(examples-groups ${LIBS} )
 add_dependencies(examples examples-groups)
 
 ## reference ###
-if( ${ARMADILLO_FOUND} )
-	add_executable(examples-reference EXCLUDE_FROM_ALL "reference/reference.cpp")
-	target_link_libraries(examples-reference ${LIBS} )
-	add_dependencies(examples examples-reference)
-endif()
+add_executable(examples-reference EXCLUDE_FROM_ALL "reference/reference.cpp")
+target_link_libraries(examples-reference ${LIBS} libarmadillo)
+add_dependencies(examples examples-reference)
 
 ## kita ###
 find_library(RESTVOL_LIBRARY NAMES restvol h5restvol DOC "REST VOL library" PATHS /usr/local/lib /usr/lib)

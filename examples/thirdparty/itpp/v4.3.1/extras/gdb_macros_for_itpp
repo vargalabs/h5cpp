@@ -1,0 +1,234 @@
+# File:   gdb_macros_for_itpp
+# Brief:  This file defines some gdb macros for printing out it++ types
+# Author: Vasek (files contributed in feature request 1913404) and Erik G. Larsson
+#
+# To use it, add this line to ~/.gdbinit:
+# source gdb_macros_for_itpp
+#
+# gdb macros defined in this file:
+#
+# dv: display vec
+# dm: display mat
+# div: display integer (ivec or svec) vector
+# dim: display integer (ivec or svec) matrix 
+# dcv: display cvec
+# dcm: display cmat
+# dbv: display bvec
+# dbm: display bmat
+#
+# -------------------------------------------------------------------------
+#
+# Copyright (C) 1995-2010  (see AUTHORS file for a list of contributors)
+#
+# This file is part of IT++ - a C++ library of mathematical, signal
+# processing, speech processing, and communications classes and functions.
+#
+# IT++ is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any
+# later version.
+#
+# IT++ is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along
+# with IT++.  If not, see <http://www.gnu.org/licenses/>.
+#
+# -------------------------------------------------------------------------
+
+
+define div
+    printf "Vector of length %i:\n", $arg0.datasize
+    output $arg0.data[0]@($arg0.datasize)
+    printf "\n"
+end
+
+document div
+   Display it++ integer (ivec or svec) vector 
+end
+
+define dim
+   set $i=0
+
+   set $M = $arg0
+   set $rs = $M.no_rows
+   set $col = $M.no_cols
+
+   printf "Matrix of dimension %ix%i:\n", $rs, $col
+
+   while $i < $rs
+     set $j=0
+     printf "["
+     while $j< $col
+        output $M.data[$j*$rs+$i]
+        printf " "
+        set $j++
+     end
+     printf "]"
+     printf "\n"
+     set $i++
+   end
+end
+
+document dim
+   Display it++ integer (ivec or svec) matrix 
+end
+
+define dv
+   set $i=0
+
+   set $M = $arg0
+   set $rs = $M.datasize
+
+   printf "Vector of length %i:\n", $rs
+
+   printf "["
+   while $i < $rs
+	printf "%g ", *(double*)(((void*)($M.data))+($i)*sizeof(double))
+     set $i++
+   end
+   printf "]\n"
+end
+
+document dv
+   Display it++ vec
+end
+
+define dcv
+   set $i=0
+
+   set $M = $arg0
+   set $rs = $M.datasize
+
+   printf "Vector of length %i:\n", $rs
+
+   printf "[ "
+   while $i < $rs
+	printf "%g", *(double*)(((void*)($M.data))+($i)*sizeof(double)*2)
+	printf "+"
+	printf "%-g", *(double*)(((void*)($M.data))+($i)*sizeof(double)*2+sizeof(double))
+	printf "i, "
+     set $i++
+   end
+   printf "]\n"
+end
+
+document dcv
+   Display it++ cvec
+end
+
+define dm
+   set $i=0
+
+   set $M = $arg0
+   set $rs = $M.no_rows
+   set $col = $M.no_cols
+
+   printf "Matrix of dimension %ix%i:\n", $rs, $col
+
+   while $i < $rs
+     set $j=0
+     printf "["
+     while $j< $col
+        printf "%6g", $M.data[$j*$rs+$i]
+#        output $M.data[$j*$rs+$i]
+        printf " "
+        set $j++
+     end
+     printf "]\n"
+     set $i++
+   end
+end
+
+document dm
+   Display it++ mat
+end
+
+define dcm
+   set $i=0
+
+   set $M = $arg0
+   set $rs = $M.no_rows
+   set $col = $M.no_cols
+
+   printf "Matrix of dimension %ix%i:\n", $rs, $col
+
+   while $i < $rs
+     set $j=0
+     printf "["
+     while $j< $col
+#	printf "%8.3f+%8.3fi ", *(double*)(((void*)($M.data))+($j*$rs+$i)*sizeof(double)*2), *(double*)(((void*)($M.data))+($j*$rs+$i)*sizeof(double)*2+sizeof(double))
+	printf "%5g", *(double*)(((void*)($M.data))+($j*$rs+$i)*sizeof(double)*2)
+	printf "+"
+	printf "%-5g", *(double*)(((void*)($M.data))+($j*$rs+$i)*sizeof(double)*2+sizeof(double))
+	printf "i, "
+        set $j++
+     end
+     printf "]\n"
+     set $i++
+   end
+end
+
+document dcm
+   Display it++ cmat
+end
+
+define dbv
+   set $i=0
+
+   set $M = $arg0
+   set $rs = $M.datasize
+
+   printf "Vector of length %i:\n", $rs
+
+   printf "["
+   while $i < $rs
+	printf "%c ", (*(char*)(((void*)($M.data))+($i)*sizeof(char)))+48
+     set $i++
+   end
+   printf "]\n"
+end
+
+document dbv
+   Display it++ bvec
+end
+
+define dbm
+   set $i=0
+
+   set $M = $arg0
+   set $rs = $M.no_rows
+   set $col = $M.no_cols
+
+   printf "Matrix of dimension %ix%i:\n", $rs, $col
+
+   while $i < $rs
+     set $j=0
+     printf "["
+     while $j< $col
+	printf "%c ", *(char*)(((void*)($M.data))+($j*$rs+$i)*sizeof(char))+48
+        set $j++
+     end
+     printf "]\n"
+     set $i++
+   end
+end
+
+document dbm
+   Display it++ bmat
+end
+
+define _test_dvm_macros_
+   dv a
+   dcv b
+   div c
+   div cs
+   dm A
+   dcm B
+   dim C
+   dim Cs
+   dbv p
+   dbm P
+end

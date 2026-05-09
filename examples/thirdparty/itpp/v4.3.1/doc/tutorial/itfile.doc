@@ -1,0 +1,34 @@
+/*!
+\page itfile Writing and reading data from files
+
+Here we will use the \c it_file class to store some data. The program \c
+write_it_file.cpp looks as follows:
+
+\include write_it_file.cpp
+
+When you run this program you will obtain a file called \c it_file_test.it
+in your current directory. You can read the file into Matlab/Octave to view
+the data by using the following commands:
+
+\code
+itload('it_file_test.it')
+figure(1); clf;
+plot(a)
+\endcode
+
+Note: Make sure that <tt>$PREFIX/share/itpp</tt> is in your Matlab/Octave
+path and that you run the code above from the directory where \c
+it_file_test.it is located (\c $PREFIX is the IT++ installation prefix;
+<tt>/usr/local</tt> by default).
+
+The IT++ program \c read_it_file.cpp that reads the file and prints its
+content can look like this:
+
+\include read_it_file.cpp
+
+Here is the output of the program:
+
+\verbatim
+a = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20]
+\endverbatim
+*/

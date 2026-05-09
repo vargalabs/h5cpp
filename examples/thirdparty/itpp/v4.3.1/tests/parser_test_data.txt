@@ -1,0 +1,62 @@
+%---------------------------------------------------------------------
+% Test data file for the parser_test.cpp program
+%---------------------------------------------------------------------
+
+% Lines that begins with % are ignored. Expressions that ends with ';'
+% are not printed while parsing.
+
+a = 4; %Comments may be put at the end of each line
+
+% You can give several values for the same parameter name. Each 
+% alternative value must be on a new row. Select the value you 
+% want with the num parameter in the get_double member function.
+% Use:
+%   Parser p("filename.txt");
+%   double b = p.get_double("b",1);
+% to select the value 2.36 below.
+b = 2.35 
+    2.36 
+    2.37
+% Several expressions may be put on the same row (separated by , or ;)
+% c is a string, d is an integer vector. Spaces and/or commas separate 
+% the vector elements.
+c = "Hello World"; d   =[1,2,3 4,3 2, -1];
+
+% This a vector. 
+e=[1.2,2,3.33 4.01,3.2 2, -1.2];
+
+% This is a short vector. 
+f=[1,2,3 4,3 2, -1];
+
+% This is a binary vector. 
+g=[0 1 0 0 1];
+
+% This an integer matrix. Spaces and/or commas separate the colums. Semicolons separate rows.
+h=[1 2 3;4 5 6];
+
+% Expressions can continue over several rows by inserting '...' at the end of the rows 
+% (as in Matlab). This is a matrix.
+i=[... 
+   1.0, 2 ; ...
+  -3    4.2 ...
+  ] ;
+
+% This is a short matrix.
+j=[1 -2 -3;4 -5 6];
+
+% This is a binary matrix.
+k=[0 1 0 1;1 0 1 0;0 0 0 0;1 1 1 1];
+
+% These are boolean variables:
+l= 0;
+m= true;
+
+% This is a string with single instead of double quotes (For Matlab compatibility)
+n='Hello World';
+
+% This is an Array<Array<cvec> >
+% In Matlab, the elements defined below are accessible as
+% o{1}{1}, o{1}{2} and o{2}{1}; note the curly brackets.
+% For complex numbers, both 1+2i and (1,2) are allowed formats,
+% but only the first one is Matlab compatible.
+o = {{[1+2i 3+4i] [5+6i]} {[7 8 9]}}

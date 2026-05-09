@@ -1,0 +1,44 @@
+===========================================================
+gf2mat_test: Test of matrix operations in gfmat.h/gfmat.cpp
+===========================================================
+A=---- GF(2) matrix of dimension 3*3 -- Density: 0.333333 ----
+      1 0 0 
+      0 0 1 
+      0 1 0 
+
+A*A=---- GF(2) matrix of dimension 3*3 -- Density: 0.333333 ----
+      1 0 0 
+      0 1 0 
+      0 0 1 
+
+A*A'=---- GF(2) matrix of dimension 3*3 -- Density: 0.333333 ----
+      1 0 0 
+      0 1 0 
+      0 0 1 
+
+B=---- GF(2) matrix of dimension 3*3 -- Density: 0.333333 ----
+      1 0 0 
+      0 0 1 
+      0 1 0 
+
+B.get_row(1)=[0 0 1]
+B.get_col(2)=[0 1 0]
+v=[1 1 0]
+A*v=[1 0 1]
+rank(A)=3
+inv(A)=---- GF(2) matrix of dimension 3*3 -- Density: 0.333333 ----
+      1 0 0 
+      0 0 1 
+      0 1 0 
+
+C=---- GF(2) matrix of dimension 3*3 -- Density: 0.333333 ----
+      1 0 0 
+      0 1 0 
+      0 0 1 
+
+D=---- GF(2) matrix of dimension 3*3 -- Density: 0.333333 ----
+      1 0 0 
+      0 1 0 
+      0 0 1 
+
+p=[0 2 1]

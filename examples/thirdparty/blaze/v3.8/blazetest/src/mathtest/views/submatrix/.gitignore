@@ -1,0 +1,10 @@
+*.d
+*.o
+DenseAlignedTest1
+DenseAlignedTest2
+DenseUnalignedTest1
+DenseUnalignedTest2
+IncludeTest
+SparseTest1
+SparseTest2
+

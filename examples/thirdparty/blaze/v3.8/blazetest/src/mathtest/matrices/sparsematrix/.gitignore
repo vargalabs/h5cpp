@@ -1,0 +1,15 @@
+*.d
+*.o
+DiagonalTest
+GeneralTest
+HermitianTest
+IdentityTest
+LowerTest
+StrictlyLowerTest
+StrictlyUpperTest
+SymmetricTest
+UniLowerTest
+UniUpperTest
+UpperTest
+ZeroTest
+

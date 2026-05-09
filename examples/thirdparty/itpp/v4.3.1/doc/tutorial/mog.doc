@@ -1,0 +1,11 @@
+/*!
+\page mog Using Mixture of Gaussians (MOG) module to model data
+
+This example demonstrates how to find the parameters of
+a MOG model via using the kmeans and EM based optimisers.
+Synthetic data is utilised.
+
+\include mog.cpp
+
+
+*/

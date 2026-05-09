@@ -1,0 +1,554 @@
+===============================================================================
+IT++ version 4.0.7                                         Released: 2009-12-27
+-------------------------------------------------------------------------------
+
+IT++ 4.0.7 is the next maintenance release based on the IT++ stable branch
+itpp-4-0. A list of modifications and bug-fixes is presented below:
+
+
+Modifications:
+--------------
+
+* Added support for automatic detection of MKL 10.2 libraries when using GCC
+
+* Improved performance of the Frobenious norm function
+
+* Improved documentation on the accuracy of LLR calculations
+
+* Disabled optimization flag "-O1" for the debug builds
+
+
+Bug-fixes:
+----------
+
+* Added equality and inequality operators for Vec<complex<double>> type (bug
+  report #2909998)
+
+* Added missing templated instantiations of is_hermitian() and is_unitary()
+  functions (bug report #2392728)
+
+* Added missing include files, so IT++ compiles cleanly with GCC 4.4 (bug
+  report #2780001)
+
+
+===============================================================================
+IT++ version 4.0.6                                         Released: 2008-10-08
+-------------------------------------------------------------------------------
+
+IT++ 4.0.6 is the next maintenance release based on the current IT++ stable
+branch (itpp-4-0). As usual, a brief list of modifications and bug-fixes is
+presented below:
+
+
+Modifications:
+--------------
+
+* Added GDB debugger helper display macros for IT++ data types (feature
+  request [1913404])
+
+* Reduced number of divisions in a sinc() function implementation
+
+* "itpp/config.h" no longer included in "itpp/base/itassert.h" header file
+
+
+Bug-fixes:
+----------
+
+* Fixed broken implementation of toeplitz() function for the case when two
+  different complex-valued input vectors are used as input arguments (bug
+  report [2110119]).
+
+* Fixed a minor bug in GF::set_size() method: the content of "alphapow" and
+  "logalpha" static variables is now properly copied when resizing them.
+
+* Fixed sort() and sort_index() so they again work for vectors with less
+  than two elements.
+
+* Fixed bug [2041474] in Vec<>::split() method, which was a regression with
+  respect to the previous 3.10.x stable releases.
+
+* Fixed incorrect usage of ZDOTU BLAS function when linking to 64-bit MKL
+  library for GNU/Linux (zdotusub Fortran wrapper function is required)
+
+* Suppressed warnings about deprecated "/Wp64" option when compiling with MS
+  Visual C++ Express 2008
+
+
+===============================================================================
+IT++ version 4.0.5                                         Released: 2008-07-19
+-------------------------------------------------------------------------------
+
+IT++ 4.0.5 is the next maintenance release of the current IT++ stable branch
+(itpp-4-0). As usual, a brief list of modifications and bug-fixes is
+presented below:
+
+
+Modifications:
+--------------
+
+* Mat<>::set_size() method now resets the number of rows/columns, if one of
+  the dimensions of a matrix is zero. This is consistent with the
+  constructor behaviour.
+
+* Suppressed a few MSVC++ warnings (C4512, C4701, C4244 and C4100) by minor
+  re-factoring of some code fragments
+
+* Changed the default debugging CFLAGS to "-g -O1" or "-Wall -ggdb -O1
+  -pipe", where the latter set is used with GCC.
+
+* Suppressed GCC 4.3 warnings on "ambiguous else" due to missing braces
+
+* Coding style unified and beautified using Artistic Style (astyle) source
+  code formatter
+
+
+Bug-fixes:
+----------
+
+* Fixed bug [2017948] in parsing from string routine of Vec<int> for "a:b:c"
+  format specifier
+
+* Fixed bug [2004345] causing incorrect result of Mat::concat_vertical(),
+  when one of the input matrices was empty. In such case the result is now a
+  copy of the other (non-empty) matrix.
+
+* Fixed bug [1995743] in BCH::decode() function, which resulted in a
+  decoding failure, while a codeword should have been correctable in theory.
+
+* Fixed one regression due to a missing "inline" keyword in
+  Vec<>::outer_product() specialisation
+
+* Fixed bug [1941219], which reports broken initialisation of
+  Fast_ICA::set_init_guess() method.
+
+
+===============================================================================
+IT++ version 4.0.4                                         Released: 2008-03-31
+-------------------------------------------------------------------------------
+
+IT++ 4.0.4 is the next bug-fix release of the current IT++ stable branch
+(itpp-4-0). As usual, a brief list of modifications and bug-fixes in this
+maintenance release is presented below:
+
+
+Modifications:
+--------------
+
+* Added support for "-1" indexing in Vec<>::del(i1, i2) method. For instance,
+  v.del(4, -1) should delete all elements of v starting from the fourth one.
+
+* In case of an overflow saturate QLLR values instead of aborting.
+
+* Improved performance of expand_base() and calculate_base_matrix() methods
+  of the BLDPC_Parity class
+
+* Const member functions in BERC and BLERC classes are now really "const".
+
+* Added new tests for error counters, converting functions and block LDPC
+  code classes
+
+* Clean-ups of the Vec and Mat classes (removed unnecessary "const"
+  keywords, use consistent naming, use in_range() private methods, revise
+  inlining of functions)
+
+* Minor documentation improvements (spelling fixes in the base module and
+  improved sqr() documentation).
+
+
+Bug-fixes:
+----------
+
+* Fixed bug [1908644] in Modulator<>::set(symbols, bits2symbols) function.
+  The bitmap matrix used in the demodulate_bits() function of the
+  Modulator<> base class was improperly constructed from the input
+  bits2symbols mapping vector. This resulted in demodulation errors for some
+  constellations, e.g. 64-QAM or 8-PSK.
+
+* Fixed wrong size of the resulting bit vector of the LDPC_Code::decode()
+  function
+
+* Fixed wrong conditions in it_assert_debug() calls of elem_mult_out()
+  methods of the Vec and Math classes
+
+* Fading_Generator::generate(int) methods in the derived classes are no
+  longer hidden.
+
+* Warnings are no longer treated as errors under MSVC++ compiler. This
+  should workaround the bug [1900236].
+
+* Fixed incorrect implementation of rint() function not available under
+  MSVC++ compiler
+
+* Fixed complex constructors in operators.cpp to build with g++ 4.3
+
+
+===============================================================================
+IT++ version 4.0.3                                         Released: 2008-02-21
+-------------------------------------------------------------------------------
+
+This bug-fix release is only intended to fix the wrong calling method of
+BLAS zdotu_ function, used in IT++ 4.0.1 and 4.0.2 releases. The problem is
+due to the fact that a std::complex<double> C++ type is not compatible with
+COMPLEX in Fortran. This appears to be especially visible when calling the
+Fortran functions that return a complex result.
+
+Therefore, the most portable solution to call such functions from C++ is to
+use a Fortran wrapper function that passes the complex result as the
+function argument. For this particular problem, the zdotusub_ wrapper
+function is provided. Besides, the configure script provides a new
+"--with-zdotu=<method>" option to override the default calling method of
+zdotu_ function. The valid options are as follows:
+- "zdotusub" - use the zdotusub_ Fortran wrapper function (default, if a
+   Fortran compiler is available)
+- "void" - compatible with BLAS libraries built with g77 compiler and BLAS
+  provided by Intel MKL
+- "none" - not using the zdotu_ function at all
+
+Please note that if IT++ 4.0.2 release works fine for you (all tests pass),
+you do not need to update IT++ to version 4.0.3.
+
+
+===============================================================================
+IT++ version 4.0.2                                         Released: 2008-02-15
+-------------------------------------------------------------------------------
+
+This is the second bug-fix release of the current IT++ stable branch
+(itpp-4-0). A brief list of modifications and bug-fixes in this maintenance
+release is as follows:
+
+
+Modifications:
+--------------
+
+* Documentation improvements:
+  - better description of the encoding/decoding and encoder state setting
+    functions of the Convolutional_Code class
+  - detailed description added to the get_bits2symbols() method of the
+    Modulator base class
+  - missing itpp namespace documentation is now generated (due to the
+    Doxygen's changes)
+
+* Added support for building a DLL library on Cygwin (IT++ has to be linked
+  to Cygwin's libblas and liblapack DLLs).
+
+
+Bug-fixes:
+----------
+
+* Fixed wrong result of the log_add() function for infinite arguments
+  (bug report [1863940])
+
+* Fixed GF2mat_sparse_alist::from_sparse() conversion function, which was
+  not usable for most of non-regular sparse matrices.
+
+* Fixed wrong verbose output of the Parser::get() function for "int" and
+  "bool" types of the parsed variables
+
+* Improved zdotu_ calling convention tests, which should solve problems with
+  blas_test and vec_test reported for 64-bit versions of Debian and SUSE
+  Linux systems (bug report [1855481]). A Fortran wrapper function zdotusub_
+  is no longer distributed with IT++.
+
+
+===============================================================================
+IT++ version 4.0.1                                         Released: 2007-12-15
+-------------------------------------------------------------------------------
+
+This is the first bug-fix release of the current stable itpp-4-0 branch. As
+usual, the maintenance release of the IT++ library is backward compatible
+with previous versions from the same branch (4.0.x), because only bug-fixes
+and modifications that do not break the interface have been included.
+
+Here is a brief summary of the most important changes included in this
+release:
+
+
+Modifications:
+--------------
+
+* Fortran compiler is no longer required for detection of some BLAS/LAPACK
+  implementations. For instance, the BLAS and LAPACK libraries provided by
+  Intel MKL or Apple's Accelerate Framework can be used without Fortran
+  compiler installed.
+
+* Flags and libraries returned by itpp-config and "pkg-config itpp" commands
+  are adjusted to the linker requirements of a particular platform and
+  library type. With this change, the use of "--static" switch should be no
+  longer necessary. This should also fix linking problems to a shared
+  library on Mac OS X.
+
+* Major improvement in calculation performance of SVD and QR decomposition
+  routines, especially for larger matrices.
+
+* "operator*(Vec &v, Mat &m)" documented as deprecated, because its
+  behaviour is equivalent to "outer_product(v, m.get_row(0))".
+
+* "-Werror" flag is not used any more by default when compiling the
+  debugging library.
+
+* Documentation improvements of svd() and diag() functions
+
+* Latest MKL and ACML libraries should be automatically detected on both 32-
+  and 64-bit systems.
+
+* The MS Visual C++ project files now use environment variables (INCLUDE,
+  LIB and PATH) to find the location of header and library files of MKL and
+  ACML. Besides, multi-threaded DLL libraries are built by default.
+
+* "min" and "max" macros are now unconditionally undefined in config.h and
+  config_msvc.h. IT++ uses std::min() and std::max() functions.
+
+* Autoconf 2.60 is now required when building from SVN.
+
+* Improved configure checks for isfinite(), isinf() and isnan() functions.
+  This should improve portability of the library on other UNIX and BSD
+  systems.
+
+* The configuration summary is logged in the config.log file.
+
+* Added "itpp_debug.pc" pkg-config's file for linking with the debugging
+  library.
+
+
+Bug-fixes:
+----------
+
+* Fixed compilation errors when using GCC 4.3 (bug-report [1848375])
+
+* Fixed LDPC tutorial examples (bug-report [1827041])
+
+* Added a workaround for a compilation error of a few explicit
+  instantiations in converters.cpp when using GCC 3.3.x with
+  "-finline-functions" flag enabled (bug-report [1818395])
+
+* The distributed files "itpp.spec" and "itpp-config.1" are no longer
+  removed when invoking a "make distclean" command (bug-report [1818391]).
+
+* Fixed wrong calculation of bessely() caused by incompatible
+  implementations of gamma() and lgamma() functions. This problem was only
+  visible when using an Intel C++ compiler.
+
+* Prevent warnings about string to char* conversions when using GCC >= 4.2
+
+
+===============================================================================
+IT++ version 4.0.0                                         Released: 2007-10-14
+-------------------------------------------------------------------------------
+
+IT++ 4.0.0 is the new stable release based on itpp-3-99 development branch.
+It supersedes our previous 3.10.x stable versions. After over one and a half
+year of intensive development it includes a lot of new features and
+improvements with respect to IT++ 3.10.12 release (the previous stable
+version).
+
+A brief summary of the most important additions and changes is listed below.
+Should you need more detailed history of changes that are new in this
+release, please have a look at the NEWS-3.99 and ChangeLog files.
+
+
+New features:
+-------------
+
+### Base module: ###
+
+* New functions for initializing vectors and matrices from strings
+  implemented. Main features of the improved parser are as follows:
+  - Decimal, octal and hexadecimal notation support according to C/C++
+    conventions, i.e. octal numbers starts with `0' (e.g. `0133', `077'),
+    decimal numbers starts with `1-9' or are single `0' digits, hexadecimal
+    numbers starts with `0x' or `0X' prefix and have at least one `0-9',
+    `a-f' or `A-F' digit after (e.g. 0xFF, 0x0, 0x070).
+  - Mixing of various representations in one string
+  - Signed numbers supported, i.e. with leading `+', `-' signs, e.g.
+    `-1000', `+0133', `-0x1'
+  - Vector values separated with spaces ` ', tabs `\t' or comma `,'
+  - Matlab's "a:b" or "a:b:c" notation for increasing and decreasing
+    values, e.g. "0:2:10", "-9:-18", "4:-1:0", "0x0:0x8:0xFF"
+  - Matrix rows separated with a single semicolon `;'
+  - `NaN' (not a number) and `Inf' (infinity) values properly interpreted
+  - Detection of syntax errors during parsing
+
+* New features of the communication channels:
+  - Implemented missing "Gauss I" and "Gauss II" Doppler spectra required by
+    a few COST207 channel models
+  - Channel_Specification and TDL_Channel classes extended with support of
+    LOS (Rice) fading for any tap. Removed Doppler spectrum of type `Rice',
+    since its generation method was the same as of the `Jakes' one. To
+    obtain the `Rice' spectrum, a relative power, and optionally relative
+    Doppler, needs to be defined for certain taps.
+  - Implemented exponential channel profile generation function
+
+* New implementation of the Normal_RNG and Complex_Normal_RNG classes, which
+  uses so-called Ziggurat algorithm. The new generators are about 4-5 times
+  faster than the previous ones using Box-Mueller method (feature request
+  [1707969] and [1711727]).
+
+* New Sort class implementation included with four different algorithms:
+  Introsort, Heap sort, Quick sort and Insertion sort. The implementation of
+  the new sorting functions is much faster than our previous QS()
+  implementation due to the use of low level pointer arithmetic (feature
+  request [1746876]).
+
+* Added repmat() functions, which expand an input matrix or vector to a
+  larger one by concatenating multiple copies of the input one.
+
+* New methods in Vec and Mat classes: elem_mult_inplace(), elem_mult_out(),
+  elem_div_out(), elem_mult_sum(), elem_div_sum() and sumsum()
+
+* New methods: set_rows() and set_cols() implemented in the Mat class
+
+* Added missing left(), right() and mid() methods to the Array class
+
+### Communications module: ###
+
+* Added new classes for Low-Density Parity Check (LDPC) codes. So-called
+  Block LDPC (B-LDPC) codes, or Quasi-Cyclic LDPC codes are supported as
+  well.
+
+* Added support for MacKay's "alist" representation of sparse GF(2)
+  matrices
+
+* Added systematic codewords support in BCH and RS encoder/decoder classes
+  (feature request [1418250])
+
+* Added a new function waterfilling() to solve water-filling problems
+
+### Statistics module: ###
+
+* Created a new set of Mixture of Gaussians (MOG) classes (Statistics
+  module)
+
+* Added templated Histogram class provided (feature request [1451288])
+
+### Other: ###
+
+* MS Visual C++ .NET project file for linking IT++ with ACML added. Also
+  added MSVC++ project files for building test programs.
+
+
+Modifications:
+--------------
+
+### Base module: ###
+
+* Major changes in IT++ file format related classes:
+  - the new file format (version 3) is incompatible with version 2, which
+    was used in IT++ 3.10.x series; for backward compatibility the previous
+    format can be handled using the it_file_old and it_ifile_old classes,
+    which are considered as deprecated and will be removed from the library
+    in future
+  - data is always saved using a little endian byte ordering; files files
+    written on machines using big or little endian ordering should be
+    identical; endianity variable removed from the data_header structure
+  - all size variables are stored using fixed-width 64-bit unsigned integer
+    type, and therefore are independent of the architecture word size (32-
+    or 64-bit)
+  - short and int data types are explicitly casted to fixed-with types
+    int16_t, uint16_t, int32_t and uint32_t, since C/C++ standards do not
+    assume fixed widths of these types
+  - cleaner and more efficient implementation of the write_data_header()
+    function
+  - added missing implementation of a pack() function, which compacts an
+    opened it_file by removing free space between data blocks
+  - added optional description filed which can be saved with each variable
+  - added missing operators and methods for reading and writing svec and
+    smat data types
+  - test program improved
+  - itload.m and itsave.m M-files updated to be compatible with the latest
+    IT++ file format
+
+* Improved and reorganised existing error handling macros:
+  - using standard NDEBUG flag for controlling it_assert_debug() macro,
+    which replaced a three-level ASSERT_LEVEL definition
+  - for backward compatibility it_assert0() and it_assert1() now behaves the
+    same as it_assert_debug()
+  - added new it_info() and it_info_debug() macros for printing information
+    messages; it_info_debug() is also dependent on the NDEBUG compile-time
+    definition
+  - added it_error_msg_style() function for changing the format of
+    it_assert(), it_error() and it_warning() messages; if style is set to
+    Minimum, file name and line number of the error/assert/warning macro is
+    not printed
+  - error functions extended to handle stream operators like `<<' or
+    `std::endl' in concatenation with strings (feature request [1569867])
+
+* Improved the consistency of the alloc(), free() and set_size() methods in
+  the Array, Mat and Vec classes
+
+* General performance improvements of various operators in Vec and Mat
+  classes by using a copy_vector() function where possible. The
+  copy_vector() function use BLAS 1 routines for double and complex<double>
+  arguments.
+
+* The outer_product() function now uses an extra argument "hermitian", which
+  controls the calculation for complex vectors. By default "hermitian" is
+  set to false, which results in (x * y^T) calculation. If "hermitian" is
+  true, (x * y^H) is calculated. This solution is backward compatible with
+  3.10.x interface of outer_product(). Final fix for bug [1727923].
+
+### Communications module: ###
+
+* Major redesign of 1D and 2D modulator classes. From now, there is only one
+  templated base class Modulator, which can handle 1D (real) and 2D
+  (complex) constellations. Other modulators inherits from this base class.
+  BPSK and PAM modulators are split into: BPSK_c/PAM_c classes which have
+  complex-valued interfaces, and BPSK/PAM that have real-valued interfaces.
+  Besides, demodulate_soft_bits() functions take an additional parameter
+  "method" to switch between Log-MAP or approximate demodulation. The input
+  signal for the Modulator_2D has now a slightly different meaning. Also an
+  improper definition of the QPSK constellation is fixed (it was a 4-QAM
+  modulator previously).
+
+* Important updates in the communication channels:
+  - Fading generators inheritance model redesigned. Now there are three
+    types of fading: Independent, Static and Correlated. The Correlated
+    fading can be generated using Rice (MEDS), FIR or IFFT methods. The
+    default fading type is set to `Independent'.
+  - The delay profile discretization function is improved and moved to the
+    TDL_Channel class. An additional parameter `sampling_time' is required
+    when setting the channel profile using the Channel_Specification object.
+    It is now possible to discretize the channel with too low sampling
+    frequency, but only if the taps being merged into a new single tap use
+    the same Doppler spectrum type.
+  - Cleaned up the interfaces of various fading generator classes
+
+* Improved interfaces of Modulator_ND classes, so they are now more similar
+  to 1D and 2D modulators. BTW, implemented Zero-Forcing (ZF) Log-MAP soft
+  demodulator.
+
+### Signal processing module: ###
+
+* Memory allocation for double and complex<double> based vectors and
+  matrices uses 16-byte alignment. This results in much better performance
+  (up to 30% improvement) of FFT/IFFT and DCT/IDCT operations when using
+  FFTW external library (feature request [1418707]).
+
+### Other: ###
+
+* Removed dependency on the external CBLAS library by providing direct
+  interfaces to Fortran BLAS routines (feature request [1746876]).
+
+* New "Signal Processing", "Statistics" and "Numerical Optimization" modules
+  created from a subset of classes and functions from the "Base" module
+
+* Restructuring of the source files in the "Base" module. Some of the
+  functions grouped in "Linear Algebra" and "Mathematical and Miscellaneous
+  Functions" sub-modules.
+
+* Modularization added to the configuration scripts. It is now possible to
+  select a limited set of modules, which will be built and installed as the
+  IT++ library.
+
+* Improvements in itpp-config and pkg-config's itpp.pc scripts. The changes
+  are intended to follow the distinction between linking to a static and
+  shared version of the library, which is used in pkg-config's itpp.pc file.
+  By default "itpp-config --libs" returns "-I${prefix}/lib -litpp", whereas
+  when "--static" is added in front of "--libs", the returned string is
+  extended with a set of external library names required for proper static
+  linking. Moreover, an additional "--debug" switch has been added, which
+  changes the output of "itpp-config --cflags" and "itpp-config --libs" by
+  providing debugging flags and debugging library name. For backward
+  compatibility "--cflags-opt", "--cflags-debug", "--libs-opt" and
+  "--libs-debug" still exist, but they are not documented and their use is
+  deprecated.
+

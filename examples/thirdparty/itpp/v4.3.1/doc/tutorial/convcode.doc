@@ -1,0 +1,12 @@
+/*!
+\page convcode Simulation of a convolutional encoder and decoder
+
+In this example we will show how to use the convolutional encoder/decoder class in it++. The Viterbi decoder uses the soft received values.
+
+\include convcode.cpp
+
+When you run this program, the output will look something like this:
+
+\include convcode.ref
+
+*/

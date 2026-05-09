@@ -1,0 +1,41 @@
+Testing declaration, initialization and conversion
+==================================================
+For double and complex<double>:
+  real_value = 3.1415927
+  complex_value = 33.333333+66.666667i
+For Fix and CFix:
+  the_fix = 3.140625
+  the_cfix = 33.333008+66.666016i
+For Fixed and CFixed:
+  the_fixed = 3.140625
+  the_cfixed = 33.333008+66.666016i
+For Fixed and CFixed declared using a typedef:
+  the_fixed20 = 3.140625
+  the_cfixed20 = 33.333008+66.666016i
+For Fix and CFix declared using a factory:
+  the_fix20 = 3.140625
+  the_cfix20 = 33.333008+66.666016i
+
+Testing Array/Vec/Mat declarations and operations
+=================================================
+For Vec<Fix> and Vec<CFix>:
+  the_fixvec = [3.140625 3.140625]
+  the_cfixvec = [33.333008+66.666016i 33.333008+66.666016i]
+  the_cfixvec + the_fixvec = [36.473633+66.666016i 36.473633+66.666016i]
+  the_cfixvec - the_fixvec = [30.192383+66.666016i 30.192383+66.666016i]
+  the_cfixvec * the_fixvec = 209.37296+418.74591i
+  the_cfixvec / the_fix = [10+21i 10+21i]
+
+Testing functions
+=================
+Function is_fix:
+  is_fix(the_array2d_fixvec) = 1
+Function set_fix:
+  original_float = [0 1 2 3 4 5 6 7] => resulting_fix = [0<0> 1<0> 2<0> 3<0> -4<0> -3<0> -2<0> -1<0>]
+  original_float = [0 1 2 3 4 5 6 7] => resulting_float = [0 1 2 3 4 5 6 7]
+Function lshift_fix:
+  before lshift: 77<0> , rep: 77
+  after lshift: 154<1> , rep: 154
+Function rshift_fix:
+  before rshift: 803<8> , rep: 803
+  after rshift: 13<2> , rep: 13

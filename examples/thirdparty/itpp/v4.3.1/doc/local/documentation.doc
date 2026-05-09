@@ -1,0 +1,139 @@
+/*!
+\page documentation Documentation Rules
+
+\section doc_general General Rules
+
+All classes in IT++ should be properly documented with Doxygen
+comments in include (`.h') files. Source (`.cpp') files should be
+documented according to a normal standard for well documented C++
+code.
+
+An example of how the interface of a class shall be documented in IT++
+is shown here:
+
+\verbatim
+/*!
+ * \brief Brief description of My_Class here
+ *
+ * Detailed description of My_Class here. With example code if needed.
+ */
+class My_Class {
+
+public:
+
+  //! Default constructor
+  My_Class(void) { setup_done = false; }
+
+  /*!
+   * \brief Constructor that initializes the class with parameters
+   *
+   * Detailed description of the constructor here if needed
+   *
+   * \param[in] param1 Description of \a param1 here
+   * \param[in] param2 Description of \a param2 here
+   */
+  My_Class(TYPE1 param1, TYPE2 param2) { setup(param1, param2); }
+
+  /*!
+   * \brief Setup function for My_Class
+   *
+   * Detailed description of the setup function here if needed
+   *
+   * \param[in] param1 Description of \a param1 here
+   * \param[in] param2 Description of \a param2 here
+   */
+  void setup(TYPE1 param1, TYPE2 param2);
+
+  /*!
+   * \brief Brief description of member_function1
+   *
+   * Detailed description of member_function1 here if needed
+   *
+   * \param[in]     param1 Description of \a param1 here
+   * \param[in]     param2 Description of \a param2 here
+   * \param[in,out] param3 Description of \a param3 here
+   * \return Description of the return value here
+   */
+  TYPE4 member_function1(TYPE1 param1, TYPE2 param2, TYPE3 &param3);
+
+private:
+
+  bool setup_done;         /*!< Variable that checks if the class is properly
+                                initialized with parameters */
+  TYPE1 private_variable1; //!< Short description of private_variable1 here
+  TYPE2 private_variable2; //!< Short description of private_variable2 here
+};
+\endverbatim
+
+
+\section doc_header File Header
+
+All files should start with the following header, which include Doxygen's \c
+\\file, \c \\brief and \c \\author tags, and a common copyright note:
+
+\verbatim
+/*!
+ * \file
+ * \brief Brief description of the file here
+ * \author Names of the authors who contributed to this code
+ *
+ * Detailed description of the file here if needed.
+ *
+ * -------------------------------------------------------------------------
+ *
+ * Copyright (C) 1995-2010  (see AUTHORS file for a list of contributors)
+ *
+ * This file is part of IT++ - a C++ library of mathematical, signal
+ * processing, speech processing, and communications classes and functions.
+ *
+ * IT++ is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * IT++ is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with IT++.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * -------------------------------------------------------------------------
+ */
+\endverbatim
+
+
+\section doc_groups Grouping Various Parts
+
+All functions must be added to a Doxygen group in order to appear in
+the documentation. The following code example defines the group \c
+`my_group':
+
+\verbatim
+/*!
+ * \defgroup my_group Brief description of the group here
+ *
+ * Detailed description of the group here
+*/
+\endverbatim
+
+
+The following example shows how to document the function \c
+`my_function' and how to add it to the group \c `my_group':
+
+\verbatim
+/*!
+ * \brief Brief description of my_function here
+ * \ingroup my_group
+ *
+ * Detailed description of my_function here
+ *
+ * \param[in] param1 Description of \a param1 here
+ * \param[in] param2 Description of \a param2 here
+ * \return Description of the return value here
+ */
+TYPE3 my_function(TYPE1 param1, TYPE2 &param2);
+\endverbatim
+
+*/

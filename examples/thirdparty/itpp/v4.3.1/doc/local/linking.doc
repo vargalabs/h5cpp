@@ -1,0 +1,215 @@
+/*!
+\page linking Linking with IT++
+
+\section toc Table of Contents
+- \ref intro
+- \ref pkgconfig
+- \ref itppconfig
+- \ref dynamiclinking
+- \ref msvc_linking
+- \ref matlab_load_and_save
+- \ref python_load
+
+
+\section intro Introduction
+
+Since version 3.9.0, there are two convenient methods of linking your
+programs with the IT++ library. The first one employs the \c `pkg-config'
+command (see <a href="http://pkg-config.freedesktop.org/">
+http://pkg-config.freedesktop.org/</a>), wheres the second one uses the \c
+`itpp-config' script. These methods are shortly described below.
+
+
+\section pkgconfig Using the pkg-config command
+
+\c `pkg-config' is a helper tool used when compiling and linking programs or
+libraries. It provides correct compiler and linker options (flags). The
+syntax of the \c `pkg-config' command is as follows:
+
+\code
+% pkg-config <options> <library_name>
+\endcode
+
+For instance, assuming that you need to compile an IT++ based program
+<tt>`my_prog.cpp'</tt>, you might use the following command:
+
+\code
+% g++ `pkg-config --cflags itpp` -o my_prog my_prog.cpp `pkg-config --libs itpp`
+\endcode
+
+If you have installed a debugging version of the IT++ library in parallel,
+you can ask the \c `pkg-config' command to provide flags for it as well.
+Just use \c `itpp_debug' name instead of \c `itpp' in the arguments:
+
+\code
+% export CXXFLAGS_DEBUG=`pkg-config --cflags itpp_debug`
+% export LIBS_DEBUG=`pkg-config --libs itpp_debug`
+% g++ $CXXFLAGS_DEBUG -o my_prog my_prog.cpp $LIBS_DEBUG
+\endcode
+
+Alternatively, when you have to use static linking only (e.g. in Cygwin or
+MinGW/MSYS), you might need to add the `--static' switch to your command:
+
+\code
+% export CXXFLAGS=`pkg-config --cflags itpp`
+% export LIBS=`pkg-config --static --libs`
+% g++ $CXXFLAGS -o my_prog my_prog.cpp $LIBS
+\endcode
+
+If `pkg-config' can not find the itpp library information, you might need to
+set the PKG_CONFIG_PATH environment variable with the directory where the
+<tt>`itpp.pc'</tt> file is installed (<tt>`$prefix/lib/pkgconfig'</tt> by
+default). Alternatively you can use the full path to the <tt>`itpp.pc'</tt> or
+<tt>`itpp_debug.pc'</tt> file, e.g.:
+
+\code
+% pkg-config --libs /usr/local/lib/pkgconfig/itpp.pc
+\endcode
+
+For more information please refer to the \c `pkg-config' documentation.
+
+
+\section itppconfig Using the itpp-config script
+
+IT++ also provides a shell script called \c `itpp-config`, which is
+installed in a <tt>`$prefix/bin'</tt> (<tt>`/usr/local/bin'</tt>) directory
+by default. It can be used to simplify the compilation and linking of IT++
+based programs. The usage of this script is quite similar to the usage of
+the \c `pkg-config' command.
+
+Assuming that you need to compile the program <tt>`my_prog.cpp'</tt>,
+you can do that with the following command:
+
+\code
+% g++ `itpp-config --cflags` -o my_prog my_prog.cpp `itpp-config --libs`
+\endcode
+
+The above command will result in an optimised binary \c `my_prog', and
+optimisation flags (CXXFLAGS) will be the same as those used when compiling
+the IT++ library.
+
+When you need to use static linking, you might need to prepend the `--libs'
+switch with `--static', e.g.:
+
+\code
+% export CXXFLAGS=`itpp-config --cflags`
+% export LIBS=`itpp-config --static --libs`
+% g++ $CXXFLAGS -o my_prog my_prog.cpp $LIBS
+\endcode
+
+Moreover, if you compiled and installed the debugging IT++ library (\c
+`libitpp_debug.*') by using \c `--enable-debug' swich to configure, you can
+compile and link your program with debugging options using the following
+command instead:
+
+\code
+% g++ `itpp-config --debug --cflags` -o my_prog_debug my_prog.cpp `itpp-config --debug --libs`
+\endcode
+
+Full list of \c `itpp-config' options can be obtained by typing:
+
+\code
+% itpp-config --help
+\endcode
+
+If the \c `itpp-config' command is not found by your shell, you should add
+its location <tt>`$prefix/bin'</tt> to the PATH environment variable, e.g.:
+
+\code
+% export PATH=/usr/local/bin:$PATH
+\endcode
+
+
+\section dynamiclinking Using IT++ with dynamic linking
+
+When using static linking some of the IT++ library routines are copied into
+your executable program. This can lead to unnecessary large executables. To
+avoid this you may use dynamic linking instead. Dynamic linking means that
+the actual linking is performed when the program is executed. This requires
+that the system is able to locate the shared IT++ library file
+(<tt>`libitpp.so'</tt> or <tt>`libittp_debug.so</tt>) during the program
+execution. If you have to install the IT++ library using non-standard
+prefix, the \c `LD_LIBRARY_PATH' environment variable might be used to
+inform the linker about the location of the shared library object
+(<tt>`$prefix/lib'</tt>), e.g.:
+
+\code
+% export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
+\endcode
+
+This environment variable can be also used to set dynamic linking library
+paths for external libraries which are used by IT++, e.g. ATLAS, MKL, ACML
+and others.
+
+
+\section msvc_linking Linking your own programs with IT++ using MSVC++
+
+It is assumed here that the IT++ library is already compiled and linked with
+either ACML or MKL, using Microsoft Visual C++ .NET (or Express) compiler
+(see \ref msvc).
+
+To link your own programs with IT++ and ACML or MKL, several things need to
+be correctly set up in your MSVC++ project:
+
+- The IT++ include directory must be defined. Settings for this can be found
+  in the <tt>"Tools -&gt; Options -&gt; Projects and Solutions -&gt; VC++
+  Directories -&gt; Include files"</tt> menu. Add path to
+  <tt>"<IT++ source directory>"</tt>, e.g. <tt>"C:\itpp-4.0.1"</tt>.
+
+- The IT++ library directory must be defined. Settings for this can be found
+  in the <tt>"Tools -&gt; Options -&gt; Projects and Solutions -&gt; VC++
+  Directories -&gt; Library files"</tt> menu. Add path to
+  <tt>"<IT++ source directory>\win32\lib"</tt>, e.g.
+  <tt>"C:\itpp-4.0.1\win32\lib"</tt>.
+
+- The ACML or MKL library directory must be defined. If you properly set up
+  the \c LIB environment variable after the installation of ACML or MKL (see
+  \ref msvc), you can just add <tt>\$(LIB)</tt> as an another library path.
+
+- Linking with IT++ and ACML or MKL must be set up. Do this by marking your
+  project and go to the <tt>"Project -&gt; Properties -&gt; Configuration
+  Properties -&gt; Linker -&gt; Input -&gt; Additional Dependencies"</tt>
+  menu. There you need to add <tt>itpp_debug.lib</tt> or <tt>itpp.lib</tt>
+  depending on whether the Debug or Release mode are being used.
+  Furthermore, you need to add <tt>libacml_dll.lib</tt> or
+  <tt>mkl_c_dll.lib</tt>, respectively.
+
+- Two additional definitions: <tt>_CRT_SECURE_NO_DEPRECATE</tt> and
+  <tt>_CRT_NONSTDC_NO_DEPRECATE</tt>, which disable warnings on Standard C
+  Library and POSIX-compilant function names, might be also added in
+  <tt>"Project -&gt; Properties -&gt; Configuration Properties -&gt; C/C++
+  -&gt; Preprocessor -&gt; Preprocessor Definitions"</tt>. Moreover,
+  <tt>HAVE_ACML</tt> or <tt>HAVE_MKL</tt> definitions should be set up,
+  depending on the installed library.
+
+Please note that similar project settings for your program must be made for
+both the Debug and Release modes.
+
+
+\section matlab_load_and_save Using IT++ file format in Matlab/Octave
+
+IT++ provides two m-files <tt>`itload.m'</tt> and <tt>`itsave.m'</tt>, which
+can be used for reading and writing IT++ data files in Matlab or GNU Octave.
+To ensure that Matlab/Octave finds these two files you should add the
+following directory <tt>`$prefix/share/itpp'</tt> to the default path in
+Matlab/Octave, e.g.:
+
+\code
+p = path; path(p, "/usr/local/share/itpp");
+\endcode
+
+\section python_load Using IT++ file format in Python
+IT++ provides a Python module <tt>`pyitpp.py'</tt> with <tt>`itload()'</tt> function
+for reading IT++ data files in Python. This module uses <tt>`numpy'</tt> module for
+matrix operations and extended numerical types support. Additionally, you might need
+<tt>`matplotlib'</tt> module in order to graphically display the loaded data.
+To ensure that Python finds this module, you should add the following directory
+<tt>`$prefix/share/itpp'</tt> to the Python search path, e.g.
+
+\code
+import sys
+sys.path.append('$prefix/share/itpp')
+import pyitpp
+\endcode
+
+*/

@@ -1,0 +1,12 @@
+/*!
+\page reedsolomon Simulation of a Reed-Solomon Block Code
+
+A Reed-Solomon code is a \f$q^m\f$-ary BCH code of length \f$q^m-1\f$. The generator polynomial for a \f$t\f$-error correcting code is \f$g(x) = (x-\alpha) (x-\alpha^1) \ldots (x-\alpha^{2t-1})\f$. The decoder uses the Berlkamp-Massey algorithm for decoding as described in: S. B. Wicker, "Error Control Systems for digital communication and storage," Prentice Hall. The following example simulates a binary (i.e. \f$q=2\f$) Reed-Solomon code with parameters \f$m\f$ and \f$t\f$:
+
+\include reedsolomon.cpp
+
+A typical run of this program can look like this:
+
+\include reedsolomon.ref
+
+*/

@@ -1,0 +1,111 @@
+/*!
+\mainpage IT++ Documentation
+
+\htmlonly
+<!-- start of main block -->
+<div style="width: 100%;">
+<!-- start of left margin -->
+<div style="float:right; width:200px; background-color: #eeeeff; border: 1px solid #b0b0b0; margin: 0 0 10px 20px; padding: 10px; font-size: 90%;">
+
+<b>Getting Started:</b>
+<ul>
+<li><a href="features.html">Features</a></li>
+<li><a href="installation.html">Installation</a></li>
+<li><a href="linking.html">Linking with IT++</a></li>
+<li><a href="users_guide.html">Short Introduction to IT++</a></li>
+<li><a href="tutorial.html">Some Tutorial Examples</a></li>
+<li><a href="verification.html">IT++ Verification</a></li>
+<li><a href="copyright.html">Copyright and License</a></li>
+<li><a href="help_wanted.html">Make a Difference</a></li>
+<li><a href="authors.html">Authors</a></li>
+</ul>
+
+<a href="http://sourceforge.net/projects/itpp/"><b>IT++ at SourceForge:</b></a>
+<ul>
+<li><a href="http://sourceforge.net/projects/itpp/files/">Download IT++</a></li>
+<li><a href="http://sourceforge.net/p/itpp/bugs/?source=navbar">Bug Reports</a></li>
+<li><a href="http://sourceforge.net/p/itpp/feature-requests/">Feature Requests</a></li>
+<li><a href="http://sourceforge.net/p/itpp/discussion/115656/">Ask for Help</a></li>
+<li><a href="http://sourceforge.net/p/itpp/discussion/115655/">Discuss IT++</a></li>
+</ul>
+
+<b>IT++ Development:</b>
+<ul>
+<li><a href="http://sourceforge.net/p/itpp/git/">Git Repository</a></li>
+<li><a href="http://sourceforge.net/p/itpp/svn/">SVN Repository (Git mirror)</a></li>
+<li><a href="codingrules.html">Coding Rules</a></li>
+<li><a href="documentation.html">Documentation Rules</a></li>
+<li><a href="test.html">Test Rules</a></li>
+</ul>
+
+<b>External Libraries:</b>
+<ul>
+<li><a href="http://www.netlib.org/blas/">BLAS (NetLib)</a></li>
+<li><a href="http://www.netlib.org/lapack/">LAPACK (NetLib)</a></li>
+<li><a href="http://www.fftw.org/">FFTW</a></li>
+<li><a href="http://math-atlas.sourceforge.net/">ATLAS</a></li>
+<li><a href="http://developer.amd.com/acml.aspx">ACML (AMD)</a></li>
+<li><a href="http://software.intel.com/en-us/intel-mkl/">MKL (Intel)</a></li>
+</ul>
+
+</div>
+<!-- end of left margin -->
+\endhtmlonly
+
+\section about About IT++
+
+IT++ is a C++ library of mathematical, signal processing and communication
+classes and functions. Its main use is in simulation of communication
+systems and for performing research in the area of communications. The
+kernel of the library consists of generic vector and matrix classes, and a
+set of accompanying routines. Such a kernel makes IT++ similar to
+<a href="http://www.mathworks.com/products/matlab/">MATLAB</a>, 
+<a href="http://www.octave.org/">GNU Octave</a> or  
+<a href="http://www.scipy.org/">SciPy</a>.
+
+The IT++ library originates from the former department of Information
+Theory at the <a href="http://www.chalmers.se/en/">Chalmers University of
+Technology</a>, Gothenburg, Sweden. Because the library is coded in C++, the
+name IT++ seemed like a good idea at the time. While departments come and
+go, IT++ have developed a life of its' own and is now released under the
+terms of the <a href="http://www.gnu.org/copyleft/gpl.html">GNU General
+Public License</a> (GPL) for you to enjoy.
+
+IT++ is being developed and widely used by researchers who work in the area
+of communications, both in the industry and at universities. In 2005, 2006
+and 2007, IT++ was developed as a part of the European Network of Excellence
+in Wireless Communications (NEWCOM).
+
+IT++ makes an extensive use of existing open-source or commercial libraries
+for increased functionality, speed and accuracy. In particular
+<a href="http://www.netlib.org/blas/">BLAS</a>,
+<a href="http://www.netlib.org/lapack/">LAPACK</a> and
+<a href="http://www.fftw.org/">FFTW</a> libraries can be used.
+Instead of the reference BLAS and LAPACK implementations, some optimized
+platform-specific libraries can be used as well, i.e.:
+- <a href="http://math-atlas.sourceforge.net/">ATLAS</a> (<em>Automatically
+  Tuned Linear Algebra Software</em>) - includes optimised BLAS and a
+  limited set of LAPACK routines
+- <a href="http://software.intel.com/en-us/intel-mkl/">MKL</a>
+  (<em>Intel Math Kernel Library</em>) - includes all required BLAS, LAPACK
+  and FFT routines (FFTW not required)
+- <a href="http://developer.amd.com/acml.aspx">ACML</a> (<em>AMD Core Math
+  Library</em>) - includes BLAS, LAPACK and FFT routines (FFTW not required)
+.
+It is possible to compile and use IT++ without any of the above
+listed libraries, but the functionality will be reduced.
+
+IT++ should work on
+<a href="http://en.wikipedia.org/wiki/GNU/Linux">GNU/Linux</a>,
+<a href="http://www.sun.com/software/solaris/">Sun Solaris</a>,
+Microsoft Windows (with <a href="http://www.cygwin.com/">Cygwin</a>,
+<a href="http://www.mingw.org/">MinGW/MSYS</a> or
+<a href="http://msdn.microsoft.com/visualc/">Microsoft Visual C++</a>)
+and <a href="http://www.apple.com/macosx/">Mac OS X</a> operating systems.
+
+\htmlonly
+</div>
+<!-- end of main block -->
+\endhtmlonly
+
+*/

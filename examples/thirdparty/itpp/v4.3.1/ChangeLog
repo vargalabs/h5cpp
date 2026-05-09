@@ -1,0 +1,204 @@
+2013-07-04  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* cmake/Modules/FindBLAS.cmake, cmake/Modules/FindLAPACK.cmake,
+	doc/local/installation.doc: add support for detecting itpp-external compiled
+	as static libraries
+
+2013-07-03  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* doc/local/installation.doc: add install instructions with cmake using external
+	libraries without being root
+
+2013-06-16  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* itpp.pc.cmake.in, itpp/CMakeLists.txt: generate and install itpp.pc
+
+2013-06-02  Andy Panov <andypanov@users.sourceforge.net>
+	* itpp/base/math/log_exp.h
+	pow2 overloads for integer arguments added.
+
+2013-05-24  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* CMakeLists.txt, itpp-config.cmake.in, itpp/CMakeLists.txt: add
+	configuration script generation for UNIX-like systems (bug #221)
+
+2013-05-24  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* doc/local/authors.doc, doc/local/index.doc.in, doc/local/installation.doc,
+	doc/local/test.doc, doc/local/verification.doc: documentation updates
+
+2013-05-24  Andy Panov <andypanov@users.sourceforge.net>
+	* itpp/srccode/audiofile.cpp, itpp/srccode/audiofile.h, itpp/srccode/audiosample.h, gtests/audiofile_test.cpp: 
+	itpp/base/binfile.h, itpp/base/binfile.cpp
+	refactoring of audio streams.
+
+2013-05-24  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* CMakeLists.txt, doc/local/installation.doc, gtests/commfunc_test.cpp,
+	gtests/vec_test.cpp, itpp/CMakeLists.txt: corrections for cygwin and mingw
+
+2013-05-23  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* itpp/base/itfile.cpp, itpp/base/parser.cpp, itpp/base/vec.cpp,
+	itpp/itexports.h.cmake, itpp/protocol/events.h,
+	itpp/protocol/front_drop_queue.h, itpp/protocol/packet.h,
+	itpp/protocol/packet_channel.h, itpp/protocol/packet_generator.h,
+	itpp/protocol/selective_repeat.h, itpp/protocol/signals_slots.h,
+	itpp/protocol/tcp.h, itpp/srccode/audiofile.h: corrected shared library
+	compilation with MSVC in debug mode	
+
+2013-05-23  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* itpp/signal/fastica.cpp: corrected bug #206
+
+2013-05-22  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* gtests/fastmath_test.cpp, gtests/filter_design_test.cpp,
+	gtests/filter_test.cpp, gtests/fix_test.cpp, gtests/freq_filt_test.cpp,
+	gtests/galois_test.cpp, gtests/gf2mat_test.cpp,
+	gtests/histogram_test.cppgtests/histogram_test.cpp,
+	gtests/interleaver_test.cpp, gtests/inv_test.cpp, gtests/ldpc_test.cpp,
+	gtests/linspace_test.cppgtests/linspace_test.cpp, gtests/llr_test.cpp,
+	gtests/ls_solve_test.cpp, gtests/lu_test.cpp, gtests/mat_test.cpp,
+	gtests/matfunc_test.cpp, gtests/modulator_nd_test.cpp,
+	gtests/modulator_test.cpp, gtests/newton_search_test.cpp,
+	gtests/operators_test.cpp, gtests/parser_test.cpp, gtests/poly_test.cpp,
+	gtests/pulse_shape_test.cpp, gtests/qr_test.cpp,
+	gtests/rec_syst_conv_code_test.cpp, gtests/reedsolomon_test.cpp,
+	gtests/schur_test.cpp, gtests/sigfun_test.cpp, gtests/siso_test.cpp,
+	gtests/sort_test.cpp, gtests/source_test.cpp, gtests/sparse_test.cpp,
+	gtests/specmat_test.cpp, gtests/stat_test.cpp, gtests/stc_test.cpp,
+	gtests/svd_test.cpp, gtests/timer_test.cpp, gtests/turbo_test.cpp,
+	gtests/vec_test.cpp, gtests/window_test.cpp: ported all unit tests to Google
+	framework. Old tests are obsolete and will be no longer maintained.
+
+2013-04-16  Andy Panov <andypanov@users.sourceforge.net>
+	* itpp/srccode/g711.cpp, itpp/srccode/g711.h, itpp/itsrccode.h, gtests/g711_test.cpp: 
+	G.711 audio codecs implementation is added
+
+2013-04-09  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* itpp/base/random.cpp, itpp/base/random.h: fix thread-safety issue in
+	Gamma_RNG, thanks to Andy Panov for providing the patch
+
+2013-04-09  Bogdan Cristea <cristeab@users.sourceforge.net>
+	*	doc/local/installation.doc, itpp/signal/transforms.cpp: updated
+	installation instructions and corrected FFT bug when using MKL 11 (thanks to
+	Andy Panov for providing the patch)
+
+2013-04-07  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* cmake/Modules/FindBLAS.cmake, cmake/Modules/FindFFT.cmake,
+	cmake/Modules/FindLAPACK.cmake, itpp/base/algebra/lapack.h,
+	itpp/signal/transforms.cpp: add support for MKL 11, FFT transform does not
+	work
+
+2013-04-06  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* itpp/itexports.h.cmake: corrected regression that generates error when
+	compiling as static library on UNIX systems
+
+2013-04-05  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* gtests/multilateration_test.cpp, itpp/comm/multilateration.cpp,
+	itpp/comm/multilateration.h, itpp/itcomm.h: add Multilateration class for
+	indoor localization
+
+2013-04-02  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* gtests/CMakeLists.txt, gtests/bch_test.cpp, gtests/itfile_test.cpp,
+	itpp/base/base_exports.h, itpp/base/binfile.cpp, itpp/base/binfile.h,
+	itpp/base/gf2mat.h, itpp/base/itfile.cpp, itpp/base/itfile.h,
+	itpp/comm/channel.h, itpp/comm/convcode.h, itpp/comm/crc.h,
+	itpp/comm/egolay.h, itpp/comm/galois.h, itpp/comm/hammcode.h,
+	itpp/comm/ldpc.h, itpp/comm/llr.h, itpp/comm/modulator.h,
+	itpp/comm/modulator_nd.h, itpp/comm/punct_convcode.h,
+	itpp/comm/rec_syst_conv_code.h, itpp/comm/sequence.h, itpp/comm/siso.h,
+	itpp/comm/spread.h, itpp/comm/stc.h, itpp/comm/turbo.h, itpp/itbase.h,
+	itpp/optim/newton_search.h, itpp/stat/mog_diag_kmeans.h,
+	itpp/stat/mog_generic.h: binfile and itfile classes have been rewritten in
+	order to be exportable from shared library build with MSVC. Some code
+	refactoring has been done. Thanks to Andy Panov for providing the patch.
+
+2013-03-10  Bogdan Cristea <cristeab@users.sourceforge.net>
+  * CMakeLists.txt, doc/local/installation.doc,
+	doc/tutorial/src/pccc_bersim_awgn.cpp,
+	doc/tutorial/src/sccc_bersim_awgn.cpp, doc/tutorial/src/stbicm.cpp,
+	doc/tutorial/src/turbo_equalizer_bersim_multipath.cpp, gtests/exit_test.cpp,
+	itpp/CMakeLists.txt, itpp/base/algebra/cholesky.h, itpp/base/algebra/det.h,
+	itpp/base/algebra/eigen.h, itpp/base/algebra/inv.h,
+	itpp/base/algebra/ls_solve.h, itpp/base/algebra/lu.h,
+	itpp/base/algebra/qr.h, itpp/base/algebra/schur.h, itpp/base/algebra/svd.h,
+	itpp/base/bessel.h, itpp/base/binary.h, itpp/base/binfile.h,
+	itpp/base/converters.cpp, itpp/base/converters.h, itpp/base/copy_vector.h,
+	itpp/base/factory.h, itpp/base/fastmath.h, itpp/base/gf2mat.h,
+	itpp/base/help_functions.cpp, itpp/base/help_functions.h,
+	itpp/base/itassert.h, itpp/base/itfile.h, itpp/base/mat.cpp,
+	itpp/base/mat.h, itpp/base/matfunc.cpp, itpp/base/matfunc.h,
+	itpp/base/math/elem_math.h, itpp/base/math/error.h,
+	itpp/base/math/integration.h, itpp/base/math/log_exp.h,
+	itpp/base/math/misc.h, itpp/base/math/trig_hyp.h, itpp/base/operators.h,
+	itpp/base/parser.h, itpp/base/random.h, itpp/base/random_dsfmt.h,
+	itpp/base/smat.cpp, itpp/base/smat.h, itpp/base/specmat.cpp,
+	itpp/base/specmat.h, itpp/base/svec.cpp, itpp/base/svec.h,
+	itpp/base/timing.h, itpp/base/vec.cpp, itpp/base/vec.h, itpp/comm/bch.h,
+	itpp/comm/channel.cpp, itpp/comm/channel.h, itpp/comm/channel_code.h,
+	itpp/comm/commfunc.h, itpp/comm/convcode.h, itpp/comm/crc.h,
+	itpp/comm/egolay.h, itpp/comm/error_counters.h, itpp/comm/exit.cpp,
+	itpp/comm/exit.h, itpp/comm/galois.cpp, itpp/comm/galois.h,
+	itpp/comm/hammcode.h, itpp/comm/interleave.cpp, itpp/comm/interleave.h,
+	itpp/comm/ldpc.cpp, itpp/comm/ldpc.h, itpp/comm/llr.h,
+	itpp/comm/modulator.cpp, itpp/comm/modulator.h, itpp/comm/modulator_nd.cpp,
+	itpp/comm/modulator_nd.h, itpp/comm/ofdm.h, itpp/comm/pulse_shape.cpp,
+	itpp/comm/pulse_shape.h, itpp/comm/punct_convcode.h,
+	itpp/comm/rec_syst_conv_code.h, itpp/comm/reedsolomon.h,
+	itpp/comm/sequence.h, itpp/comm/siso.h, itpp/comm/siso_dem.cpp,
+	itpp/comm/siso_eq.cpp, itpp/comm/siso_mud.cpp, itpp/comm/siso_nsc.cpp,
+	itpp/comm/siso_rsc.cpp, itpp/comm/spread.h, itpp/comm/stc.cpp,
+	itpp/comm/stc.h, itpp/comm/turbo.cpp, itpp/comm/turbo.h, itpp/fixed/cfix.h,
+	itpp/fixed/cfixed.cpp, itpp/fixed/cfixed.h, itpp/fixed/fix.h,
+	itpp/fixed/fix_base.h, itpp/fixed/fix_factory.h, itpp/fixed/fix_functions.h,
+	itpp/fixed/fix_operators.h, itpp/fixed/fixed.cpp, itpp/fixed/fixed.h,
+	itpp/itexports.h.cmake, itpp/optim/newton_search.h, itpp/protocol/events.h,
+	itpp/protocol/front_drop_queue.h, itpp/protocol/packet.h,
+	itpp/protocol/packet_channel.h, itpp/protocol/packet_generator.h,
+	itpp/protocol/selective_repeat.h, itpp/protocol/signals_slots.h,
+	itpp/protocol/tcp.h, itpp/protocol/tcp_client_server.h,
+	itpp/signal/fastica.h, itpp/signal/filter.cpp, itpp/signal/filter.h,
+	itpp/signal/filter_design.h, itpp/signal/freq_filt.cpp,
+	itpp/signal/freq_filt.h, itpp/signal/poly.h, itpp/signal/resampling.cpp,
+	itpp/signal/resampling.h, itpp/signal/sigfun.h, itpp/signal/source.h,
+	itpp/signal/transforms.cpp, itpp/signal/transforms.h, itpp/signal/window.h,
+	itpp/srccode/audiofile.h, itpp/srccode/gmm.h, itpp/srccode/lpcfunc.h,
+	itpp/srccode/pnm.h, itpp/srccode/vq.h, itpp/srccode/vqtrain.h,
+	itpp/stat/misc_stat.h, itpp/stat/mog_diag.h, itpp/stat/mog_diag_em.h,
+	itpp/stat/mog_diag_kmeans.h, itpp/stat/mog_generic.h, tests/CMakeLists.txt,
+	tests/exit_test.cpp, tests/itfile_test.cpp, tests/siso_test.cpp: add support
+	for shared library using MS Visual Studio (feature request #84). Thanks to Andy Panov for
+	providing the patch. The following classes are not exported in the shared
+	library: audiofile, gf2mat, binfile, itfile, packet_generator,
+	signals_slots, front_drop_queue, tcp_client_server, packet,
+	selective_repeat, tcp, events, packet_channel. Note that some minor
+	changes and code refactoring were also needed.
+
+2013-01-21  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* CMakeLists.txt, itpp/CMakeLists.txt, itpp/itexports.h.cmake: add
+	itexports.h for exporting/importing IT++ library symbols when compiled as
+	shared library on Visual Studio C++.
+
+2013-01-20  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* gtests/integration_test.cpp, itpp/base/help_functions.h,
+	itpp/base/math/integration.cpp, itpp/base/math/integration.h: add numerical
+	integration with function objects as integrands. Thanks to Andy Panov for
+	providing the patch.
+
+2013-01-19  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* CMakeLists.txt, doc/local/installation.doc,
+	doc/tutorial/src/CMakeLists.txt, extras/setenv.bat, gtests/CMakeLists.txt,
+	gtests/bch_test.cpp, gtests/bessel_test.cpp, gtests/blas_test.cpp,
+	gtests/channel_test.cpp, gtests/cholesky_test.cpp,
+	gtests/circular_buffer_test.cpp, gtests/commfunc_test.cpp,
+	gtests/convcode_test.cpp, gtests/converters_test.cpp,
+	gtests/demapper_test.cpp, gtests/det_test.cpp, gtests/eigen_test.cpp,
+	gtests/error_count_test.cpp, gtests/exit_test.cpp, gtests/fastica_test.cpp,
+	gtests/fastica_test_data.txt, gtests/itfile_test_data.it,
+	gtests/parser_test_data.txt, gtests/rand_test.cpp, itpp/CMakeLists.txt: add
+	more unit tests using Google framework. Add options for compiling unit
+	tests, for building shared or static library and for generating the HTML
+	help.
+
+2013-01-12  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* doc/doxygen_html.cfg.cmake.in, itpp/CMakeLists.txt, itpp/base/parser.cpp,
+	tests/modulator_nd_test.cpp: corrected compilation errors with MS Visual
+	Studio 2010
+
+2013-01-12  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* gtests/transforms_test.cpp, itpp/signal/transforms.cpp,
+	itpp/signal/transforms.h: add thread-safe Fourier and cosine transforms.
+	Thanks to Andy Panov for providing the patch (feature request #92).
