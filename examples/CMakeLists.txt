@@ -73,7 +73,15 @@ endif()
 find_package(ZLIB REQUIRED QUIET)
 
 # Vendored linear algebra third-party dependencies
-add_subdirectory(thirdparty)
+if(NOT TARGET libeigen3)
+	if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
+		add_subdirectory(thirdparty)
+	elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../thirdparty)
+		add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../thirdparty ${CMAKE_CURRENT_BINARY_DIR}/thirdparty)
+	else()
+		message(FATAL_ERROR "thirdparty directory not found")
+	endif()
+endif()
 
 list(APPEND LIBS ${HDF5_C_LIBRARIES} ${ZLIB_LIBRARIES})
 list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR} ${HDF5_INCLUDE_DIRS}  ${ZLIB_INCLUDE_DIRS})

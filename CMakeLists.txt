@@ -107,7 +107,7 @@ install(TARGETS h5cpp EXPORT h5cpp-targets)
 # Install examples
 install(DIRECTORY examples/attributes   DESTINATION "${INSTALL_DIR_EXAMPLES}")
 install(DIRECTORY examples/basics       DESTINATION "${INSTALL_DIR_EXAMPLES}")
-install(DIRECTORY examples/thirdparty   DESTINATION "${INSTALL_DIR_EXAMPLES}")
+install(DIRECTORY thirdparty/ DESTINATION "${INSTALL_DIR_EXAMPLES}/thirdparty")
 install(DIRECTORY examples/compound     DESTINATION "${INSTALL_DIR_EXAMPLES}")
 install(DIRECTORY examples/csv          DESTINATION "${INSTALL_DIR_EXAMPLES}")
 install(DIRECTORY examples/datasets     DESTINATION "${INSTALL_DIR_EXAMPLES}")
@@ -149,6 +149,8 @@ install(FILES
     DESTINATION ${INSTALL_DIR_CMAKE}
 )
 
+
+add_subdirectory(thirdparty EXCLUDE_FROM_ALL)
 
 if(H5CPP_BUILD_EXAMPLES)
     add_subdirectory(examples)
