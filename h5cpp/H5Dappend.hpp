@@ -165,6 +165,7 @@ inline void h5::pt_t::append( const std::string& ref ) {
 		dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
 	n = 0;
 }
+template <>
 inline void h5::pt_t::append( const char* ref ) {
 	static_cast<const char**>( ptr )[n++] = ref;
 	if( n != N ) return;

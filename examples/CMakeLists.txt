@@ -89,7 +89,7 @@ pkg_check_modules(Blitz QUIET blitz)
 list(APPEND LIBS ${HDF5_C_LIBRARIES} ${ZLIB_LIBRARIES})
 list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR} ${HDF5_INCLUDE_DIRS}  ${ZLIB_INCLUDE_DIRS})
 
-include_directories(BEFORE ${CMAKE_SOURCE_DIR})
+include_directories(BEFORE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/..)
 
 if( H5CPP_COMPILER_FOUND )
 	add_custom_target(h5cpp-compiler-generated ALL
@@ -103,8 +103,10 @@ if( H5CPP_COMPILER_FOUND )
 			${H5CPP} ${CMAKE_CURRENT_SOURCE_DIR}/packet-table/packettable.cpp -- 
 			${CMAKE_CXXFLAGS}  -I${EIGEN3_INCLUDE_DIR} -D${CMAKE_CURRENT_SOURCE_DIR}/packet-table/generated.h
 		COMMENT "-- generating hdf5 compound type descriptors with h5cpp compiler ...")
+		add_custom_target(examples ALL DEPENDS h5cpp-compiler-generated h5cpp-compiler-generated-eigen )
+	else()
+		add_custom_target(examples ALL DEPENDS h5cpp-compiler-generated )
 	endif()
-	add_custom_target(examples ALL DEPENDS h5cpp-compiler-generated h5cpp-compiler-generated-eigen )
 else()
 	add_custom_target(examples ALL)
 	message("-- H5CPP compiler NOT found: using `generated.h` already present...")
@@ -123,7 +125,7 @@ endif()
 if( ${Eigen3_FOUND} )
 	message( "-- Found: eigen3 ${Eigen3_VERSION} added to examples" )
 	add_executable(examples-eigen3 EXCLUDE_FROM_ALL "linalg/eigen3.cpp")
-	include_directories(${EIGEN3_INCLUDE_DIR})
+	target_include_directories(examples-eigen3 PRIVATE ${EIGEN3_INCLUDE_DIR})
 	target_link_libraries(examples-eigen3 ${LIBS} Eigen3::Eigen )
 	add_dependencies(examples examples-eigen3)
 endif()
@@ -241,11 +243,11 @@ target_link_libraries(examples-datasets ${LIBS} )
 add_dependencies(examples examples-datasets)
 endif()
 
-if( ${Eigen3_FOUND} )
+if( ${Eigen3_FOUND} AND ${ARMADILLO_FOUND} )
 ## datatypes nbit ###
 	add_executable(examples-nbit EXCLUDE_FROM_ALL "datatypes/n-bit.cpp")
 	target_link_libraries(examples-nbit ${LIBS}  )
-	include_directories(${EIGEN3_INCLUDE_DIR})
+	target_include_directories(examples-nbit PRIVATE ${EIGEN3_INCLUDE_DIR})
 	add_dependencies(examples examples-nbit)
 endif()
 
@@ -269,11 +271,12 @@ target_link_libraries(examples-optimized ${LIBS} )
 add_dependencies(examples examples-optimized)
 endif()
 
-if( ${ARMADILLO_FOUND} )
-## packet-table ###
-add_executable(examples-packet-table EXCLUDE_FROM_ALL "packet-table/packettable.cpp")
-target_link_libraries(examples-packet-table ${LIBS} )
-add_dependencies(examples examples-packet-table)
+if( ${Eigen3_FOUND} AND ${ARMADILLO_FOUND} )
+	## packet-table ###
+	add_executable(examples-packet-table EXCLUDE_FROM_ALL "packet-table/packettable.cpp")
+	target_include_directories(examples-packet-table PRIVATE ${EIGEN3_INCLUDE_DIR})
+	target_link_libraries(examples-packet-table ${LIBS} )
+	add_dependencies(examples examples-packet-table)
 endif()
 
 ## raw memory ###
@@ -298,7 +301,28 @@ target_link_libraries(examples-transform ${LIBS} )
 add_dependencies(examples examples-transform)
 endif()
 
+## groups ###
+add_executable(examples-groups EXCLUDE_FROM_ALL "groups/groups.cpp")
+target_link_libraries(examples-groups ${LIBS} )
+add_dependencies(examples examples-groups)
+
+## reference ###
 if( ${ARMADILLO_FOUND} )
+	add_executable(examples-reference EXCLUDE_FROM_ALL "reference/reference.cpp")
+	target_link_libraries(examples-reference ${LIBS} )
+	add_dependencies(examples examples-reference)
+endif()
+
+## kita ###
+find_library(RESTVOL_LIBRARY NAMES restvol h5restvol DOC "REST VOL library" PATHS /usr/local/lib /usr/lib)
+if( RESTVOL_LIBRARY )
+	message("-- Found REST VOL library: ${RESTVOL_LIBRARY}")
+	add_executable(examples-kita EXCLUDE_FROM_ALL "kita/kita.cpp")
+	target_link_libraries(examples-kita ${LIBS} ${RESTVOL_LIBRARY} )
+	add_dependencies(examples examples-kita)
+else()
+	message("-- REST VOL library NOT found: kita example disabled")
+endif()
 ## utf ###
 add_executable(examples-utf EXCLUDE_FROM_ALL "utf/utf.cpp")
 target_link_libraries(examples-utf ${LIBS} )
