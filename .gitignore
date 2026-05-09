@@ -48,3 +48,4 @@ CMakeLists.txt.user*
 .venv/
 
 site/
+compile_commands.json
