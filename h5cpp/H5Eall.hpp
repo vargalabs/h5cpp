@@ -250,6 +250,10 @@ namespace h5::error::io::attribute {
 		misc() : h5::error::io::attribute::any() {}
 		misc( const std::string& msg ) : h5::error::io::attribute::any( msg ){}
 	};
+	struct delete_ : public h5::error::io::attribute::any {
+		delete_() : h5::error::io::attribute::any() {}
+		delete_( const std::string& msg ) : h5::error::io::attribute::any( msg ){}
+	};
 }
 
 namespace h5::error::property_list {
