@@ -1,0 +1,70 @@
+# ___________________________________________________________________________________
+# SPDX-License-Identifier: MIT
+# This file is part of H5CPP.
+# Copyright (c) 2025-2026 Varga Labs, Toronto, ON, Canada.
+# __________________________________________________________________________________
+
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# OpenMPI permits running as root inside Docker
+ENV OMPI_ALLOW_RUN_AS_ROOT=1
+ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+ENV OMPI_MCA_rmaps_base_oversubscribe=1
+
+# Speed up package installation inside Docker by disabling fsync
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends eatmydata && \
+    eatmydata apt-get install -y --no-install-recommends \
+        cmake \
+        g++ \
+        make \
+        libhdf5-dev \
+        libhdf5-openmpi-dev \
+        libopenmpi-dev \
+        openmpi-bin \
+        zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# CMake's FindHDF5 looks for h5cc by default; prefer the parallel wrapper
+RUN apt-get update && eatmydata apt-get install -y --no-install-recommends pkg-config python3 libboost-dev libarmadillo-dev && rm -rf /var/lib/apt/lists/*
+
+RUN ln -sf /usr/bin/h5pcc /usr/bin/h5cc
+
+# HDF5 headers live in a subdir with the Ubuntu packaged parallel build;
+# make them visible to the compiler since examples/CMakeLists.txt does not
+# always add HDF5_INCLUDE_DIRS to target_include_directories.
+ENV CPLUS_INCLUDE_PATH=/usr/include/hdf5/openmpi:/usr/lib/x86_64-linux-gnu/openmpi/include
+
+WORKDIR /h5cpp
+
+# Copy the full project (headers, examples, thirdparty, tests, cmake, etc.)
+COPY . .
+
+# Configure and build the complete suite: tests + examples
+RUN cmake -B build \
+        -DH5CPP_BUILD_TESTS=ON \
+        -DH5CPP_BUILD_EXAMPLES=ON \
+        -DCMAKE_BUILD_TYPE=Release
+RUN cmake --build build --parallel
+
+# Default: run ctest and a subset of example smoke tests
+CMD ["bash", "-c", "\
+echo '=== Running CTest ===' && \
+ctest --test-dir build --output-on-failure && \
+echo '' && \
+echo '=== Core Example Smoke Tests ===' && \
+./build/examples/examples-basics && \
+./build/examples/examples-stl && \
+./build/examples/examples-datasets && \
+./build/examples/examples-attributes && \
+echo '' && \
+echo '=== Linalg Example Smoke Tests ===' && \
+./build/examples/examples-dlib && \
+echo '' && \
+echo '=== MPI Example Smoke Tests ===' && \
+mpiexec -n 2 ./build/examples/examples-mpi-collective && \
+mpiexec -n 2 ./build/examples/examples-mpi-independent && \
+mpiexec -n 2 ./build/examples/examples-mpi-throughput \
+"]
