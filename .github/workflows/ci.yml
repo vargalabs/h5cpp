@@ -168,7 +168,7 @@ jobs:
           fi
 
       - name: Download all badge status artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: badge-status
           pattern: status-*
@@ -198,7 +198,7 @@ jobs:
           done
 
       - name: Upload badge folder to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./${{ steps.badge_dir.outputs.dir }}
