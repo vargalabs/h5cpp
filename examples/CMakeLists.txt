@@ -162,6 +162,17 @@ else()
     endif()
 endif()
 
+find_file(NT2_TABLE_HPP "nt2/table.hpp" PATHS /usr/include /usr/local/include "${CMAKE_SOURCE_DIR}/thirdparty/nt2" PATH_SUFFIXES include)
+if( NT2_TABLE_HPP )
+	message( "-- Found: nt2 table header, added to examples" )
+	add_executable(examples-nt2 EXCLUDE_FROM_ALL "linalg/nt2.cpp")
+	target_link_libraries(examples-nt2 ${LIBS})
+	if(TARGET nt2::nt2)
+		target_link_libraries(examples-nt2 nt2::nt2)
+	endif()
+	add_dependencies(examples examples-nt2)
+endif()
+
 # ublas headers are vendored but rely on system Boost config/compiler headers
 find_path(H5CPP_BOOST_CONFIG_INCLUDE_EX NAMES boost/config.hpp)
 if(H5CPP_BOOST_CONFIG_INCLUDE_EX)
