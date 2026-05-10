@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_PIPELINE_HPP
-#define  H5CPP_PIPELINE_HPP
+#pragma once
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
@@ -280,4 +279,3 @@ inline std::ostream& operator<<(std::ostream &os, const h5::impl::pipeline_t<T>&
     os << "n: " << p.n;
 	return os;
 }
-#endif

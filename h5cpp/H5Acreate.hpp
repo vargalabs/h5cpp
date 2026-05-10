@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_ACREATE_HPP
-#define  H5CPP_ACREATE_HPP
+#pragma once
 #include <string>
 #include <stdexcept>
 #include <type_traits>
@@ -44,7 +43,4 @@ namespace h5 {
 				throw h5::error::io::attribute::create( err.what() );
 		}
 	}
-
 }
-#endif
-

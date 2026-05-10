@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_COMPAT_HPP
-#define  H5CPP_COMPAT_HPP
+#pragma once
 
 #include <hdf5.h>
 #include <cstddef>
@@ -86,4 +85,3 @@ namespace h5::meta::compat {
     template <class To, template<class...> class Op, class... Args>
     constexpr bool is_detected_convertible_v = is_detected_convertible<To, Op, Args...>::value;
 }
-#endif

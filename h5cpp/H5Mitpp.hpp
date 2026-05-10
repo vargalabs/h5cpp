@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_ITPP_HPP 
-#define  H5CPP_ITPP_HPP
+#pragma once
 
 
 #if defined(MAT_H) || defined(H5CPP_USE_ITPP_MATRIX)
@@ -61,5 +60,4 @@ namespace h5::impl {
 			return h5::itpp::rowvec<T>( dims[0] );
 	}};
 }
-#endif
 #endif

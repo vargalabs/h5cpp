@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  *
  */
-#ifndef  H5CPP_META_HPP 
-#define  H5CPP_META_HPP
+#pragma once
 
 #include "compat.hpp"
 #include <type_traits>
@@ -275,4 +274,3 @@ namespace h5::meta {
 template<class T> struct extent_to_string :
     h5::meta::impl::parse<std::rank<T>::value, T>{};
 }
-#endif

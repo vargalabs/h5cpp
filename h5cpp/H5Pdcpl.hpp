@@ -4,8 +4,7 @@
  *
  */
 
-#ifndef  H5CPP_PDCPL_HPP
-#define  H5CPP_PDCPL_HPP
+#pragma once
 
 #define H5CPP_DCPL_MULTI_DATASET "h5cpp_dcpl_multi_dataset"
 
@@ -79,4 +78,3 @@ namespace h5 {
     const static h5::dcpl_t dcpl = static_cast<h5::dcpl_t>( H5P_DEFAULT );
     const static h5::dcpl_t default_dcpl = static_cast<h5::dcpl_t>( H5P_DEFAULT );
 }
-#endif

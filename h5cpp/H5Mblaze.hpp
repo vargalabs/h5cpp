@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_BLAZE_HPP 
-#define  H5CPP_BLAZE_HPP
+#pragma once
 
 #if defined(_BLAZE_MATH_MODULE_H_) || defined(H5CPP_USE_BLAZE)
 namespace h5::blaze {
@@ -67,5 +66,4 @@ namespace h5::impl {
 	}};
 }
 
-#endif
 #endif

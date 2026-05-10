@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_UBLAS_HPP 
-#define  H5CPP_UBLAS_HPP
+#pragma once
 
 #if defined(_BOOST_UBLAS_MATRIX_) || defined(H5CPP_USE_UBLAS_MATRIX)
 namespace h5::ublas {
@@ -60,5 +59,4 @@ namespace h5::impl {
 			return h5::ublas::rowvec<T>( dims[0] );
 	}};
 }
-#endif
 #endif

@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_PDAPL_HPP
-#define  H5CPP_PDAPL_HPP
+#pragma once
 
 #define H5CPP_DAPL_HIGH_THROUGHPUT "h5cpp_dapl_highthroughput"
 
@@ -46,4 +45,3 @@ namespace h5 {
 	const static h5::dapl_t default_dapl = static_cast<h5::dapl_t>(  H5Pcreate(H5P_DATASET_ACCESS) );
 }
 
-#endif

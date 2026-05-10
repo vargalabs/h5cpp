@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_SALL_HPP
-#define  H5CPP_SALL_HPP
+#pragma once
 #include <array>
 #include <tuple>
 #include <initializer_list>
@@ -175,4 +174,3 @@ namespace h5::impl {
 	}
 }
 
-#endif

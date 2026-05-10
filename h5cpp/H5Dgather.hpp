@@ -2,8 +2,7 @@
  * Copyright (c) 2018 - 2021 vargaconsulting, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_DGATHER_HPP 
-#define  H5CPP_DGATHER_HPP
+#pragma once
 
 #include <cstddef>
 #include <vector>
@@ -137,4 +136,3 @@ namespace h5 {
             "h5::materialize path is unsupported for this type");
     }
 }
-#endif

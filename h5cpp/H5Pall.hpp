@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_PALL_HPP
-#define  H5CPP_PALL_HPP
+#pragma once
 #include <array>
 #include <tuple>
 #include <initializer_list>
@@ -403,6 +402,4 @@ namespace h5 {
 	const static h5::fapl_t default_fapl = static_cast<h5::fapl_t>( H5P_DEFAULT );
 	const static h5::fcpl_t default_fcpl = static_cast<h5::fcpl_t>( H5P_DEFAULT );
 }
-
-#endif
 

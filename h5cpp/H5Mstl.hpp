@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_STL_HPP
-#define  H5CPP_STL_HPP
+#pragma once
 #include <string>
 #include <vector>
 #include <array>
@@ -80,4 +79,3 @@ namespace h5::impl {
 			return std::vector<T>( dims[0] );
 	}};
 }
-#endif

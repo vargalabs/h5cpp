@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_STD_COUT
-#define  H5CPP_STD_COUT
+#pragma once
 #include <ostream>
 #include <string>
 #include <vector>
@@ -120,6 +119,4 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec){
 return os;
 }
 
-
-#endif
 
