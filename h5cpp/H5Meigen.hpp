@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_EIGEN_HPP 
-#define H5CPP_EIGEN_HPP
+#pragma once
 #include <hdf5.h>
 #include "H5Tmeta.hpp"
 #include <tuple>
@@ -120,5 +119,4 @@ namespace h5::impl {
 	}};
 }
 
-#endif
 #endif

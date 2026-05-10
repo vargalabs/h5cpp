@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_AOPEN_HPP
-#define  H5CPP_AOPEN_HPP
+#pragma once
 #include <string>
 #include <type_traits>
 namespace h5 {
@@ -19,5 +18,3 @@ namespace h5 {
      	return  h5::at_t{attr};
     }
 }
-#endif
-

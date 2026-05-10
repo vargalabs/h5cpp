@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPPI_ALGORITHM_HPP
-#define  H5CPPI_ALGORITHM_HPP
+#pragma once
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -43,5 +42,3 @@ namespace h5 {
         return files;
     }
 }
-#endif
-

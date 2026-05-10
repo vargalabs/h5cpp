@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_EALL_HPP
-#define  H5CPP_EALL_HPP
+#pragma once
 #include <stdexcept>
 #include <string>
 #include <iostream>
@@ -251,6 +250,10 @@ namespace h5::error::io::attribute {
 		misc() : h5::error::io::attribute::any() {}
 		misc( const std::string& msg ) : h5::error::io::attribute::any( msg ){}
 	};
+	struct delete_ : public h5::error::io::attribute::any {
+		delete_() : h5::error::io::attribute::any() {}
+		delete_( const std::string& msg ) : h5::error::io::attribute::any( msg ){}
+	};
 }
 
 namespace h5::error::property_list {
@@ -270,5 +273,3 @@ namespace h5::error::property_list {
 		misc( const std::string& msg ) : h5::error::property_list::any( msg ){}
 	};
 }
-#endif
-

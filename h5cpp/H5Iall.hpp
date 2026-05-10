@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_IALL_HPP
-#define  H5CPP_IALL_HPP
+#pragma once
 #include <string>
 #include <vector>
 #include <tuple>
@@ -214,7 +213,6 @@ namespace h5 {
 	#undef H5CPP__defpid_t
 	#undef H5CPP__defhid_t
 }
-#endif
 // T ::= impl::T_ 
 // prop_t<h5::fapl_t, default_fapl,  capi, capi_call>
 // prop_base< prop_t<phid_t,init,capi,capi_call>, phid_t >

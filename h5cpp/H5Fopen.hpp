@@ -2,10 +2,8 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_FOPEN_HPP
-#define  H5CPP_FOPEN_HPP
+#pragma once
 #include <string>
-#include <memory>
 
 /**
  * @namespace h5
@@ -33,5 +31,3 @@ namespace h5{
 		return  h5::fd_t{fd};
     }
 }
-#endif
-

@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef H5CPP_CONFIG_H
-#define H5CPP_CONFIG_H
+#pragma once
 
 // to activate must include: #include "rest_vol_public.h"
 // see: https://bitbucket.hdfgroup.org/users/jhenderson/repos/rest-vol/browse
@@ -173,10 +172,4 @@
  *  **off** and **on**.  Typically used when failure is information: checking existence of [dataset|path] by call-fail pattern, etc...  
  *  \hdf5_links
  */
-
-#endif
-
-
-
-
 

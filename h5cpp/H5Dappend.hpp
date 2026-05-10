@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef H5CPP_DAPPEND_HPP
-#define H5CPP_DAPPEND_HPP
+#pragma once
 #include <zlib.h>
 #include <string>
 #include <vector>
@@ -313,4 +312,3 @@ inline std::ostream& operator<<(std::ostream &os, const h5::pt_t& pt) {
     os << std::dec;
 	return os;
 }
-#endif

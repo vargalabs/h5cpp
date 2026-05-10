@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_ARMA_HPP 
-#define  H5CPP_ARMA_HPP
+#pragma once
 
 //#include "H5Tmeta.hpp"
 
@@ -80,5 +79,4 @@ namespace h5::impl {
 			return h5::arma::colmat<T>( dims[2], dims[0], dims[1] );
 	}};
 }
-#endif
 #endif

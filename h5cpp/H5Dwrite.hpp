@@ -1,10 +1,8 @@
-        /*
+/*
  * Copyright (c) 2018 - 2021 vargaconsulting, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-
-#ifndef H5CPP_DWRITE_HPP
-#define H5CPP_DWRITE_HPP
+#pragma once
 
 #include "H5Tmeta.hpp"
 #include "H5Dgather.hpp"
@@ -417,4 +415,3 @@ namespace h5 {
 		return ::h5::write( fd, dataset_path, args...);
 	}
 }
-#endif

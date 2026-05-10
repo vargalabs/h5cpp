@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_DREAD_HPP
-#define  H5CPP_DREAD_HPP
+#pragma once
 #include "H5Dopen.hpp" // be sure this precedes error handling macro-s !!!
 #include <string>
 #include <vector>
@@ -322,4 +321,3 @@ namespace h5 {
 		return ::h5::read<T>( fd, dataset_path, args...);
 	}
 }
-#endif

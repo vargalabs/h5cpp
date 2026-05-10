@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2021 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_DCREATE_HPP
-#define  H5CPP_DCREATE_HPP
+#pragma once
 #include <string>
 #include <stdexcept>
 #include <tuple>
@@ -139,5 +138,3 @@ namespace h5 {
 		return ::h5::create<T>(fd, dataset_path, args...);
 	}
 }
-#endif
-

@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_MISC_HPP
-#define  H5CPP_MISC_HPP
+#pragma once
 #include <complex>
 #include <string>
 #include <vector>
@@ -111,5 +110,3 @@ namespace h5::impl {
     template <typename T>
         using unique_ptr = std::unique_ptr<T, h5::impl::free>;
 }
-#endif
-

@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_CAPI_HPP
-#define  H5CPP_CAPI_HPP
+#pragma once
 #include <type_traits>
 #include <stdexcept>
 #include <string>
@@ -220,5 +219,3 @@ namespace h5 {
 		return h5::get_fill_value(dcpl, type, size);
 	}
 }
-#endif
-

@@ -2,10 +2,8 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_PIPELINE_BASIC_HPP
-#define  H5CPP_PIPELINE_BASIC_HPP
+#pragma once
 #include <stdexcept>
-#include <iostream>
 
 inline void h5::impl::basic_pipeline_t::write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* data ){
 
@@ -74,4 +72,3 @@ inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, 
 	}
 }
 
-#endif

@@ -1,10 +1,8 @@
-
 /*
  * Copyright (c) 2018 - 2021 vargaconsulting, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_META456_HPP 
-#define  H5CPP_META456_HPP
+#pragma once
 
 #include "H5Iall.hpp"
 #include "H5meta.hpp"
@@ -20,9 +18,7 @@
 #include <map>
 #include <unordered_set>
 #include <unordered_map>
-#include <stack>
-#include <queue>
-#include <any>
+
 #include <tuple>
 #include <complex>
 #include <cstddef>
@@ -533,5 +529,3 @@ namespace h5::meta {
 
     //template <class T> struct 
 }
-
-#endif

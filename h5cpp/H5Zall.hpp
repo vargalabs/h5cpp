@@ -2,14 +2,11 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_ZALL_HPP
-#define  H5CPP_ZALL_HPP
+#pragma once
 
-#include <iomanip>
 #include <string>
 #include <stdexcept>
 #include <zlib.h>
-#include <cmath>
 
 namespace h5::impl::filter {
 	// TODO: figure something out to map c++ filters to C calls? 
@@ -107,4 +104,3 @@ namespace h5::impl::filter {
 
 
 }
-#endif

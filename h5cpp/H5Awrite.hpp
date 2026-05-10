@@ -3,8 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_AWRITE_HPP
-#define  H5CPP_AWRITE_HPP
+#pragma once
 #include <string>
 #include <stdexcept>
 #include <type_traits>
@@ -95,6 +94,4 @@ h5::at_t h5::at_t::operator=( const std::initializer_list<V> args ){
 	h5::awrite(ds, name, args);
 	return *this;
 }
-
-#endif
 

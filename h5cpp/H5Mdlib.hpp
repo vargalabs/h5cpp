@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_DLIB_HPP 
-#define  H5CPP_DLIB_HPP
+#pragma once
 
 #if defined(DLIB_MATRIx_HEADER) || defined(H5CPP_USE_DLIB)
 namespace h5::dlib {
@@ -47,5 +46,4 @@ namespace h5::impl {
 			return h5::dlib::rowmat<T>( dims[1], dims[0] );
 	}};
 }
-#endif
 #endif
