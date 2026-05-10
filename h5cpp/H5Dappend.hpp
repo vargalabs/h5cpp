@@ -70,7 +70,6 @@ namespace h5 {
 		template<class T> inline std::enable_if_t< !h5::impl::is_scalar<T>::value,
 		void> append( const T& ref );
 		void append( const std::string& ref );
-		void append( const char* ref );
 
 		impl::pipeline_t<impl::basic_pipeline_t> pipeline;
 		h5::dxpl_t dxpl;

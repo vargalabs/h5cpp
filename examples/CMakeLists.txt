@@ -241,10 +241,12 @@ target_link_libraries(examples-optimized ${LIBS} )
 add_dependencies(examples examples-optimized)
 endif()
 
-## packet-table ###
-add_executable(examples-packet-table EXCLUDE_FROM_ALL "packet-table/packettable.cpp")
-target_link_libraries(examples-packet-table ${LIBS} libarmadillo Eigen3::Eigen)
-add_dependencies(examples examples-packet-table)
+if( ${Eigen3_FOUND} AND ${ARMADILLO_FOUND} )
+	## packet-table ###
+	add_executable(examples-packet-table EXCLUDE_FROM_ALL "packet-table/packettable.cpp")
+	target_link_libraries(examples-packet-table ${LIBS} libarmadillo Eigen3::Eigen)
+	add_dependencies(examples examples-packet-table)
+endif()
 
 ## raw memory ###
 add_executable(examples-raw EXCLUDE_FROM_ALL "raw_memory/raw.cpp")
