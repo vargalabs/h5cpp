@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <ostream>
 #include <cstring>
-#include <cstdlib>
 #include <utility>
 
 namespace h5 {

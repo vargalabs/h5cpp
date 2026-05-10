@@ -4,11 +4,9 @@
  */
 #pragma once
 
-#include <iomanip>
 #include <string>
 #include <stdexcept>
 #include <zlib.h>
-#include <cmath>
 
 namespace h5::impl::filter {
 	// TODO: figure something out to map c++ filters to C calls? 

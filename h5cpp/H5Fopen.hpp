@@ -4,7 +4,6 @@
  */
 #pragma once
 #include <string>
-#include <memory>
 
 /**
  * @namespace h5
