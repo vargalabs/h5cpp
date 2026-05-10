@@ -32,7 +32,7 @@ jobs:
           - compiler: clang-20
             compiler-version: 20
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Set badge output directory
       id: path
@@ -99,7 +99,7 @@ jobs:
         echo "CXX=$(which $CXX)" >> "$GITHUB_ENV"
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -144,7 +144,7 @@ jobs:
         EOF
     - name: Upload Status Artifact
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: status-${{ matrix.os }}-${{ matrix.compiler }}
         path: badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
@@ -156,7 +156,7 @@ jobs:
     if: always()
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Determine badge target directory
         id: badge_dir
