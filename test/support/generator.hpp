@@ -65,10 +65,11 @@ namespace detail {
     template <class T>
     T rng_uniform(T lo, T hi) {
         using dist_t = std::conditional_t<std::is_integral<T>::value,
-            std::uniform_int_distribution<T>, std::uniform_real_distribution<T>>;
+            std::uniform_int_distribution<std::conditional_t<sizeof(T) < sizeof(int), int, T>>,
+            std::uniform_real_distribution<T>>;
         thread_local std::mt19937_64 eng{std::random_device{}()};
-        dist_t dist(lo, hi);
-        return dist(eng);
+        dist_t dist(static_cast<typename dist_t::result_type>(lo), static_cast<typename dist_t::result_type>(hi));
+        return static_cast<T>(dist(eng));
     }
 
     inline size_t rng_size(size_t mn, size_t mx) {

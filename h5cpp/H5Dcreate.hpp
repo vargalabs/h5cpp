@@ -78,7 +78,7 @@ namespace h5 {
 				for(hsize_t i=0; i<rank; i++)
 					current_dims_default[i] = max_dims[i] != H5S_UNLIMITED
 						? max_dims[i] : (has_unlimited_dimension=true, static_cast<hsize_t>(0));
-				current_dims_default.rank = rank;
+				current_dims_default.rank = static_cast<int>(rank);
 			}
 		} else static_assert( tcurrent_dims::present,"current or max dimensions must be present in order to create a dataset!" );
 
@@ -136,7 +136,7 @@ namespace h5 {
 	template<class T, class... args_t>
 	inline h5::ds_t create( const std::string& file_path, const std::string& dataset_path, args_t&&... args ){
 		h5::fd_t fd = h5::open(file_path, H5F_ACC_RDWR, h5::default_fapl);
-		return h5::create<T>(fd, dataset_path, args...);
+		return ::h5::create<T>(fd, dataset_path, args...);
 	}
 }
 #endif

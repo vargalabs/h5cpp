@@ -17,6 +17,8 @@ jobs:
         os: [ubuntu-22.04, ubuntu-24.04]
         compiler: [gcc-13, gcc-14, gcc-15, clang-17, clang-18, clang-19, clang-20]
         include:
+          - os: windows-latest
+            compiler: msvc
           - compiler: gcc-13
             compiler-version: 13
           - compiler: gcc-14
@@ -36,6 +38,7 @@ jobs:
 
     - name: Set badge output directory
       id: path
+      shell: bash
       run: |
         if [[ "${GITHUB_REF##*/}" == "staging" ]]; then
           echo "dir=status-staging" >> $GITHUB_OUTPUT
@@ -45,6 +48,7 @@ jobs:
 
     - name: Check skip list
       id: skip_check
+      shell: bash
       run: |
         skip_list=(
           "ubuntu-22.04:gcc-14"
@@ -114,20 +118,31 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y libhdf5-dev
 
 
+    - name: Install dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: vcpkg install hdf5
+      shell: powershell
+
     - name: Configure
-      if: env.SKIP_COMPILE == 'false'
+      if: env.SKIP_COMPILE == 'false' && runner.os != 'Windows'
       run: cmake -B build -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_STANDARD=23 -DCMAKE_BUILD_TYPE=Release -DH5CPP_BUILD_TESTS=ON
+
+    - name: Configure (Windows)
+      if: runner.os == 'Windows'
+      run: cmake -B build -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake" -DCMAKE_BUILD_TYPE=Release -DH5CPP_BUILD_TESTS=ON -DH5CPP_BUILD_EXAMPLES=ON
+      shell: powershell
 
     - name: Build
       if: env.SKIP_COMPILE == 'false'
-      run: cmake --build build --parallel
+      run: cmake --build build --parallel --config Release
 
     - name: Test
       if: env.SKIP_COMPILE == 'false'
-      run: ctest --test-dir build --output-on-failure
+      run: ctest --test-dir build -C Release --output-on-failure
 
     - name: Record Badge Status
       if: always()
+      shell: bash
       run: |
         mkdir -p badge-status
         status="skipped"

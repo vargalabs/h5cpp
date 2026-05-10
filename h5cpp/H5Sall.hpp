@@ -16,7 +16,7 @@ namespace h5{ namespace impl {
 	template <typename T, int N=H5CPP_MAX_RANK>
 	struct array  {
 
-		array( const std::initializer_list<size_t> list  ) : rank( list.size() ) {
+		array( const std::initializer_list<size_t> list  ) : rank( static_cast<int>(list.size()) ) {
 			for(int i=0; i<rank; i++) data[i] = *(list.begin() + i);
 		}
 		// support linalg objects upto 3 dimensions or cubes
@@ -58,7 +58,6 @@ namespace h5{ namespace impl {
 
 		array() : rank(0){};
 		array( array&& arg ) = default;
-		array( array& arg ) = default;
 		array(const array& arg) = default;
 		array& operator=( array&& arg ) = default;
 		array& operator=( array& arg ) = default;

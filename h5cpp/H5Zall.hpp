@@ -49,7 +49,13 @@ namespace h5::impl::filter {
 	}
 	inline size_t gzip( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
 		size_t nbytes = size;
+#ifdef _MSC_VER
+		uLongf dst_len = static_cast<uLongf>(size);
+		compress2( (unsigned char*)dst, &dst_len, (const unsigned char*)src, static_cast<uLong>(size), params[0]);
+		nbytes = dst_len;
+#else
 		compress2( (unsigned char*)dst, &nbytes, (const unsigned char*)src, size, params[0]);
+#endif
 		return nbytes;
 	}
 	inline size_t szip( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){

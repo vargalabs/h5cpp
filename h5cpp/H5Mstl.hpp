@@ -38,9 +38,12 @@ namespace h5::impl {
 	// helpers
 	template <class T>
 		using is_scalar = std::bool_constant<std::is_integral_v<T> || std::is_pod_v<T> || std::is_same_v<T,std::string>>;
-	template <class T, class B = typename impl::decay<T>::type>
-		using is_rank01 = std::bool_constant<std::is_same_v<T,std::initializer_list<B>> || 
-			std::is_same_v<T,std::vector<B>> >;
+	template <class T> struct is_vector : std::false_type {};
+	template <class T, class A> struct is_vector<std::vector<T, A>> : std::true_type {};
+	template <class T> struct is_initializer_list : std::false_type {};
+	template <class T> struct is_initializer_list<std::initializer_list<T>> : std::true_type {};
+	template <class T>
+		using is_rank01 = std::bool_constant<is_vector<T>::value || is_initializer_list<T>::value>;
 
 	template<class T> struct rank : public std::integral_constant<size_t,0>{};
 	template<> struct rank<std::string>: public std::integral_constant<size_t,1>{};
@@ -54,10 +57,10 @@ namespace h5::impl {
 		const T*> data( const std::initializer_list<T>& ref ){ return ref.begin(); }
 	inline const char* const* data( const std::initializer_list<const char*>& ref ){ return ref.begin(); }
 	inline const char* data( const std::string& ref ){ return ref.c_str(); }
-	template <class T> inline const T* data( const std::vector<T>& ref ){
+	template <class T, class A> inline const T* data( const std::vector<T, A>& ref ){
 		return ref.data();
 	}
-	template <class T> inline T* data( std::vector<T>& ref ){
+	template <class T, class A> inline T* data( std::vector<T, A>& ref ){
 		return ref.data();
 	}
 	// 4.) write access
@@ -68,8 +71,10 @@ namespace h5::impl {
 	// 5.) obtain dimensions of extents
 	template <class T> inline constexpr std::enable_if_t< impl::is_scalar<T>::value,
 		std::array<size_t,0>> size( T value ){ return{}; }
-	template <class T> inline std::enable_if_t< impl::is_rank01<T>::value,
-		std::array<size_t,1>> size( const T& ref ){ return {ref.size()}; }
+	template <class T, class A> inline std::array<size_t,1> size( const std::vector<T, A>& ref ){ return {ref.size()}; }
+	template <class T> inline std::array<size_t,1> size( const std::initializer_list<T>& ref ){ return {ref.size()}; }
+	template <class T> inline constexpr std::enable_if_t<!impl::is_scalar<T>::value,
+		std::array<size_t,0>> size( const T& ){ return{}; }
 	// 6.) ctor with right dimensions
 	template <class T> struct get {
 	   	static inline T ctor( std::array<size_t,impl::rank<T>::value> dims ){

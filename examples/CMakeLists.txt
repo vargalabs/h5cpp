@@ -207,30 +207,39 @@ if( MPI_FOUND AND HDF5_IS_PARALLEL )
 
 endif()
 
+if( ${ARMADILLO_FOUND} )
 ## attributes ###
 add_executable(examples-attributes EXCLUDE_FROM_ALL "attributes/attributes.cpp")
 target_link_libraries(examples-attributes ${LIBS} )
 add_dependencies(examples examples-attributes)
+endif()
 
 ## basics ###
 add_executable(examples-basics EXCLUDE_FROM_ALL "basics/basics.cpp")
 target_link_libraries(examples-basics ${LIBS} )
 add_dependencies(examples examples-basics)
 
+if( ${ARMADILLO_FOUND} )
 ## compound ###
 add_executable(examples-compound EXCLUDE_FROM_ALL "compound/struct.cpp")
 target_link_libraries(examples-compound ${LIBS} )
 add_dependencies(examples examples-compound)
+endif()
 
 ## csv ###
 add_executable(examples-csv EXCLUDE_FROM_ALL "csv/csv2hdf5.cpp")
 target_link_libraries(examples-csv ${LIBS} Threads::Threads )
 add_dependencies(examples examples-csv)
+if(MSVC)
+    target_compile_definitions(examples-csv PRIVATE _CRT_SECURE_NO_WARNINGS)
+endif()
 
+if( ${ARMADILLO_FOUND} )
 ## datasets ###
 add_executable(examples-datasets EXCLUDE_FROM_ALL "datasets/datasets.cpp")
 target_link_libraries(examples-datasets ${LIBS} )
 add_dependencies(examples examples-datasets)
+endif()
 
 if( ${Eigen3_FOUND} )
 ## datatypes nbit ###
@@ -253,15 +262,19 @@ add_dependencies(examples examples-twobit)
 #target_link_libraries(examples-multi-tu  examples-multi-tu01 examples-multi-tu02 ${LIBS}   )
 #add_dependencies(examples examples-multi-tu)
 
+if( ${ARMADILLO_FOUND} )
 ## optimized ###
 add_executable(examples-optimized EXCLUDE_FROM_ALL "optimized/optimized.cpp")
 target_link_libraries(examples-optimized ${LIBS} )
 add_dependencies(examples examples-optimized)
+endif()
 
+if( ${ARMADILLO_FOUND} )
 ## packet-table ###
 add_executable(examples-packet-table EXCLUDE_FROM_ALL "packet-table/packettable.cpp")
-target_link_libraries(examples-optimized ${LIBS} )
-add_dependencies(examples examples-optimized)
+target_link_libraries(examples-packet-table ${LIBS} )
+add_dependencies(examples examples-packet-table)
+endif()
 
 ## raw memory ###
 add_executable(examples-raw EXCLUDE_FROM_ALL "raw_memory/raw.cpp")
@@ -278,12 +291,16 @@ add_executable(examples-string EXCLUDE_FROM_ALL "string/string.cpp")
 target_link_libraries(examples-string ${LIBS} )
 add_dependencies(examples examples-string)
 
+if( ${ARMADILLO_FOUND} )
 ## transform ###
 add_executable(examples-transform EXCLUDE_FROM_ALL "transform/transform.cpp")
 target_link_libraries(examples-transform ${LIBS} )
 add_dependencies(examples examples-transform)
+endif()
 
+if( ${ARMADILLO_FOUND} )
 ## utf ###
 add_executable(examples-utf EXCLUDE_FROM_ALL "utf/utf.cpp")
 target_link_libraries(examples-utf ${LIBS} )
 add_dependencies(examples examples-utf)
+endif()
