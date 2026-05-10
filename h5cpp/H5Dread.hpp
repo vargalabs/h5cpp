@@ -96,7 +96,7 @@ namespace h5 {
 	inline void read( const h5::fd_t& fd, const std::string& dataset_path, T* ptr, args_t&&... args ){
 		const h5::dapl_t& dapl = arg::get(h5::default_dapl, args...);
 		h5::ds_t ds = h5::open(fd, dataset_path, dapl ); // will throw its exception
-		h5::read<T>(ds, ptr, args...);
+		::h5::read<T>(ds, ptr, args...);
 	}
 
  	/** \func_read_hdr
@@ -114,7 +114,7 @@ namespace h5 {
 	template<class T, class... args_t>
 	inline void read( const std::string& file_path, const std::string& dataset_path,T* ptr, args_t&&... args ){
 		h5::fd_t fd = h5::open( file_path, H5F_ACC_RDWR );
-		h5::read( fd, dataset_path, ptr, args...);
+		::h5::read( fd, dataset_path, ptr, args...);
 	}
 
 
@@ -143,7 +143,7 @@ namespace h5 {
 		// get 'count' and underlying type 
 		h5::count_t count = impl::size(ref);
 		element_type* ptr = impl::data(ref);
-		read<element_type>(ds, ptr, count, args...);
+		::h5::read<element_type>(ds, ptr, count, args...);
 	}
  	/** \func_read_hdr
  	*  Updates the content of passed **ref** reference, which must have enough memory space to receive data.
@@ -161,7 +161,7 @@ namespace h5 {
 
 		const h5::dapl_t& dapl = arg::get(h5::default_dapl, args...);
 		h5::ds_t ds = h5::open(fd, dataset_path, dapl );
-		h5::read<T>(ds, ref, args...);
+		::h5::read<T>(ds, ref, args...);
 	}
 
  	/** \func_read_hdr
@@ -178,7 +178,7 @@ namespace h5 {
 	void read( const std::string& file_path, const std::string& dataset_path, T& ref, args_t&&... args ){
 
 		h5::fd_t fd = h5::open( file_path, H5F_ACC_RDWR );
-		h5::read( fd, dataset_path, ref, args...);
+		::h5::read( fd, dataset_path, ref, args...);
 	}
 
 /***************************  OBJECT *****************************/
@@ -218,7 +218,7 @@ namespace h5 {
 		T ref = impl::get<T>::ctor( count );
 		element_type *ptr = impl::data( ref );
 
-		read<element_type>(ds, ptr, count, args...);
+		::h5::read<element_type>(ds, ptr, count, args...);
 		return ref;
 	}
 /***************************  STRING *****************************/
@@ -305,7 +305,7 @@ namespace h5 {
 
 		const h5::dapl_t& dapl = arg::get(h5::default_dapl, args...);
 		h5::ds_t ds = h5::open(fd, dataset_path, dapl );
-		return h5::read<T>(ds, args...);
+		return ::h5::read<T>(ds, args...);
 	}
  	/** \func_read_hdr
  	*  Direct read from file and dataset path that returns the entire data space wrapped into the object specified.
@@ -319,7 +319,7 @@ namespace h5 {
 	template<class T, class... args_t> // dispatch to above
 	inline T read(const std::string& file_path, const std::string& dataset_path, args_t&&... args ){
 		h5::fd_t fd = h5::open( file_path, H5F_ACC_RDWR );
-		return h5::read<T>( fd, dataset_path, args...);
+		return ::h5::read<T>( fd, dataset_path, args...);
 	}
 }
 #endif

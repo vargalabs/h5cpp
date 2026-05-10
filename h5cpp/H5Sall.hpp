@@ -58,7 +58,6 @@ namespace h5{ namespace impl {
 
 		array() : rank(0){};
 		array( array&& arg ) = default;
-		array( array& arg ) = default;
 		array(const array& arg) = default;
 		array& operator=( array&& arg ) = default;
 		array& operator=( array& arg ) = default;

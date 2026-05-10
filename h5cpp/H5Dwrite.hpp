@@ -118,7 +118,7 @@ namespace h5 {
 				err = H5Sselect_all(file_space);
 			// throw an exception if eny error
 			H5CPP_CHECK_NZ(err, h5::error::io::dataset::write, h5::error::msg::select_hyperslab);
-			h5::write(ds, mem_space, file_space, dxpl, ptr);
+			::h5::write(ds, mem_space, file_space, dxpl, ptr);
 		}
 		return ds;
 	} catch ( const std::exception& err ){
@@ -187,10 +187,10 @@ namespace h5 {
 		if constexpr (h5::meta::is_contiguous<T>::value) { // arrays/vectors/matrices of pod_t, funcamental types, but NOT vector<std::string> ... etc
 			auto ptr = h5::impl::data(ref);
 			if constexpr (tcount::present) // explicitly set: mem_space and file_space are given
-				h5::write(ds, ptr,  args...);
+				::h5::write(ds, ptr,  args...);
 			else { // we have to find out the size of `ref` and compute h5::count{}	
 				h5::count_t count = impl::size( ref );
-				h5::write(ds, ptr, count, args...);
+				::h5::write(ds, ptr, count, args...);
 			}
 		} else { // variable length datasets: ragged arrays, vector of strings...
 			// SUBTLE: lowering element_t type here with one level 
@@ -198,10 +198,10 @@ namespace h5 {
 			std::vector<element_t> elements;
 			element_t* ptrs = h5::gather(ref, elements);
 			if constexpr (tcount::present) // explicitly set: mem_space and file_space are given
-				ds = h5::write<element_t>(ds, ptrs,  args...);
+				ds = ::h5::write<element_t>(ds, ptrs,  args...);
 			else { // we have to find out the size of `ref` and compute h5::count{}	
 				h5::count_t count = impl::size( ref );
-				h5::write<element_t>(ds, ptrs, count, args...);
+				::h5::write<element_t>(ds, ptrs, count, args...);
 			}
 		}
 		return ds;
@@ -279,7 +279,7 @@ namespace h5 {
 			}
 		}
 		// we either have `ds` != H5I_UNINIT or an exception thrown, safe to delegate
-		return h5::write(ds, ptr, args...);
+		return ::h5::write(ds, ptr, args...);
 	}
 
     /** @ingroup io-write
@@ -358,7 +358,7 @@ namespace h5 {
 			}
 		}
 		// we either have `ds` != H5I_UNINIT or an exception thrown, safe to delegate
-		return h5::write(ds, ref,  args...);
+		return ::h5::write(ds, ref,  args...);
 	}
 
 
@@ -414,7 +414,7 @@ namespace h5 {
 	inline h5::ds_t write( const std::string& file_path, const std::string& dataset_path, args_t&&... args  ){
 		//TODO: refine delegation
 		h5::fd_t fd = h5::open( file_path, H5F_ACC_RDWR, h5::default_fapl );
-		return h5::write( fd, dataset_path, args...);
+		return ::h5::write( fd, dataset_path, args...);
 	}
 }
 #endif

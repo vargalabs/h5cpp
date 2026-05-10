@@ -136,7 +136,7 @@ namespace h5 {
 	template<class T, class... args_t>
 	inline h5::ds_t create( const std::string& file_path, const std::string& dataset_path, args_t&&... args ){
 		h5::fd_t fd = h5::open(file_path, H5F_ACC_RDWR, h5::default_fapl);
-		return h5::create<T>(fd, dataset_path, args...);
+		return ::h5::create<T>(fd, dataset_path, args...);
 	}
 }
 #endif

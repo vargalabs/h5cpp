@@ -17,6 +17,18 @@ namespace h5 {
 }
 
 namespace h5{ namespace impl {
+
+	struct aligned_deleter {
+		void operator()(char* p) const {
+#ifdef _MSC_VER
+			_aligned_free(p);
+#else
+			std::free(p);
+#endif
+		}
+	};
+	using aligned_ptr = std::unique_ptr<char, aligned_deleter>;
+
 	enum struct filter_direction_t {
 		forward = 0, reverse = 1
 	};
@@ -78,7 +90,7 @@ namespace h5{ namespace impl {
 		void push( filter::call_t filter );
 		void pop();
 
-		h5::impl::unique_ptr<char> ptr0, ptr1;
+		h5::impl::aligned_ptr ptr0, ptr1;
 		filter::call_t filter[H5CPP_MAX_FILTER];
 		hsize_t n,
 				C[H5CPP_MAX_RANK], D[H5CPP_MAX_RANK],
@@ -162,8 +174,13 @@ inline void h5::impl::pipeline_t<Derived>::set_cache( const h5::dcpl_t& dcpl, si
 			filter::get_callback( H5Pget_filter2( dcpl, i, &flags[i], &cd_size[i], cd_values[i], 0, nullptr, &filter_config )));
 	}
 
-	ptr0.reset( (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size ) );
-	ptr1.reset( (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size ) );
+#ifdef _MSC_VER
+		ptr0.reset( (char*)_aligned_malloc( block_size, H5CPP_MEM_ALIGNMENT ) );
+		ptr1.reset( (char*)_aligned_malloc( block_size, H5CPP_MEM_ALIGNMENT ) );
+#else
+		ptr0.reset( (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size ) );
+		ptr1.reset( (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size ) );
+#endif
 	// get an alias to smart ptr
 	if( (chunk0 = ptr0.get()) == NULL || (chunk1 = ptr1.get()) == NULL )
 	   	throw h5::error::io::dataset::open( H5CPP_ERROR_MSG("CTOR: couldn't allocate memory for caching chunks, invalid/check size?"));
