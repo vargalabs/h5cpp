@@ -284,6 +284,11 @@ add_executable(examples-raw EXCLUDE_FROM_ALL "raw_memory/raw.cpp")
 target_link_libraries(examples-raw ${LIBS} )
 add_dependencies(examples examples-raw)
 
+## valarray ###
+add_executable(examples-valarray EXCLUDE_FROM_ALL "linalg/valarray.cpp")
+target_link_libraries(examples-valarray ${LIBS} )
+add_dependencies(examples examples-valarray)
+
 ## stl ###
 add_executable(examples-stl EXCLUDE_FROM_ALL "stl/vector.cpp")
 target_link_libraries(examples-stl ${LIBS} )
