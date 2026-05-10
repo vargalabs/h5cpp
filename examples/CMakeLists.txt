@@ -162,6 +162,11 @@ else()
     endif()
 endif()
 
+message( "-- Vendored: newmat added to examples" )
+add_executable(examples-newmat EXCLUDE_FROM_ALL "linalg/newmat.cpp")
+target_link_libraries(examples-newmat ${LIBS} libnewmat)
+add_dependencies(examples examples-newmat)
+
 # ublas headers are vendored but rely on system Boost config/compiler headers
 find_path(H5CPP_BOOST_CONFIG_INCLUDE_EX NAMES boost/config.hpp)
 if(H5CPP_BOOST_CONFIG_INCLUDE_EX)
@@ -172,6 +177,11 @@ if(H5CPP_BOOST_CONFIG_INCLUDE_EX)
 else()
     message("-- Boost config headers not found — ublas example disabled")
 endif()
+
+message( "-- Vendored: newmat added to examples" )
+add_executable(examples-newmat EXCLUDE_FROM_ALL "linalg/newmat.cpp")
+target_link_libraries(examples-newmat ${LIBS} libnewmat)
+add_dependencies(examples examples-newmat)
 
 include(FindMPI)
 if( MPI_FOUND AND HDF5_IS_PARALLEL )
