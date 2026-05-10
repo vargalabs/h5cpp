@@ -70,6 +70,8 @@ namespace h5 {
 		void> append( const T& ref );
 		template<class T> inline std::enable_if_t< !h5::impl::is_scalar<T>::value,
 		void> append( const T& ref );
+		void append( const std::string& ref );
+		void append( const char* ref );
 
 		impl::pipeline_t<impl::basic_pipeline_t> pipeline;
 		h5::dxpl_t dxpl;
@@ -146,7 +148,6 @@ void> h5::pt_t::append( const T* ptr ) try {
 } catch( const std::runtime_error& err ){
 	throw h5::error::io::dataset::append( err.what() );
 }
-template <>
 inline void h5::pt_t::append( const std::string& ref ) {
 	static_cast<const char**>( ptr )[n++] = ref.data();
 	if( n != N ) return;
@@ -165,8 +166,7 @@ inline void h5::pt_t::append( const std::string& ref ) {
 		dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
 	n = 0;
 }
-template <>
-inline void h5::pt_t::append( const char* const& ref ) {
+inline void h5::pt_t::append( const char* ref ) {
 	static_cast<const char**>( ptr )[n++] = ref;
 	if( n != N ) return;
 

@@ -43,16 +43,28 @@ inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, 
 
 	switch( tail ){ // tail = index pointing to queue holding filters
 		case 0: // no filters, ( if blocking ) -> data == chunk0 otherwise directly from container 
+	#if H5_VERSION_GE(2,0,0)
+			H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk0, H5ES_NONE);
+#else
 			H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk0);
+#endif
 			break;
 		case 1: // single filter
+#if H5_VERSION_GE(2,0,0)
+			H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk1, H5ES_NONE);
+#else
 			H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk1);
+#endif
 			length = filter[0](chunk0, chunk1, nbytes, flags[0], cd_size[0], cd_values[0] );
 			break;
 		default: // more than one filter
 			throw std::runtime_error("filters not implemented yet...");
 			if( tail % 2 ){
+#if H5_VERSION_GE(2,0,0)
+				H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk0, H5ES_NONE);
+#else
 				H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk0);
+#endif
 				for(int j=tail; j>0; j--){ // invariant: out == buffer holding final result
 					tmp = in, in = out, out = tmp;
 					length = filter[j](out,in,length, flags[j], cd_size[j], cd_values[j]);
