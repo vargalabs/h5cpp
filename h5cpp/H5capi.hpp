@@ -120,7 +120,7 @@ namespace h5 {
 		return h5::sp_t{space};
 	}
 	inline h5::sp_t create_simple( const h5::current_dims& current_dims, const h5::max_dims& max_dims  ){
-		return h5::sp_t{H5Screate_simple( current_dims.size(), current_dims.begin(), max_dims.begin() )};
+		return h5::sp_t{H5Screate_simple( static_cast<int>(current_dims.size()), current_dims.begin(), max_dims.begin() )};
 	}
 
 

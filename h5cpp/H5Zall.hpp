@@ -51,7 +51,7 @@ namespace h5::impl::filter {
 		size_t nbytes = size;
 #ifdef _MSC_VER
 		uLongf dst_len = static_cast<uLongf>(size);
-		compress2( (unsigned char*)dst, &dst_len, (const unsigned char*)src, size, params[0]);
+		compress2( (unsigned char*)dst, &dst_len, (const unsigned char*)src, static_cast<uLong>(size), params[0]);
 		nbytes = dst_len;
 #else
 		compress2( (unsigned char*)dst, &nbytes, (const unsigned char*)src, size, params[0]);

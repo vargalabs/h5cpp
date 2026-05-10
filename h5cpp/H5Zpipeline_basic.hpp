@@ -65,7 +65,7 @@ inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, 
 #else
 				H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk0);
 #endif
-				for(int j=tail; j>0; j--){ // invariant: out == buffer holding final result
+				for(hsize_t j=tail; j>0; j--){ // invariant: out == buffer holding final result
 					tmp = in, in = out, out = tmp;
 					length = filter[j](out,in,length, flags[j], cd_size[j], cd_values[j]);
 				}

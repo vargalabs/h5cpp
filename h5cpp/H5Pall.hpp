@@ -100,12 +100,12 @@ namespace h5::impl {
 		using base_t =  prop_t<phid_t,init,capi,capi_call>;
 
 		aprop_t( std::initializer_list<hsize_t> values )
-			: base_t( std::make_tuple( values.size(), this->values) ) {
+			: base_t( std::make_tuple( static_cast<int>(values.size()), this->values) ) {
 			std::copy( std::begin(values), std::end(values), this->values);
 		}
 		template <class T, size_t N>
 		aprop_t( std::array<T,N> values )
-			: base_t( std::make_tuple( values.size(), this->values) ) {
+			: base_t( std::make_tuple( static_cast<int>(values.size()), this->values) ) {
 			std::copy( std::begin(values), std::end(values), this->values);
 		}
 		hsize_t values[H5CPP_MAX_RANK];

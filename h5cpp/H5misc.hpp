@@ -58,7 +58,7 @@ namespace h5::utils {
 		std::random_device rd;
 		std::default_random_engine rng(rd());
 		std::uniform_int_distribution<> dist(0,sizeof(alphabet)/sizeof(*alphabet)-2);
-		std::uniform_int_distribution<> string_length(min, max);
+		std::uniform_int_distribution<size_t> string_length(min, max);
 
 		std::generate_n(std::back_inserter(data), data.capacity(),   [&] {
 				std::string str;

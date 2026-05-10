@@ -78,7 +78,7 @@ namespace h5 {
 				for(hsize_t i=0; i<rank; i++)
 					current_dims_default[i] = max_dims[i] != H5S_UNLIMITED
 						? max_dims[i] : (has_unlimited_dimension=true, static_cast<hsize_t>(0));
-				current_dims_default.rank = rank;
+				current_dims_default.rank = static_cast<int>(rank);
 			}
 		} else static_assert( tcurrent_dims::present,"current or max dimensions must be present in order to create a dataset!" );
 
