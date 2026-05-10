@@ -230,6 +230,9 @@ endif()
 add_executable(examples-csv EXCLUDE_FROM_ALL "csv/csv2hdf5.cpp")
 target_link_libraries(examples-csv ${LIBS} Threads::Threads )
 add_dependencies(examples examples-csv)
+if(MSVC)
+    target_compile_definitions(examples-csv PRIVATE _CRT_SECURE_NO_WARNINGS)
+endif()
 
 if( ${ARMADILLO_FOUND} )
 ## datasets ###
