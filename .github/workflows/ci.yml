@@ -212,6 +212,15 @@ jobs:
             curl -s "https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg" -o "$badge"
           done
 
+          # Generate NA badges for matrix combinations without CI jobs
+          for combo in ubuntu-22.04-msvc ubuntu-24.04-msvc windows-latest-gcc-13 windows-latest-gcc-14 windows-latest-gcc-15 windows-latest-clang-17 windows-latest-clang-18 windows-latest-clang-19 windows-latest-clang-20; do
+            badge="${{ steps.badge_dir.outputs.dir }}/${combo}.svg"
+            if [[ ! -f "$badge" ]]; then
+              echo "Generating NA badge for ${combo}"
+              curl -s "https://img.shields.io/badge/na-%E2%97%8B-gray.svg" -o "$badge"
+            fi
+          done
+
       - name: Upload badge folder to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

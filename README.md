@@ -13,10 +13,11 @@ Easy to use  [HDF5][hdf5] C++ templates for Serial and Paralell HDF5
 
 ## Build Matrix
 
-| OS / Compiler | GCC 13       | GCC 14       | GCC 15       | Clang 17       | Clang 18       | Clang 19       | Clang 20       |
-|---------------|--------------|--------------|--------------|----------------|----------------|----------------|----------------|
-| Ubuntu 22.04  |![gcc13][200] |![gcc14][201] |![gcc15][202] |![clang17][250] |![clang18][251] |![clang19][252] |![clang20][253] |
-| Ubuntu 24.04  |![gcc13][300] |![gcc14][301] |![gcc15][302] |![clang17][350] |![clang18][351] |![clang19][352] |![clang20][353] |
+| OS / Compiler | GCC 13       | GCC 14       | GCC 15       | Clang 17       | Clang 18       | Clang 19       | Clang 20       | MSVC         |
+|---------------|--------------|--------------|--------------|----------------|----------------|----------------|----------------|--------------|
+| Ubuntu 22.04  |![gcc13][200] |![gcc14][201] |![gcc15][202] |![clang17][250] |![clang18][251] |![clang19][252] |![clang20][253] |![msvc][203]  |
+| Ubuntu 24.04  |![gcc13][300] |![gcc14][301] |![gcc15][302] |![clang17][350] |![clang18][351] |![clang19][352] |![clang20][353] |![msvc][303]  |
+| Windows       |![gcc13][210] |![gcc14][211] |![gcc15][212] |![clang17][260] |![clang18][261] |![clang19][262] |![clang20][263] |![msvc][354]  |
 
 **News:**
 **optional custom dataype** is added to `h5::create` to allow custom dataypes passed along the other arguments. 
@@ -243,6 +244,7 @@ while( having_a_good_day ){
 [251]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-18.svg
 [252]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-19.svg
 [253]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-20.svg
+[203]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-msvc.svg
 
 <!-- Ubuntu 24.04 -->
 [300]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-gcc-13.svg
@@ -252,3 +254,14 @@ while( having_a_good_day ){
 [351]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-18.svg
 [352]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-19.svg
 [353]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-20.svg
+[303]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-msvc.svg
+
+<!-- Windows -->
+[210]: https://vargalabs.github.io/h5cpp/badges/windows-latest-gcc-13.svg
+[211]: https://vargalabs.github.io/h5cpp/badges/windows-latest-gcc-14.svg
+[212]: https://vargalabs.github.io/h5cpp/badges/windows-latest-gcc-15.svg
+[260]: https://vargalabs.github.io/h5cpp/badges/windows-latest-clang-17.svg
+[261]: https://vargalabs.github.io/h5cpp/badges/windows-latest-clang-18.svg
+[262]: https://vargalabs.github.io/h5cpp/badges/windows-latest-clang-19.svg
+[263]: https://vargalabs.github.io/h5cpp/badges/windows-latest-clang-20.svg
+[354]: https://vargalabs.github.io/h5cpp/badges/windows-latest-msvc.svg
