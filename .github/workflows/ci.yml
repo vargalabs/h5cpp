@@ -134,11 +134,11 @@ jobs:
 
     - name: Build
       if: env.SKIP_COMPILE == 'false'
-      run: cmake --build build --parallel
+      run: cmake --build build --parallel --config Release
 
     - name: Test
       if: env.SKIP_COMPILE == 'false'
-      run: ctest --test-dir build --output-on-failure
+      run: ctest --test-dir build -C Release --output-on-failure
 
     - name: Record Badge Status
       if: always()

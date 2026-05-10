@@ -196,7 +196,7 @@ namespace h5 {
 			// SUBTLE: lowering element_t type here with one level 
 			using element_t = typename impl::decay<element_t>::type;
 			std::vector<element_t> elements;
-			element_t* ptrs = h5::gather(ref, elements);
+			const element_t* ptrs = h5::gather(ref, elements);
 			if constexpr (tcount::present) // explicitly set: mem_space and file_space are given
 				ds = ::h5::write<element_t>(ds, ptrs,  args...);
 			else { // we have to find out the size of `ref` and compute h5::count{}	

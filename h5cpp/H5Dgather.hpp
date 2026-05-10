@@ -56,6 +56,10 @@ namespace h5 {
     const T* gather(const std::unordered_multiset<T,H,E,A>& ref, std::vector<T>& elements){
         return gather_linear_values(ref, elements);
     }
+    template <class T, class A> inline
+    const T* gather(const std::vector<T,A>& ref, std::vector<T>& elements){
+        return ref.data();
+    }
 
     template <class T, class A> inline
     void materialize(std::list<T,A>& ref, const T* first, const T* last){
@@ -120,21 +124,27 @@ namespace h5 {
 
     template <class T, class E> inline
     const E* gather(const T&, std::vector<E>&){
+#ifndef _MSC_VER
         static_assert(detail::dependent_false_t<T,E>::value,
             "h5::gather path is unsupported for this type");
+#endif
         return nullptr;
     }
 
     template <class T, class E> inline
     void materialize(T&, const E*, const E*){
+#ifndef _MSC_VER
         static_assert(detail::dependent_false_t<T,E>::value,
             "h5::materialize path is unsupported for this type");
+#endif
     }
 
     template <class T, class E> inline
     void materialize(T&, const E*, size_t){
+#ifndef _MSC_VER
         static_assert(detail::dependent_false_t<T,E>::value,
             "h5::materialize path is unsupported for this type");
+#endif
     }
 }
 #endif
