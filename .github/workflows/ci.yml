@@ -218,3 +218,64 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./${{ steps.badge_dir.outputs.dir }}
           destination_dir: ${{ steps.badge_dir.outputs.dir }}
+
+  coverage:
+    name: coverage / ubuntu-24.04 / gcc-14
+    runs-on: ubuntu-24.04
+
+    env:
+      CC: gcc-14
+      CXX: g++-14
+      GCOV: gcov-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build gcc-14 g++-14 lcov libhdf5-dev
+
+      - name: Configure
+        shell: bash
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_STANDARD=17 \
+            -DCMAKE_C_COMPILER=gcc-14 \
+            -DCMAKE_CXX_COMPILER=g++-14 \
+            -DCMAKE_C_FLAGS="--coverage -O0 -g" \
+            -DCMAKE_CXX_FLAGS="--coverage -O0 -g" \
+            -DH5CPP_BUILD_TESTS=ON
+
+      - name: Build
+        shell: bash
+        run: |
+          cmake --build build --parallel
+
+      - name: Test
+        shell: bash
+        run: |
+          ctest --test-dir build --output-on-failure --parallel
+
+      - name: Capture coverage
+        shell: bash
+        run: |
+          lcov --gcov-tool /usr/bin/gcov-14 --rc geninfo_unexecuted_blocks=1 --directory build --capture --output-file coverage.full.info
+          lcov --gcov-tool /usr/bin/gcov-14 --remove coverage.full.info '/usr/*' '*/test/*' '*/thirdparty/*' '*/examples/*' --ignore-errors unused --output-file coverage.info
+          rm coverage.full.info
+          lcov --gcov-tool /usr/bin/gcov-14 --list coverage.info
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.info
+          disable_search: true
+          fail_ci_if_error: true
+          disable_telem: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
