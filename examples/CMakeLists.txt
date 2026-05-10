@@ -271,8 +271,8 @@ endif()
 
 ## packet-table ###
 add_executable(examples-packet-table EXCLUDE_FROM_ALL "packet-table/packettable.cpp")
-target_link_libraries(examples-optimized ${LIBS} )
-add_dependencies(examples examples-optimized)
+target_link_libraries(examples-packet-table ${LIBS} )
+add_dependencies(examples examples-packet-table)
 
 ## raw memory ###
 add_executable(examples-raw EXCLUDE_FROM_ALL "raw_memory/raw.cpp")
