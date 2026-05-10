@@ -144,7 +144,7 @@ jobs:
         EOF
     - name: Upload Status Artifact
       if: always()
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: status-${{ matrix.os }}-${{ matrix.compiler }}
         path: badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
