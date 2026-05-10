@@ -8,8 +8,11 @@
 #if defined(MAT_H) || defined(H5CPP_USE_ITPP_MATRIX)
 namespace h5::itpp {
 		template<class T> using rowmat = ::itpp::Mat<T>;
-		template <class Object, class T = typename impl::decay<Object>::type> 
+		template <class Object, class T = typename impl::decay<Object>::type>
 			using is_supported = std::bool_constant<std::is_same_v<Object,h5::itpp::rowmat<T>>>;
+}
+namespace h5::meta {
+    template <class T> struct is_contiguous<h5::itpp::rowmat<T>> : std::true_type {};
 }
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
@@ -41,6 +44,10 @@ namespace h5::itpp {
 		template<class T> using rowvec = ::itpp::Vec<T>;
 		template <class Object, class T = typename impl::decay<Object>::type>
 			using is_supported_v = std::bool_constant<std::is_same_v<Object,h5::itpp::rowvec<T>>>;
+}
+namespace h5::meta {
+    template <class T> struct is_contiguous<h5::itpp::rowvec<T>> : std::true_type {};
+}
 namespace h5::impl {
 	template <class T> struct decay<h5::itpp::rowvec<T>>{ using type = T; };
 	template <class Object, class T = typename impl::decay<Object>::type> inline
@@ -53,7 +60,7 @@ namespace h5::impl {
 	T*> data( Object& ref ){
 			return ref._data();
 	}
-	template<class T> struct rank<h5::itpp::rowvec<T>> : public std::integral_constant<size_t,2>{};
+	template<class T> struct rank<h5::itpp::rowvec<T>> : public std::integral_constant<size_t,1>{};
 	template <class T> inline std::array<size_t,1> size( const h5::itpp::rowvec<T>& ref ){ return { (hsize_t)ref.size() };}
 	template <class T> struct get<h5::itpp::rowvec<T>> {
 		static inline h5::itpp::rowvec<T> ctor( std::array<size_t,1> dims ){
