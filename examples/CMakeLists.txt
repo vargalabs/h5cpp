@@ -127,10 +127,12 @@ add_executable(examples-blaze EXCLUDE_FROM_ALL "linalg/blaze.cpp")
 target_link_libraries(examples-blaze ${LIBS} libblaze)
 add_dependencies(examples examples-blaze)
 
-message( "-- Vendored: itpp added to examples" )
-add_executable(examples-itpp EXCLUDE_FROM_ALL "linalg/itpp.cpp")
-target_link_libraries(examples-itpp ${LIBS} libitpp)
-add_dependencies(examples examples-itpp)
+# NOTE: itpp example disabled — upstream ITPP v4.3.1 is not C++17 compatible
+# (uses removed 'register' keyword). Fails with GCC 14. Not an h5cpp bug.
+# message( "-- Vendored: itpp added to examples" )
+# add_executable(examples-itpp EXCLUDE_FROM_ALL "linalg/itpp.cpp")
+# target_link_libraries(examples-itpp ${LIBS} libitpp)
+# add_dependencies(examples examples-itpp)
 
 message( "-- Vendored: blitz added to examples" )
 add_executable(examples-blitz EXCLUDE_FROM_ALL "linalg/blitz.cpp")
