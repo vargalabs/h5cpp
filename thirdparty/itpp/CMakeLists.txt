@@ -20,6 +20,8 @@ if(NOT EXISTS ${itpp_build_dir}/itpp/libitpp_static.a)
             -S ${itpp_source_dir}
             -B ${itpp_build_dir}
             -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_CXX_STANDARD=14
+            -DCMAKE_CXX_FLAGS="-Wno-register"
             -DITPP_SHARED_LIB=OFF
             -DOLD_TESTS=OFF
             -DHTML_DOCS=OFF
@@ -32,7 +34,7 @@ if(NOT EXISTS ${itpp_build_dir}/itpp/libitpp_static.a)
     endif()
 
     execute_process(
-        COMMAND ${CMAKE_COMMAND} --build ${itpp_build_dir} --config Release
+        COMMAND ${CMAKE_COMMAND} --build ${itpp_build_dir} --config Release --parallel 1
         RESULT_VARIABLE itpp_build_result
         OUTPUT_VARIABLE itpp_build_output
         ERROR_VARIABLE itpp_build_error
