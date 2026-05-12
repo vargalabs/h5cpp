@@ -42,3 +42,9 @@ add_example_test(test_blaze_io    LIBRARIES libblaze)
 add_example_test(test_dlib_io     LIBRARIES libdlib)
 add_example_test(test_ublas_io    LIBRARIES libublas)
 add_example_test(test_blitz_io    LIBRARIES libblitz)
+
+# Category D: Advanced Features
+add_example_test(test_packet_table_io LIBRARIES libarmadillo)
+add_example_test(test_optimized_io    LIBRARIES libarmadillo)
+add_example_test(test_transform_io    LIBRARIES libarmadillo)
+add_example_test(test_utf_io          LIBRARIES libarmadillo)
