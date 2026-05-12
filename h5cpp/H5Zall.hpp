@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <cstdint>
+#include <algorithm>
 #include <zlib.h>
 
 #if !defined(H5CPP_DISABLE_LIBDEFLATE)
@@ -20,6 +21,23 @@
 #endif
 #endif
 #endif
+
+#if defined(H5CPP_HAS_LZ4)
+#include <lz4.h>
+#endif
+
+#if defined(H5CPP_HAS_ZSTD)
+#include <zstd.h>
+#endif
+
+// Community HDF5 filter IDs
+#ifndef H5Z_FILTER_LZ4
+#define H5Z_FILTER_LZ4  32004
+#endif
+#ifndef H5Z_FILTER_ZSTD
+#define H5Z_FILTER_ZSTD 32015
+#endif
+
 namespace h5::impl::filter {
 	// TODO: figure something out to map c++ filters to C calls? 
 	template<class Derived>
@@ -56,6 +74,29 @@ namespace h5::impl::filter {
 	}
 	inline size_t deflate_bound(size_t size) {
 		return static_cast<size_t>(compressBound(static_cast<uLong>(size)));
+	}
+	inline size_t lz4_bound(size_t size) {
+#if defined(H5CPP_HAS_LZ4)
+		return static_cast<size_t>(LZ4_compressBound(static_cast<int>(size)));
+#else
+		return size + (size / 4) + 16;
+#endif
+	}
+	inline size_t zstd_bound(size_t size) {
+#if defined(H5CPP_HAS_ZSTD)
+		return ZSTD_compressBound(size);
+#else
+		return size + (size / 4) + 128;
+#endif
+	}
+	// Largest possible output across all supported filters for a given input size.
+	// Use this to size the pipeline scratch buffers.
+	inline size_t filter_scratch_bound(size_t size) {
+		size_t b = deflate_bound(size);
+		b = std::max(b, lz4_bound(size));
+		b = std::max(b, zstd_bound(size));
+		b = std::max(b, size + 4);   // fletcher32 appends 4-byte checksum
+		return b;
 	}
 	inline size_t zlib_deflate_encode(void* dst, const void* src, size_t size, unsigned level) {
 #if defined(H5CPP_HAS_LIBDEFLATE)
@@ -202,6 +243,49 @@ namespace h5::impl::filter {
 		memcpy(dst,src,size);
 		return size;
 	}
+
+	// LZ4 extreme-throughput compression (community filter ID 32004).
+	// Enabled when compiled with H5CPP_HAS_LZ4; falls back to passthrough otherwise.
+	inline size_t lz4( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+#if defined(H5CPP_HAS_LZ4)
+		if (flags & H5Z_FLAG_REVERSE) {
+			const int out = LZ4_decompress_safe(
+				static_cast<const char*>(src), static_cast<char*>(dst),
+				static_cast<int>(size),
+				static_cast<int>(decompressed_size_hint(size, n, params)));
+			return out > 0 ? static_cast<size_t>(out) : 0;
+		} else {
+			const int out = LZ4_compress_default(
+				static_cast<const char*>(src), static_cast<char*>(dst),
+				static_cast<int>(size), static_cast<int>(lz4_bound(size)));
+			return out > 0 ? static_cast<size_t>(out) : 0;
+		}
+#else
+		memcpy(dst, src, size);
+		return size;
+#endif
+	}
+
+	// Zstd compression (community filter ID 32015).
+	// Enabled when compiled with H5CPP_HAS_ZSTD; falls back to passthrough otherwise.
+	inline size_t zstd( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+#if defined(H5CPP_HAS_ZSTD)
+		if (flags & H5Z_FLAG_REVERSE) {
+			const size_t out = ZSTD_decompress(
+				dst, decompressed_size_hint(size, n, params), src, size);
+			return ZSTD_isError(out) ? 0 : out;
+		} else {
+			const size_t out = ZSTD_compress(
+				dst, zstd_bound(size), src, size,
+				static_cast<int>(compression_level(n, params)));
+			return ZSTD_isError(out) ? 0 : out;
+		}
+#else
+		memcpy(dst, src, size);
+		return size;
+#endif
+	}
+
 	inline size_t error( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
 		throw std::runtime_error("invalid filter");
 		return size;
@@ -209,12 +293,14 @@ namespace h5::impl::filter {
 	inline call_t get_callback( H5Z_filter_t filter_id ){
 
 		switch( filter_id ){
-			case H5Z_FILTER_DEFLATE: return filter::gzip;
-			case H5Z_FILTER_SHUFFLE: return filter::shuffle;
+			case H5Z_FILTER_DEFLATE:    return filter::gzip;
+			case H5Z_FILTER_SHUFFLE:    return filter::shuffle;
 			case H5Z_FILTER_FLETCHER32: return filter::fletcher32;
-			case H5Z_FILTER_SZIP: return filter::szip;
-			case H5Z_FILTER_NBIT: return filter::nbit;
-			case H5Z_FILTER_SCALEOFFSET: return filter::scaleoffset;
+			case H5Z_FILTER_SZIP:       return filter::szip;
+			case H5Z_FILTER_NBIT:       return filter::nbit;
+			case H5Z_FILTER_SCALEOFFSET:return filter::scaleoffset;
+			case H5Z_FILTER_LZ4:        return filter::lz4;
+			case H5Z_FILTER_ZSTD:       return filter::zstd;
 			default:
 					return filter::error;
 		}

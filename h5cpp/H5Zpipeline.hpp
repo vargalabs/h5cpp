@@ -195,7 +195,7 @@ inline void h5::impl::pipeline_t<Derived>::set_cache( const h5::dcpl_t& dcpl, si
 			filter::get_callback( H5Pget_filter2( dcpl, i, &flags[i], &cd_size[i], cd_values[i], 0, nullptr, &filter_config )));
 	}
 
-	const size_t scratch_size = filter::deflate_bound(block_size);
+	const size_t scratch_size = filter::filter_scratch_bound(block_size);
 	ptr0 = make_aligned( H5CPP_MEM_ALIGNMENT, scratch_size );
 	ptr1 = make_aligned( H5CPP_MEM_ALIGNMENT, scratch_size );
 	// get an alias to smart ptr
