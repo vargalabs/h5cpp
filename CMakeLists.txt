@@ -46,6 +46,14 @@ option(H5CPP_BUILD_TESTS    "Build tests"    OFF)
 # ─── System Dependencies ──────────────────────────────────────────────────────────
 include(GNUInstallDirs)
 
+find_package(Threads REQUIRED QUIET)
+find_package(Python3 COMPONENTS Interpreter QUIET)
+
+# match hdf5 versioning x.x.x.h5cpp-version
+set(H5CPP_VERSION
+    ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
+)
+
 if(WIN32)
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
         set(CMAKE_INSTALL_PREFIX "C:/h5cpp" CACHE PATH "default install path" FORCE)
@@ -137,8 +145,22 @@ endif()
 
 message(STATUS "Install directory: ${INSTALL_DIR_INCLUDE}")
 
-# Install header-only library
+# Generate single-header amalgamation during build
+set(H5CPP_AMALGAMATED_HEADER ${CMAKE_BINARY_DIR}/h5cpp.hpp)
+add_custom_command(
+    OUTPUT ${H5CPP_AMALGAMATED_HEADER}
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/amalgamate.py
+            ${CMAKE_SOURCE_DIR}/h5cpp ${H5CPP_AMALGAMATED_HEADER}
+    DEPENDS ${CMAKE_SOURCE_DIR}/scripts/amalgamate.py
+            ${CMAKE_SOURCE_DIR}/h5cpp/core
+            ${CMAKE_SOURCE_DIR}/h5cpp/io
+    COMMENT "Amalgamating h5cpp headers into h5cpp.hpp"
+)
+add_custom_target(h5cpp-amalgamate ALL DEPENDS ${H5CPP_AMALGAMATED_HEADER})
+
+# Install header-only library (directory + single-header)
 install(DIRECTORY h5cpp DESTINATION ${INSTALL_DIR_INCLUDE})
+install(FILES ${H5CPP_AMALGAMATED_HEADER} DESTINATION ${INSTALL_DIR_INCLUDE})
 install(TARGETS h5cpp EXPORT h5cpp-targets)
 
 # Install examples
