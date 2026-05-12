@@ -48,3 +48,6 @@ add_example_test(test_packet_table_io LIBRARIES libarmadillo)
 add_example_test(test_optimized_io    LIBRARIES libarmadillo)
 add_example_test(test_transform_io    LIBRARIES libarmadillo)
 add_example_test(test_utf_io          LIBRARIES libarmadillo)
+
+# Category F: Multi-TU / Compiler-generated
+add_example_test(test_multi_tu        LIBRARIES libarmadillo)
