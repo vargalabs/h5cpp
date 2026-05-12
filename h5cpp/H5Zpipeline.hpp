@@ -193,6 +193,14 @@ inline void h5::impl::pipeline_t<Derived>::set_cache( const h5::dcpl_t& dcpl, si
 		cd_size[i] = H5CPP_MAX_FILTER_PARAM;
 		push(
 			filter::get_callback( H5Pget_filter2( dcpl, i, &flags[i], &cd_size[i], cd_values[i], 0, nullptr, &filter_config )));
+		// Guarantee that params[1] always holds the uncompressed chunk byte count as a
+		// reliable decompression output-size hint.  External HDF5 files written by
+		// community plugins (LZ4 ID 32004, Zstd ID 32015, …) may store only
+		// compression level in params[0] and leave params[1] absent; libdeflate also
+		// requires the exact output size.  Overwriting here is safe: encoders only read
+		// params[0] (compression level) and ignore params[1].
+		if (cd_size[i] < 2) cd_size[i] = 2;
+		cd_values[i][1] = static_cast<unsigned>(block_size & 0xFFFFFFFFu);
 	}
 
 	const size_t scratch_size = filter::filter_scratch_bound(block_size);

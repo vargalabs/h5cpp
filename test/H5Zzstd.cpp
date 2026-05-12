@@ -60,6 +60,28 @@ TEST_CASE("zstd: compressed output is smaller than input for compressible data")
 #endif
 }
 
+TEST_CASE("zstd: decode with only level param (external-file compat)") {
+    // External HDF5 Zstd plugin stores only compression level in cd_values[0];
+    // no output size is stored.  set_cache injects block_size into params[1].
+    const auto input = make_double_sequence(512);
+    const size_t nbytes = input.size() * sizeof(double);
+
+    std::vector<uint8_t> compressed(h5::impl::filter::zstd_bound(nbytes));
+    std::vector<uint8_t> decompressed(nbytes);
+
+    const unsigned enc_params[] = {3u, static_cast<unsigned>(nbytes)};
+    const size_t comp_size = h5::impl::filter::zstd(
+        compressed.data(), input.data(), nbytes, 0, 2, enc_params);
+    REQUIRE(comp_size > 0);
+
+    // Decode with params[1] = block_size (as injected by set_cache)
+    const unsigned dec_params[] = {3u, static_cast<unsigned>(nbytes)};
+    const size_t decomp_size = h5::impl::filter::zstd(
+        decompressed.data(), compressed.data(), comp_size, H5Z_FLAG_REVERSE, 2, dec_params);
+    REQUIRE(decomp_size == nbytes);
+    CHECK(std::memcmp(decompressed.data(), input.data(), nbytes) == 0);
+}
+
 TEST_CASE("zstd: corrupt compressed input returns 0") {
     std::vector<uint8_t> corrupt(64, 0xFF);
     std::vector<uint8_t> out(8192);

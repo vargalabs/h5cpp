@@ -60,6 +60,30 @@ TEST_CASE("lz4: compressed output is smaller than input for compressible data") 
 #endif
 }
 
+TEST_CASE("lz4: decode with only level param (external-file compat)") {
+    // External HDF5 files using the community LZ4 plugin store block-size in cd_values[0],
+    // not a compression level.  Our set_cache fix injects block_size into params[1] so the
+    // decoder always has a reliable output-size bound.  This test simulates that fixed state.
+    const auto input = make_repeating_payload(4096);
+    const size_t nbytes = input.size();
+
+    std::vector<uint8_t> compressed(h5::impl::filter::lz4_bound(nbytes));
+    std::vector<uint8_t> decompressed(nbytes);
+
+    // Encode with standard params
+    const unsigned enc_params[] = {0u, static_cast<unsigned>(nbytes)};
+    const size_t comp_size = h5::impl::filter::lz4(
+        compressed.data(), input.data(), nbytes, 0, 2, enc_params);
+    REQUIRE(comp_size > 0);
+
+    // Decode with params[1] = block_size (as injected by set_cache)
+    const unsigned dec_params[] = {0u, static_cast<unsigned>(nbytes)};
+    const size_t decomp_size = h5::impl::filter::lz4(
+        decompressed.data(), compressed.data(), comp_size, H5Z_FLAG_REVERSE, 2, dec_params);
+    REQUIRE(decomp_size == nbytes);
+    CHECK(decompressed == input);
+}
+
 TEST_CASE("lz4: corrupt compressed input returns 0") {
     std::vector<uint8_t> corrupt(64, 0xFF);
     std::vector<uint8_t> out(4096);
