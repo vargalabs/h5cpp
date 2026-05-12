@@ -48,3 +48,6 @@ CMakeLists.txt.user*
 .venv/
 
 site/
+
+# Generated single-header amalgamation
+h5cpp.hpp
