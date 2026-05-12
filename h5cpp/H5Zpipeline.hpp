@@ -9,6 +9,11 @@
 #include <ostream>
 #include <cstring>
 #include <utility>
+#include <cstdlib>
+#include <new>
+#ifdef _MSC_VER
+#include <malloc.h>
+#endif
 
 namespace h5 {
 	int get_chunk_dims( const h5::dcpl_t& dcpl,  h5::chunk_t& chunk_dims );
@@ -17,15 +22,33 @@ namespace h5 {
 namespace h5{ namespace impl {
 
 	struct aligned_deleter {
-		void operator()(char* p) const {
+		void operator()(char* ptr) const {
 #ifdef _MSC_VER
-			_aligned_free(p);
+			_aligned_free(ptr);
 #else
-			std::free(p);
+			std::free(ptr);
 #endif
 		}
 	};
 	using aligned_ptr = std::unique_ptr<char, aligned_deleter>;
+
+	inline size_t round_up_to_alignment(size_t size, size_t alignment) {
+		return alignment ? ((size + alignment - 1) / alignment) * alignment : size;
+	}
+
+	inline aligned_ptr make_aligned(size_t alignment, size_t size) {
+		const size_t allocation_size = round_up_to_alignment(size, alignment);
+		void* ptr = nullptr;
+#ifdef _MSC_VER
+		ptr = _aligned_malloc(allocation_size, alignment);
+#else
+		if (posix_memalign(&ptr, alignment, allocation_size) != 0)
+			ptr = nullptr;
+#endif
+		if (!ptr)
+			throw std::bad_alloc();
+		return aligned_ptr(static_cast<char*>(ptr));
+	}
 
 	enum struct filter_direction_t {
 		forward = 0, reverse = 1
@@ -88,7 +111,7 @@ namespace h5{ namespace impl {
 		void push( filter::call_t filter );
 		void pop();
 
-		h5::impl::aligned_ptr ptr0, ptr1;
+		aligned_ptr ptr0, ptr1;
 		filter::call_t filter[H5CPP_MAX_FILTER];
 		hsize_t n,
 				C[H5CPP_MAX_RANK], D[H5CPP_MAX_RANK],
@@ -170,15 +193,19 @@ inline void h5::impl::pipeline_t<Derived>::set_cache( const h5::dcpl_t& dcpl, si
 		cd_size[i] = H5CPP_MAX_FILTER_PARAM;
 		push(
 			filter::get_callback( H5Pget_filter2( dcpl, i, &flags[i], &cd_size[i], cd_values[i], 0, nullptr, &filter_config )));
+		// Guarantee that params[1] always holds the uncompressed chunk byte count as a
+		// reliable decompression output-size hint.  External HDF5 files written by
+		// community plugins (LZ4 ID 32004, Zstd ID 32015, …) may store only
+		// compression level in params[0] and leave params[1] absent; libdeflate also
+		// requires the exact output size.  Overwriting here is safe: encoders only read
+		// params[0] (compression level) and ignore params[1].
+		if (cd_size[i] < 2) cd_size[i] = 2;
+		cd_values[i][1] = static_cast<unsigned>(block_size & 0xFFFFFFFFu);
 	}
 
-#ifdef _MSC_VER
-		ptr0.reset( (char*)_aligned_malloc( block_size, H5CPP_MEM_ALIGNMENT ) );
-		ptr1.reset( (char*)_aligned_malloc( block_size, H5CPP_MEM_ALIGNMENT ) );
-#else
-		ptr0.reset( (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size ) );
-		ptr1.reset( (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size ) );
-#endif
+	const size_t scratch_size = filter::filter_scratch_bound(block_size);
+	ptr0 = make_aligned( H5CPP_MEM_ALIGNMENT, scratch_size );
+	ptr1 = make_aligned( H5CPP_MEM_ALIGNMENT, scratch_size );
 	// get an alias to smart ptr
 	if( (chunk0 = ptr0.get()) == nullptr || (chunk1 = ptr1.get()) == nullptr )
 	   	throw h5::error::io::dataset::open( H5CPP_ERROR_MSG("CTOR: couldn't allocate memory for caching chunks, invalid/check size?"));

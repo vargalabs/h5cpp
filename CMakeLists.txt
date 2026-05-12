@@ -42,6 +42,12 @@ endif()
 # ─── Options ──────────────────────────────────────────────────────────────────────
 option(H5CPP_BUILD_EXAMPLES "Build examples" OFF)
 option(H5CPP_BUILD_TESTS    "Build tests"    OFF)
+option(H5CPP_USE_LIBDEFLATE "Use libdeflate for H5CPP deflate/gzip filters when available" ON)
+option(H5CPP_REQUIRE_LIBDEFLATE "Fail configuration if H5CPP_USE_LIBDEFLATE is ON and libdeflate is not found" OFF)
+option(H5CPP_INSTALL_LIBDEFLATE "Install the resolved libdeflate header and library with H5CPP" OFF)
+option(H5CPP_USE_LZ4  "Use LZ4 compression filter when available" ON)
+option(H5CPP_USE_ZSTD "Use Zstd compression filter when available" ON)
+option(H5CPP_USE_SZIP "Use vendored SZIP (Rice) compression filter when available" ON)
 
 # ─── System Dependencies ──────────────────────────────────────────────────────────
 include(GNUInstallDirs)
@@ -105,10 +111,50 @@ list(APPEND H5CPP_INCLUDE_DIRS
 list(APPEND H5CPP_LIBS
     Threads::Threads
     ${HDF5_LIBRARIES}
+    ZLIB::ZLIB
 )
 
 # ─── Thirdparty ───────────────────────────────────────────────────────────────────
 add_subdirectory(thirdparty EXCLUDE_FROM_ALL)
+
+if(H5CPP_LIBDEFLATE_FOUND)
+    message(STATUS "H5CPP libdeflate support: vendored ${H5CPP_LIBDEFLATE_INCLUDE_DIR}")
+elseif(H5CPP_USE_LIBDEFLATE)
+    message(STATUS "H5CPP libdeflate support: not found; zlib fallback will be used")
+endif()
+
+if(H5CPP_INSTALL_LIBDEFLATE AND NOT H5CPP_LIBDEFLATE_FOUND)
+    message(FATAL_ERROR "H5CPP_INSTALL_LIBDEFLATE is ON, but libdeflate was not found")
+endif()
+
+# ─── LZ4 (optional) ───────────────────────────────────────────────────────────────
+if(H5CPP_USE_LZ4)
+    find_library(H5CPP_LZ4_LIBRARY NAMES lz4)
+    find_path(H5CPP_LZ4_INCLUDE_DIR NAMES lz4.h)
+    if(H5CPP_LZ4_LIBRARY AND H5CPP_LZ4_INCLUDE_DIR)
+        message(STATUS "H5CPP LZ4 support: ${H5CPP_LZ4_LIBRARY}")
+    else()
+        message(STATUS "H5CPP LZ4 support: not found")
+    endif()
+endif()
+
+# ─── Zstd (optional) ──────────────────────────────────────────────────────────────
+if(H5CPP_USE_ZSTD)
+    if(H5CPP_ZSTD_FOUND)
+        message(STATUS "H5CPP Zstd support: vendored ${H5CPP_ZSTD_INCLUDE_DIR}")
+    else()
+        message(STATUS "H5CPP Zstd support: not found")
+    endif()
+endif()
+
+# ─── SZIP (optional) ──────────────────────────────────────────────────────────────
+if(H5CPP_USE_SZIP)
+    if(H5CPP_SZIP_FOUND)
+        message(STATUS "H5CPP SZIP support: vendored ${H5CPP_SZIP_INCLUDE_DIR}")
+    else()
+        message(STATUS "H5CPP SZIP support: not found")
+    endif()
+endif()
 
 # ─── Header-only Library Target ───────────────────────────────────────────────────
 add_library(h5cpp INTERFACE)
@@ -121,6 +167,26 @@ target_include_directories(h5cpp INTERFACE
 
 target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBS})
 target_compile_features(h5cpp INTERFACE cxx_std_17)
+
+if(H5CPP_LIBDEFLATE_FOUND)
+    target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBDEFLATE_TARGET})
+else()
+    target_compile_definitions(h5cpp INTERFACE H5CPP_DISABLE_LIBDEFLATE=1)
+endif()
+
+if(H5CPP_USE_LZ4 AND H5CPP_LZ4_LIBRARY AND H5CPP_LZ4_INCLUDE_DIR)
+    target_compile_definitions(h5cpp INTERFACE H5CPP_HAS_LZ4=1)
+    target_include_directories(h5cpp INTERFACE $<BUILD_INTERFACE:${H5CPP_LZ4_INCLUDE_DIR}>)
+    target_link_libraries(h5cpp INTERFACE ${H5CPP_LZ4_LIBRARY})
+endif()
+
+if(H5CPP_USE_ZSTD AND H5CPP_ZSTD_FOUND)
+    target_link_libraries(h5cpp INTERFACE ${H5CPP_ZSTD_TARGET})
+endif()
+
+if(H5CPP_USE_SZIP AND H5CPP_SZIP_FOUND)
+    target_link_libraries(h5cpp INTERFACE ${H5CPP_SZIP_TARGET})
+endif()
 
 # ─── Subdirectories ───────────────────────────────────────────────────────────────
 if(H5CPP_BUILD_EXAMPLES)
@@ -162,6 +228,25 @@ add_custom_target(h5cpp-amalgamate ALL DEPENDS ${H5CPP_AMALGAMATED_HEADER})
 install(DIRECTORY h5cpp DESTINATION ${INSTALL_DIR_INCLUDE})
 install(FILES ${H5CPP_AMALGAMATED_HEADER} DESTINATION ${INSTALL_DIR_INCLUDE})
 install(TARGETS h5cpp EXPORT h5cpp-targets)
+
+if(H5CPP_LIBDEFLATE_FOUND)
+    install(FILES "${H5CPP_LIBDEFLATE_INCLUDE_DIR}/libdeflate.h" DESTINATION "${INSTALL_DIR_INCLUDE}")
+    install(TARGETS libh5cpp-libdeflate libh5cpp-libdeflate-static
+        EXPORT h5cpp-targets
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+endif()
+
+if(H5CPP_ZSTD_FOUND)
+    install(TARGETS libh5cpp-zstd libh5cpp-zstd-static
+        EXPORT h5cpp-targets
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+endif()
+
+if(H5CPP_SZIP_FOUND)
+    install(TARGETS libh5cpp-szip libh5cpp-szip-static
+        EXPORT h5cpp-targets
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+endif()
 
 # Install examples
 install(DIRECTORY examples/attributes   DESTINATION "${INSTALL_DIR_EXAMPLES}")

@@ -58,4 +58,3 @@ namespace h5::meta::compat {
     template <class To, template<class...> class Op, class... Args>
     constexpr bool is_detected_convertible_v = is_detected_convertible<To, Op, Args...>::value;
 }
-#endif

@@ -13,6 +13,10 @@ TEST_CASE("[example] attributes round-trip") {
     const char* filename = "test_attributes_io.h5";
     std::filesystem::remove(filename);
 
+    // Inner scope so all h5cpp RAII handles release the file before the final
+    // remove().  On Windows, std::filesystem::remove on a still-open file
+    // throws filesystem_error; Linux silently allows it.
+    {
     // CREATE dataset
     h5::fd_t fd = h5::create(filename, H5F_ACC_TRUNC);
     h5::ds_t ds = h5::create<double>(fd, "directory/dataset", h5::current_dims{5, 6});
@@ -95,6 +99,7 @@ TEST_CASE("[example] attributes round-trip") {
     CHECK(H5Aexists(static_cast<hid_t>(gr), "att_22") > 0);
     CHECK(H5Aexists(static_cast<hid_t>(gr), "att_25") > 0);
     CHECK(H5Aexists(static_cast<hid_t>(gr), "att_27") > 0);
+    }
 
     std::filesystem::remove(filename);
 }

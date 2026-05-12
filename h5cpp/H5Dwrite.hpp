@@ -116,7 +116,17 @@ namespace h5 {
 				err = H5Sselect_all(file_space);
 			// throw an exception if eny error
 			H5CPP_CHECK_NZ(err, h5::error::io::dataset::write, h5::error::msg::select_hyperslab);
-			::h5::write(ds, mem_space, file_space, dxpl, ptr);
+			// MSVC partial-ordering bug: the unqualified `::h5::write(ds, mem, file, dxpl, ptr)`
+			// is ambiguous between the inner overload at line 21 and the variadic forwarder at
+			// line 181 (with T=sp_t).  Inline the H5Dwrite call here — matches the H5Dread.hpp:73
+			// idiom — so there is no recursive call back into this overload set.
+			using element_t = typename impl::decay<T>::type;
+			h5::meta::resolved_type_t<element_t> type;
+			H5CPP_CHECK_NZ(
+				H5Dwrite( static_cast<hid_t>(ds), static_cast<hid_t>(type),
+					static_cast<hid_t>(mem_space), static_cast<hid_t>(file_space),
+					static_cast<hid_t>(dxpl), ptr),
+				h5::error::io::dataset::write, h5::error::msg::write_dataset);
 		}
 		return ds;
 	} catch ( const std::exception& err ){
@@ -177,7 +187,8 @@ namespace h5 {
 	* H5Dflush(ds); 
 	* @endcode 
  	*/
-	template <class T, class... args_t>
+	template <class T, class... args_t,
+		class = std::enable_if_t<!std::is_pointer_v<std::decay_t<T>>>>
 	inline h5::ds_t write(const h5::ds_t& ds, const T& ref,  args_t&&... args) try {
 		using tcount = typename arg::tpos<const h5::count_t&,const args_t&...>;
 		using element_t = typename impl::decay<T>::type;
@@ -326,12 +337,13 @@ namespace h5 {
 	* 	h5::current_dims{vec.length()}, h5::max_dims{H5S_UNLIMITED}, h5::chunk{1024} | h5::gzip{9});
 	* @endcode 
  	*/ 
-	template <class T, class... args_t>
+	template <class T, class... args_t,
+		class = std::enable_if_t<!std::is_pointer_v<std::decay_t<T>>>>
 	inline h5::ds_t write( const h5::fd_t& fd, const std::string& dataset_path, const T& ref,  args_t&&... args  ){
 		using tcount  = typename arg::tpos<const h5::count_t&, const args_t&...>;
 		h5::ds_t ds; // initialized to H5I_UNINIT
 		// find out if we have to create the dataset
-		h5::mute(); 
+		h5::mute();
 			// Returns a negative value when the function fails and may return a negative value if the link does not exist.
 			// - name is not local to the group specified by loc_id or, if loc_id is something other than a group identifier, 
 			//        name is not local to the root group

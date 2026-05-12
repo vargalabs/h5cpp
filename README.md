@@ -153,8 +153,7 @@ A pull request should:
 
 The preferred merge target for active development is `staging`. Release branches are promoted from `staging` after validation.
 
-
-[NA]: https://vargalabs.github.io/h5cpp/docs/assets/na.svg
+[NA]: https://vargalabs.github.io/h5cpp/badges/na.svg
 
 <!-- Ubuntu 22.04 -->
 [200]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-gcc-13.svg

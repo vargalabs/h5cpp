@@ -1,5 +1,9 @@
 name: CI
 
+env:
+  HDF5_VERSION: 1.10.10
+  HDF5_CACHE_VERSION: v2
+
 on:
   push:
     branches: [ release, staging ]
@@ -24,61 +28,46 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Ubuntu 22.04
           - os: ubuntu-22.04
             compiler: gcc-13
             compiler-version: 13
- 
           - os: ubuntu-22.04
             compiler: clang-17
             compiler-version: 17
- 
           - os: ubuntu-22.04
             compiler: clang-18
             compiler-version: 18
- 
           - os: ubuntu-22.04
             compiler: clang-19
             compiler-version: 19
- 
           - os: ubuntu-22.04
             compiler: clang-20
             compiler-version: 20
- 
-          # Ubuntu 24.04
           - os: ubuntu-24.04
             compiler: gcc-13
             compiler-version: 13
- 
           - os: ubuntu-24.04
             compiler: gcc-14
             compiler-version: 14
- 
           - os: ubuntu-24.04
             compiler: clang-18
             compiler-version: 18
- 
           - os: ubuntu-24.04
             compiler: clang-19
             compiler-version: 19
- 
           - os: ubuntu-24.04
             compiler: clang-20
             compiler-version: 20
- 
-          # macOS native toolchain
           - os: macos-15
             compiler: apple-clang
             compiler-version: native
- 
-          # Windows native toolchain
           - os: windows-latest
             compiler: msvc
             compiler-version: native
- 
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -111,9 +100,23 @@ jobs:
             clang++-"$version" --version
 
           elif [[ "$compiler" == gcc-* ]]; then
-            sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-            sudo apt-get update
-            sudo apt-get install -y "gcc-$version" "g++-$version"
+            if ! command -v "gcc-$version" &>/dev/null; then
+              sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+              for attempt in 1 2 3; do
+                sudo apt-get update
+                if apt-cache show "gcc-$version" >/dev/null 2>&1; then
+                  break
+                fi
+                if [[ $attempt -lt 3 ]]; then
+                  echo "Package gcc-$version not found after update (attempt $attempt), retrying in 30s..."
+                  sleep 30
+                else
+                  echo "Package gcc-$version not found in PPA after $attempt attempts" >&2
+                  exit 1
+                fi
+              done
+              sudo apt-get install -y "gcc-$version" "g++-$version"
+            fi
 
             echo "CC=$(command -v gcc-$version)" >> "$GITHUB_ENV"
             echo "CXX=$(command -v g++-$version)" >> "$GITHUB_ENV"
@@ -157,11 +160,112 @@ jobs:
           ls -la "${HDF5_PREFIX}/include/hdf5.h"
           ls -la "${HDF5_PREFIX}/lib"/libhdf5*
 
-      - name: Install dependencies on Windows
+      - name: Build Windows zlib from source
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          vcpkg install hdf5
+          $ErrorActionPreference = "Stop"
+
+          # Build zlib ourselves rather than relying on vcpkg.  The vcpkg
+          # `x64-windows` install was flaky: its ZLIBConfig.cmake referenced a
+          # non-existent ZLIB-static.cmake, and even after sidestepping that the
+          # linker intermittently failed to open the installed import lib.
+          # Building from source takes ~30s, gives us a predictable layout, and
+          # lets both HDF5 and h5cpp link against the same zlib.
+
+          $zlib_version = "1.3.1"
+          $zlib_archive = "$env:RUNNER_TEMP\zlib-$zlib_version.tar.gz"
+          $zlib_source  = "$env:RUNNER_TEMP\zlib-$zlib_version"
+          $zlib_build   = "$env:RUNNER_TEMP\zlib-build"
+          $zlib_prefix  = "$env:RUNNER_TEMP\zlib-install"
+
+          Invoke-WebRequest `
+            -Uri "https://github.com/madler/zlib/archive/refs/tags/v$zlib_version.tar.gz" `
+            -OutFile $zlib_archive
+          tar -xzf $zlib_archive -C $env:RUNNER_TEMP
+
+          cmake -S $zlib_source -B $zlib_build `
+            -G "Visual Studio 17 2022" -A x64 `
+            -DCMAKE_INSTALL_PREFIX="$zlib_prefix"
+          cmake --build $zlib_build --parallel --config Release
+          cmake --install $zlib_build --config Release
+
+          Get-ChildItem -Recurse "$zlib_prefix\lib","$zlib_prefix\include"
+
+      - name: Restore HDF5 1.10.10 cache
+        if: runner.os == 'Windows'
+        id: cache-hdf5
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}\hdf5-${{ env.HDF5_VERSION }}-install
+          key: hdf5-${{ runner.os }}-${{ matrix.compiler }}-${{ env.HDF5_VERSION }}-${{ env.HDF5_CACHE_VERSION }}
+
+      - name: Build HDF5 1.10.10
+        if: runner.os == 'Windows' && steps.cache-hdf5.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $hdf5_version = "${{ env.HDF5_VERSION }}"
+          $hdf5_archive = "$env:RUNNER_TEMP\hdf5-$hdf5_version.tar.gz"
+          $hdf5_source = "$env:RUNNER_TEMP\hdf5-$hdf5_version"
+          $hdf5_build = "$env:RUNNER_TEMP\hdf5-$hdf5_version-build"
+          $hdf5_prefix = "$env:RUNNER_TEMP\hdf5-$hdf5_version-install"
+
+          Invoke-WebRequest `
+            -Uri "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-$hdf5_version/src/hdf5-$hdf5_version.tar.gz" `
+            -OutFile $hdf5_archive
+          tar -xzf $hdf5_archive -C $env:RUNNER_TEMP
+
+          cmake -S $hdf5_source -B $hdf5_build `
+            -G "Visual Studio 17 2022" `
+            -A x64 `
+            -DCMAKE_INSTALL_PREFIX="$hdf5_prefix" `
+            -DHDF_CFG_NAME=Release `
+            -DBUILD_SHARED_LIBS=ON `
+            -DBUILD_TESTING=OFF `
+            -DHDF5_BUILD_TOOLS=OFF `
+            -DHDF5_BUILD_UTILS=OFF `
+            -DHDF5_BUILD_EXAMPLES=OFF `
+            -DHDF5_BUILD_CPP_LIB=OFF `
+            -DHDF5_BUILD_HL_LIB=OFF `
+            -DHDF5_BUILD_FORTRAN=OFF `
+            -DHDF5_ENABLE_Z_LIB_SUPPORT=ON `
+            -DHDF5_ENABLE_SZIP_SUPPORT=OFF `
+            -DZLIB_USE_EXTERNAL=OFF `
+            -DZLIB_INCLUDE_DIR="$env:RUNNER_TEMP/zlib-install/include" `
+            -DZLIB_LIBRARY="$env:RUNNER_TEMP/zlib-install/lib/zlib.lib"
+
+          cmake --build $hdf5_build --parallel --config Release
+          cmake --install $hdf5_build --config Release
+
+      - name: Save HDF5 1.10.10 cache
+        if: runner.os == 'Windows' && steps.cache-hdf5.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}\hdf5-${{ env.HDF5_VERSION }}-install
+          key: ${{ steps.cache-hdf5.outputs.cache-primary-key }}
+
+      - name: Export Windows HDF5 environment
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $hdf5_version = "${{ env.HDF5_VERSION }}"
+          $hdf5_prefix = "$env:RUNNER_TEMP\hdf5-$hdf5_version-install"
+
+          if (!(Test-Path "$hdf5_prefix")) {
+            throw "HDF5 install prefix not found: $hdf5_prefix"
+          }
+
+          $hdf5_cmake_prefix = $hdf5_prefix -replace '\\','/'
+          $zlib_cmake_prefix = "$env:RUNNER_TEMP\zlib-install" -replace '\\','/'
+
+          "HDF5_ROOT=$hdf5_cmake_prefix" >> $env:GITHUB_ENV
+          "CMAKE_PREFIX_PATH=$hdf5_cmake_prefix;$zlib_cmake_prefix" >> $env:GITHUB_ENV
+          "$hdf5_prefix\bin" >> $env:GITHUB_PATH
+          "$env:RUNNER_TEMP\zlib-install\bin" >> $env:GITHUB_PATH
 
       - name: Configure
         if: runner.os != 'Windows'
@@ -204,6 +308,8 @@ jobs:
         run: |
           cmake -S . -B build `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake" `
+            -DHDF5_ROOT="$env:HDF5_ROOT" `
+            -DCMAKE_PREFIX_PATH="$env:CMAKE_PREFIX_PATH" `
             -DCMAKE_CXX_STANDARD=23 `
             -DCMAKE_BUILD_TYPE=Release `
             -DH5CPP_BUILD_TESTS=ON `
@@ -233,43 +339,27 @@ jobs:
 
       - name: Upload Status Artifact
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: status-${{ matrix.os }}-${{ matrix.compiler }}
           path: badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
 
-  generate-badges:
+  badge:
     name: Generate SVG Badges
-    runs-on: ubuntu-latest
-    needs: build
     if: always()
+    needs: build
+    runs-on: ubuntu-24.04
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
       - name: Install badge tools
         shell: bash
         run: |
           set -euxo pipefail
-
           sudo apt-get update
           sudo apt-get install -y jq curl
 
-      - name: Determine badge target directory
-        id: badge_dir
-        shell: bash
-        run: |
-          set -euxo pipefail
-
-          if [[ "${GITHUB_REF##*/}" == "staging" ]]; then
-            echo "dir=badges-staging" >> "$GITHUB_OUTPUT"
-          else
-            echo "dir=badges" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Download all badge status artifacts
-        uses: actions/download-artifact@v8
+      - name: Download all status artifacts
+        uses: actions/download-artifact@v4
         with:
           path: badge-status
           pattern: status-*
@@ -280,16 +370,28 @@ jobs:
         run: |
           set -euxo pipefail
 
-          mkdir -p "${{ steps.badge_dir.outputs.dir }}"
+          ref_name="${GITHUB_REF_NAME:-}"
 
-          shopt -s nullglob
+          if [[ "$ref_name" == "staging" ]]; then
+            badge_dir="badges-staging"
+          else
+            badge_dir="badges"
+          fi
 
-          for f in badge-status/*.json; do
-            echo "Processing $f"
+          mkdir -p "$badge_dir"
 
-            os="$(jq -r .os "$f")"
-            compiler="$(jq -r .compiler "$f")"
-            status="$(jq -r .status "$f")"
+          na_badge="$badge_dir/na.svg"
+          na_url="https://img.shields.io/badge/na-%E2%97%8B-gray.svg"
+
+          if [[ ! -f "$na_badge" ]]; then
+            echo "$na_url -> $na_badge"
+            curl -fsSL "$na_url" -o "$na_badge"
+          fi
+
+          for status_file in badge-status/*.json; do
+            os=$(jq -r '.os' "$status_file")
+            compiler=$(jq -r '.compiler' "$status_file")
+            status=$(jq -r '.status' "$status_file")
 
             prefix="unknown"
             symbol="%3F"
@@ -319,20 +421,28 @@ jobs:
             esac
 
             label="${os}-${compiler}"
-            badge="${{ steps.badge_dir.outputs.dir }}/${label}.svg"
+            badge="$badge_dir/${label}.svg"
             url="https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg"
 
             echo "$url -> $badge"
             curl -fsSL "$url" -o "$badge"
           done
 
-      - name: Upload badge folder to GitHub Pages
+      - name: Upload badges artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
+          path: ${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
+
+      - name: Deploy badges to GitHub Pages
         if: github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./${{ steps.badge_dir.outputs.dir }}
-          destination_dir: ${{ steps.badge_dir.outputs.dir }}
+          publish_dir: ./${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
+          destination_dir: ${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
+          keep_files: true   # prevents wiping the other branch's folder on every deploy
 
   coverage:
     name: coverage / ubuntu-24.04 / gcc-14
@@ -346,7 +456,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 

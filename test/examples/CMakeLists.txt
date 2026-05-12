@@ -40,7 +40,16 @@ add_example_test(test_arma_io     LIBRARIES libarmadillo)
 # add_example_test(test_eigen3_io   LIBRARIES libeigen3)
 add_example_test(test_blaze_io    LIBRARIES libblaze)
 add_example_test(test_dlib_io     LIBRARIES libdlib)
-add_example_test(test_ublas_io    LIBRARIES libublas)
+
+# ublas headers are vendored but rely on system Boost config/compiler headers
+# (the vendored copy only includes gcc.hpp, not clang.hpp or msvc.hpp)
+find_path(H5CPP_BOOST_CONFIG_INCLUDE NAMES boost/config.hpp)
+if(H5CPP_BOOST_CONFIG_INCLUDE)
+    add_example_test(test_ublas_io LIBRARIES libublas)
+else()
+    message(STATUS "Boost config headers not found — skipping test_ublas_io")
+endif()
+
 add_example_test(test_blitz_io    LIBRARIES libblitz)
 
 # Category D: Advanced Features

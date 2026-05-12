@@ -15,6 +15,8 @@ TEST_CASE("[example] optimized offset write/read round-trip") {
     arma::mat M(10, 1);
     M.zeros();
 
+    // Inner scope so RAII handles release the file before remove().
+    {
     // CREATE dataset with chunked/gzipped properties
     h5::fd_t fd = h5::create(filename, H5F_ACC_TRUNC);
     h5::ds_t ds = h5::create<short>(fd, "dataset",
@@ -33,6 +35,7 @@ TEST_CASE("[example] optimized offset write/read round-trip") {
     for (hsize_t i = 0; i < 5; ++i) {
         auto R = h5::read<arma::mat>(ds, h5::count{10, 1}, h5::offset{0, i});
         CHECK(R(0, 0) == doctest::Approx(static_cast<double>(i)));
+    }
     }
 
     std::filesystem::remove(filename);

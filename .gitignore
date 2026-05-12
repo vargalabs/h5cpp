@@ -52,3 +52,5 @@ compile_commands.json
 
 # Generated single-header amalgamation
 h5cpp.hpp
+
+.cache/

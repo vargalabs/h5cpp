@@ -16,3 +16,6 @@ add_subdirectory(blitz)
 
 # Test framework
 add_subdirectory(doctest)
+add_subdirectory(libdeflate)
+add_subdirectory(zstd)
+add_subdirectory(szip)

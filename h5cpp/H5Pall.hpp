@@ -210,8 +210,9 @@ using mdc_config               = impl::fapl_call< impl::fapl_args<hid_t,H5AC_cac
 using mdc_image_config         = impl::fapl_call< impl::fapl_args<hid_t,H5AC_cache_image_config_t*>,H5Pset_mdc_image_config>;
 using mdc_log_options          = impl::fapl_call< impl::fapl_args<hid_t,hbool_t,const char*,hbool_t>,H5Pset_mdc_log_options>;
 #endif
-#if H5_VERSION_GE(1,14,0) //FIXME: find out why the compile error with valid 1.8.0 version 
-using fapl_direct              = impl::fapl_call<impl::fapl_args<hid_t,size_t,size_t,size_t, H5Pset_fapl_direct>>;
+#if H5_VERSION_GE(1,14,0) //FIXME: find out why the compile error with valid 1.8.0 version
+#ifdef H5_HAVE_DIRECT
+using fapl_direct              = impl::fapl_call<impl::fapl_args<hid_t,size_t,size_t,size_t>, H5Pset_fapl_direct>;
 #endif
 #endif
 //
@@ -392,14 +393,28 @@ namespace h5 {
 	const static h5::acpl_t acpl = static_cast<h5::acpl_t>( H5P_DEFAULT );
 	const static h5::dcpl_t dcpl = static_cast<h5::dcpl_t>( H5P_DEFAULT );
 	const static h5::dxpl_t dxpl = static_cast<h5::dxpl_t>( H5P_DEFAULT );
-	const static h5::lcpl_t lcpl = h5::char_encoding{H5T_CSET_UTF8} | h5::create_intermediate_group{1};
+	// lcpl/default_lcpl allocate real handles via the `|` operator chain.
+	// See dapl singletons in H5Pdapl.hpp for the rationale; same fix applies.
+	namespace impl {
+		inline const h5::lcpl_t& _lcpl_singleton() {
+			static h5::lcpl_t* p = new h5::lcpl_t(
+				h5::char_encoding{H5T_CSET_UTF8} | h5::create_intermediate_group{1});
+			return *p;
+		}
+		inline const h5::lcpl_t& _default_lcpl_singleton() {
+			static h5::lcpl_t* p = new h5::lcpl_t(
+				h5::char_encoding{H5T_CSET_UTF8} | h5::create_intermediate_group{1});
+			return *p;
+		}
+	}
+	inline const h5::lcpl_t& lcpl = impl::_lcpl_singleton();
 	const static h5::fapl_t fapl = static_cast<h5::fapl_t>( H5P_DEFAULT );
 	const static h5::fcpl_t fcpl = static_cast<h5::fcpl_t>( H5P_DEFAULT );
 
 	const static h5::acpl_t default_acpl = static_cast<h5::acpl_t>( H5P_DEFAULT );
 	const static h5::dcpl_t default_dcpl = static_cast<h5::dcpl_t>( H5P_DEFAULT );
 	const static h5::dxpl_t default_dxpl = static_cast<h5::dxpl_t>( H5P_DEFAULT );
-	const static h5::lcpl_t default_lcpl = h5::char_encoding{H5T_CSET_UTF8} | h5::create_intermediate_group{1};
+	inline const h5::lcpl_t& default_lcpl = impl::_default_lcpl_singleton();
 	const static h5::fapl_t default_fapl = static_cast<h5::fapl_t>( H5P_DEFAULT );
 	const static h5::fcpl_t default_fcpl = static_cast<h5::fcpl_t>( H5P_DEFAULT );
 }
