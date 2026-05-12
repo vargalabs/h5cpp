@@ -172,6 +172,8 @@ namespace h5 {
 		h5::ds_t ds_{ds};
 
 		switch( H5Pget_layout(static_cast<::hid_t>( dcpl)) ){
+			case H5D_LAYOUT_ERROR: break;
+			case H5D_NLAYOUTS: break;
 			case H5D_COMPACT: break;
 			case H5D_CONTIGUOUS: break;
 			case H5D_CHUNKED:
