@@ -104,28 +104,18 @@ list(APPEND H5CPP_LIBS
     ZLIB::ZLIB
 )
 
-if(H5CPP_USE_LIBDEFLATE)
-    find_path(LIBDEFLATE_INCLUDE_DIR NAMES libdeflate.h)
-    find_library(LIBDEFLATE_LIBRARY NAMES deflate libdeflate)
-    if(LIBDEFLATE_INCLUDE_DIR AND LIBDEFLATE_LIBRARY)
-        set(H5CPP_LIBDEFLATE_FOUND TRUE)
-        message(STATUS "H5CPP libdeflate support: ${LIBDEFLATE_LIBRARY}")
-    elseif(H5CPP_REQUIRE_LIBDEFLATE)
-        message(FATAL_ERROR "H5CPP_REQUIRE_LIBDEFLATE is ON, but libdeflate was not found")
-    else()
-        set(H5CPP_LIBDEFLATE_FOUND FALSE)
-        message(STATUS "H5CPP libdeflate support: not found; zlib fallback will be used")
-    endif()
-else()
-    set(H5CPP_LIBDEFLATE_FOUND FALSE)
+# ─── Thirdparty ───────────────────────────────────────────────────────────────────
+add_subdirectory(thirdparty EXCLUDE_FROM_ALL)
+
+if(H5CPP_LIBDEFLATE_FOUND)
+    message(STATUS "H5CPP libdeflate support: vendored ${H5CPP_LIBDEFLATE_INCLUDE_DIR}")
+elseif(H5CPP_USE_LIBDEFLATE)
+    message(STATUS "H5CPP libdeflate support: not found; zlib fallback will be used")
 endif()
 
 if(H5CPP_INSTALL_LIBDEFLATE AND NOT H5CPP_LIBDEFLATE_FOUND)
     message(FATAL_ERROR "H5CPP_INSTALL_LIBDEFLATE is ON, but libdeflate was not found")
 endif()
-
-# ─── Thirdparty ───────────────────────────────────────────────────────────────────
-add_subdirectory(thirdparty EXCLUDE_FROM_ALL)
 
 # ─── Header-only Library Target ───────────────────────────────────────────────────
 add_library(h5cpp INTERFACE)
@@ -140,9 +130,7 @@ target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBS})
 target_compile_features(h5cpp INTERFACE cxx_std_17)
 
 if(H5CPP_LIBDEFLATE_FOUND)
-    target_include_directories(h5cpp INTERFACE ${LIBDEFLATE_INCLUDE_DIR})
-    target_link_libraries(h5cpp INTERFACE ${LIBDEFLATE_LIBRARY})
-    target_compile_definitions(h5cpp INTERFACE H5CPP_HAS_LIBDEFLATE=1)
+    target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBDEFLATE_TARGET})
 else()
     target_compile_definitions(h5cpp INTERFACE H5CPP_DISABLE_LIBDEFLATE=1)
 endif()
@@ -174,9 +162,11 @@ message(STATUS "Install directory: ${INSTALL_DIR_INCLUDE}")
 install(DIRECTORY h5cpp DESTINATION ${INSTALL_DIR_INCLUDE})
 install(TARGETS h5cpp EXPORT h5cpp-targets)
 
-if(H5CPP_INSTALL_LIBDEFLATE AND H5CPP_LIBDEFLATE_FOUND)
-    install(FILES "${LIBDEFLATE_INCLUDE_DIR}/libdeflate.h" DESTINATION "${INSTALL_DIR_INCLUDE}")
-    install(FILES "${LIBDEFLATE_LIBRARY}" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+if(H5CPP_LIBDEFLATE_FOUND)
+    install(FILES "${H5CPP_LIBDEFLATE_INCLUDE_DIR}/libdeflate.h" DESTINATION "${INSTALL_DIR_INCLUDE}")
+    install(TARGETS libh5cpp-libdeflate libh5cpp-libdeflate-static
+        EXPORT h5cpp-targets
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 endif()
 
 # Install examples
