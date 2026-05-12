@@ -8,14 +8,14 @@ set(name armadillo)
 set(libname lib${name})
 project(${libname} LANGUAGES CXX)
 
-set(current_version_dir "v12.6.7")
+set(current_version_dir "v15.2.6")
 
-# Save and restore BUILD_SHARED_LIBS to avoid affecting parent project
-set(_saved_build_shared_libs ${BUILD_SHARED_LIBS})
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-
-add_subdirectory(${current_version_dir})
-
-set(BUILD_SHARED_LIBS ${_saved_build_shared_libs} CACHE BOOL "" FORCE)
-
-add_library(${libname} ALIAS armadillo)
+# Armadillo is used in header-only mode (ARMA_DONT_USE_WRAPPER).
+# The wrapper library (libarmadillo) is not needed for h5cpp's use case,
+# which only requires basic linear algebra object introspection
+# (memptr(), n_elem, n_cols, n_rows, constructors).
+# Consumers must link BLAS/LAPACK directly when needed.
+add_library(${libname} INTERFACE)
+add_library(armadillo::armadillo ALIAS ${libname})
+target_include_directories(${libname} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/${current_version_dir}/include)
+target_compile_definitions(${libname} INTERFACE ARMA_DONT_USE_WRAPPER)
