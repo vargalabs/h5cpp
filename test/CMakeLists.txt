@@ -58,3 +58,6 @@ add_test_case(H5Dio)
 # add_test_case(H5E_exceptions)
 add_test_case(H5Dio_roundtrip)
 # add_test_case(H5Iall)
+
+# Example-derived I/O round-trip tests (issue/145)
+add_subdirectory(examples)
