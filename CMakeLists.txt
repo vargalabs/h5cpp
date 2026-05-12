@@ -132,12 +132,10 @@ endif()
 
 # ─── Zstd (optional) ──────────────────────────────────────────────────────────────
 if(H5CPP_USE_ZSTD)
-    find_library(H5CPP_ZSTD_LIBRARY NAMES zstd)
-    find_path(H5CPP_ZSTD_INCLUDE_DIR NAMES zstd.h)
-    if(H5CPP_ZSTD_LIBRARY AND H5CPP_ZSTD_INCLUDE_DIR)
-        message(STATUS "H5CPP Zstd support: ${H5CPP_ZSTD_LIBRARY}")
+    if(H5CPP_ZSTD_FOUND)
+        message(STATUS "H5CPP Zstd support: vendored ${H5CPP_ZSTD_INCLUDE_DIR}")
     else()
-        message(STATUS "H5CPP Zstd support: not found (install libzstd-dev to enable)")
+        message(STATUS "H5CPP Zstd support: not found")
     endif()
 endif()
 
@@ -165,10 +163,8 @@ if(H5CPP_USE_LZ4 AND H5CPP_LZ4_LIBRARY AND H5CPP_LZ4_INCLUDE_DIR)
     target_link_libraries(h5cpp INTERFACE ${H5CPP_LZ4_LIBRARY})
 endif()
 
-if(H5CPP_USE_ZSTD AND H5CPP_ZSTD_LIBRARY AND H5CPP_ZSTD_INCLUDE_DIR)
-    target_compile_definitions(h5cpp INTERFACE H5CPP_HAS_ZSTD=1)
-    target_include_directories(h5cpp INTERFACE $<BUILD_INTERFACE:${H5CPP_ZSTD_INCLUDE_DIR}>)
-    target_link_libraries(h5cpp INTERFACE ${H5CPP_ZSTD_LIBRARY})
+if(H5CPP_USE_ZSTD AND H5CPP_ZSTD_FOUND)
+    target_link_libraries(h5cpp INTERFACE ${H5CPP_ZSTD_TARGET})
 endif()
 
 # ─── Subdirectories ───────────────────────────────────────────────────────────────
