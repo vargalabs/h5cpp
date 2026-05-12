@@ -16,7 +16,7 @@ namespace h5::impl {
     inline ::herr_t dcpl_multi_dataset(::hid_t dcpl, const char** values){
         // ignore if already set 
         if( H5Pexist(dcpl, H5CPP_DCPL_MULTI_DATASET) ) return 0;
-        return H5Pinsert2(dapl, H5CPP_DCPL_MULTI_DATASET, 8, 0,
+        return H5Pinsert2(dcpl, H5CPP_DCPL_MULTI_DATASET, 8, 0,
             nullptr, nullptr, nullptr, nullptr, nullptr,    nullptr);
     }
 

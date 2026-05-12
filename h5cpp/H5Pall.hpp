@@ -206,7 +206,7 @@ using mdc_image_config         = impl::fapl_call< impl::fapl_args<hid_t,H5AC_cac
 using mdc_log_options          = impl::fapl_call< impl::fapl_args<hid_t,hbool_t,const char*,hbool_t>,H5Pset_mdc_log_options>;
 #endif
 #if H5_VERSION_GE(1,14,0) //FIXME: find out why the compile error with valid 1.8.0 version 
-using fapl_direct              = impl::fapl_call<impl::fapl_args<hid_t,size_t,size_t,size_t, H5Pset_fapl_direct>;
+using fapl_direct              = impl::fapl_call<impl::fapl_args<hid_t,size_t,size_t,size_t, H5Pset_fapl_direct>>;
 #endif
 //
 namespace flag {
