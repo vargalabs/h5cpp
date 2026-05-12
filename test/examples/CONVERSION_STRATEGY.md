@@ -31,42 +31,47 @@ TEST_CASE("[example] <name> round-trip") {
 
 ## Categorization of Examples
 
-### Category A: Simple I/O (easy conversions)
+### Category A: Simple I/O ✅
 - [x] `string/string.cpp` → `test_string_io.cpp`
 - [x] `stl/vector.cpp` → `test_stl_vector_io.cpp`
-- [ ] `basics/basics.cpp` → mostly API demonstration; may skip or test property creation only
-- [ ] `raw_memory/raw.cpp` → raw pointer buffer round-trip
-- [ ] `csv/csv2hdf5.cpp` → CSV parse + write, then read back and compare
+- [x] `basics/basics.cpp` → `test_basics_io.cpp`
+- [x] `raw_memory/raw.cpp` → `test_raw_memory_io.cpp`
+- [x] `csv/csv2hdf5.cpp` → `test_csv_io.cpp`
 
-### Category B: Compound / Custom Types
-- [ ] `compound/struct.cpp` → write compound struct, read back, field-by-field compare
-- [ ] `attributes/attributes.cpp` → write attrs, read back, verify values
-- [ ] `datatypes/two-bit.cpp` → custom 2-bit type round-trip
-- [ ] `datatypes/n-bit.cpp` → n-bit type with eigen3 dependency
+### Category B: Compound / Custom Types ✅
+- [x] `compound/struct.cpp` → `test_compound_struct_io.cpp`
+- [x] `attributes/attributes.cpp` → `test_attributes_io.cpp`
+- [x] `datatypes/two-bit.cpp` → `test_two_bit_io.cpp`
+- [x] `datatypes/n-bit.cpp` → `test_n_bit_io.cpp`
 
-### Category C: Linear Algebra (requires thirdparty libs)
-These need `thirdparty/` (armadillo, eigen3, blaze, dlib, ublas, itpp, blitz).
-- [ ] `linalg/arma.cpp` → arma::mat/vec round-trip
-- [ ] `linalg/eigen3.cpp` → Eigen::Matrix round-trip
-- [ ] `linalg/blaze.cpp` → blaze::DynamicMatrix round-trip
-- [ ] `linalg/dlib.cpp` → dlib::matrix round-trip
-- [ ] `linalg/ublas.cpp` → ublas::matrix round-trip
-- [ ] `linalg/itpp.cpp` → itpp::mat round-trip
-- [ ] `linalg/blitz.cpp` → blitz::Array round-trip
+### Category C: Linear Algebra ✅
+- [x] `linalg/arma.cpp` → `test_arma_io.cpp`
+- [x] `linalg/eigen3.cpp` → `test_eigen3_io.cpp` *(note: eigen3 example uses `Eigen::Matrix`; test covered via Category A/B infra)*
+- [x] `linalg/blaze.cpp` → `test_blaze_io.cpp`
+- [x] `linalg/dlib.cpp` → `test_dlib_io.cpp`
+- [x] `linalg/ublas.cpp` → `test_ublas_io.cpp`
+- [x] `linalg/blitz.cpp` → `test_blitz_io.cpp`
+- [ ] `linalg/itpp.cpp` → **skipped** — upstream IT++ v4.3.1 is not C++17 compatible
 
-### Category D: Advanced Features
-- [ ] `packet-table/packettable.cpp` → append + read back packet table
-- [ ] `optimized/optimized.cpp` → verify optimized write path produces correct data
-- [ ] `transform/transform.cpp` → transform-on-write/read round-trip
-- [ ] `utf/utf.cpp` → UTF-8 string round-trip
+### Category D: Advanced Features ✅
+- [x] `packet-table/packettable.cpp` → `test_packet_table_io.cpp`
+- [x] `optimized/optimized.cpp` → `test_optimized_io.cpp`
+- [x] `transform/transform.cpp` → `test_transform_io.cpp`
+- [x] `utf/utf.cpp` → `test_utf_io.cpp`
 
-### Category E: MPI (requires PHDF5 + mpirun)
+### Category E: MPI 🔴 TODO
 - [ ] `mpi/collective.cpp` → `mpirun -n 2` collective write/read
 - [ ] `mpi/independent.cpp` → independent write/read
 - [ ] `mpi/throughput.cpp` → may be performance-only, hard to validate
 
-### Category F: Multi-TU / Compiler-generated
-- [ ] `multi-tu/` → compile-time test only; may not need runtime I/O test
+**Blockers for Category E:**
+1. `test/CMakeLists.txt` has no `find_package(MPI)` — must mirror `examples/CMakeLists.txt` logic
+2. CI workflow installs serial `libhdf5-dev` only — PHDF5 (`libhdf5-mpich-dev` or `openmpi`) not available
+3. `ctest` needs launcher configuration: `MPIEXEC_EXECUTABLE`, `MPIEXEC_NUMPROC_FLAG`
+4. `HDF5_IS_PARALLEL` must be true for MPI tests to be relevant
+
+### Category F: Multi-TU / Compiler-generated ✅
+- [x] `multi-tu/` → `test_multi_tu.cpp` (compile-and-run verification)
 
 ## CMake Integration
 
@@ -84,8 +89,7 @@ runners are ephemeral so this is acceptable.
 
 ## Future Work
 
-1. **Linalg examples** — blocked until `thirdparty/` is merged to staging (issue #144).
-2. **MPI examples** — need `ctest` launcher configuration for `mpirun`.
-3. **Property-based testing** — replace fixed test data with randomized generators
+1. **Category E (MPI)** — blocked on CI PHDF5 availability and CMake MPI launcher config.
+2. **Property-based testing** — replace fixed test data with randomized generators
    (reuse `h5::utils::get_test_data<T>(n)` where available).
-4. **Coverage** — ensure these tests are included in Codecov reporting.
+3. **Coverage** — ensure these tests are included in Codecov reporting.
