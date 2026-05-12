@@ -1,0 +1,293 @@
+#!/bin/bash
+#==================================================================================================
+#
+#  Run script for the dmatdmatkron module of the Blaze test suite
+#
+#  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+#
+#  This file is part of the Blaze library. You can redistribute it and/or modify it under
+#  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+#  forms, with or without modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this list of
+#     conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright notice, this list
+#     of conditions and the following disclaimer in the documentation and/or other materials
+#     provided with the distribution.
+#  3. Neither the names of the Blaze development group nor the names of its contributors
+#     may be used to endorse or promote products derived from this software without specific
+#     prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+#  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+#  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+#  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+#  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+#  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+#  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+#  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+#  DAMAGE.
+#
+#==================================================================================================
+
+
+PATH_DMATDMATKRON=$( dirname "${BASH_SOURCE[0]}" )
+
+echo " Running dense matrix/dense matrix Kronecker product tests...";
+
+EXE=$PATH_DMATDMATKRON/D3x3aD3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/D3x3aD3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/D3x3bD3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/D3x3bD3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/DDaDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDaUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DDbUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/DHaDHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DHaDHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DHbDHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/DHbDHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/H3x3aH3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/H3x3aH3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/H3x3bH3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/H3x3bH3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/HDaDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDaUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HDbUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/HHaHHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HHaHHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HHbHHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/HHbHHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/L3x3aL3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/L3x3aL3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/L3x3bL3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/L3x3bL3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/LDaDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDaUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LDbUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/LHaLHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LHaLHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LHbLHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/LHbLHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/M3x3aM3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/M3x3aM3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/M3x3aMDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/M3x3aMDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/M3x3bM3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/M3x3bM3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/M3x3bMDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/M3x3bMDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/MDaDDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaDDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaHDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaHDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaLDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaLDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaM3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaM3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaMDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaMDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaMHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaMHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaMUa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaMUb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaSDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaSDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaUDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDaUDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbDDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbDDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbHDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbHDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbLDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbLDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbM3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbM3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbMDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbMDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbMHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbMHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbMUa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbMUb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbSDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbSDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbUDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MDbUDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/MHaM3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHaM3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHaMDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHaMDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHaMHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHaMHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHaMUa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHaMUb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHbM3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHbM3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHbMDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHbMDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHbMHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHbMHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHbMUa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MHbMUb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/MUaM3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUaM3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUaMDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUaMDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUaMHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUaMHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUaMUa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUaMUb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUbM3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUbM3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUbMDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUbMDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUbMHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUbMHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUbMUa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/MUbMUb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/S3x3aS3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/S3x3aS3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/S3x3bS3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/S3x3bS3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/SDaDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDaUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SDbUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/SHaSHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SHaSHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SHbSHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/SHbSHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/U3x3aU3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/U3x3aU3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/U3x3bU3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/U3x3bU3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/UDaDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDaUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbDDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbDDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbHDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbHDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbLDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbLDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbMDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbMDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbSDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbSDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbUDa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UDbUDb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATDMATKRON/UHaUHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UHaUHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UHbUHa; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATDMATKRON/UHbUHb; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi

@@ -1,0 +1,82 @@
+#!/bin/bash
+#==================================================================================================
+#
+#  Run script for the dmatreduce/total module of the Blaze test suite
+#
+#  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+#
+#  This file is part of the Blaze library. You can redistribute it and/or modify it under
+#  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+#  forms, with or without modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this list of
+#     conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright notice, this list
+#     of conditions and the following disclaimer in the documentation and/or other materials
+#     provided with the distribution.
+#  3. Neither the names of the Blaze development group nor the names of its contributors
+#     may be used to endorse or promote products derived from this software without specific
+#     prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+#  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+#  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+#  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+#  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+#  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+#  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+#  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+#  DAMAGE.
+#
+#==================================================================================================
+
+
+PATH_DMATREDUCE_TOTAL=$( dirname "${BASH_SOURCE[0]}" )
+
+echo " Running dense matrix total reduction operation tests..."
+
+EXE=$PATH_DMATREDUCE_TOTAL/D3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/D3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/DDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/DDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/DHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/DHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATREDUCE_TOTAL/H3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/H3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/HDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/HDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/HHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/HHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATREDUCE_TOTAL/L3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/L3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/LDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/LDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/LHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/LHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATREDUCE_TOTAL/M3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/M3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/MDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/MDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/MHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/MHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/MUa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/MUb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATREDUCE_TOTAL/S3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/S3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/SDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/SDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/SHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/SHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+
+EXE=$PATH_DMATREDUCE_TOTAL/U3x3a; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/U3x3b; if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/UDa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/UDb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/UHa;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi
+EXE=$PATH_DMATREDUCE_TOTAL/UHb;   if [ -x $EXE ]; then $EXE; if [ $? != 0 ]; then exit 1; fi fi

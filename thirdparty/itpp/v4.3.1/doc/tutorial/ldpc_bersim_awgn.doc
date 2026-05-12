@@ -1,0 +1,16 @@
+/*!
+\page ldpc_bersim_awgn Simulation of LDPC codes the AWGN channel
+
+This program simulates the performance of LDPC codes on the AWGN channel. Since the channel is symmetric, the zero codeword is used.
+
+\include ldpc_bersim_awgn.cpp
+To simulate the code "RU_10000.it" over a range of SNR (see \ref ldpc_gen_codes for how to generate codec)
+\code
+./ldpc_bersim_awgn RU_10000.it
+\endcode
+
+To simulate at Eb/N0=1.1 dB
+\code
+./ldpc_bersim_awgn RU_10000.it 1.1
+\endcode
+*/

@@ -1,0 +1,10 @@
+build/
+build-*/
+.git/
+.gitignore
+*.h5
+CMakeLists.txt.user*
+*.swp
+*.o
+*.a
+*.so

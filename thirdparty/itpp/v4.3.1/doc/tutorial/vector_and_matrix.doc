@@ -1,0 +1,13 @@
+/*! \page vector_and_matrix A very simple tutorial about vectors and matrices
+
+Let's start with a really simple example. Try to complile the following program:
+
+\include vector_and_matrix.cpp
+
+When you run this program, the output shall look like this
+
+\include vector_and_matrix.ref
+
+If this is what you see, then congratulations! You have managed to compile your first it++ program!
+
+*/

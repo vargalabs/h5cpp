@@ -1,0 +1,7 @@
+-----------------------------------------
+RNG core tests:
+-----------------------------------------
+genrand_close1_open2() test: PASSED
+genrand_open_close() test:   PASSED
+multithreading test:         PASSED
+-----------------------------------------

@@ -1,0 +1,16 @@
+Now simulating Eb/N0 value number 1 of 10
+Now simulating Eb/N0 value number 2 of 10
+Now simulating Eb/N0 value number 3 of 10
+Now simulating Eb/N0 value number 4 of 10
+Now simulating Eb/N0 value number 5 of 10
+Now simulating Eb/N0 value number 6 of 10
+Now simulating Eb/N0 value number 7 of 10
+Now simulating Eb/N0 value number 8 of 10
+Now simulating Eb/N0 value number 9 of 10
+Now simulating Eb/N0 value number 10 of 10
+Elapsed time = 0.460899 seconds
+
+EbN0dB = [0 1 2 3 4 5 6 7 8 9] [dB]
+BER = [0.07968 0.0559 0.03729 0.02294 0.01243 0.0058 0.0025 0.00076 0.00013 6e-05]
+Saving results to ./qpsk_result_file.it
+

@@ -1,0 +1,24 @@
+/*!
+\page mimoconv MIMO (spatial multiplexing) with convolutional coding
+
+This example demonstrates how to use the \c Modulator_ND (MIMO) class
+for soft-output demodulation.  The program simulates a simple
+convolutionally coded spatial-multiplexing (V-BLAST style) MIMO system
+with maximum-likelihood, alternatively zero-forcing, demodulation and
+soft Viterbi decoding, but no iteration between the demodulator and
+the decoder.
+
+\include mimoconv.cpp
+
+To run the program,
+
+\code
+mimoconv nTx nRx nC Tc
+\endcode
+where
+- nTx=number of transmit antennas
+- nRx=number of receive antennas
+- nC=constellation (1=QPSK, 2=16-QAM, 3=64-QAM)
+- Tc=coherence time (channel uses)
+
+*/

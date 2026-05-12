@@ -18,10 +18,10 @@ namespace h5::blaze {
 }
 
 namespace h5::meta {
-    template <class T> struct is_contiguous<h5::blaze::rowvec<T>> : std::true_type {};
-    template <class T> struct is_contiguous<h5::blaze::colvec<T>> : std::true_type {};
-    template <class T> struct is_contiguous<h5::blaze::rowmat<T>> : std::true_type {};
-    template <class T> struct is_contiguous<h5::blaze::colmat<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::blaze::rowvec<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::blaze::colvec<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::blaze::rowmat<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::blaze::colmat<T>> : std::true_type {};
 }
 
 namespace h5::impl {

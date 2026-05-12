@@ -1,0 +1,40 @@
+/*!
+\page pccc_bersim_awgn Simulation of PCCCs in an AWGN channel
+
+This program simulates Parallel Concatenated Convolutional Codes (PCCCs) of coding rate 1/3
+using a turbo decoder with two SISO RSC modules.
+
+Reference: S. Benedetto, D. Divsalar, G. Motorsi and F. Pollara, "A Soft-Input Soft-Output Maximum A posteriori (MAP) Module to Decode Parallel and Serial Concatenated Codes", TDA Progress Report, nov. 1996
+
+\include pccc_bersim_awgn.cpp
+
+When you run this program, the results (BER and EbN0_dB) are saved into pccc_bersim_awgn.it file.
+Using the following MATLAB script:
+\code
+clear all
+itload('pccc_bersim_awgn.it');
+figure
+semilogy(EbN0_dB, BER, 'o-')
+grid on
+xlabel('E_b/N_0 [dB]')
+ylabel('BER')
+\endcode
+the results can be displayed.
+
+Similarly, the results can be displayed using the following Python script (pyitpp, numpy and matplotlib
+modules are required):
+\code
+#!/usr/bin/env python
+
+from pyitpp import itload
+from matplotlib.pyplot import *
+
+out = itload('pccc_bersim_awgn.it')
+
+semilogy(out['EbN0_dB'], out['BER'].T, 'o-')
+grid()
+xlabel('$E_b/N_0 [dB]$')
+ylabel('$BER$')
+show()
+\endcode
+*/

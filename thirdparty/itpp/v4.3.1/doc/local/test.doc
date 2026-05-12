@@ -1,0 +1,43 @@
+/*!
+\page test Test Rules
+
+This section describes rules how the functionality of the IT++
+library should be verified. In the \c `tests' subdirectory test files
+are provided. All functionality should be tested using these test
+files.
+
+
+\section test_file The Test File
+
+Each new IT++ module/class should be accompanied with a test file. The
+test file is an implementation in C++ that tests the functionality of
+a function/class or a group of functions/classes called modules. The
+test file should test relevant parameter settings and input/output
+relations to guarantee correct functionality of the corresponding
+classes/functions. The test files should be maintained using version
+control and updated whenever new functionality is added to the IT++
+library.
+
+The test file should use Google C++ Testing Framework (http://code.google.com/p/googletest/) 
+for unit tests and should be, if possible, self contained, i.e. no external data needed. 
+Also, if you use random data, please use IT++ random generators with a fixed seed in order to
+ensure the same results on different platforms.
+
+The test file should be placed in the \c `gtests' subdirectory and
+should have a name ending with <tt>`_test.cpp'</tt>.
+
+\section testing_using_make Testing IT++ Library
+
+One can compile and execute all test programs from \c `gtests'
+subdirectory by typing
+\verbatim
+% ./itpp_gtests
+\endverbatim after
+successful compilation of the IT++ library. Note that unit test compilation must
+be enabled by specifying for cmake the path to the folder containing Google C++
+Testing Framework sources. From the build folder the command is:
+\verbatim
+% cmake .. -DGTEST_DIR=/path/to/gtest
+\endverbatim
+
+*/

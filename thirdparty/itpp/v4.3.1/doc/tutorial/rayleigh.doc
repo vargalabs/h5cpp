@@ -1,0 +1,24 @@
+/*!
+\page rayleigh Generating a correlated Rayleigh fading process
+
+In this example we will generate a correlated Rayleigh fading process with a
+normaized Doppler frequency equal to 0.1. The normalized Doppler is defined
+as the multiplication of the maximum Doppler frequency by the sampling time
+(i.e. \f$f_d = F_d T_s\f$).
+
+\include rayleigh.cpp
+
+You can use Matlab or Octave to examine the channel fading process that is
+stored int the output file \c rayleigh_test.it. Try the followigh code to
+view a part of the fading process:
+
+\code
+itload("rayleigh_test.it")
+figure(1); clf;
+semilogy(abs(ch_coeffs(1:200)))
+\endcode
+
+Note: Make sure that the folder <tt>$PREFIX/share/itpp</tt> is included your
+Matlab/Octave path variable (\c $PREFIX is the IT++ installation prefix:
+<tt>/usr/local</tt> by default).
+*/

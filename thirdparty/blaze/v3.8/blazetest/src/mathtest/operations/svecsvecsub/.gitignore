@@ -1,0 +1,16 @@
+*.d
+*.o
+AliasingTest
+VCaVCa
+VCaVCb
+VCaVZa
+VCaVZb
+VCbVCa
+VCbVCb
+VCbVZa
+VCbVZb
+VZaVCa
+VZaVCb
+VZbVCa
+VZbVCb
+

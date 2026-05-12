@@ -1,0 +1,76 @@
+.TH "itpp-config" 1 "@PACKAGE_DATE@" "IT++ @PACKAGE_VERSION@"
+
+.SH NAME
+.P
+itpp\-config \- script to get information about intalled IT++ library
+prefix, compiler flags and its version
+
+.SH SYNOPSIS
+.P
+\fBitpp\-config\fR [\-\-prefix] [\-\-exec\-prefix] [\-\-debug] [\-\-static]
+            [\-\-cflags] [\-\-libs] [\-\-help] [\-\-version]
+
+.SH DESCRIPTION
+.P
+\fIitpp\-config\fR is a tool that can be used to determine the compiler and
+linker flags required for compiling and linking programs that use IT++.
+It can be also used for checking the intalled libitpp library version.
+
+.SH OPTIONS
+.P
+\fIitpp\-config\fR accepts the following options:
+
+.TP
+\fB\-\-prefix\fR
+output libitpp installation prefix
+.TP
+\fB\-\-exec\-prefix\fR
+output libitpp installation exec prefix
+.TP
+\fB\-\-debug\fR
+use debugging pre\-processor, compiler and linker flags (needs to be used
+in front of \fB\-\-cflags\fR and \fB\-\-libs\fR)
+.TP
+\fB\-\-static\fR
+use static linker flags (needs to be used in front of \fB\-\-libs\fR)
+.TP
+\fB\-\-cflags\fR
+output pre\-processor and compiler flags
+.TP
+\fB\-\-libs\fR
+output linker flags
+.TP
+\fB\-\-help\fR
+display brief help and exit
+.TP
+\fB\-\-version\fR
+output version number
+
+.SH AUTHOR
+.P
+This manual page was written by Adam Piatyszek <ediap@users.sourceforge.net>
+as a text file, then converted to man format by txt2tags.
+
+.SH COPYRIGHT
+.P
+Copyright (C) 1995\-2013  (see AUTHORS file for a list of contributors)
+
+.P
+This file is part of IT++ \- a C++ library of mathematical, signal
+processing, speech processing, and communications classes and functions.
+
+.P
+IT++ is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+.P
+IT++ is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
+
+.P
+You should have received a copy of the GNU General Public License along
+with IT++.  If not, see <http://www.gnu.org/licenses/>.

@@ -1,0 +1,776 @@
+/*!
+\page installation IT++ Installation
+
+\section toc Table of Contents
+- \ref requirements
+- \ref download
+- \ref inst_instr_cmake
+  - \ref localinst_cmake
+- \ref obsolete
+  - \ref inst_instructions
+    - \ref modularization
+    - \ref external_libs
+    - \ref optimisation
+    - \ref config_status
+    - \ref compile_step
+    - \ref test_step
+    - \ref install_step
+  - \ref localinst
+  - \ref msvc
+
+
+\section requirements IT++ Requirements
+
+IT++ should compile without errors or warnings on most GNU/Linux, BSD and
+UNIX systems, and on POSIX based environments for Microsoft Windows like
+Cygwin or MinGW with MSYS. It can be also built on Microsoft Windows
+NT/2000/XP using Microsoft's Visual C++ .NET (or Express), but our support
+for this compiler is limited. For GNU/Linux, FreeBSD, Solaris SunOS, Cygwin
+and MinGW we assume that you have at least the following GNU software
+installed on your computer:
+- <a href="http://www.gnu.org/software/make/">GNU make</a>, version 3.77
+or later (check version with <tt>`make --version'</tt> or
+<tt>`gmake --version`</tt>)
+- <a href="http://gcc.gnu.org/">GCC</a> - GNU Compilers Collection including
+C (gcc) and C++ (g++) compilers, version 3.3.x or later (check version with
+<tt>`gcc --version'</tt>)
+.
+In most cases, a Fortran compiler is also required for proper linking of
+IT++ with external BLAS and LAPACK libraries. GCC provides g77 (versions
+3.x.x) or gfortran (versions 4.x.x) compilers.
+
+We strongly recommend that you use recent stable releases of the GCC, if
+possible. We do not actively work on supporting older versions of the GCC,
+and they may therefore (without prior notice) become unsupported in future
+releases of IT++.
+
+Instead of using GCC, you might try to build and link the IT++ library using
+other C/C++/Fortran compilers. For instance, Intel C++ (icpc) and Fortran
+(ifc) compilers are known to work well.
+
+To perform tests, two command line programs: \c sed and \c diff are
+required. Optionally, you might need a few additional programs, i.e.
+<a href="http://www.doxygen.org/">Doxygen</a>,
+<a href="http://www.latex-project.org/">LaTeX</a>,
+<a href="http://www.radicaleye.com/dvips.html">Dvips</a> and
+<a href="http://www.cs.wisc.edu/~ghost/">Ghostscript</a>, to generate the
+HTML documentation. The HTML documentation for each release is also
+available as separate packages for download, so you do not need to generate
+it during the installation.
+
+In order to use all functionality provided by the IT++ library, it is
+recommended that you have some external libraries compiled and installed in
+your computer. The basic set of them is:
+<a href="http://www.netlib.org/blas/">BLAS</a>,
+<a href="http://www.netlib.org/lapack/">LAPACK</a> and
+<a href="http://www.fftw.org/">FFTW</a> (version 3.0.0 or later).
+
+Instead of NetLib's reference BLAS and LAPACK implementations, some
+optimized platform-specific libraries can be used as well, i.e.:
+- <a href="http://math-atlas.sourceforge.net/">ATLAS</a> (<em>Automatically
+  Tuned Linear Algebra Software</em>) - includes optimised BLAS and a
+  limited set of LAPACK routines (version 3.6.0 or later)
+- <a href="http://www.intel.com/cd/software/products/asmo-na/eng/perflib/mkl/">MKL</a>
+  (<em>Intel Math Kernel Library</em>) - includes all required BLAS,
+  LAPACK and FFT routines (version 8.1.1 or later; FFTW not required)
+- <a href="http://developer.amd.com/acml.aspx">ACML</a> (<em>AMD Core Math
+  Library</em>) - includes BLAS, LAPACK and FFT routines (version
+  2.5.3 or later; FFTW not required)
+
+Except the Intel MKL, the above mentioned BLAS/LAPACK implementations
+require additional support libraries provided by a Fortran compiler. To use
+them with IT++, please make sure that you have the compatible Fortran
+compiler installed. For instance, if your system BLAS and LAPACK libraries
+were compiled and linked with GNU g77, you should have the same compiler
+installed on your system before starting the IT++ configuration process.
+
+It is possible to compile and use IT++ without these external libraries, but
+the functionality will be reduced. Therefore, we recommend that you take
+some time and effort to provide these external libraries in your system.
+Please note that the basic set of them (FFTW, BLAS and LAPACK) is usually
+included in most modern Linux distributions.
+
+
+\section download Obtaining the IT++ Source Codes
+
+IT++ is released under the terms of the GNU General Public License (GPL) and
+hence the source code of the IT++ library is available for free download. To
+obtain the IT++ source code, visit the project pages on SourceForge:
+- <a href="http://itpp.sourceforge.net/">http://itpp.sourceforge.net/</a>
+.
+and download the file named \c itpp-\<VERSION\>.tar.gz or
+\c itpp-\<VERSION\>.tar.bz2, where \c \<VERSION\> is the latest release
+number, e.g. 4.0.0.
+
+Assuming that you have already downloaded the latest IT++ sources, untar
+and unpack the sources, and enter the unpacked directory. Depending on the
+package type you have downloaded, use the following commands:
+
+\verbatim
+% gzip -cd itpp-<VERSION>.tar.gz | tar xf -
+% cd itpp-<VERSION>
+\endverbatim
+
+\verbatim
+% bzip2 -cd itpp-<VERSION>.tar.bz2 | tar xf -
+% cd itpp-<VERSION>
+\endverbatim
+
+\section inst_instr_cmake Configuration and Installation with cmake
+
+Since version 4.3.0, the IT++ library uses <a href=http://www.cmake.org/>cmake</a> 
+as build system for generating Unix Makefiles, VisualStudio project files or 
+XCode project files.
+
+For example, in order to compile and install on Unix-based systems, one can use (from the
+sources folder):
+\verbatim
+% mkdir build
+% cd build
+% cmake ..
+% make
+% make install
+\endverbatim
+
+By default, IT++ library is compiled as shared library in release mode, 
+the HTML documentation is generated (if Doxygen is detected) and no unit tests are compiled.
+
+The \c `cmake' command can be invoked with additional options:
+- \c `-DITPP_SHARED_LIB=off', allows to compile the static version of IT++ library. By default this option is
+set to `on'.
+- \c `-DBLA_VENDOR=vendor', where vendor can be `ACML', `Intel11' or `ATLAS'. This is helpful in selecting a specific 
+external library (ACML or MKL 11). If these libraries are installed in nonstandard locations, on Linux, set 
+\c `LD_LIBRARY_PATH' environment variable to the location where the libraries are installed. For Windows `PATH' environment 
+variable should be set, while Mac OS X users should use `DYLD_LIBRARY_PATH'.
+- \c `-DGTEST_DIR=/path/to/gtest/sources' is used to specify the path to
+Google unit test framework (gtest) sources. Thus the unit tests are compiled and can be
+run separately to check IT++ library.
+- \c `-DOLD_TESTS=on' is used to activate the compilation of older unit tests (no unit test framework required). By default
+this option is set to `off'. These tests are no longer maintained, so it is recommended to use the tests based on Google
+framework. In order to run these tests use `check_tests.py' script found in extras folder (Python is required).
+- \c `-DHTML_DOCS=off' allows to disable the generation of HTML documentation. Default option is `on' provided that
+Doxygen is found.
+- \c `-DCMAKE_BUILD_TYPE=Release' allows to specify the build type: Release (default) or Debug. The library name in Debug
+mode is itpp_debug.*, so that both Release and Debug versions could exist in the installation folder.
+- \c `-DCMAKE_INSTALL_PREFIX=/install/path' allows to specify the installation path. This is used when installing IT++,
+either from command line, with 'make install', either using the INSTALL project from Visual Studio. Note that the user
+should have write permissions to the installation folder.
+
+Note: in order to run the unit test binaries, external libraries need to be in your system path. On Linux
+one can use ldconfig, while in Windows `PATH' variable should be set to the location of external libraries
+(ACML or MKL).
+
+For further details on the available switches see <a href=http://www.cmake.org/cmake/help/documentation.html>
+cmake documentation</a>.
+
+Library detection examples:
+- on Linux, 64 bits:
+  - in order to detect ACML library (installed in the default path 
+  `/opt/acmln.n.n/') use (from `build' folder):
+\verbatim
+  % cmake .. -DBLA_VENDOR=ACML
+\endverbatim
+  - in order detect MKL 11 library the following commands can be used:
+\verbatim
+  % export LD_LIBRARY_PATH=/opt/intel/composer_xe_2013.2.146/mkl/lib/intel64/
+  % cmake .. -DBLA_VENDOR=Intel11
+\endverbatim
+  - in order to detect ATLAS library use
+\verbatim
+  % export LD_LIBRARY_PATH=/usr/lib64/atlas
+  % cmake .. -DBLA_VENDOR=ATLAS
+\endverbatim
+- on Windows, 32 bits, with MS Visual C++:
+  - in order to detect ACML library (installed in the default path
+  `C:\\AMD\\acmln.n.n') for Intel build the following variables must be set (from the GUI):
+\verbatim
+  BLA_VENDOR=ACML
+  CMAKE_Fortran_COMPILER_ID=Intel
+\endverbatim
+  - in order to detect ACML library using PGI build the following variables must be set:
+\verbatim
+  BLA_VENDOR=ACML
+  CMAKE_Fortran_COMPILER_ID=PGI
+\endverbatim
+  - in order to detect MKL 11, the following variables must be set:
+  from Windows Properties
+\verbatim
+  PATH=%PATH_TO_INTEL_COMPOSER%/mkl/lib/ia32
+\endverbatim
+  (note that PATH variable must point to the location of mkl_rt.lib) and from cmake
+\verbatim
+  BLA_VENDOR=Intel11
+\endverbatim
+- on Windows, 32 bits, with MINGW:
+  - in order to detect MKL 11 the PATH variable must be set as before and from command line use:
+\verbatim
+  %  "C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" .. -G "MSYS Makefiles" -DBLA_VENDOR=Intel11 -DCMAKE_INSTALL_PREFIX="C:\ITPP"
+\endverbatim
+
+For more options see `cmake/Modules/FindBLAS.cmake' file.
+
+\subsection localinst_cmake How To Set Up a Local IT++ Installation without Being Root
+
+This section presents a walkthrough of how to easily set up an IT++
+environment without being root (all files are installed locally).
+
+The philosophy behind this installation is:
+- to locally compile and install all required external libraries (LAPACK,
+  BLAS and FFTW) from sources; this is because not all systems
+  provide these libraries as ready to use binaries
+- to compile IT++ using all other available options with no modifications
+
+The source code will reside in the directories itpp-external-3.2.0 and
+itpp-4.3.0. The libraries will be created in the directories
+it++external-3.2.0 and it++4.3.0.
+
+The installation procedure goes as follows (\c $HOME can be replaced by any
+directory where you have write access):
+<ol>
+<li> Download itpp-external-3.2.0.tar.bz2 and itpp-4.3.0.tar.bz2. Save
+them in your \c $HOME directory, and unpack them:
+\verbatim
+% cd $HOME
+% tar jzf itpp-external-3.2.0.tar.bz2
+% tar jzf itpp-4.3.0.tar.bz2
+\endverbatim
+</li>
+
+<li> Compile and install the external libs as shared libs:
+\verbatim
+% cd $HOME/itpp-external-3.0.0
+% make distclean
+% ./configure --prefix=$HOME/it++external-3.2.0
+% make && make install
+\endverbatim
+</li>
+
+<li> Compile and install IT++ library as shared library:
+\verbatim
+% cd $HOME/itpp-4.3.0
+% mkdir build && cd build
+% cmake .. -DCMAKE_INCLUDE_PATH=$HOME/it++external-3.2.0/include -DCMAKE_LIBRARY_PATH=$HOME/it++external-3.2.0/lib -DCMAKE_INSTALL_PREFIX=$HOME/it++4.3.0
+% make && make install
+\endverbatim
+</li>
+
+<li> Compile and install the external libs as static libs:
+\verbatim
+% cd $HOME/itpp-external-3.0.0
+% make distclean
+% ./configure --prefix=$HOME/it++external-3.2.0 --enable-static --disable-shared
+% make && make install
+\endverbatim
+</li>
+
+<li> Compile and install IT++ library as static library:
+\verbatim
+% cd $HOME/itpp-4.3.0
+% mkdir build && cd build
+% cmake .. -DCMAKE_INCLUDE_PATH=$HOME/it++external-3.2.0/include -DCMAKE_LIBRARY_PATH=$HOME/it++external-3.2.0/lib -DCMAKE_INSTALL_PREFIX=$HOME/it++4.3.0 -DBLA_STATIC=on -DITPP_SHARED_LIB=off
+% make && make install
+\endverbatim
+</li>
+
+Please note that you could also enable unit tests compilation by providing the path to Google C++ 
+Testing Framework. Your own programs can be compiled using the script 'itpp-config` found in 
+$HOME/it++4.3.0/bin.
+
+\section obsolete Obsolete Configuration and Installation Instructions
+
+The instructions found in this section are now considered obsolete and are kept only
+for backward compatibility. They might be removed in the future.
+
+\subsection inst_instructions Configuration and Installation Instructions with autoconf, automake and libtool
+
+Since version 3.9.0, the IT++ library uses autoconf, automake and libtool
+for preparing Makefiles and configuration script, so the compilation
+procedure resembles a standard, well-known GNU method, i.e.
+
+\verbatim
+% ./configure
+% make
+\endverbatim
+
+The \c `configure' command can be invoked with additional switches and
+options (run <tt>`./configure --help'</tt> to get a full list of them). The
+most important are:
+- \c `--prefix=PREFIX' - set top installation directory to a certain \c
+  PREFIX value. By default it is set to \c `/usr/local', so <tt>`make
+  install'</tt> will install appropriate files into \c `/usr/local/include',
+  \c `/usr/local/lib`, etc.
+- \c `--enable-debug' - build an extra library named \c `libitpp_debug.*'
+  using special debugging flags for compiler and linker (disabled by default)
+- \c `--enable-exceptions' - enable exceptions handling of run-time errors
+  instead of aborting the program (disabled by default)
+- \c `--disable-html-doc' - do not generate and install the HTML
+  documentation (enabled by default)
+- \c `--disable-shared' - do not build the shared version of the library
+  (enabled by default for non Windows based platforms)
+- \c `--disable-static' - do not build the static version of the library
+  (enabled by default for Windows based platforms)
+.
+Plese note that each \c `--enable-\<OPTION\>' switch can be replaced
+with its opposite switch \c `--disable-\<OPTION\>'.
+
+
+\subsubsection modularization Modularization
+
+Since version 3.99.0, a modularization of the library has been introduced.
+Therefore, several additional switches have been added to the configure
+script, which can be used to disable building some of the library
+components. Here is a list of them:
+- \c `--disable-comm' - do not build the `Communications' module
+- \c `--disable-fixed' - do not build the `Fixed-point' module
+- \c `--disable-optim' - do not build the `Numerical optimisations' module
+- \c `--disable-protocol' - do not include the `Protocols' module
+- \c `--disable-signal' - do not build the `Signal processing' module
+- \c `--disable-srccode' - do not build the `Source coding' module
+
+\subsubsection external_libs External Libraries
+
+By default, the \c `configure' script checks for a few external libraries,
+which might be used by the IT++ library (cf. \ref requirements).
+The detection procedure is as follows:
+-# First, the presence of a BLAS library among MKL, ACML, ATLAS and
+   NetLib's reference BLAS is checked. If one of the above mentioned can be
+   used, \c HAVE_BLAS is defined.
+-# Next, some LAPACK library is being searched, but only if BLAS is
+   available. Full set of LAPACK routines can be found in the MKL, ACML and
+   NetLib's reference LAPACK libraries. Besides, ATLAS contains a subset of
+   optimised LAPACK routines, which can be used with NetLib's LAPACK library
+   (this is described in the ATLAS documentation). If some LAPACK library
+   can be found, \c HAVE_LAPACK is defined.
+-# Finally, a set of separate checks for FFT libraries is executed.
+   Currently three different libraries providing FFT/IFFT routines can be
+   used: MKL, ACML and FFTW. If at least one of them is found, \c HAVE_FFT
+   id defined. Besides, one of the following: \c HAVE_FFT_MKL, \c
+   HAVE_FFT_ACML or \c HAVE_FFTW3 is defined, respectively.
+
+If some external libraries are installed in a non-standard location in your
+system, e.g. MKL in <tt>`/opt/intel/mkl/9.1'</tt>, the \c `configure' script
+will not detect them automatically. In such a case, you should use LDFLAGS
+and CPPFLAGS environment variables to define additional directories to be
+searched for libraries (LDFLAGS) and include files (CPPFLAGS). For instance,
+to configure IT++ to link to 32-bit versions of MKL 9.1 external libraries,
+which is installed in <tt>`/opt/intel/mkl/9.1'</tt> directory, you should
+use the following commands:
+
+\verbatim
+% export LDFLAGS="-L/opt/intel/mkl/9.1/lib/32"
+% export CPPFLAGS="-I/opt/intel/mkl/9.1/include"
+% ./configure
+\endverbatim
+
+Instead of CPPFLAGS, one can use \c `--with-fft-include=\<PATH\>' configure
+option to set path to header files that provide FFT functionality, i.e. to
+<tt>`fftw3.h'</tt>, <tt>`mkl_dft.h'</tt> or <tt>`acml.h'</tt>.
+
+In the case that external libraries have non-standard names, e.g.
+<tt>`libblas3.a'</tt> for BLAS, you might specify them to the configure
+using \c `--with-\<LIBNAME\>' switches, where \c \<LIBNAME\> is one of the
+following: \c `blas', \c `lapack' or \c `fft'. You might use
+more than one library names by quoting them, e.g.
+
+\verbatim
+% ./configure --with-blas="-latlas -lblas"
+\endverbatim
+
+If there is only one library specified, you can use a simplified notation
+without the preceding `-l', e.g. \c `--with-fft=fftw3' instead of \c
+`--with-fftw=-lfftw3'.
+
+Please refer to the documentation of your external libraries, to find out
+what are the correct library names and paths on your architecture, operating
+system, etc.
+
+Since 4.0.3 release, the configure script provides a new \c
+`--with-zdotu=\<method\>' option. It can be used to force the default
+calling convention of BLAS \c `zdotu_' Fortran function. The BLAS libraries
+built with g77 compiler do not return the complex result of a function, but
+pass it via the first argument of the function. By using \c
+`--with-zdotu=void' option, this approach can be forced (g77 compatible). On
+the other hand, the libraries built with a newer gfortran compiler return
+the complex result like a normal function does, but calling such interface
+from C++ is not portable, due to incompatibilities between C++
+complex<double> and Fortran's COMPLEX. Therefore in such case a Fortran
+wrapper function \c `zdotusub_' can be used (\c `--with-zdotu=zdotusub'),
+however it requires a working Fortran compiler. By default, IT++ tries to
+guess the proper method based on the detected BLAS implementation. For
+instance, the BLAS library provided by Intel MKL works fine with the `void'
+method. Eventually, if no Fortran compiler is available and the `void'
+method can not be used, the \c zdotu_ BLAS function is not used at all and a
+relevant warning message is displayed during the configuration step.
+
+Although it is not recommended, you can intentionally prevent detection of
+some external libraries. To do this you should use \c
+`--without-\<LIBNAME\>' or \c `--with-\<LIBNAME\>=no', e.g.:
+
+\verbatim
+% ./configure --without-blas --without-lapack
+\endverbatim
+
+
+\subsubsection optimisation Optimisation Flags
+
+It is recommended to set the CXXFLAGS environment variable with some
+compiler- and platform-specific optimisation flags, before invoking the \c
+`configure' command. Additionally, \c `-DNDEBUG' should be included in the
+optimised CXXFLAGS, because it turns off all conditional assertion checks.
+This will improve the computation performance of many IT++ functions. For
+example, in the case of using the Intel Pentium 4 processor one might employ
+the following flags:
+
+\verbatim
+% CXXFLAGS="-DNDEBUG -O3 -march=pentium4 -pipe" ./configure
+\endverbatim
+
+In the case of Sun's UltraSPARC 64-bit platform and GCC compiler, the flags
+might be set as follows:
+
+\verbatim
+% export CXXFLAGS="-DNDEBUG -O3 -mcpu=v9 -m64 -pipe"
+% ./confiugre
+\endverbatim
+
+If CXXFLAGS is not set in the environment, it will be initialised with
+the default flags, i.e. <tt>"-DNDEBUG -O3 -pipe"</tt>.
+
+
+\subsubsection config_status Configuration Status
+
+When the configuration process is finished, a status message is displayed.
+For instance, after having invoked the following configuration command
+
+\verbatim
+% ./configure --with-blas="-lblas"
+\endverbatim
+
+on a recent Gentoo Linux system with blas-atlas, lapack-atlas and fftw
+packages installed, one can observe something like this:
+
+\verbatim
+------------------------------------------------------------------------------
+itpp-4.0.3 library configuration:
+------------------------------------------------------------------------------
+
+Directories:
+  - prefix ......... : /usr/local
+  - exec_prefix .... : ${prefix}
+  - includedir ..... : ${prefix}/include
+  - libdir ......... : ${exec_prefix}/lib
+  - datarootdir .... : ${prefix}/share
+  - docdir ......... : ${datarootdir}/doc/${PACKAGE_TARNAME}
+
+Switches:
+  - debug .......... : no
+  - exceptions ..... : no
+  - html-doc ....... : yes
+  - shared ......... : yes
+  - static ......... : no
+  - explicit deps .. : no
+  - zdotu .......... : zdotusub
+
+Documentation tools:
+  - doxygen ........ : yes
+  - latex .......... : yes
+  - dvips .......... : yes
+  - ghostscript .... : yes
+
+Testing tools:
+  - diff ........... : yes
+
+Optional modules:
+  - comm ........... : yes
+  - fixed .......... : yes
+  - optim .......... : yes
+  - protocol ....... : yes
+  - signal ......... : yes
+  - srccode ........ : yes
+
+External libs:
+  - BLAS ........... : yes
+    * MKL .......... : no
+    * ACML ......... : no
+    * ATLAS ........ : yes
+  - LAPACK ......... : yes
+  - FFT ............ : yes
+    * MKL .......... : no
+    * ACML ......... : no
+    * FFTW ......... : yes
+
+Compiler/linker flags/libs/defs:
+  - CXX ............ : g++
+  - F77 ............ : gfortran
+  - CXXFLAGS ....... : -DNDEBUG -O3 -pipe
+  - CXXFLAGS_DEBUG . :
+  - CPPFLAGS ....... :
+  - LDFLAGS ........ :
+  - LIBS ........... : -lfftw3 -llapack -lblas
+
+------------------------------------------------------------------------------
+Now type 'make && make install' to build and install itpp-4.0.3 library
+------------------------------------------------------------------------------
+
+\endverbatim
+
+
+\subsubsection compile_step Compilation
+
+Now, it is time for compiling and linking the IT++ library. To do so, please
+simply run the following command:
+
+\verbatim
+% make
+\endverbatim
+
+IT++ should compile without any errors or warnings. If this is not the case,
+please report the problem on the IT++ Help forum at SourceForge. Please
+include information about your OS, compiler version, external libraries and
+their versions, etc.
+
+
+\subsubsection test_step Testing the Compiled Library
+
+It is recommended that you check if your library has been compiled and linked
+properly and works as expected. To do so, you should execute the testing
+process:
+
+\verbatim
+% make check
+\endverbatim
+
+As a result, you should obtain a similar report:
+
+\verbatim
+------------------------------------------------------------------------------
+Test `array_test' PASSED.
+------------------------------------------------------------------------------
+Test `bessel_test' PASSED.
+------------------------------------------------------------------------------
+
+[...]
+
+------------------------------------------------------------------------------
+Test `window_test' PASSED.
+------------------------------------------------------------------------------
+Test `histogram_test' PASSED.
+------------------------------------------------------------------------------
+Test `stat_test' PASSED.
+------------------------------------------------------------------------------
+\endverbatim
+
+Check if all the executed tests PASSED. If not, please report the problem on
+the IT++ Help forum.
+
+
+\subsubsection install_step Installation
+
+Finally, you should install the compiled and linked library, include files
+and HTML documentation (optionally) by typing:
+
+\verbatim
+% make install
+\endverbatim
+
+Depending on the \c PREFIX settings during configuration, you might need
+the root (administrator) access to perform this step.
+
+Eventually, you might invoke the following command
+
+\verbatim
+% make clean
+\endverbatim
+
+to remove all files created during compilation process, or even
+
+\verbatim
+% make distclean
+\endverbatim
+
+to remove all files generated by the \c `configure' script.
+
+
+\subsection localinst How To Set Up a Local, Dual-config IT++ Installation without Being Root
+
+This section presents a walkthrough of how to easily set up an IT++
+environment without being root (all files are installed locally). The
+installation results in two parallel versions of the IT++ library, one
+version with debugging features enabled (this is slow in general but
+can be valuable during the development phase) and one version which is
+complied with maximum optimization. When compiling executables, one
+can then easily generate two versions of a program: one for debugging
+and one for maximum runtime efficiency. See the Makefile below for an
+example.
+
+The philosophy behind this installation is:
+- to locally compile and install all required external libraries (LAPACK,
+  BLAS and FFTW) from sources; this is because not all systems
+  provide these libraries as ready to use binaries
+- to install two parallel IT++ libraries: one optimized and one for
+  debugging
+- to use static linking only (this gives larger executables but is sometimes
+  more portable)
+
+The source code will reside in the directories itpp-external-3.0.0 and
+itpp-4.0.0. The libraries will be created in the directories
+it++external-3.0.0 and it++4.0.0.
+
+The installation procedure goes as follows (\c $HOME can be replaced by any
+directory where you have write access):
+<ol>
+<li> Download itpp-external-3.0.0.tar.bz2 and itpp-4.0.0.tar.bz2. Save
+them in your \c $HOME directory, and unpack them:
+\verbatim
+% cd $HOME
+% tar jzf itpp-external-3.0.0.tar.bz2
+% tar jzf itpp-4.0.0.tar.bz2
+\endverbatim
+</li>
+
+<li> Compile and install the external libs
+\verbatim
+% cd $HOME/itpp-external-3.0.0
+% make distclean
+% ./configure --prefix=$HOME/it++external-3.0.0 --disable-shared --enable-static
+% make && make install
+\endverbatim
+</li>
+
+<li> Compile and install the optimized and debugging IT++ libraries:
+\verbatim
+% export LDFLAGS=-L$HOME/it++external-3.0.0/lib
+% export CPPFLAGS=-I$HOME/it++external-3.0.0/include
+% cd $HOME/itpp-4.0.0
+% make distclean
+% ./configure --disable-shared --enable-static --enable-debug --prefix=$HOME/it++4.0.0
+% make && make check && make install
+\endverbatim
+</li>
+
+<li> Go to a temporary directory, and create the following program \c
+example.cpp:
+\code
+#include <itpp/itsignal.h>
+
+using namespace itpp;
+using namespace std;
+
+int main()
+{
+  for (int i = 0; i < 10; i++) {
+    mat X = randn(500, 500);
+    mat Z = chol(X * X.transpose());
+    cout << Z(0, 0) << endl;
+  }
+
+  for (int i = 0; i < 10; i++) {
+    cvec a = fft(randn_c(10000));
+    cout << a(5) << endl;
+  }
+
+  it_assert_debug(1 == 0, "Debugging is on!");
+}
+\endcode
+
+Also, in the same directory, create the following \c Makefile:
+\verbatim
+FLAGS_DEBUG = `$(HOME)/it++4.0.0/bin/itpp-config --debug --cflags`
+FLAGS_OPT   = `$(HOME)/it++4.0.0/bin/itpp-config --cflags`
+
+LIBS_DEBUG  = `$(HOME)/it++4.0.0/bin/itpp-config --debug --static --libs`
+LIBS_OPT    = `$(HOME)/it++4.0.0/bin/itpp-config --static --libs`
+
+example: example.cpp
+	g++ $(FLAGS_DEBUG) example.cpp -o example_debug  $(LIBS_DEBUG)
+	g++ $(FLAGS_OPT) example.cpp -o example_opt  $(LIBS_OPT)
+\endverbatim
+
+This \c Makefile produces two programs: \c example_opt and \c example_debug.
+The former is optimized for performance but offers no debugging or
+assertions. The latter includes debugging info and is compiled with all
+assertions enabled (this generally gives "safe" but slow code).
+
+Run \c make and try the programs \c example_opt and \c example_debug. If
+this works the library is ready to use. (The program \c example_debug should
+exit with an assertion error.) </li>
+
+<li> If you want to conserve disk space, clean up all temporary files:
+\verbatim
+% cd $HOME/itpp-external-3.0.0
+% make distclean
+% cd $HOME/itpp-4.0.0
+% make distclean
+\endverbatim
+
+To conserve even more diskspace (remove all sources) then do
+\verbatim
+% rm -rf $HOME/itpp-external-3.0.0
+% rm -rf $HOME/itpp-4.0.0
+\endverbatim
+</li>
+</ol>
+
+Note: the \c make \c distclean commands in some steps may result in an error
+message; just ignore this. But the command is recommended because it
+guarantees that you start with a clean directory, in the event you would
+repeat the installation procedure.
+
+
+\subsection msvc IT++ Compilation and Installation using Microsoft Visual C++
+
+It is possible to compile and link the IT++ library using the
+<a href="http://msdn.microsoft.com/visualc/">Microsoft Visual C++ .NET</a>
+(or Express) compiler and either
+<a href="http://www.intel.com/cd/software/products/asmo-na/eng/perflib/mkl/">
+Intel Math Kernel Library (MKL)</a> or
+<a href="http://developer.amd.com/acml.aspx">AMD Core Math Library (ACML)</a>.
+
+First, you need to install ACML or MKL in your system. If you decide to use
+ACML, please download the library built with PGI compiler for Windows, e.g.
+<tt>acml3.6.0-32-pgi.exe</tt> file for 32-bit systems. Please follow the
+default installation steps of the ACML or MKL installer. After waiting a few
+dozens of seconds you should have the chosen external libraries installed on
+your computer. Finally, you need to set up a few environment variables, so
+the library and include files can be found during compilation and linking of
+the IT++ library. These environment variables are as follows:
+- \c INCLUDE - specifies the path to header files, e.g.
+  <tt>INCLUDE="C:\\Program Files\\AMD\\acml3.6.0\\pgi32\\include"</tt> for
+  ACML 3.6.0 or
+  <tt>INCLUDE="C:\\Program Files\\Intel\\MKL\\9.1\\include"</tt> for MKL 9.1
+- \c LIB - specifies the path to library files, e.g.
+  <tt>LIB="C:\\Program Files\\AMD\\acml3.6.0\\pgi32\\lib"</tt> or
+  <tt>LIB="C:\\Program Files\\Intel\\MKL\\9.1\\ia32\\lib"</tt>
+- \c PATH - specifies the runtime path to DLL libraries, e.g.
+  <tt>PATH="C:\\Program Files\\AMD\\acml3.6.0\\pgi32\\lib"</tt> or
+  <tt>PATH="C:\\Program Files\\Intel\\MKL\\9.1\\ia32\\bin"</tt>
+.
+Please note that the \c PATH environment variable is usually already defined,
+so you should just append the runtime path to DLL libraries to the existing
+\c PATH, using a semicolon as a separation character.
+
+The next step is to compile and link the IT++ library. Assuming that you
+have already downloaded and unpacked the IT++ package, you should find
+the <tt>itpp_acml.vcproj</tt> and <tt>itpp_mkl.vcproj</tt> MSVC++ project
+files in the <tt>win32</tt> directory. Depending on the installed external
+library (ACML or MKL), open one of these project files in the MSVC++ IDE
+environment. There are two default targets prepared for compilation and
+linking: <tt>Debug</tt> and <tt>Release</tt>. The former can be used to
+compile a non-optimised version of the library for debugging purposes,
+named <tt>itpp_debug.lib</tt>, whereas the latter one should produce an
+optimised library named <tt>itpp.lib</tt>, which is also used by test
+programs. Both libraries will be created in <tt>win32\\lib</tt> directory.
+IT++ should compile and link without any warnings or errors.
+
+Last but not least, test programs can be compiled and linked to IT++ with
+MKL or ACML by using the project files included
+in <tt>win32\\itpp_mkl_tests</tt> or <tt>win32\\itpp_acml_tests</tt>
+respectively. The resulting executable test files should be created
+in <tt>win32\\bin</tt> directory. Currently there is no automated method for
+comparing the output of these test programs with the reference files
+(<tt>*.ref</tt>) located in <tt>tests</tt> directory.
+
+To learn how to set up your own project for linking with the IT++ library
+and ACML or MKL, please read the following manual: \ref msvc_linking.
+
+*/

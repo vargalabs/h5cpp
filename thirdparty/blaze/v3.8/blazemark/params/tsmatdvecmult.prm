@@ -1,0 +1,180 @@
+//=================================================================================================
+//
+//  Parameter file for the transpose sparse matrix/dense vector multiplication benchmark
+//
+//  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+//
+//  This file is part of the Blaze library. You can redistribute it and/or modify it under
+//  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+//  forms, with or without modification, are permitted provided that the following conditions
+//  are met:
+//
+//  1. Redistributions of source code must retain the above copyright notice, this list of
+//     conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice, this list
+//     of conditions and the following disclaimer in the documentation and/or other materials
+//     provided with the distribution.
+//  3. Neither the names of the Blaze development group nor the names of its contributors
+//     may be used to endorse or promote products derived from this software without specific
+//     prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+//  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+//  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+//  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+//  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+//  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+//  DAMAGE.
+//
+//=================================================================================================
+
+
+//=================================================================================================
+// This parameter file configures the transpose sparse matrix/dense vector multiplication benchmark
+// runs. The individual runs are specified via tuples of the form
+//
+//                               ( <size>, <nonzeros> [, <steps>] ),
+//
+// where 'size' specifies the number of rows and columns of the matrix and the size of the vector,
+// 'nonzeros' specifies the number of non-zero elements in each row of the sparse matrix, and the
+// optional parameter 'steps' specifies the number of steps the benchmark is repeated. The indices
+// of the non-zero elements in each row of the sparse matrix are randomly determined. In case
+// 'steps' is omitted, the number of steps is automatically evaluated.
+//
+// Note that it is possible to use comments. A single-line comment can be started with '//', a
+// multiline commend can be started with '/*' and ended with '*/'.
+//=================================================================================================
+
+(   50,    5)
+(   50,   20)
+(  100,   10)
+(  100,   40)
+(  500,   50)
+(  500,  200)
+( 1000,  100)
+( 1000,  400)
+( 5000,  500)
+( 5000, 2000)
+(10000, 1000)
+(10000, 4000)
+
+// Logarithmic performance graph (5%)
+/*
+(   20,   1)
+(   40,   2)
+(   60,   3)
+(   80,   4)
+(  100,   5)
+(  120,   6)
+(  140,   7)
+(  160,   8)
+(  180,   9)
+(  200,  10)
+(  220,  11)
+(  240,  12)
+(  260,  13)
+(  280,  14)
+(  300,  15)
+(  340,  17)
+(  380,  19)
+(  420,  21)
+(  460,  23)
+(  500,  25)
+(  560,  28)
+(  620,  31)
+(  680,  34)
+(  740,  37)
+(  800,  40)
+(  880,  44)
+(  960,  48)
+( 1060,  53)
+( 1160,  58)
+( 1280,  64)
+( 1420,  71)
+( 1560,  78)
+( 1720,  86)
+( 1880,  94)
+( 2080, 104)
+( 2280, 114)
+( 2520, 126)
+( 2760, 138)
+( 3040, 152)
+( 3340, 167)
+( 3680, 184)
+( 4040, 202)
+( 4440, 222)
+( 4900, 245)
+( 5380, 269)
+( 5920, 296)
+( 6520, 326)
+( 7160, 358)
+( 7880, 394)
+( 8660, 433)
+( 9540, 477)
+(10000, 500)
+*/
+
+// Logarithmic performance graph (10%)
+/*
+(   10,    1)
+(   20,    2)
+(   30,    3)
+(   40,    4)
+(   50,    5)
+(   60,    6)
+(   70,    7)
+(   80,    8)
+(   90,    9)
+(  100,   10)
+(  120,   12)
+(  140,   14)
+(  160,   16)
+(  180,   18)
+(  200,   20)
+(  220,   22)
+(  240,   24)
+(  260,   26)
+(  280,   28)
+(  300,   30)
+(  320,   32)
+(  340,   34)
+(  370,   37)
+(  400,   40)
+(  450,   45)
+(  500,   50)
+(  550,   55)
+(  600,   60)
+(  660,   66)
+(  730,   73)
+(  800,   80)
+(  880,   88)
+(  970,   97)
+( 1070,  107)
+( 1170,  117)
+( 1290,  129)
+( 1420,  142)
+( 1560,  156)
+( 1720,  172)
+( 1890,  189)
+( 2080,  208)
+( 2280,  228)
+( 2510,  251)
+( 2760,  276)
+( 3040,  304)
+( 3340,  334)
+( 3680,  368)
+( 4050,  405)
+( 4450,  445)
+( 4900,  490)
+( 5380,  538)
+( 5920,  592)
+( 6510,  651)
+( 7160,  716)
+( 7880,  788)
+( 8670,  867)
+( 9530,  953)
+(10000, 1000)
+*/

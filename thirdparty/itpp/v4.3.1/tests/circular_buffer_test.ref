@@ -1,0 +1,37 @@
+peek(out_vec,2) = [0.347621 2.24348]: display 2 first elements of the buffer, without affecting the content
+peek_reverse(out_vec,-1) = [-0.813962 2.24348 0.347621]: display buffer, without affecting the content
+peek_reverse(out_array,-1) = {-0.813962 2.24348 0.347621}: display buffer, without affecting the content
+get(out_vec,1) = [2.24348]
+get(out_vec) = [-0.813962 0.402693 -0.0180747 0.456185 -2.65107 0.48475 0.9001 0.489366 0.305648]
+get(out_vec) = []; get(out_array,0) = {}: empty buffer, no content
+buffer size = 10
+nrof_elements = 10
+i = 0: peek() = 2.24348; peek_reverse() = 0.305648; get() = 2.24348
+i = 1: peek() = -0.813962; peek_reverse() = 0.305648; get() = -0.813962
+i = 2: peek() = 0.402693; peek_reverse() = 0.305648; get() = 0.402693
+i = 3: peek() = -0.0180747; peek_reverse() = 0.305648; get() = -0.0180747
+i = 4: peek() = 0.456185; peek_reverse() = 0.305648; get() = 0.456185
+i = 5: peek() = -2.65107; peek_reverse() = 0.305648; get() = -2.65107
+i = 6: peek() = 0.48475; peek_reverse() = 0.305648; get() = 0.48475
+i = 7: peek() = 0.9001; peek_reverse() = 0.305648; get() = 0.9001
+i = 8: peek() = 0.489366; peek_reverse() = 0.305648; get() = 0.489366
+i = 9: peek() = 0.305648; peek_reverse() = 0.305648; get() = 0.305648
+buffer size = 10
+nrof_elements = 8
+peek(out_vec) = [0.402693 -0.0180747 0.456185 -2.65107 0.48475 0.9001 0.489366 0.305648]
+peek at index 5: peek(5) = 0.9001
+peek at index 3: peek(3) = -2.65107
+peek at index 7: peek(7) = 0.305648
+peek at index 1: peek(1) = -0.0180747
+peek at indices [5 3 7 1]:
+peek(index_vec,out_vec) = [0.9001 -2.65107 0.305648 -0.0180747]
+buffer size = 15
+nrof_elements = 8
+peek(out_vec) = [0.402693 -0.0180747 0.456185 -2.65107 0.48475 0.9001 0.489366 0.305648]
+buffer size = 5
+nrof_elements = 5
+peek(out_vec) = [-2.65107 0.48475 0.9001 0.489366 0.305648]
+Copy constructor: 
+Circular_Buffer<double> cb2(cb1): cb2.peek(out_vec) = [-2.65107 0.48475 0.9001 0.489366 0.305648]
+Copy operator: 
+Circular_Buffer<double> cb3=cb1: cb3.peek(out_array) = {-2.65107 0.48475 0.9001 0.489366 0.305648}

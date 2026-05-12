@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 3.22.0)
+project(h5cpp-mpi-examples LANGUAGES CXX C)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+find_package(MPI REQUIRED COMPONENTS C CXX)
+find_package(HDF5 REQUIRED COMPONENTS C HL)
+find_package(Threads REQUIRED QUIET)
+find_package(ZLIB REQUIRED QUIET)
+
+set(INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/../..
+    ${HDF5_C_INCLUDE_DIRS}
+    ${MPI_CXX_INCLUDE_DIRS}
+    ${ZLIB_INCLUDE_DIRS}
+)
+
+set(LIBS
+    ${HDF5_LIBRARIES}
+    ZLIB::ZLIB
+    Threads::Threads
+    ${MPI_CXX_LIBRARIES}
+)
+
+foreach(EXAMPLE collective independent throughput)
+    add_executable(${EXAMPLE} ${EXAMPLE}.cpp)
+    target_include_directories(${EXAMPLE} PRIVATE ${INCLUDE_DIRS})
+    target_compile_definitions(${EXAMPLE} PRIVATE ${MPI_CXX_COMPILE_DEFINITIONS})
+    target_link_libraries(${EXAMPLE} PRIVATE ${LIBS})
+    target_compile_options(${EXAMPLE} PRIVATE -w)
+endforeach()

@@ -1,0 +1,86 @@
+Use the Parser class on a parameter file:
+a  = 4
+Parsing double: b = 2.35
+Parsing double: b = 2.36
+Parsing double: b = 2.37
+c  = Hello World
+d  = [1 2 3 4 3 2 -1]
+e  = [1.2 2 3.33 4.01 3.2 2 -1.2]
+f  = [1 2 3 4 3 2 -1]
+g  = [0 1 0 0 1]
+h  = [[1 2 3]
+ [4 5 6]]
+i  = [[1 2]
+ [-3 4.2]]
+j  = [[1 -2 -3]
+ [4 -5 6]]
+k  = [[0 1 0 1]
+ [1 0 1 0]
+ [0 0 0 0]
+ [1 1 1 1]]
+l  = false
+m  = true
+n  = Hello World
+------------------------------------------------------------
+Use the Parser class on the command line input:
+Example: > ./parser_test.run "a=3; b=-1.2; d=[0 1 2 45];"
+
+Use the following code:
+    p.init(argc,argv);
+    a = p.get_int("a");    cout << "a = " << a << endl;
+    b = p.get_double("b"); cout << "b = " << b << endl;
+    d = p.get_ivec("d");   cout << "d = " << d << endl;
+------------------------------------------------------------
+Use the Parser class on a char pointer (usually the command line input):
+Parsing int   : a = 345
+Parsing double: b = 1.001
+Parsing string: c = Hello Bird
+Parsing ivec  : d = [1 2 3 -1 -2 -3]
+------------------------------------------------------------
+Use the Parser class on a parameter file and a char pointer:
+a = 4
+Parsing double: b = 2.35
+b = 2.35
+c = Hello World
+d = [1 2 3 4 3 2 -1]
+------------------------------------------------------------
+Use the Parser class on an Array of strings:
+Parsing int   : a = -11
+Parsing double: b = 3.14
+Parsing string: c = Hello Nerd
+Parsing ivec  : d = [0 1 2 0 3 4 7]
+------------------------------------------------------------
+Use the Parser::get() method on a parameter file:
+a = 4;
+b = 2.35
+b = 2.36
+b = 2.37
+c = 'Hello World';
+d = [1 2 3 4 3 2 -1];
+e = [1.2 2 3.33 4.01 3.2 2 -1.2];
+f = [1 2 3 4 3 2 -1];
+g = [0 1 0 0 1];
+h = [[1 2 3]
+ [4 5 6]];
+i = [[1 2]
+ [-3 4.2]];
+j = [[1 -2 -3]
+ [4 -5 6]];
+k = [[0 1 0 1]
+ [1 0 1 0]
+ [0 0 0 0]
+ [1 1 1 1]];
+l = false;
+m = true;
+n = 'Hello World';
+o = {{[1+2i 3+4i] [5+6i]} {[7+0i 8+0i 9+0i]}}
+q = {{[1+0i] [2+0i 3+0i] [4+0i 5+0i 6+0i]}};
+r = true;
+s = 7;
+t = 3.14;
+u = 'test string';
+------------------------------------------------------------
+Check if variables exist in the Parser:
+p.exist("a") = true
+p.exist("aa") = false
+------------------------------------------------------------

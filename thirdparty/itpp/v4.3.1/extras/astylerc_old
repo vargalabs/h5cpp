@@ -1,0 +1,37 @@
+# ----------------------------------------------------------------------
+# This is an astyle configuration file, which can be used for indenting,
+# formatting and beautifying IT++ header and source files. The Artistic
+# Style (astyle) program can be downloaded from the following site:
+#   http://astyle.sourceforge.net/
+#
+# Please note that this file is compatible with older version of astyle,
+# i.e. 1.x series (e.g. 1.24)
+#
+# To filter a source or header file using this option please use the
+# following command:
+#   $ astyle --options=<IT++_source_directory>/extras/astylerc_old file.cpp
+#
+# Similar indentation style can be obtained in GNU emacs editor by
+# adding these settings to the default .emacs configuration file:
+#
+# (defun it++-mode ()
+#   "C++ mode with adjusted defaults for use with the IT++ project."
+#   (interactive)
+#   (c++-mode)
+#   (c-set-style "gnu")
+#   (c-set-offset 'innamespace 0)
+#   (setq c-basic-offset 2)
+#   (setq indent-tabs-mode nil)
+#   (setq c-block-comment-prefix "* "))
+#
+# (setq auto-mode-alist (cons '("itpp.*/.*\\.\\(h\\|cpp\\)$" . it++-mode)
+#                             auto-mode-alist))
+# ----------------------------------------------------------------------
+indent=spaces=2
+brackets=linux
+brackets=break-closing
+indent-labels
+pad=oper
+unpad=paren
+one-line=keep-blocks
+convert-tabs

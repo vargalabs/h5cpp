@@ -1,0 +1,76 @@
+2009-12-28  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* doc/local/index.doc.in: Update links
+
+	* AUTHORS, doc/local/authors.doc: Update the list of developers
+
+-------------------------------------------------------------------------------
+
+2009-12-27  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* IT++ 4.0.7 release (SVN tag: release-4-0-7)
+
+	* NEWS, VERSION: Add release notes and update version number for
+	IT++ 4.0.7 release.
+
+	* configure.ac.in: Do not enable any optimization for the debug
+	build
+
+2009-12-26  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* tests/fastica_test.cpp: Suppress a warning message of GCC 4.4
+
+	* itpp/base/vec.cpp, itpp/base/vec.h, tests/vec_test.cpp,
+	tests/vec_test.ref: Support equality "==" and inequality "!="
+	operators for cvec type.
+
+	This patch fixes bug report #2909998.
+
+2009-12-12  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* itpp/comm/llr.h, itpp/comm/turbo.h, itpp/comm/ldpc.h,
+	itpp/comm/modulator_nd.h: Improved documentation on the accuracy
+	of LLR calculations.
+
+2009-10-11  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/array.h: Pass by reference, not by value
+
+2009-09-29  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* m4/acx_blas.m4: Add support for detecting MKL 10.2 libraries
+	using GCC
+
+2009-08-06  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* configure.ac.in, doc/local/documentation.doc, extras/*,
+	itpp-config.1.in, itpp/**/*.cpp, itpp/**/*.h, tests/*.cpp:
+	Copyright dates updated to `1995-2009'
+
+2009-05-12   Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* doc/local/verification.doc: Added Ubuntu 9.04 to list of tested
+	systems
+
+2009-03-17  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/comm/bch.cpp, tests/bch_test.ref: Change polynomial bit
+	mapping convention in BCH code.
+
+	Matlab (and the DVB-T standard) use different mapping of the bits to
+	polynomial representation:
+	- Matlab maps highest order first:
+	  1010 <-> i(x)=1*x^3 + 0*x^2 + 1*x^1 + 0*x^0 = x^3 + x
+	- IT++ maps lowest order first:
+	  1010 <-> i(x)= 1*x^0 + 0*x^1 + 1*x^2 + 0*x^3 = x^2 + 1
+	This is because the GFX class indexes the coefficients according
+	to their powers (i[0] <-> x^0), which is again intuitive.
+
+	The attached patches changes the IT++ behaviour to the approach
+	used in Matlab, in order to become consistent with the more common
+	way.
+
+2009-01-30  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/itfile.h, itpp/base/vec.h: Minor spelling and grammar
+	fixes

@@ -1,0 +1,86 @@
+
+Simulating point nr 1
+   Itteration 1: ber = 0.13016
+Breaking on point 1 with 6508 errors.
+
+Simulating point nr 2
+   Itteration 1: ber = 0.103
+Breaking on point 2 with 5150 errors.
+
+Simulating point nr 3
+   Itteration 1: ber = 0.07886
+Breaking on point 3 with 3943 errors.
+
+Simulating point nr 4
+   Itteration 1: ber = 0.05534
+Breaking on point 4 with 2767 errors.
+
+Simulating point nr 5
+   Itteration 1: ber = 0.03822
+Breaking on point 5 with 1911 errors.
+
+Simulating point nr 6
+   Itteration 1: ber = 0.02388
+Breaking on point 6 with 1194 errors.
+
+Simulating point nr 7
+   Itteration 1: ber = 0.01316
+Breaking on point 7 with 658 errors.
+
+Simulating point nr 8
+   Itteration 1: ber = 0.00586
+Breaking on point 8 with 293 errors.
+
+Simulating point nr 9
+   Itteration 1: ber = 0.0027
+   Itteration 2: ber = 0.00247
+Breaking on point 9 with 247 errors.
+
+Simulating point nr 10
+   Itteration 1: ber = 0.00094
+   Itteration 2: ber = 0.00086
+   Itteration 3: ber = 0.00076
+   Itteration 4: ber = 0.00077
+   Itteration 5: ber = 0.0008
+   Itteration 6: ber = 0.000796667
+Breaking on point 10 with 239 errors.
+
+Simulating point nr 11
+   Itteration 1: ber = 0.00016
+   Itteration 2: ber = 0.00016
+   Itteration 3: ber = 0.000186667
+   Itteration 4: ber = 0.000175
+   Itteration 5: ber = 0.000172
+   Itteration 6: ber = 0.000173333
+   Itteration 7: ber = 0.000162857
+   Itteration 8: ber = 0.00017
+   Itteration 9: ber = 0.000166667
+   Itteration 10: ber = 0.000172
+
+Simulating point nr 12
+   Itteration 1: ber = 4e-05
+   Itteration 2: ber = 2e-05
+   Itteration 3: ber = 2.66667e-05
+   Itteration 4: ber = 2.5e-05
+   Itteration 5: ber = 2e-05
+   Itteration 6: ber = 2e-05
+   Itteration 7: ber = 3.14286e-05
+   Itteration 8: ber = 2.75e-05
+   Itteration 9: ber = 2.44444e-05
+   Itteration 10: ber = 2.6e-05
+
+Simulating point nr 13
+   Itteration 1: ber = 0
+   Itteration 2: ber = 0
+   Itteration 3: ber = 0
+   Itteration 4: ber = 0
+   Itteration 5: ber = 0
+   Itteration 6: ber = 0
+   Itteration 7: ber = 0
+   Itteration 8: ber = 2.5e-06
+   Itteration 9: ber = 2.22222e-06
+   Itteration 10: ber = 2e-06
+Exiting Simulation on point 13
+
+EbN0dB = [-2 -1 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14]
+ber = [0.13016 0.103 0.07886 0.05534 0.03822 0.02388 0.01316 0.00586 0.00247 0.000796667 0.000172 2.6e-05 2e-06 0 0 0 0]

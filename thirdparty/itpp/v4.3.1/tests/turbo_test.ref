@@ -1,0 +1,79 @@
+=============================================
+           Starting Simulation               
+ Bit error rate as a function of Eb/N0       
+=============================================
+  Block length = 400
+  Generator polynomials = [7 5]
+  Max number of Iterations = 8
+  Adaptive stop = 1
+  Eb/N0 = [0 0.5 1 1.5 2] [dB]
+  Turbo encoder rate 1/3 (plus tail bits)
+=============================================
+Now simulating EbN0db = 0
+Now simulating EbN0db = 0.5
+Now simulating EbN0db = 1
+Now simulating EbN0db = 1.5
+Now simulating EbN0db = 2
+Results: (1st row: logmax, 2nd row: logmap, 3rd row: qllr, default resolution, 4th row: qllr, low resolution
+Bit error rate: 
+ber = [[0.1174 0.0586 0.005 0.00065 0]
+ [0.0518 0.02005 0.0017 0 0]
+ [0.0522 0.0199 0.0017 0 0]
+ [0.05495 0.01905 0.0017 0 0]]
+Average numer of iterations used: 
+[[7.7 7.04 4.7 3.46 3.02]
+ [7.16 6.06 4.12 3.24 3]
+ [7.2 6.06 4.08 3.24 3]
+ [7.26 6.1 4.06 3.22 3.06]]
+Number of bit errors counted: 
+err = [[2348 1172 100 13 0]
+ [1036 401 34 0 0]
+ [1044 398 34 0 0]
+ [1099 381 34 0 0]]
+Number of correct bits counted: 
+cor = [[17652 18828 19900 19987 20000]
+ [18964 19599 19966 20000 20000]
+ [18956 19602 19966 20000 20000]
+ [18901 19619 19966 20000 20000]]
+
+=============================================
+ Starting Simulation for Punctured Turbo Code
+ Bit error rate as a function of Eb/N0       
+=============================================
+  Block length = 400
+  Generator polynomials = [7 5]
+  Max number of Iterations = 8
+  Adaptive stop = 1
+  Eb/N0 = [0 0.5 1 1.5 2] [dB]
+  Turbo encoder rate 1/3 (plus tail bits)
+=============================================
+Now simulating EbN0db = 0
+Now simulating EbN0db = 0.5
+Now simulating EbN0db = 1
+Now simulating EbN0db = 1.5
+Now simulating EbN0db = 2
+Results: (1st row: logmax, 2nd row: logmap, 3rd row: qllr, default resolution, 4th row: qllr, low resolution
+Bit error rate: 
+ber = [[0.1489 0.0907 0.0519 0.00355 0.00195]
+ [0.1068 0.0428 0.0242 0.0002 0]
+ [0.10685 0.04285 0.02435 0.0002 0]
+ [0.10745 0.04645 0.0244 0.00035 0]]
+Average numer of iterations used: 
+[[8 7.74 6.92 4.42 3.26]
+ [6.38 7.26 6.18 4.08 3.32]
+ [6.48 7.2 6.2 4.08 3.3]
+ [7.88 7.44 6.42 4.02 3.28]]
+Number of bit errors counted: 
+err = [[2978 1814 1038 71 39]
+ [2136 856 484 4 0]
+ [2137 857 487 4 0]
+ [2149 929 488 7 0]]
+Number of correct bits counted: 
+cor = [[17022 18186 18962 19929 19961]
+ [17864 19144 19516 19996 20000]
+ [17863 19143 19513 19996 20000]
+ [17851 19071 19512 19993 20000]]
+
+=============================================
+    Starting Simulation for Interleavers     
+=============================================

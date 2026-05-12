@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@
+libdir=@CMAKE_INSTALL_PREFIX@/lib
+includedir=@CMAKE_INSTALL_PREFIX@/include
+
+Name: @PACKAGE_NAME@
+Description: @PACKAGE_NAME@ is a C++ library of mathematical, signal processing, speech processing, and communications classes and functions
+Version: @PACKAGE_VERSION@
+URL: http://itpp.sourceforge.net/
+Libs: -L${libdir} -l@libitpp_target@
+Libs.private:@ITPP_LIBS@
+Cflags: -I${includedir} @CMAKE_CXX_FLAGS_RELEASE@

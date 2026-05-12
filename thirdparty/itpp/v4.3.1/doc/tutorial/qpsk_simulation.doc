@@ -1,0 +1,32 @@
+/*!
+\page qpsk_simulation Simulation of QPSK modulation on an AWGN channel
+
+In this example we will introduce a few new features compared to the BPSK example. We will use the it_ifile class to store the results of the simulation. We will use the Real_Timer class to measure the execution time of our program. Furthermore we will use one of the channel classes, the AWGN_Channel. We will also show how to read the results in to Matlab with the load_it function. The program is as follows:
+
+\include qpsk_simulation.cpp
+
+When you run this program, the output will look something like this:
+
+\include qpsk_simulation.ref
+
+Now it is time to plot the simulation results in Matlab and compare with theory using the Matlab code below.
+The results will be stored in a file called "qpsk_result_file.it". Make sure load_it.m is in your Matlab path
+(look in $(ITXX_HOME)/matlab) and that you run the example code below from the directory where qpsk_result_file.it is located
+
+\code
+figure(1); clf;
+load_it qpsk_result_file.it
+h1 = semilogy(EbN0dB,ber,'*-r'); hold on
+ebn0db = 0:.1:10;
+ebn0 = 10.^(ebn0db/10);
+Pb = 0.5 * erfc(sqrt(ebn0));
+h2 = semilogy(ebn0db,Pb);
+set(gca,'fontname','times','fontsize',16);
+xlabel('{\it E_b} / {\it N}_0 [dB]');
+ylabel('BER')
+title('QPSK on an AWGN Channel');
+legend([h1 h2],'Simulation','Theory');
+grid on;
+\endcode
+
+*/

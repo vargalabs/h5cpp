@@ -1,0 +1,11 @@
+*.d
+*.o
+ColumnTest
+DenseTest1
+DenseTest2
+IncludeTest
+RowTest
+SparseTest1
+SparseTest2
+SubmatrixTest
+

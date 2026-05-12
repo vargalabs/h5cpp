@@ -1,0 +1,484 @@
+#!/bin/bash
+#==================================================================================================
+#
+#  Configuration script for the Blaze test suite
+#
+#  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+#
+#  This file is part of the Blaze library. You can redistribute it and/or modify it under
+#  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+#  forms, with or without modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this list of
+#     conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright notice, this list
+#     of conditions and the following disclaimer in the documentation and/or other materials
+#     provided with the distribution.
+#  3. Neither the names of the Blaze development group nor the names of its contributors
+#     may be used to endorse or promote products derived from this software without specific
+#     prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+#  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+#  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+#  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+#  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+#  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+#  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+#  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+#  DAMAGE.
+#
+#==================================================================================================
+
+
+#######################################
+# Parsing the command line arguments
+
+# Checking the number of command line arguments
+if [ $# -ge 2 ]; then
+   echo "Invalid use of the Blaze configuration script. Type './configure -h' to display the help."
+   exit 1
+fi
+
+# Printing the help
+if [ "$1" = "--help" ] || [ "$1" = "-help" ] || [ "$1" = "-h" ]; then
+   echo
+   echo "Usage: ./configure [<config_file>]"
+   echo
+   echo "Configuration of the compilation process of the blaze test suite. The system-specific"
+   echo "settings are specified via the given configuration file <config_file>. In case no"
+   echo "<config_file> is specified, the settings of the default 'Configfile' are used."
+   echo
+   echo "Options:"
+   echo " -h, -help, --help  Displays this information"
+   echo
+   exit 0
+fi
+
+
+#####################################
+# Selecting the configuration file
+
+CONFIGFILE="Configfile"
+
+if [ $# = 1 ]; then
+   if [ ! -f "$1" ]; then
+      echo "Config file '$1' cannot be found."
+      exit 1
+   else
+      CONFIGFILE="$1"
+   fi
+fi
+
+source $CONFIGFILE
+
+
+##########################
+# Checking the settings
+
+# Checking the compiler settings
+if [ ! -n "$CXX" ]; then
+   echo "Compiler unspecified. Please select a compiler for the compilation process!"
+   exit 1
+fi
+
+# Checking the settings for the BLAS module
+if [ "$BLAS" != "yes" ] && [ "$BLAS" != "no" ]; then
+   echo "Invalid setting for the BLAS module."
+   exit 1
+fi
+
+
+################################
+# Blazemark specific settings
+
+INSTALL_PATH="$( cd "$( dirname "$0" )" && pwd )";
+BLAZE_PATH="${INSTALL_PATH%%/blazetest}"
+
+
+############################
+# Generating the Makefile
+
+# Configuration of the include paths
+CXXFLAGS="$CXXFLAGS -isystem $INSTALL_PATH -isystem $BLAZE_PATH "
+
+BOOST_INCLUDE_PATH=${BOOST_INCLUDE_PATH%"/"}
+if [ "$BOOST" = "yes" ] && [ -n "$BOOST_INCLUDE_PATH" ]; then
+   if [[ ! "$CXXFLAGS" =~ "$BOOST_INCLUDE_PATH " ]]; then
+      CXXFLAGS="${CXXFLAGS%" "} -isystem $BOOST_INCLUDE_PATH "
+   fi
+fi
+
+BLAS_INCLUDE_PATH=${BLAS_INCLUDE_PATH%"/"}
+if [ "$BLAS" = "yes" ] && [ -n "$BLAS_INCLUDE_PATH" ]; then
+   if [[ ! "$CXXFLAGS" =~ "$BLAS_INCLUDE_PATH" ]]; then
+      CXXFLAGS="${CXXFLAGS%" "} -isystem $BLAS_INCLUDE_PATH "
+   fi
+fi
+
+CXXFLAGS=${CXXFLAGS%" "}
+
+# Configuration of the library path and link libraries
+LIBRARIES="$LIBRARY_DIRECTIVES"
+
+BOOST_LIBRARY_PATH=${BOOST_LIBRARY_PATH%"/"}
+if [ "$BOOST" = "yes" ]; then
+   if [ -n "$BOOST_LIBRARY_PATH" ] && [[ ! "$LIBRARIES" =~ "$BOOST_LIBRARY_PATH " ]]; then
+      LIBRARIES="${LIBRARIES%" "} -L$BOOST_LIBRARY_PATH "
+   fi
+fi
+
+BOOST_SYSTEM_LIBRARY=${BOOST_SYSTEM_LIBRARY#"lib"}
+if [ "$BOOST" = "yes" ]; then
+   if [ -n "$BOOST_SYSTEM_LIBRARY" ]; then
+      LIBRARIES="${LIBRARIES%" "} -l$BOOST_SYSTEM_LIBRARY"
+   else
+      LIBRARIES="${LIBRARIES%" "} -lboost_system"
+   fi
+fi
+
+BOOST_THREAD_LIBRARY=${BOOST_THREAD_LIBRARY#"lib"}
+if [ "$BOOST" = "yes" ]; then
+   if [ -n "$BOOST_THREAD_LIBRARY" ]; then
+      LIBRARIES="${LIBRARIES%" "} -l$BOOST_THREAD_LIBRARY"
+   else
+      LIBRARIES="${LIBRARIES%" "} -lboost_thread"
+   fi
+fi
+
+BLAS_LIBRARY_PATH=${BLAS_LIBRARY_PATH%"/"}
+if [ "$BLAS" = "yes" ]; then
+   if [ -n "$BLAS_LIBRARY_PATH" ] && [[ ! "$LIBRARIES" =~ "$BLAS_LIBRARY_PATH " ]]; then
+      LIBRARIES="${LIBRARIES%" "} -L$BLAS_LIBRARY_PATH "
+   fi
+   if [ -n "$BLAS_LIBRARIES" ]; then
+      LIBRARIES="${LIBRARIES%" "} $BLAS_LIBRARIES "
+   fi
+fi
+
+LAPACK_LIBRARY_PATH=${LAPACK_LIBRARY_PATH%"/"}
+if [ "$LAPACK" = "yes" ]; then
+   if [ -n "$LAPACK_LIBRARY_PATH" ] && [[ ! "$LIBRARIES" =~ "$LAPACK_LIBRARY_PATH " ]]; then
+      LIBRARIES="${LIBRARIES%" "} -L$LAPACK_LIBRARY_PATH "
+   fi
+   if [ -n "$LAPACK_LIBRARIES" ]; then
+      LIBRARIES="${LIBRARIES%" "} $LAPACK_LIBRARIES "
+   fi
+fi
+
+LIBRARIES=${LIBRARIES%" "}
+
+
+############################
+# Generating the Makefile
+
+cat > Makefile <<EOF
+#==================================================================================================
+#
+#  Makefile for the Blaze test suite
+#
+#  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+#
+#  This file is part of the Blaze library. You can redistribute it and/or modify it under
+#  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+#  forms, with or without modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this list of
+#     conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright notice, this list
+#     of conditions and the following disclaimer in the documentation and/or other materials
+#     provided with the distribution.
+#  3. Neither the names of the Blaze development group nor the names of its contributors
+#     may be used to endorse or promote products derived from this software without specific
+#     prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+#  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+#  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+#  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+#  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+#  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+#  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+#  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+#  DAMAGE.
+#
+#==================================================================================================
+
+
+# Build rules
+default: mathtest utiltest
+
+all: mathtest utiltest
+
+essential: mathtest utiltest
+
+single: mathtest utiltest
+
+
+# Internal rules
+mathtest:
+	@echo
+	@\$(MAKE) --no-print-directory -C $INSTALL_PATH/src/mathtest \$(MAKECMDGOALS)
+	@echo
+
+utiltest:
+	@echo
+	@\$(MAKE) --no-print-directory -C $INSTALL_PATH/src/utiltest \$(MAKECMDGOALS)
+	@echo
+
+
+# Cleanup
+reset:
+	@echo "Cleaning up..."
+	@\$(MAKE) --no-print-directory -C $INSTALL_PATH/src/mathtest reset
+	@\$(MAKE) --no-print-directory -C $INSTALL_PATH/src/utiltest reset
+
+clean:
+	@echo "Cleaning up..."
+	@\$(MAKE) --no-print-directory -C $INSTALL_PATH/src/mathtest clean
+	@\$(MAKE) --no-print-directory -C $INSTALL_PATH/src/utiltest clean
+
+
+# Setting the independent commands
+.PHONY: default all essential single reset clean \
+        mathtest utiltest
+EOF
+
+
+#######################################################
+# Generating the 'src/Makeconfig'
+
+cat > src/Makeconfig <<EOF
+#==================================================================================================
+#
+#  System configuration for the Makefiles of the Blaze test suite
+#
+#  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+#
+#  This file is part of the Blaze library. You can redistribute it and/or modify it under
+#  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+#  forms, with or without modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this list of
+#     conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright notice, this list
+#     of conditions and the following disclaimer in the documentation and/or other materials
+#     provided with the distribution.
+#  3. Neither the names of the Blaze development group nor the names of its contributors
+#     may be used to endorse or promote products derived from this software without specific
+#     prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+#  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+#  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+#  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+#  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+#  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+#  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+#  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+#  DAMAGE.
+#
+#==================================================================================================
+
+
+# Compiler configuration
+CXX      = $CXX
+CXXFLAGS = $CXXFLAGS
+
+# Library configuration
+LIBRARIES = $LIBRARIES
+EOF
+
+
+#######################################################
+# Generating the 'blazetest/system/BLAS.h'
+
+cat > blazetest/system/BLAS.h <<EOF
+//=================================================================================================
+/*!
+//  \file blazetest/system/BLAS.h
+//  \brief System settings for the BLAS mode
+//
+//  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+//
+//  This file is part of the Blaze library. You can redistribute it and/or modify it under
+//  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+//  forms, with or without modification, are permitted provided that the following conditions
+//  are met:
+//
+//  1. Redistributions of source code must retain the above copyright notice, this list of
+//     conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice, this list
+//     of conditions and the following disclaimer in the documentation and/or other materials
+//     provided with the distribution.
+//  3. Neither the names of the Blaze development group nor the names of its contributors
+//     may be used to endorse or promote products derived from this software without specific
+//     prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+//  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+//  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+//  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+//  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+//  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+//  DAMAGE.
+*/
+//=================================================================================================
+
+#ifndef _BLAZETEST_SYSTEM_BLAS_H_
+#define _BLAZETEST_SYSTEM_BLAS_H_
+
+
+//=================================================================================================
+//
+//  BLAS MODE CONFIGURATION
+//
+//=================================================================================================
+
+//*************************************************************************************************
+/*!\brief Compilation switch for the BLAS mode.
+// \ingroup system
+//
+// This compilation switch enables/disables the BLAS mode for the Blaze math tests. In case the
+// BLAS mode is enabled, all tests that require BLAS to be available are included, in case the
+// BLAS mode is disabled the tests are ignored.
+//
+// Possible settings for the BLAS switch:
+//  - Deactivated: \b 0
+//  - Activated  : \b 1
+*/
+EOF
+
+if test $BLAS = "yes"; then
+cat >> ./blazetest/system/BLAS.h <<EOF
+#define BLAZETEST_MATHTEST_BLAS_MODE 1
+EOF
+else
+cat >> ./blazetest/system/BLAS.h <<EOF
+#define BLAZETEST_MATHTEST_BLAS_MODE 0
+EOF
+fi
+
+cat >> ./blazetest/system/BLAS.h <<EOF
+//*************************************************************************************************
+
+#endif
+EOF
+
+
+#######################################################
+# Generating the 'blazetest/system/LAPACK.h'
+
+cat > blazetest/system/LAPACK.h <<EOF
+//=================================================================================================
+/*!
+//  \file blazetest/system/LAPACK.h
+//  \brief System settings for the LAPACK mode
+//
+//  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+//
+//  This file is part of the Blaze library. You can redistribute it and/or modify it under
+//  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+//  forms, with or without modification, are permitted provided that the following conditions
+//  are met:
+//
+//  1. Redistributions of source code must retain the above copyright notice, this list of
+//     conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice, this list
+//     of conditions and the following disclaimer in the documentation and/or other materials
+//     provided with the distribution.
+//  3. Neither the names of the Blaze development group nor the names of its contributors
+//     may be used to endorse or promote products derived from this software without specific
+//     prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+//  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+//  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+//  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+//  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+//  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+//  DAMAGE.
+*/
+//=================================================================================================
+
+#ifndef _BLAZETEST_SYSTEM_LAPACK_H_
+#define _BLAZETEST_SYSTEM_LAPACK_H_
+
+
+//=================================================================================================
+//
+//  LAPACK MODE CONFIGURATION
+//
+//=================================================================================================
+
+//*************************************************************************************************
+/*!\brief Compilation switch for the LAPACK mode.
+// \ingroup system
+//
+// This compilation switch enables/disables the LAPACK mode for the Blaze math tests. In case
+// the LAPACK mode is enabled, all tests that require LAPACK to be available are included, in
+// case the LAPACK mode is disabled the tests are ignored. Note that in case the LAPACK mode
+// is enabled it is mandatory to link the LAPACK library to the final executables.
+//
+// Possible settings for the LAPACK switch:
+//  - Deactivated: \b 0
+//  - Activated  : \b 1
+*/
+EOF
+
+if test $LAPACK = "yes"; then
+cat >> ./blazetest/system/LAPACK.h <<EOF
+#define BLAZETEST_MATHTEST_LAPACK_MODE 1
+EOF
+else
+cat >> ./blazetest/system/LAPACK.h <<EOF
+#define BLAZETEST_MATHTEST_LAPACK_MODE 0
+EOF
+fi
+
+cat >> ./blazetest/system/LAPACK.h <<EOF
+//*************************************************************************************************
+
+
+//*************************************************************************************************
+/*!\brief Compilation switch for the LAPACK support of the gesvdx() functions.
+// \ingroup system
+//
+// The LAPACK gesvdx() functions are not supported by all LAPACK libraries. Via this compilation
+// switch tests for the gesvdx() function can be explicitly enabled/disabled. In case both the
+// LAPACK mode and this switch are enabled, all gesvdx() tests are included, in case either one
+// is disabled the gesvdx() tests are ignored.
+//
+// Possible settings for the LAPACK gesvdx() switch:
+//  - Deactivated: \b 0
+//  - Activated  : \b 1
+*/
+EOF
+
+if test $LAPACK_SUPPORTS_GESVDX = "yes"; then
+cat >> ./blazetest/system/LAPACK.h <<EOF
+#define BLAZETEST_MATHTEST_LAPACK_SUPPORTS_GESVDX 1
+EOF
+else
+cat >> ./blazetest/system/LAPACK.h <<EOF
+#define BLAZETEST_MATHTEST_LAPACK_SUPPORTS_GESVDX 0
+EOF
+fi
+
+cat >> ./blazetest/system/LAPACK.h <<EOF
+//*************************************************************************************************
+
+#endif
+EOF

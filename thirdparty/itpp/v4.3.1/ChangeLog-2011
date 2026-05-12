@@ -1,0 +1,113 @@
+2011-12-25  Bogdan Cristea <cristeab@users.sourceforge.net>
+
+	* doc/tutorial/demapper_mimo.doc, doc/tutorial/sources.mk,
+	  doc/tutorial/src/Makefile.am, doc/tutorial/src/demapper_mimo.cpp,
+	  itpp/comm/siso.h: added explanations about the overlap in
+	  functionality between the SISO class and the Modulator_ND class.
+	  Added an usage example for SISO demappers when using ST codes in
+	  MIMO channels.
+
+2011-11-25  Bogdan Cristea <cristeab@users.sourceforge.net>
+
+	* itpp/base/vec.h: initialization of local variable in order to
+	  close bug ID: 3425833
+
+2011-11-20  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* itpp/comm/ldpc.h, itpp/comm/ldpc.cpp: New function for soft
+	syndrome check calculation in the LDPC class
+
+2011-11-20  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* itpp/comm/error_counters.h, itpp/comm/error_counters.cpp: Minor
+	feature enhancement in the error counter classes
+
+2011-11-06  Bogdan Cristea <cristeab@users.sourceforge.net>
+
+        * itpp/comm/siso_dem.cpp: corrected Alamouti_maxlogMAP. Thanks to
+	tytusz for pointing this bug
+
+2011-09-15   Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* itpp/base/gf2mat.cpp: Fixed assertion in
+	GF2mat_sparse_alist::read().  This closes bug report #3408884.
+	Thanks to Laurent Schmalen for providing the patch.
+
+2011-06-02   Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* itpp/comm/ldpc.h, itpp/comm/ldpc.cpp: Added the possibility to
+	disable integrity checking when initiating an LDPC code. This
+	closes feature request #3309430.  Thanks to Laurent Schmalen for
+	providing the patch.
+
+2011-05-19   Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* itpp/comm/ldpc.cpp: Fixed a bug in the LDPC decoder, that occurs
+	in the special case of a lonely variable node (i.e. a variable
+	node that is connected to only one check node) in the LDPC
+	decoder. The incoming C->V message was missing in the outgoing LLR
+	value. This special case is very rare but apparently occurs for
+	some codes in the DVB-T2 standard.  We thank Gorka Agujeta and
+	Daniel Ansorregui for pointing out this error.
+
+2011-05-05  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+        * itpp/comm/convcode.cpp, tests/convcode_test.cpp,
+	  tests/convcode_test.ref:
+	  fixed bug ID 3297666. Thanks Stephan Ludwig for providing the patch
+
+2011-04-13  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/base/operators.h, tests/Makefile.am,
+	  tests/operators_test.cpp, tests/operators_test.ref: corrected bug
+	  with ID 3180562
+
+2011-02-27  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/comm/stc.cpp, itpp/comm/stc.h, tests/stc_test.cpp,
+	  tests/stc_test.ref: changed STC interface, added error checking
+	  using it_assert()
+
+2011-02-21  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/comm/stc.cpp, itpp/comm/stc.h, tests/stc_test.cpp: added
+	  more error checking on input parameters
+
+2011-02-20  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* tests/stc_test.cpp, win32/itpp_acml_tests/itpp_acml_tests.sln,
+	  win32/itpp_mkl.sln, win32/itpp_mkl_tests/itpp_mkl_tests.sln:
+	  added tests for Visual Studio projects, corrected minor error in
+	  stc_test.cpp
+
+2011-02-20  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/comm/stc.cpp, itpp/comm/stc.h, tests/Makefile.am,
+	  tests/stc_test.cpp, tests/stc_test.ref: Corrected error in STC
+	  class when generating V-BLAST code. Simplified STC interface.
+	  Added test file for STC class.
+
+2011-02-17  Robert Orzechowski  <tytusz@users.sourceforge.net>
+	* itpp/comm/modulator_nd.h, itpp/comm/modulator_nd.cpp: 
+	  get_symbols() return symbols without additional 0.0 symbol.
+	* itpp/comm/modulator_nd.h, itpp/comm/modulator_nd.cpp, 
+	  itpp/comm/modulator.h: added few getters to have similar 
+	  ND_UQAM class usage as QAM class (both can be used with 
+	  SISO class since now).
+
+2011-01-09  Robert Orzechowski  <tytusz@users.sourceforge.net>
+
+	* itpp/comm/modulator_nd.h, itpp/comm/modulator_nd.cpp: added 
+	  set_constellation_points method to ND_UQAM modulator class.
+	
+2011-01-01  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* doc/local/linking.doc, doc/tutorial/pccc_bersim_awgn.doc: added
+	  help for pyitpp module
+
+2011-01-01  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* extras/Makefile.am, extras/gen_test_itload.cpp, extras/pyitpp.py,
+	  extras/test_pyitpp.it, extras/test_pyitpp.py: added pyitpp module
+	  providing itload() function for python, similar to MATLAB
+	  itload.m

@@ -16,9 +16,7 @@ set(LIBS
     libdoctest
 )
 
-## begin thirdparty library dependencies
-  add_subdirectory(thirdparty EXCLUDE_FROM_ALL)
-## end library dependencies
+# thirdparty dependencies are added by the root CMakeLists.txt
 
 # usage:
 #   add_test_case(H5cmake)
@@ -57,4 +55,6 @@ add_test_case(H5Dgather)
 add_test_case(H5meta)
 add_test_case(H5Tmeta)
 add_test_case(H5Dio)
+# add_test_case(H5E_exceptions)
+add_test_case(H5Dio_roundtrip)
 # add_test_case(H5Iall)

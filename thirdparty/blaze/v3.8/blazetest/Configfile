@@ -1,0 +1,95 @@
+#==================================================================================================
+#
+#  Configfile file for the Blaze test suite
+#
+#  Copyright (C) 2012-2020 Klaus Iglberger - All Rights Reserved
+#
+#  This file is part of the Blaze library. You can redistribute it and/or modify it under
+#  the terms of the New (Revised) BSD License. Redistribution and use in source and binary
+#  forms, with or without modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this list of
+#     conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright notice, this list
+#     of conditions and the following disclaimer in the documentation and/or other materials
+#     provided with the distribution.
+#  3. Neither the names of the Blaze development group nor the names of its contributors
+#     may be used to endorse or promote products derived from this software without specific
+#     prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+#  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+#  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+#  SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+#  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+#  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+#  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+#  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+#  DAMAGE.
+#
+#==================================================================================================
+
+# Compiler selection
+CXX=
+
+# Special compiler flags
+CXXFLAGS=
+
+# Configuration of the Boost library
+# The BOOST switch should be set to 'yes' if Boost threads are used for the shared memory
+# parallelization of Blaze operations. In that case the Boost library (see www.boost.org) is
+# precondition for the Blaze test suite, i.e. it is not possible to compile and/or run the
+# tests without Boost. It is recommended to use the newest Boost library available, but Blaze
+# requires at minimum the Boost version 1.54.0. If Boost is activated, it is necessary to
+# specify the Boost include path. If the include path is is not set it is assumed that the
+# Boost headers are installed in standard paths (as for instance '/usr/include/boost').
+# Additionally, it is necessary to specify the library path of the Boost libraries and the
+# name of the Boost system and thread libraries (as for instance 'boost_thread-mt'). In case
+# the library path is not explicitly specified, it is assumed that the libraries are installed
+# in standard paths (for example '/usr/lib/' or '/usr/lib64/'). If the name of a library is
+# not specified, it is assumed that the library has a default name ('libboost_system.*' and
+# 'libboost_thread.*', respectively).
+BOOST="no"
+BOOST_INCLUDE_PATH=
+BOOST_LIBRARY_PATH=
+BOOST_SYSTEM_LIBRARY=
+BOOST_THREAD_LIBRARY=
+
+# Configuration of the BLAS library
+# This BLAS switch should be set according to the settings of the Blaze library. In case
+# Blaze is configured to use a BLAS library, this BLAS switch should also be set to 'yes'.
+# If BLAS is activated, per default it is assumed that the BLAS include file is called
+# 'cblas.h' and is installed in standard paths (as for instance '/usr/include/cblas.h').
+# Both default settings can be changed by explicitly specifying the BLAS include path
+# and the name of the BLAS include file. Additionally, the BLAS library path has to
+# be specified (otherwise it is assumed that the library resides in standard paths)
+# and the BLAS libraries have to be specified (for example  '-lf77blas -lcblas -latlas'
+# for the ATLAS library). If Blaze is configured without a BLAS library, this switch
+# should also be set to 'no'.
+BLAS="no"
+BLAS_INCLUDE_PATH=
+BLAS_INCLUDE_FILE=
+BLAS_LIBRARY_PATH=
+BLAS_LIBRARIES=
+
+# Configuration of the LAPACK library
+# Several matrix operations, such as the matrix inversion, LU and QR decomposition, eigenvalue
+# computations and the SVD, are only available via a LAPACK library. In case no LAPACK library
+# is available, the according functions cannot be used and therefore must not be included in
+# any test. In case LAPACK is available this switch should be set to 'yes', which enables all
+# LAPACK specific tests, except for the tests for the 'gesvdx()' functions. These have to be
+# activated explicitly since not all LAPACK libraries provide the functions. Additionally, the
+# LAPACK library path has to be specified (otherwise it is assumed that the library resides in
+# standard paths) and the required LAPACK libraries have to be specified (as for instance
+# '-llapack'). In case LAPACK is not available the switch should be set to 'no'.
+LAPACK="no"
+LAPACK_SUPPORTS_GESVDX="no"
+LAPACK_LIBRARY_PATH=
+LAPACK_LIBRARIES=
+
+# Library settings (optional)
+# In some cases it might be necessary to specify additional library paths and add additional
+# libraries. This can be done via this setting.
+LIBRARY_DIRECTIVES=

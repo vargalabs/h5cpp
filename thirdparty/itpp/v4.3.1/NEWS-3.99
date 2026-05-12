@@ -1,0 +1,411 @@
+===============================================================================
+IT++ version 3.99.3.1                                      Released: 2007-08-10
+-------------------------------------------------------------------------------
+
+This minor bug-fix release fixes a serious regression, which appeared in
+just released 3.99.3 development version. Here is a short description of the
+fixed problem:
+
+* Wrong declaration of zdotu_() BLAS function interface caused segmentation
+  faults when IT++ was compiled with "-fomit-frame-pointer" flag. To fix
+  this problem a Fortran wrapper function zdotusub_() has been added to
+  IT++. This wrapper function comes from NetLib's CBLAS package.
+
+
+===============================================================================
+IT++ version 3.99.3                                        Released: 2007-08-10
+-------------------------------------------------------------------------------
+
+This is the last development release of IT++ 3.99.x series. The upcoming
+4.0.0 stable release will be based on this version after a certain
+stabilisation period. Therefore we encourage everyone to switch to this
+version and report any problems and bugs on the IT++ Help forum. The
+interface of this release should be compatible with the planned 4.0.x stable
+releases. Below you can find a short summary of the recent additions,
+modifications and bug-fixes included in this release.
+
+
+New features:
+-------------
+
+* New Sort class implementation included with four different algorithms:
+  Introsort, Heap sort, Quick sort and Insertion sort. The implementation of
+  the new sorting functions is much faster than our previous QS()
+  implementation due to the use of low level pointer arithmetic (feature
+  request [1746876]).
+
+* Added repmat() functions, which expand an input matrix or vector to a
+  larger one by concatenating multiple copies of the input one.
+
+* Added low level functions scal_vector() and axpy_vector(), which use BLAS
+  methods for double and complex<double> vector arguments. The scal_vector()
+  function is now used by "*=" and "/=" operators.
+
+* Added support for reading and writing bool variables in it_file class
+
+* Added a few MSVC++ project files for test programs. The project files are
+  configured to use 32-bit versions of MKL 9.1.025 and ACML 3.6.0 PGI
+  libraries installed into their default locations on Windows platforms.
+
+
+Modifications:
+--------------
+
+* Removed dependency on the external CBLAS library by providing direct
+  interfaces to Fortran BLAS routines (feature request [1746876]).
+
+* General performance improvements of various operators in Vec and Mat
+  classes by using a copy_vector() function where possible. The
+  copy_vector() function use BLAS 1 routines for double and complex<double>
+  arguments.
+
+* BLAS-aided specialisation of the Vec::outer_product() method for vec and
+  cvec arguments added.
+
+* More consistent test programs for Mat and Vec classes. Now all operators
+  and methods are tested.
+
+
+Bug-fixes:
+----------
+
+* Fixed a bug in Mat::set_size() method. When resizing a smaller matrix into
+  a bigger one with copying the content, the unused entries were not
+  initialised to zeros properly.
+
+
+===============================================================================
+IT++ version 3.99.2                                        Released: 2007-06-20
+-------------------------------------------------------------------------------
+
+This is the next development release of the IT++ library. As usual, below is
+a list of the most important features, modifications and bug-fixes, since
+version 3.99.1 was released. As this is a development version, some
+interfaces have changed. Therefore, you might need to update your programs
+using this library.
+
+
+New features:
+-------------
+
+* Added B-LDPC Codes implementation, which consists of a BLDPC_Parity and
+  BLDPC_Generator classes. The former one can be used for constructing the
+  parity-check matrix from so-called base-matrix. Base matrix can be saved
+  and loaded from a text file. The BLDPC_Generator class implements an
+  efficient encoding algorithm using a preprocessed version of the
+  parity-check matrix.
+
+* New implementation of the Normal_RNG sample() function, which uses the
+  so-called Ziggurat algorithm. The new generator is about five times faster
+  than the previous one using the Box-Mueller method. This fixes feature
+  request [1707969].
+
+* New implementation of the Complex_Normal_RNG class, which now uses the
+  improved Normal_RNG for generating the real and imaginary parts of the
+  complex random sample. The new generator is about four times faster than
+  the previous implementation. This closes feature request [1711727].
+
+* Added a new function waterfilling() to solve water-filling problems
+
+* Implemented set_size() method in the GF2mat class
+
+
+Modifications:
+--------------
+
+* LDPC_Code::decode() methods changed to return only systematic bits, to be
+  compatible with the encode() methods. New methods decode_soft_out() added,
+  which return soft LLR values for all bits in a codeword.
+
+* Removed unnecessary integrity_check() execution from the
+  LDPC_Code::load_code() function. setup_decoder() method replaced with
+  three separate methods, which are more flexible to use. Tutorial example
+  updated to reflect recent changes.
+
+* Major changes in IT++ file format related classes:
+  - the new file format (version 3) is incompatible with version 2, which
+    was used in IT++ 3.10.x series; for backward compatibility the previous
+    format can be handled using the it_file_old and it_ifile_old classes,
+    which are considered as deprecated and will be removed from the library
+    in future
+  - data is always saved using a little endian byte ordering; files files
+    written on machines using big or little endian ordering should be
+    identical; endianity variable removed from the data_header structure
+  - all size variables are stored using fixed-width 64-bit unsigned integer
+    type, and therefore are independent of the architecture word size (32-
+    or 64-bit)
+  - short and int data types are explicitly casted to fixed-with types
+    int16_t, uint16_t, int32_t and uint32_t, since C/C++ standards do not
+    assume fixed widths of these types
+  - cleaner and more efficient implementation of the write_data_header()
+    function
+  - added missing implementation of a pack() function, which compacts an
+    opened it_file by removing free space between data blocks
+  - added optional description filed which can be saved with each variable
+  - added missing operators and methods for reading and writing svec and
+    smat data types
+  - test program improved
+  - itload.m and itsave.m M-files updated to be compatible with the latest
+    IT++ file format
+
+* The outer_product() function now uses an extra argument "hermitian", which
+  controls the calculation for complex vectors. By default "hermitian" is
+  set to false, which results in (x * y^T) calculation. If "hermitian" is
+  true, (x * y^H) is calculated. This solution is backward compatible with
+  3.10.x interface of outer_product(). Final fix for bug [1727923].
+
+* Improvements in MKL detection macros. The latest MKL release 9.1.018 has
+  different naming of a lapack shared library (libmkl_lapack32.so and
+  libmkl_lapack64.so -> libmkl_lapack.so).
+
+* Removed "-fno-exceptions" flag from CXXFLAGS and CXXFLAGS_DEBUG
+
+
+Bug-fixes:
+----------
+
+* Fixed bug [1739500] in hadamard() function. The initial recursion for
+  creating Hadamard matrices has to start with a 1x1 matrix H = [1], not
+  with a 2x2 matrix. This fix provides correct solution for imat H =
+  hadamard(1).
+
+* Fixed bug [1739267] in binom() and binom_i(). The binomial coefficient was
+  calculated wrongly for n = k. Instead of 1 the functions result was n+1.
+
+* The functions for reading ppm and pgm images have to use binary mode when
+  opening files. This fixes bug [1730610].
+
+* Fixed bug [1724746], i.e. a problem with modified input data in
+  ifft_real() function. Additional FFTW_PRESERVE_INPUT flag used during FFTW
+  plan creation solves this problem.
+
+* Fixed linking errors when trying to use Hadamard and Walsh-Hadamard
+  transform functions. This fixes bug report [1719146].
+
+* Fixed bugs in LDPC_Code::load_code() and LDPC_Code::save_code() functions.
+  It could happen that LDPC generator object might be left uninitialised
+  when loading the coded from a binary file.
+
+* Fixed the actual number of iterations of the LDPC decoding algorithm. It
+  was using one more then expected.
+
+* Fixed bug [1703731] by implementing the missing double2mxArray() and
+  double_complex2mxArray() functions in itmex.h
+
+* Included missing <cstdlib> and <limits> header files where necessary. This
+  fixes problems with building using GCC 4.3 snapshot.
+
+* Fixed a minor bug in the set() method, when parsing an "a:b" or "a:b:c"
+  format. Due to precision problems, the last value from some specific ranges
+  was not included in the result, e.g. "0:0.2:3" resulted in a vector with
+  2.8 at the end (instead of 3).
+
+
+===============================================================================
+IT++ version 3.99.1                                        Released: 2007-03-22
+-------------------------------------------------------------------------------
+
+This is the next development release of the IT++ 3.99.x series. Below is a
+brief summary of the most important new features, modifications and bug
+fixes, as compared to the previous release 3.99.0. Please note that some
+interfaces have changed, so you might need to update your programs linking
+to this version.
+
+
+New features:
+-------------
+
+* Random number generator extended with random53_01_lclosed() function,
+  which generates [0,1) values in 53-bit resolution.
+
+* Added missing	read/write operators for char variables in it_file and
+  it_ifile classes
+
+* MS Visual C++ .NET project file for linking IT++ with ACML added
+
+* Added man page for itpp-config script
+
+* Added test file for a binary it_file format. It is supposed to detect
+  wrong endianness detection on various platforms.
+
+
+Modifications:
+--------------
+
+* LDPC_Parity_Matrix and LDPC_Generator_Matrix classes split into a set of
+  specialized classes, which inherits from the base classes LDPC_Parity and
+  LDPC_Generator. The new inheritance model provides a flexible interface
+  for creating new generation methods and parity check matrix
+  representations by end users.
+
+* Improved and reorganised existing error handling macros:
+  - using standard NDEBUG flag for controlling it_assert_debug() macro,
+    which replaced a three-level ASSERT_LEVEL definition
+  - for backward compatibility it_assert0() and it_assert1() now behaves the
+    same as it_assert_debug()
+  - added new it_info() and it_info_debug() macros for printing information
+    messages; it_info_debug() is also dependent on the NDEBUG compile-time
+    definition
+  - added it_error_msg_style() function for changing the format of
+    it_assert(), it_error() and it_warning() messages; if style is set to
+    Minimum, file name and line number of the error/assert/warning macro is
+    not printed
+
+* Portability improved by replacing "unsigned short int" with 8-bit
+  "unsigned char" type for storing data bits in GF2mat
+
+* Improved the speed and portability of external libraries detection macros
+
+* Replaced long with int in many sources, since long and int have the same
+  sizes on most IT++ supported architectures. If there is a need for 64-bit
+  integers, due to portability reasons (u)int64_t type should be used
+  instead of long.
+
+
+Bug-fixes:
+---------
+
+* Fixed bug [1661419] by adding default constructors to the QAM, PSK, PAM_c
+  and PAM modulator classes. Thanks to Jordy Potman for reporting this bug.
+
+* Fixed a bug in BLAS detection, when an explicit library is passed to the
+  script configure using "--with-blas=" option.
+
+* Fixed improper declarations of ls_solve_od() and ls_solve_ud() methods
+
+* Protected inheritance of the Convolutional_Code class replaced with a
+  public one. This fixes the problem of assigning the
+  Punctured_Convolutional_Code class object to a pointer of Channel_Code
+  class.
+
+* Minor documentation fixes in many places
+
+
+===============================================================================
+IT++ version 3.99.0                                        Released: 2007-01-21
+-------------------------------------------------------------------------------
+
+This is the first release of the IT++ 3.99.x development series, which is
+based on sources from the main SVN branch (trunk). After some period of
+stabilization, a new stable release will be created from this branch (IT++
+4.0.0). Since this is a development branch, some interfaces might be changed
+in future releases. Moreover, some interfaces have changed with respect to
+the stable 3.10.x series.
+
+Below is a brief summary of the most important new features, modifications
+and bug fixes, as compared to the recent stable 3.10.x releases. All minor
+modifications and bug-fixes from 3.10.x series are included in this release
+as well.
+
+
+New features:
+-------------
+
+* New functions for initializing vectors and matrices from strings
+  implemented. Main features of the improved parser are as follows:
+  - Decimal, octal and hexadecimal notation support according to C/C++
+    conventions, i.e. octal numbers starts with `0' (e.g. `0133', `077'),
+    decimal numbers starts with `1-9' or are single `0' digits, hexadecimal
+    numbers starts with `0x' or `0X' prefix and have at least one `0-9',
+    `a-f' or `A-F' digit after (e.g. 0xFF, 0x0, 0x070).
+  - Mixing of various representations in one string
+  - Signed numbers supported, i.e. with leading `+', `-' signs, e.g.
+    `-1000', `+0133', `-0x1'
+  - Vector values separated with spaces ` ', tabs `\t' or comma `,'
+  - Matlab's "a:b" or "a:b:c" notation for increasing and decreasing
+    values, e.g. "0:2:10", "-9:-18", "4:-1:0", "0x0:0x8:0xFF"
+  - Matrix rows separated with a single semicolon `;'
+  - Detection of syntax errors during parsing
+
+* New features of the communication channels:
+  - Implemented missing "Gauss I" and "Gauss II" Doppler spectra required by
+    a few COST207 channel models
+  - Channel_Specification and TDL_Channel classes extended with support of
+    LOS (Rice) fading for any tap. Removed Doppler spectrum of type `Rice',
+    since its generation method was the same as of the `Jakes' one. To
+    obtain the `Rice' spectrum, a relative power, and optionally relative
+    Doppler, needs to be defined for certain taps.
+  - Implemented exponential channel profile generation function
+
+* Created a new set of Mixture of Gaussians (MOG) classes written by Conrad
+  Sanderson (Statistics module)
+
+* Added templated Histogram class provided by Andy Panov (feature request
+  [1451288])
+
+* Added new classes for Low-Density Parity Check (LDPC) codes
+
+* Added support for MacKay's "alist" representation of sparse GF(2)
+  matrices
+
+* Systematic codewords support in BCH and RS encoder/decoder classes
+  contributed by Steve Peters (feature request [1418250])
+
+* New methods in Vec and Mat classes: elem_mult_inplace(), elem_mult_out(),
+  elem_div_out(), elem_mult_sum(), elem_div_sum() and sumsum()
+
+* Added missing left(), right() and mid() methods to the Array class
+
+
+Modifications:
+--------------
+
+* New "Signal Processing", "Statistics" and "Numerical Optimization" modules
+  created from a subset of classes and functions from the "Base" module
+
+* Modularization added to the configuration scripts. It is now possible to
+  select a limited set of modules, which will be built and installed as the
+  IT++ library.
+
+* Restructuring of the source files in the "Base" module. Some of the
+  functions grouped in "Linear Algebra" and "Mathematical and Miscellaneous
+  Functions" sub-modules.
+
+* Major redesign of 1D and 2D modulator classes. From now, there is only one
+  templated base class Modulator, which can handle 1D (real) and 2D
+  (complex) constellations. Other modulators inherits from this base class.
+  BPSK and PAM modulators are split into: BPSK_c/PAM_c classes which have
+  complex-valued interfaces, and BPSK/PAM that have real-valued interfaces.
+  Besides, demodulate_soft_bits() functions take an additional parameter
+  "method" to switch between Log-MAP or approximate demodulation. The input
+  signal for the Modulator_2D has now a slightly different meaning. Also an
+  improper definition of the QPSK constellation is fixed (it was a 4-QAM
+  modulator previously).
+
+* Important updates in the communication channels:
+  - Fading generators inheritance model redesigned. Now there are three
+    types of fading: Independent, Static and Correlated. The Correlated
+    fading can be generated using Rice (MEDS), FIR or IFFT methods. The
+    default fading type is set to `Independent'.
+  - The delay profile discretization function is improved and moved to the
+    TDL_Channel class. An additional parameter `sampling_time' is required
+    when setting the channel profile using the Channel_Specification object.
+    It is now possible to discretize the channel with too low sampling
+    frequency, but only if the taps being merged into a new single tap use
+    the same Doppler spectrum type.
+  - Cleaned up the interfaces of various fading generator classes
+
+* Improved the consistency of the alloc(), free() and set_size() methods in
+  the Array, Mat and Vec classes
+
+* Error functions it_assert(), it_warning() and it_error() extended to
+  handle stream operators like `<<' or `std::endl' in concatenation with
+  strings, e.g. `it_error("Wrong value x = " << oct << x)' (feature request
+  [1569867] by George Jongren)
+
+* Changed the method of detecting the endianness of a system -
+  "itpp/base/machdep.h" is no longer used.
+
+
+Bug-fixes:
+---------
+
+* Fixed a bug that resulted in different output samples of the IFFT fading
+  generator on SPARC Solaris 9 using GCC 3.4.5, than the ones obtained in
+  other environments. The problem was caused by a different order of
+  calculating the random arguments of the concat() function. This is either
+  a bug of GCC for Solaris or its dependence on different endianness, or it
+  is not fully specified behavior of C/C++ standards.
+
+* Several other bug-fixes and improvements. For a full list of them, see the
+  ChangeLog and NEWS-3.10 files.

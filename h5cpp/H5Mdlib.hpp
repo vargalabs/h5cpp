@@ -15,8 +15,9 @@ namespace h5::dlib {
 			using is_supported = std::bool_constant<std::is_same_v<Object,h5::dlib::rowmat<T>>>;
 }
 namespace h5::meta {
-    template <class T> struct is_contiguous<h5::dlib::rowmat<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::dlib::rowmat<T>> : std::true_type {};
 }
+
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
 	template <class T> struct decay<h5::dlib::rowmat<T>>{ using type = T; };

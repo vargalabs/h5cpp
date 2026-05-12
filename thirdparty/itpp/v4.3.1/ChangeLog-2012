@@ -1,0 +1,246 @@
+2012-12-23  Bogdan Cristea <cristeab@users.sourceforge.net>
+  * doc/local/index.doc.in: updated links to IT++ site
+
+2012-12-11  Stephan Ludwig <donludovico@users.sourceforge.net>
+	* itpp/comm/reedsolomon.cpp, itpp/comm/reedsolomon.h, tests/reedsolomon_test.cpp,
+	tests/reedsolomon_test.ref: added feature #91: erasure decoding with Reed-Solomon
+	codes and non-narrow-sense RS codes.
+	added unit test cases that checks both features.
+
+2012-12-01  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* CMakeLists.txt, extras/check_tests.py, gtests/CMakeLists.txt,
+	gtests/rand_core_test.cpp, itpp/base/random.cpp, itpp/base/random.h,
+	itpp/base/random_dsfmt.h, tests/rand_core_test.cpp,
+	tests/rand_core_test.ref: add thread-safe generation of random numbers
+	using OpenMP (feature #90). Thanks to Andy Panov for providing the patch.
+
+2012-10-30 Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* doc/tutorial/src/ldpc_gen_codes.cpp: Corrected the degree
+	distribution table in LDPC coding tutorial example
+
+2012-09-12  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* cmake/Modules/FindFFT.cmake, cmake/Modules/FindBLAS.cmake, 
+	cmake/Modules/CheckFunctionExists.cpp,
+	cmake/Modules/CheckCXXFunctionExists.cmake, cmake/Modules/FindLAPACK.cmake,
+	tests/CMakeLists.txt, doc/doxygen_html.cfg.cmake.in, doc/local/index.doc.in,
+	doc/local/installation.doc, extras/check_tests.py, gtests/bch_test.cpp,
+	gtests/CMakeLists.txt, gtests/array_test.cpp, itpp/protocol/tcp.cpp,
+	itpp/base/binfile.h, itpp/base/vec.cpp, itpp/base/bessel.cpp,
+	itpp/base/bessel/struve.cpp, itpp/config.h.cmake, itpp/CMakeLists.txt,
+	CMakeLists.txt: add generic build system based on cmake, add unit test
+	support using Google framework, corrected compilation errors/warnings when
+	using Visual Studio 2012. Known issues: unit tests are not completely ported
+	to gtest, MKL library detection does not work on Windows with cmake.
+	Old build system and the associated unit tests are still in
+	place, but they will be no longer maintained.
+
+2012-09-12  Mirsad Čirkić <mirsadcirkic@users.sourceforge.net>
+
+	* itpp/comm/modulator_nd.h, itpp/comm/modulator_nd.cpp, 
+	tests/modulator_nd_test.ref, tests/modulator_nd_test.cpp: Fixed
+	the failing modulator_nd test. So far, this implementation is
+	complete for the NRD demodulator only. Some minor modifications
+	are still needed for the NCD demodulator.
+
+2012-08-30  Bogdan Cristea <cristeab@users.sourceforge.net>
+	* README: fixed minor typos (#3538128). Thanks to Kumar Appaiah
+	for providing the patch.
+
+2012-08-19  Bogdan Cristea <cristeab@users.sourceforge.net>
+
+	* tests/modulator_nd_test.ref, tests/modulator_nd_test.cpp,
+	itpp/comm/modulator_nd.cpp, itpp/comm/modulator_nd.h: add faster LLR
+	demod. Thanks to Mirsad Čirkić for providing the patch. Some issues
+	related to unit tests need to be solved.
+
+2012-08-19  Stephan Ludwig <donludovico@users.sourceforge.net>
+
+	* itpp/comm/turbo.cpp, itpp/comm/turbo.h, tests/turbo_test.cpp, 
+	  tests/turbo_test.ref: fixed an integer overflow error in LTE
+	  interleaver, since the product of index i*i gets larger than 
+	  range(int).
+	  added an unit tests case that cross-checks the punctured turbo 
+	  decode results with all-one puncture matrix (no puncturing) with 
+	  the turbo_codec.
+
+2012-08-19  Bogdan Cristea <cristeab@users.sourceforge.net>
+
+	* tests/turbo_test.cpp: add unit tests for WCDMA and LTE interleavers
+	* extras/astylerc, extras/astylerc_old: updated astyle configuration
+	file for version 2.02.1. For backward compatibility old settings are 
+	kept in astylerc_old (compatible with 1.x releases of astyle).
+
+2012-08-16  Stephan Ludwig <donludovico@users.sourceforge.net>
+
+	* itpp/comm/turbo.cpp, itpp/comm/turbo.h, tests/turbo_test.cpp, 
+	  tests/turbo_test.ref: adding a punctured turbo codec (PTC) class according
+	  to feature request #1151067 had to change turbo codec private variables to 
+	  protected ones for inheritance in PTC
+
+	* itpp/comm/turbo.cpp, itpp/comm/turbo.h, tests/turbo_test.cpp, 
+	  tests/turbo_test.ref: committing feature request 3348928: LTE sequence 
+	  interleaver with amended test case
+
+	* itpp/comm/ofdm.h: fixing bug #3512455 with a misleading help in ofdm.h
+
+	* itpp/comm/bch.cpp, itpp/comm/bch.h, itpp/comm/reedsolomon.cpp,
+	  itpp/comm/reedsolomon.h, tests/bch_test.cpp, tests/bch_test.ref,
+	  tests/reedsolomon_test.cpp, tests/reedsolomon_test.ref:
+	  fixes bug #3471451, see also Forum on topics on
+	  - systematic reed-solomon dec. behaves incorrect
+	  - bug in reed-solom decoder
+
+
+2012-03-31  Bogdan Cristea <cristeab@users.sourceforge.net>
+
+	* itpp/base/random_dsfmt.h, itpp/comm/exit.cpp, itpp/comm/exit.h,
+	  win32/itpp_acml.vs2005.sln, win32/itpp_acml.vs2005.vcproj,
+	  win32/itpp_acml_tests/array_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/bch_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/bessel_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/blas_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/channel_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/cholesky_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/circular_buffer_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/commfunc_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/convcode_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/converters_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/demapper_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/det_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/eigen_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/error_count_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/exit_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/fastica_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/fastmath_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/filter_design_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/filter_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/fix_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/freq_filt_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/galois_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/gf2mat_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/histogram_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/integration_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/interleaver_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/inv_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/itfile_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/itpp_acml_tests.vs2005.sln,
+	  win32/itpp_acml_tests/ldpc_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/linspace_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/llr_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/ls_solve_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/lu_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/mat_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/matfunc_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/modulator_nd_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/modulator_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/newton_search_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/parser_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/poly_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/pulse_shape_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/qr_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/rand_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/rec_syst_conv_code_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/reedsolomon_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/schur_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/sigfun_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/siso_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/sort_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/source_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/sparse_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/specmat_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/stat_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/stc_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/svd_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/timer_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/transforms_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/turbo_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/vec_test.vs2005.vcproj,
+	  win32/itpp_acml_tests/window_test.vs2005.vcproj,
+	  win32/itpp_mkl.sln, win32/itpp_mkl.vs2005.sln,
+	  win32/itpp_mkl.vs2005.vcproj,
+	  win32/itpp_mkl_tests/array_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/bch_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/bessel_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/blas_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/channel_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/cholesky_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/circular_buffer_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/commfunc_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/convcode_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/converters_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/demapper_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/det_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/eigen_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/error_count_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/exit_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/fastica_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/fastmath_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/filter_design_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/filter_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/fix_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/freq_filt_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/galois_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/gf2mat_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/histogram_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/integration_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/interleaver_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/inv_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/itfile_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/itpp_mkl_tests.vs2005.sln,
+	  win32/itpp_mkl_tests/ldpc_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/linspace_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/llr_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/ls_solve_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/lu_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/mat_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/matfunc_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/modulator_nd_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/modulator_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/newton_search_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/parser_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/poly_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/pulse_shape_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/qr_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/rand_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/rec_syst_conv_code_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/reedsolomon_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/schur_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/sigfun_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/siso_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/sort_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/source_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/sparse_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/specmat_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/stat_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/stc_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/svd_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/timer_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/transforms_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/turbo_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/vec_test.vs2005.vcproj,
+	  win32/itpp_mkl_tests/window_test.vs2005.vcproj: add vs2005
+	  project files for backward compatilityi, corrected some
+	  compilation warnings in Visual Studio 2010
+
+2012-03-25  Bogdan Cristea <cristeab@users.sourceforge.net>  
+
+	* itpp/base/itassert.h, itpp/base/itfile.cpp, itpp/comm/ldpc.cpp,
+	  itpp/signal/sigfun.cpp, itpp/srccode/vqtrain.cpp,
+	  tests/parser_test.cpp: corrected compilation warnings with gcc
+	  4.6.2
+
+2012-03-15  Bogdan Cristea <cristeab@users.sourceforge.net>
+
+	* doc/tutorial/src/stbicm.cpp, itpp/comm/siso.h,
+	  itpp/comm/siso_dem.cpp: corrected bug in stbicm example,
+	  optimization of MIMO demappers
+
+2012-03-14  Bogdan Cristea <cristeab@users.sourceforge.net> 
+
+	* doc/tutorial/demapper_mimo.doc, doc/tutorial/src/Makefile.am,
+	  doc/tutorial/src/demapper_mimo.cpp,
+	  doc/tutorial/src/dump_it_file.cpp, doc/tutorial/src/stbicm.cpp,
+	  itpp/comm/siso_dem.cpp, tests/Makefile.am,
+	  tests/demapper_test.cpp, tests/demapper_test.ref: corrected bug
+	  in MIMO demappers, add example for dumping the content of an itfile

@@ -1,0 +1,401 @@
+========================================================
+               Test of ND (MIMO) Modulators             
+========================================================
+================== 2-PAM, 4-QAM, and 4-PSK ==================
+--- REAL MIMO (NRD) CHANNEL ---------
+Dimension (nt):           4
+Bits per dimension (k):   [1 1 1 1]
+Symbols per dimension (M):[2 2 2 2]
+Bitmap for dimension 0: [[0]
+ [1]]
+Symbol coordinates for dimension 0: [1.00 -1.00]
+Bitmap for dimension 1: [[0]
+ [1]]
+Symbol coordinates for dimension 1: [1.00 -1.00]
+Bitmap for dimension 2: [[0]
+ [1]]
+Symbol coordinates for dimension 2: [1.00 -1.00]
+Bitmap for dimension 3: [[0]
+ [1]]
+Symbol coordinates for dimension 3: [1.00 -1.00]
+---------- LLR calculation unit -----------------
+LLR_calc_unit table properties:
+The granularity in the LLR representation is 0.00
+The LLR scale factor is 4096
+The largest LLR that can be represented is 32768.00
+The table resolution is 0.03
+The number of entries in the table is 300
+The tables truncates at the LLR value 9.38
+-------------------------------------------------
+
+
+--- COMPLEX MIMO (NCD) CHANNEL --------
+Dimension (nt):           2
+Bits per dimension (k):   [2 2]
+Symbols per dimension (M):[4 4]
+Bitmap for dimension 0: [[0 0]
+ [0 1]
+ [1 0]
+ [1 1]]
+Symbol coordinates for dimension 0: [0.71+0.71i -0.71+0.71i 0.71-0.71i -0.71-0.71i]
+Bitmap for dimension 1: [[0 0]
+ [0 1]
+ [1 0]
+ [1 1]]
+Symbol coordinates for dimension 1: [0.71+0.71i -0.71+0.71i 0.71-0.71i -0.71-0.71i]
+---------- LLR calculation unit -----------------
+LLR_calc_unit table properties:
+The granularity in the LLR representation is 0.00
+The LLR scale factor is 4096
+The largest LLR that can be represented is 32768.00
+The table resolution is 0.03
+The number of entries in the table is 300
+The tables truncates at the LLR value 9.38
+-------------------------------------------------
+
+
+--- COMPLEX MIMO (NCD) CHANNEL --------
+Dimension (nt):           2
+Bits per dimension (k):   [2 2]
+Symbols per dimension (M):[4 4]
+Bitmap for dimension 0: [[0 0]
+ [0 1]
+ [1 1]
+ [1 0]]
+Symbol coordinates for dimension 0: [1.00+0.00i 0.00+1.00i -1.00+0.00i 0.00-1.00i]
+Bitmap for dimension 1: [[0 0]
+ [0 1]
+ [1 1]
+ [1 0]]
+Symbol coordinates for dimension 1: [1.00+0.00i 0.00+1.00i -1.00+0.00i 0.00-1.00i]
+---------- LLR calculation unit -----------------
+LLR_calc_unit table properties:
+The granularity in the LLR representation is 0.00
+The LLR scale factor is 4096
+The largest LLR that can be represented is 32768.00
+The table resolution is 0.03
+The number of entries in the table is 300
+The tables truncates at the LLR value 9.38
+-------------------------------------------------
+
+
+PAM: full LLR: [-61.26 -21.51 64.51 -17.16]
+             : [-61.26 -21.51 64.51 -17.16]
+QAM: full LLR: [-26.76 -31.10 20.41 -25.78]
+             : [-26.76 -31.10 20.41 -25.78]
+PSK: full LLR: [-28.65 -28.87 20.15 -22.77]
+             : [-28.65 -28.87 20.15 -22.77]
+PAM: Max-Log : [-61.26 -21.51 64.51 -17.16]
+             : [-61.26 -21.51 64.51 -17.16]
+QAM: Max-Log : [-26.76 -31.10 20.41 -26.27]
+PSK: Max-Log : [-28.65 -28.87 20.15 -22.78]
+
+PAM: diag. model : [1.36 6.94 -0.02 -12.09]
+PAM: zero-forcing: [-19.46 -7.36 18.31 -6.10]
+PAM: sphere-dec. : [-1000 -1000 1000 -1000]
+
+================== 4-PAM, 16-QAM, and 16-PSK ==================
+--- REAL MIMO (NRD) CHANNEL ---------
+Dimension (nt):           4
+Bits per dimension (k):   [2 2 2 2]
+Symbols per dimension (M):[4 4 4 4]
+Bitmap for dimension 0: [[0 0]
+ [0 1]
+ [1 1]
+ [1 0]]
+Symbol coordinates for dimension 0: [1.34 0.45 -0.45 -1.34]
+Bitmap for dimension 1: [[0 0]
+ [0 1]
+ [1 1]
+ [1 0]]
+Symbol coordinates for dimension 1: [1.34 0.45 -0.45 -1.34]
+Bitmap for dimension 2: [[0 0]
+ [0 1]
+ [1 1]
+ [1 0]]
+Symbol coordinates for dimension 2: [1.34 0.45 -0.45 -1.34]
+Bitmap for dimension 3: [[0 0]
+ [0 1]
+ [1 1]
+ [1 0]]
+Symbol coordinates for dimension 3: [1.34 0.45 -0.45 -1.34]
+---------- LLR calculation unit -----------------
+LLR_calc_unit table properties:
+The granularity in the LLR representation is 0.00
+The LLR scale factor is 4096
+The largest LLR that can be represented is 32768.00
+The table resolution is 0.03
+The number of entries in the table is 300
+The tables truncates at the LLR value 9.38
+-------------------------------------------------
+
+
+--- COMPLEX MIMO (NCD) CHANNEL --------
+Dimension (nt):           2
+Bits per dimension (k):   [4 4]
+Symbols per dimension (M):[16 16]
+Bitmap for dimension 0: [[0 0 0 0]
+ [0 0 0 1]
+ [0 0 1 1]
+ [0 0 1 0]
+ [0 1 0 0]
+ [0 1 0 1]
+ [0 1 1 1]
+ [0 1 1 0]
+ [1 1 0 0]
+ [1 1 0 1]
+ [1 1 1 1]
+ [1 1 1 0]
+ [1 0 0 0]
+ [1 0 0 1]
+ [1 0 1 1]
+ [1 0 1 0]]
+Symbol coordinates for dimension 0: [0.95+0.95i 0.32+0.95i -0.32+0.95i -0.95+0.95i 0.95+0.32i 0.32+0.32i -0.32+0.32i -0.95+0.32i 0.95-0.32i 0.32-0.32i -0.32-0.32i -0.95-0.32i 0.95-0.95i 0.32-0.95i -0.32-0.95i -0.95-0.95i]
+Bitmap for dimension 1: [[0 0 0 0]
+ [0 0 0 1]
+ [0 0 1 1]
+ [0 0 1 0]
+ [0 1 0 0]
+ [0 1 0 1]
+ [0 1 1 1]
+ [0 1 1 0]
+ [1 1 0 0]
+ [1 1 0 1]
+ [1 1 1 1]
+ [1 1 1 0]
+ [1 0 0 0]
+ [1 0 0 1]
+ [1 0 1 1]
+ [1 0 1 0]]
+Symbol coordinates for dimension 1: [0.95+0.95i 0.32+0.95i -0.32+0.95i -0.95+0.95i 0.95+0.32i 0.32+0.32i -0.32+0.32i -0.95+0.32i 0.95-0.32i 0.32-0.32i -0.32-0.32i -0.95-0.32i 0.95-0.95i 0.32-0.95i -0.32-0.95i -0.95-0.95i]
+---------- LLR calculation unit -----------------
+LLR_calc_unit table properties:
+The granularity in the LLR representation is 0.00
+The LLR scale factor is 4096
+The largest LLR that can be represented is 32768.00
+The table resolution is 0.03
+The number of entries in the table is 300
+The tables truncates at the LLR value 9.38
+-------------------------------------------------
+
+
+--- COMPLEX MIMO (NCD) CHANNEL --------
+Dimension (nt):           2
+Bits per dimension (k):   [4 4]
+Symbols per dimension (M):[16 16]
+Bitmap for dimension 0: [[0 0 0 0]
+ [0 0 0 1]
+ [0 0 1 1]
+ [0 0 1 0]
+ [0 1 1 0]
+ [0 1 1 1]
+ [0 1 0 1]
+ [0 1 0 0]
+ [1 1 0 0]
+ [1 1 0 1]
+ [1 1 1 1]
+ [1 1 1 0]
+ [1 0 1 0]
+ [1 0 1 1]
+ [1 0 0 1]
+ [1 0 0 0]]
+Symbol coordinates for dimension 0: [1.00+0.00i 0.92+0.38i 0.71+0.71i 0.38+0.92i 0.00+1.00i -0.38+0.92i -0.71+0.71i -0.92+0.38i -1.00+0.00i -0.92-0.38i -0.71-0.71i -0.38-0.92i 0.00-1.00i 0.38-0.92i 0.71-0.71i 0.92-0.38i]
+Bitmap for dimension 1: [[0 0 0 0]
+ [0 0 0 1]
+ [0 0 1 1]
+ [0 0 1 0]
+ [0 1 1 0]
+ [0 1 1 1]
+ [0 1 0 1]
+ [0 1 0 0]
+ [1 1 0 0]
+ [1 1 0 1]
+ [1 1 1 1]
+ [1 1 1 0]
+ [1 0 1 0]
+ [1 0 1 1]
+ [1 0 0 1]
+ [1 0 0 0]]
+Symbol coordinates for dimension 1: [1.00+0.00i 0.92+0.38i 0.71+0.71i 0.38+0.92i 0.00+1.00i -0.38+0.92i -0.71+0.71i -0.92+0.38i -1.00+0.00i -0.92-0.38i -0.71-0.71i -0.38-0.92i 0.00-1.00i 0.38-0.92i 0.71-0.71i 0.92-0.38i]
+---------- LLR calculation unit -----------------
+LLR_calc_unit table properties:
+The granularity in the LLR representation is 0.00
+The LLR scale factor is 4096
+The largest LLR that can be represented is 32768.00
+The table resolution is 0.03
+The number of entries in the table is 300
+The tables truncates at the LLR value 9.38
+-------------------------------------------------
+
+
+PAM: full LLR: [-9.55 2.24 -15.87 2.30 12.19 2.28 9.38 -2.38]
+             : [-9.55 2.24 -15.87 2.30 12.19 2.28 9.38 -2.38]
+QAM: full LLR: [-14.32 3.78 -38.33 13.34 44.61 13.24 3.78 -11.40]
+             : [-14.32 3.78 -38.33 13.34 44.61 13.24 3.78 -11.40]
+PSK: full LLR: [-23.21 -2.04 -5.98 0.71 5.84 15.26 2.95 -0.49]
+             : [-23.21 -2.04 -5.98 0.71 5.84 15.26 2.95 -0.49]
+PAM: Max-Log : [-9.39 2.41 -16.52 2.30 12.15 2.30 9.18 -2.41]
+             : [-9.39 2.41 -16.52 2.30 12.15 2.30 9.18 -2.41]
+QAM: Max-Log : [-14.36 3.79 -38.34 13.72 44.82 13.63 3.79 -11.38]
+PSK: Max-Log : [-22.53 -1.96 -5.73 0.48 5.49 14.67 2.48 -0.48]
+
+PAM: diag. model : [2.62 1.00 -17.64 8.09 -1.66 0.05 2.46 0.34]
+PAM: zero-forcing: [-8.52 1.05 -15.85 3.78 12.39 3.12 5.46 -2.86]
+PAM: sphere-dec. : [-1000 1000 -1000 1000 1000 1000 1000 -1000]
+
+--- COMPLEX MIMO (NCD) CHANNEL --------
+Dimension (nt):           3
+Bits per dimension (k):   [2 6 4]
+Symbols per dimension (M):[4 64 16]
+Bitmap for dimension 0: [[0 0]
+ [0 1]
+ [1 0]
+ [1 1]]
+Symbol coordinates for dimension 0: [0.71+0.71i -0.71+0.71i 0.71-0.71i -0.71-0.71i]
+Bitmap for dimension 1: [[0 0 0 0 0 0]
+ [0 0 0 0 0 1]
+ [0 0 0 0 1 1]
+ [0 0 0 0 1 0]
+ [0 0 0 1 1 0]
+ [0 0 0 1 1 1]
+ [0 0 0 1 0 1]
+ [0 0 0 1 0 0]
+ [0 0 1 0 0 0]
+ [0 0 1 0 0 1]
+ [0 0 1 0 1 1]
+ [0 0 1 0 1 0]
+ [0 0 1 1 1 0]
+ [0 0 1 1 1 1]
+ [0 0 1 1 0 1]
+ [0 0 1 1 0 0]
+ [0 1 1 0 0 0]
+ [0 1 1 0 0 1]
+ [0 1 1 0 1 1]
+ [0 1 1 0 1 0]
+ [0 1 1 1 1 0]
+ [0 1 1 1 1 1]
+ [0 1 1 1 0 1]
+ [0 1 1 1 0 0]
+ [0 1 0 0 0 0]
+ [0 1 0 0 0 1]
+ [0 1 0 0 1 1]
+ [0 1 0 0 1 0]
+ [0 1 0 1 1 0]
+ [0 1 0 1 1 1]
+ [0 1 0 1 0 1]
+ [0 1 0 1 0 0]
+ [1 1 0 0 0 0]
+ [1 1 0 0 0 1]
+ [1 1 0 0 1 1]
+ [1 1 0 0 1 0]
+ [1 1 0 1 1 0]
+ [1 1 0 1 1 1]
+ [1 1 0 1 0 1]
+ [1 1 0 1 0 0]
+ [1 1 1 0 0 0]
+ [1 1 1 0 0 1]
+ [1 1 1 0 1 1]
+ [1 1 1 0 1 0]
+ [1 1 1 1 1 0]
+ [1 1 1 1 1 1]
+ [1 1 1 1 0 1]
+ [1 1 1 1 0 0]
+ [1 0 1 0 0 0]
+ [1 0 1 0 0 1]
+ [1 0 1 0 1 1]
+ [1 0 1 0 1 0]
+ [1 0 1 1 1 0]
+ [1 0 1 1 1 1]
+ [1 0 1 1 0 1]
+ [1 0 1 1 0 0]
+ [1 0 0 0 0 0]
+ [1 0 0 0 0 1]
+ [1 0 0 0 1 1]
+ [1 0 0 0 1 0]
+ [1 0 0 1 1 0]
+ [1 0 0 1 1 1]
+ [1 0 0 1 0 1]
+ [1 0 0 1 0 0]]
+Symbol coordinates for dimension 1: [1.08+1.08i 0.77+1.08i 0.46+1.08i 0.15+1.08i -0.15+1.08i -0.46+1.08i -0.77+1.08i -1.08+1.08i 1.08+0.77i 0.77+0.77i 0.46+0.77i 0.15+0.77i -0.15+0.77i -0.46+0.77i -0.77+0.77i -1.08+0.77i 1.08+0.46i 0.77+0.46i 0.46+0.46i 0.15+0.46i -0.15+0.46i -0.46+0.46i -0.77+0.46i -1.08+0.46i 1.08+0.15i 0.77+0.15i 0.46+0.15i 0.15+0.15i -0.15+0.15i -0.46+0.15i -0.77+0.15i -1.08+0.15i 1.08-0.15i 0.77-0.15i 0.46-0.15i 0.15-0.15i -0.15-0.15i -0.46-0.15i -0.77-0.15i -1.08-0.15i 1.08-0.46i 0.77-0.46i 0.46-0.46i 0.15-0.46i -0.15-0.46i -0.46-0.46i -0.77-0.46i -1.08-0.46i 1.08-0.77i 0.77-0.77i 0.46-0.77i 0.15-0.77i -0.15-0.77i -0.46-0.77i -0.77-0.77i -1.08-0.77i 1.08-1.08i 0.77-1.08i 0.46-1.08i 0.15-1.08i -0.15-1.08i -0.46-1.08i -0.77-1.08i -1.08-1.08i]
+Bitmap for dimension 2: [[0 0 0 0]
+ [0 0 0 1]
+ [0 0 1 1]
+ [0 0 1 0]
+ [0 1 0 0]
+ [0 1 0 1]
+ [0 1 1 1]
+ [0 1 1 0]
+ [1 1 0 0]
+ [1 1 0 1]
+ [1 1 1 1]
+ [1 1 1 0]
+ [1 0 0 0]
+ [1 0 0 1]
+ [1 0 1 1]
+ [1 0 1 0]]
+Symbol coordinates for dimension 2: [0.95+0.95i 0.32+0.95i -0.32+0.95i -0.95+0.95i 0.95+0.32i 0.32+0.32i -0.32+0.32i -0.95+0.32i 0.95-0.32i 0.32-0.32i -0.32-0.32i -0.95-0.32i 0.95-0.95i 0.32-0.95i -0.32-0.95i -0.95-0.95i]
+---------- LLR calculation unit -----------------
+LLR_calc_unit table properties:
+The granularity in the LLR representation is 0.00
+The LLR scale factor is 4096
+The largest LLR that can be represented is 32768.00
+The table resolution is 0.03
+The number of entries in the table is 300
+The tables truncates at the LLR value 9.38
+-------------------------------------------------
+
+
+--- REAL MIMO (NRD) CHANNEL ---------
+Dimension (nt):           6
+Bits per dimension (k):   [1 3 2 1 3 2]
+Symbols per dimension (M):[2 8 4 2 8 4]
+Bitmap for dimension 0: [[0]
+ [1]]
+Symbol coordinates for dimension 0: [1.00 -1.00]
+Bitmap for dimension 1: [[0 0 0]
+ [0 0 1]
+ [0 1 1]
+ [0 1 0]
+ [1 1 0]
+ [1 1 1]
+ [1 0 1]
+ [1 0 0]]
+Symbol coordinates for dimension 1: [1.53 1.09 0.65 0.22 -0.22 -0.65 -1.09 -1.53]
+Bitmap for dimension 2: [[0 0]
+ [0 1]
+ [1 1]
+ [1 0]]
+Symbol coordinates for dimension 2: [1.34 0.45 -0.45 -1.34]
+Bitmap for dimension 3: [[0]
+ [1]]
+Symbol coordinates for dimension 3: [1.00 -1.00]
+Bitmap for dimension 4: [[0 0 0]
+ [0 0 1]
+ [0 1 1]
+ [0 1 0]
+ [1 1 0]
+ [1 1 1]
+ [1 0 1]
+ [1 0 0]]
+Symbol coordinates for dimension 4: [1.53 1.09 0.65 0.22 -0.22 -0.65 -1.09 -1.53]
+Bitmap for dimension 5: [[0 0]
+ [0 1]
+ [1 1]
+ [1 0]]
+Symbol coordinates for dimension 5: [1.34 0.45 -0.45 -1.34]
+---------- LLR calculation unit -----------------
+LLR_calc_unit table properties:
+The granularity in the LLR representation is 0.00
+The LLR scale factor is 4096
+The largest LLR that can be represented is 32768.00
+The table resolution is 0.03
+The number of entries in the table is 300
+The tables truncates at the LLR value 9.38
+-------------------------------------------------
+
+
+0.01 0.01
+BER passed
+bit sequence : [0 1 1 0 0 1 0 0 0 1 0 0]
+PAM: full LLR: [34.60 -2.96 -30.11 11.40 16.13 -3.17 29.92 50.38 4.47 -8.37 23.30 3.50]
+QAM: full LLR: [60.29 -58.87 -98.02 22.66 6.70 -107.04 22.90 3.22 12.70 -7.41 34.29 6.74]
