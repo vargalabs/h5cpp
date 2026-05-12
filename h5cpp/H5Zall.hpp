@@ -7,6 +7,7 @@
 #include <string>
 #include <stdexcept>
 #include <cstring>
+#include <cstdint>
 #include <zlib.h>
 
 #if !defined(H5CPP_DISABLE_LIBDEFLATE)
@@ -101,6 +102,83 @@ namespace h5::impl::filter {
 		memcpy(dst,src,size);
 		return size;
 	}
+
+	// Byte-level shuffle / unshuffle.
+	// Matching HDF5 H5Z_FILTER_SHUFFLE semantics: for n elements of `type_size` bytes
+	// each, reorder bytes so that byte-k of every element is contiguous.
+	// params[0] = element size in bytes (set by H5Pset_shuffle / H5Pget_filter2).
+	inline size_t shuffle( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+		const size_t type_size = (n > 0 && params[0] > 1) ? static_cast<size_t>(params[0]) : 1;
+		if (type_size == 1 || size == 0) {
+			memcpy(dst, src, size);
+			return size;
+		}
+		const size_t count = size / type_size;
+		const char* s = static_cast<const char*>(src);
+		char*       d = static_cast<char*>(dst);
+		if (flags & H5Z_FLAG_REVERSE) {
+			// Unshuffle: interleaved → original AoS layout
+			for (size_t byte = 0; byte < type_size; ++byte)
+				for (size_t elem = 0; elem < count; ++elem)
+					d[elem * type_size + byte] = s[byte * count + elem];
+		} else {
+			// Shuffle: AoS → byte-plane layout
+			for (size_t byte = 0; byte < type_size; ++byte)
+				for (size_t elem = 0; elem < count; ++elem)
+					d[byte * count + elem] = s[elem * type_size + byte];
+		}
+		return size;
+	}
+
+	namespace {
+	inline uint32_t fletcher32_checksum(const void* data, size_t nbytes) {
+		const uint8_t* p = static_cast<const uint8_t*>(data);
+		uint32_t sum1 = 0, sum2 = 0;
+		// Process 16-bit words; if nbytes is odd the final byte is treated as a
+		// zero-padded 16-bit word (matching HDF5's reference implementation).
+		const size_t words = nbytes / 2;
+		for (size_t i = 0; i < words; ++i) {
+			const uint16_t w = (static_cast<uint16_t>(p[2*i]) << 8) | p[2*i+1];
+			sum1 = (sum1 + w) % 65535u;
+			sum2 = (sum2 + sum1) % 65535u;
+		}
+		if (nbytes & 1u) {
+			const uint16_t w = static_cast<uint16_t>(p[nbytes - 1]) << 8;
+			sum1 = (sum1 + w) % 65535u;
+			sum2 = (sum2 + sum1) % 65535u;
+		}
+		return (sum2 << 16) | sum1;
+	}
+	} // anonymous namespace
+
+	// Fletcher32 checksum filter.
+	// Encode: appends a 4-byte big-endian checksum → returns size + 4.
+	// Decode: verifies, strips 4-byte checksum → returns size - 4, or 0 on mismatch.
+	inline size_t fletcher32( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
+		if (flags & H5Z_FLAG_REVERSE) {
+			if (size < 4) return 0;
+			const size_t data_size = size - 4;
+			const uint8_t* stored_bytes = static_cast<const uint8_t*>(src) + data_size;
+			const uint32_t stored =
+				(static_cast<uint32_t>(stored_bytes[0]) << 24) |
+				(static_cast<uint32_t>(stored_bytes[1]) << 16) |
+				(static_cast<uint32_t>(stored_bytes[2]) <<  8) |
+				 static_cast<uint32_t>(stored_bytes[3]);
+			const uint32_t computed = fletcher32_checksum(src, data_size);
+			if (stored != computed) return 0;
+			memcpy(dst, src, data_size);
+			return data_size;
+		} else {
+			const uint32_t checksum = fletcher32_checksum(src, size);
+			memcpy(dst, src, size);
+			uint8_t* out = static_cast<uint8_t*>(dst) + size;
+			out[0] = static_cast<uint8_t>(checksum >> 24);
+			out[1] = static_cast<uint8_t>(checksum >> 16);
+			out[2] = static_cast<uint8_t>(checksum >>  8);
+			out[3] = static_cast<uint8_t>(checksum);
+			return size + 4;
+		}
+	}
 	inline size_t gzip( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
 		return deflate(dst, src, size, flags, n, params);
 	}
@@ -112,16 +190,7 @@ namespace h5::impl::filter {
 		memcpy(dst,src,size);
 		return size;
 	}
-	inline size_t fletcher32( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
-		memcpy(dst,src,size);
-		return size;
-	}
-
 	inline size_t add( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
-		memcpy(dst,src,size);
-		return size;
-	}
-	inline size_t shuffle( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
 		memcpy(dst,src,size);
 		return size;
 	}
