@@ -184,6 +184,7 @@ inline std::ostream& operator<<(std::ostream &os, const h5::dt_t<T>& dt) {
 		case H5T_ENUM: ; break;
 		case H5T_VLEN: ; break;
 		case H5T_ARRAY: ;break;
+		default: break;
 	}
 	/*
 */
