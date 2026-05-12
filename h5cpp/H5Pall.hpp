@@ -62,7 +62,7 @@ namespace h5 { namespace impl {
 			//int i = capi_call + 1;
 			/*CAPI needs `this` hid_t id passed along */
 			capi_t capi_args = std::tuple_cat( std::tie(id), args );
-			H5CPP_CHECK_NZ( h5::compat::apply(capi_call, capi_args),
+			H5CPP_CHECK_NZ( std::apply(capi_call, capi_args),
 					h5::error::property_list::argument,"failed to parse arguments...");
 		}
 
@@ -124,7 +124,7 @@ namespace h5 { namespace impl {
 	H5CPP__capicall( lapl, H5P_LINK_ACCESS)      H5CPP__capicall( lcpl, H5P_LINK_CREATE	 )
 	H5CPP__capicall( ocpl, H5P_OBJECT_COPY)      H5CPP__capicall( ocrl, H5P_OBJECT_CREATE )
 	H5CPP__capicall( scpl, H5P_STRING_CREATE)
-	#undef H5CPP__defid
+	#undef H5CPP__capicall
 
 	// only data control property list set_chunk has this pattern, lets allow to define CAPI argument lists 
 	// the same way as with others

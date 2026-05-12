@@ -43,18 +43,18 @@ namespace test {
 
 TEST_CASE("compat make_index_sequence builds expected sequence") {
     CHECK((std::is_same_v<
-        h5::compat::make_index_sequence<0>,
-        h5::compat::index_sequence<>
+        std::make_index_sequence<0>,
+        std::index_sequence<>
     >));
 
     CHECK((std::is_same_v<
-        h5::compat::make_index_sequence<1>,
-        h5::compat::index_sequence<0>
+        std::make_index_sequence<1>,
+        std::index_sequence<0>
     >));
 
     CHECK((std::is_same_v<
-        h5::compat::make_index_sequence<4>,
-        h5::compat::index_sequence<0,1,2,3>
+        std::make_index_sequence<4>,
+        std::index_sequence<0,1,2,3>
     >));
 }
 
@@ -67,7 +67,7 @@ TEST_CASE("compat apply unpacks tuple into callable") {
     };
 
     auto args = std::make_tuple(7, 2.5, 'x');
-    CHECK(h5::compat::apply(fn, args) == 42);
+    CHECK(std::apply(fn, args) == 42);
 }
 
 TEST_CASE("compat detection idiom detects nested types") {

@@ -62,16 +62,6 @@
 	#define H5CPP_ERROR_MSG( msg ) std::string( __FILE__ ) + " line#  " + std::to_string( __LINE__ ) + " : " + msg
 #endif
 
-// detecting c++17 if constexpr cond ( ... ){} 
-#ifdef __cpp_if_constexpr
-	#define h5cpp__constexpr constexpr
-	#define h5cpp__assert( condition, msg ) static_assert( condition, msg )
-#else
-	#define h5cpp__constexpr
-	#define h5cpp__assert( condition, msg ) if( !condition ) throw std::runtime_error( "ERROR: "  msg )
-#endif
-
-
 #define H5CPP_CHECK_EQ( call, exception, msg ) if( call == 0 ) throw exception( H5CPP_ERROR_MSG( msg ));
 #define H5CPP_CHECK_NZ( call, exception, msg ) if( call < 0 ) throw exception( H5CPP_ERROR_MSG( msg ));
 #define H5CPP_CHECK_NULL( call, exception, msg ) if( call == nullptr ) throw exception( H5CPP_ERROR_MSG( msg ));
