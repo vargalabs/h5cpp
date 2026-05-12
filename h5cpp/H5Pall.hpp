@@ -67,7 +67,7 @@ namespace h5::impl {
 			//int i = capi_call + 1;
 			/*CAPI needs `this` hid_t id passed along */
 			capi_t capi_args = std::tuple_cat( std::tie(id), args );
-			H5CPP_CHECK_NZ( h5::compat::apply(capi_call, capi_args),
+			H5CPP_CHECK_NZ( std::apply(capi_call, capi_args),
 					h5::error::property_list::argument,"failed to parse arguments...");
 		}
 
@@ -129,7 +129,7 @@ namespace h5::impl {
 	H5CPP__capicall( lapl, H5P_LINK_ACCESS)      H5CPP__capicall( lcpl, H5P_LINK_CREATE	 )
 	H5CPP__capicall( ocpl, H5P_OBJECT_COPY)      H5CPP__capicall( ocrl, H5P_OBJECT_CREATE )
 	H5CPP__capicall( scpl, H5P_STRING_CREATE)
-	#undef H5CPP__defid
+	#undef H5CPP__capicall
 
 	// only data control property list set_chunk has this pattern, lets allow to define CAPI argument lists 
 	// the same way as with others
@@ -210,9 +210,8 @@ using mdc_config               = impl::fapl_call< impl::fapl_args<hid_t,H5AC_cac
 using mdc_image_config         = impl::fapl_call< impl::fapl_args<hid_t,H5AC_cache_image_config_t*>,H5Pset_mdc_image_config>;
 using mdc_log_options          = impl::fapl_call< impl::fapl_args<hid_t,hbool_t,const char*,hbool_t>,H5Pset_mdc_log_options>;
 #endif
-#if H5_VERSION_GE(1,14,0)
-#ifdef H5_HAVE_DIRECT
-using fapl_direct              = impl::fapl_call<impl::fapl_args<hid_t,size_t,size_t,size_t>, H5Pset_fapl_direct>;
+#if H5_VERSION_GE(1,14,0) //FIXME: find out why the compile error with valid 1.8.0 version 
+using fapl_direct              = impl::fapl_call<impl::fapl_args<hid_t,size_t,size_t,size_t, H5Pset_fapl_direct>>;
 #endif
 #endif
 //

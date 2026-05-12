@@ -281,7 +281,7 @@ namespace h5 {
 					static_cast<hid_t>( ds ), static_cast<hid_t>(mem_type), static_cast<hid_t>(mem_space),
 					static_cast<hid_t>(file_space),	static_cast<hid_t>(dxpl), ptr ), h5::error::io::dataset::read, h5::error::msg::read_dataset);
 		for(int i=0; i<nelem; i++)
-				if( ptr[i] != NULL )
+				if( ptr[i] != nullptr )
 						ref[i] = std::string( ptr[i] );
 		H5Dvlen_reclaim (mem_type, mem_space, H5P_DEFAULT, ptr);
 		free(ptr);

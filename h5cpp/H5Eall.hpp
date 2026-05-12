@@ -26,7 +26,7 @@ namespace h5 {
 	 */
     inline void mute( ){
 		H5Eget_auto2(H5E_DEFAULT, &error_stack_callback, &error_stack_client_data);
-		H5Eset_auto2(H5E_DEFAULT, NULL, NULL);
+		H5Eset_auto2(H5E_DEFAULT, nullptr, nullptr);
     }
 	/**  @ingroup file-io
 	 * @brief restores previously saved error handler with h5::mute [Read on Error Handling/Exceptions](@ref link_error_handler)

@@ -180,7 +180,7 @@ inline void h5::impl::pipeline_t<Derived>::set_cache( const h5::dcpl_t& dcpl, si
 		ptr1.reset( (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size ) );
 #endif
 	// get an alias to smart ptr
-	if( (chunk0 = ptr0.get()) == NULL || (chunk1 = ptr1.get()) == NULL )
+	if( (chunk0 = ptr0.get()) == nullptr || (chunk1 = ptr1.get()) == nullptr )
 	   	throw h5::error::io::dataset::open( H5CPP_ERROR_MSG("CTOR: couldn't allocate memory for caching chunks, invalid/check size?"));
 }
 

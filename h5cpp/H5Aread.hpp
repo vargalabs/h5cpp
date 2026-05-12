@@ -31,8 +31,8 @@ namespace h5 {
 
 	//POD ELEMENT TYPES: Rank 0 and rank > 0
 	template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
-	std::enable_if_t< !std::is_arithmetic_v<D> && std::is_pod_v<D> && !std::is_same_v<T,std::string>,
-	T> aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
+	typename std::enable_if< !std::is_arithmetic<D>::value && (std::is_standard_layout_v<D> && std::is_trivial_v<D>) && !std::is_same<T,std::string>::value,
+	T>::type aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
 		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
 		hid_t id;
 		H5CPP_CHECK_NZ( (id = H5Aget_space( static_cast<hid_t>(attr) )),
@@ -78,7 +78,7 @@ namespace h5 {
             object = std::string(*ptr), free(ptr);
         } else {
             for( size_t i=0; i<nelem; i++)
-			    if( ptr[i] != NULL ) object[i] = std::string( ptr[i] );
+			    if( ptr[i] != nullptr ) object[i] = std::string( ptr[i] );
             free(ptr);
         }
 		return object;

@@ -1,0 +1,11 @@
+# H5CPP C++ Standard Compliance Roadmap
+
+## C++20
+- [ ] concept/requires — Could replace heavy SFINAE in H5Tmeta.hpp and I/O dispatch headers. Medium effort, breaks C++17 compat unless behind feature macros.
+- [ ] std::span — Natural fit for write(const T* ptr, ...) / read(..., T* ptr) overloads. Low effort, backward-compatible.
+
+## C++23
+- [ ] std::expected — Strategic opportunity for a non-throwing error-handling API. High effort.
+
+## C++26
+- [ ] reflection — Could eventually eliminate the external h5cpp compiler tool for POD struct registration. Watch but don't design around it yet.

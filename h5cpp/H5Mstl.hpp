@@ -36,13 +36,12 @@ namespace h5::impl {
 
 	// helpers
 	template <class T>
-		using is_scalar = std::bool_constant<std::is_integral_v<T> || std::is_pod_v<T> || std::is_same_v<T,std::string>>;
-	template <class T> struct is_vector : std::false_type {};
-	template <class T, class A> struct is_vector<std::vector<T, A>> : std::true_type {};
-	template <class T> struct is_initializer_list : std::false_type {};
-	template <class T> struct is_initializer_list<std::initializer_list<T>> : std::true_type {};
-	template <class T>
-		using is_rank01 = std::bool_constant<is_vector<T>::value || is_initializer_list<T>::value>;
+		using is_scalar = std::integral_constant<bool,
+			std::is_integral<T>::value || (std::is_standard_layout_v<T> && std::is_trivial_v<T>) || std::is_same<T,std::string>::value>;
+	template <class T, class B = typename impl::decay<T>::type>
+		using is_rank01 = std::integral_constant<bool,
+			std::is_same<T,std::initializer_list<B>>::value || 
+			std::is_same<T,std::vector<B>>::value >;
 
 	template<class T> struct rank : public std::integral_constant<size_t,0>{};
 	template<> struct rank<std::string>: public std::integral_constant<size_t,1>{};
@@ -50,10 +49,10 @@ namespace h5::impl {
 	template<class T> struct rank<std::vector<T>>: public std::integral_constant<size_t,1>{};
 
 	// 3.) read access
-	template <class T> inline std::enable_if_t<std::is_integral_v<T> || std::is_pod_v<T>,
-		const T*> data( const T& ref ){ return &ref; }
-	template<class T> inline std::enable_if_t< impl::is_scalar<T>::value,
-		const T*> data( const std::initializer_list<T>& ref ){ return ref.begin(); }
+	template <class T> inline typename std::enable_if<std::is_integral<T>::value || (std::is_standard_layout_v<T> && std::is_trivial_v<T>),
+		const T*>::type data( const T& ref ){ return &ref; }
+	template<class T> inline typename std::enable_if< impl::is_scalar<T>::value,
+		const T*>::type data( const std::initializer_list<T>& ref ){ return ref.begin(); }
 	inline const char* const* data( const std::initializer_list<const char*>& ref ){ return ref.begin(); }
 	inline const char* data( const std::string& ref ){ return ref.c_str(); }
 	template <class T, class A> inline const T* data( const std::vector<T, A>& ref ){

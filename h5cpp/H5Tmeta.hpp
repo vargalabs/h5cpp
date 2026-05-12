@@ -72,7 +72,7 @@ namespace h5::meta {
 
     /* Objects may reside in continuous memory region such as vectors, matrices, POD structures can be saved/loaded in a single transfer,
      * the rest needs to be handled on a member variable bases*/
-    template <class T, class... Ts> struct is_contiguous : std::bool_constant<std::is_pod_v<T>> {};
+    template <class T, class... Ts> struct is_contiguous : std::integral_constant<bool, (std::is_standard_layout_v<T> && std::is_trivial_v<T>)> {};
     template <class T, class... Ts> struct is_contiguous <std::basic_string<T,Ts...>> : std::true_type {};
     template <class T, class... Ts> struct is_contiguous <std::basic_string_view<T,Ts...>> : std::true_type {};
     template <size_t N> struct is_contiguous <const char*[N]> : std::false_type {};
@@ -80,9 +80,9 @@ namespace h5::meta {
     template <class T> struct is_contiguous <std::complex<T>> : std::true_type{};
     template <class... Ts> struct is_contiguous <std::vector<bool,Ts...>> : std::false_type {};
     template <class T, class... Ts> struct is_contiguous <std::vector<T,Ts...>> :
-        std::bool_constant<std::is_pod_v<T>>{};
+        std::integral_constant<bool, (std::is_standard_layout_v<T> && std::is_trivial_v<T>)>{};
     template <class T, size_t N> struct is_contiguous <std::array<T,N>> :
-        std::bool_constant<std::is_pod_v<T>>{};
+        std::integral_constant<bool, (std::is_standard_layout_v<T> && std::is_trivial_v<T>)>{};
 
     template <class T, class... Ts> struct is_linalg : std::false_type {};
     template <class C, class T, class... Cs> struct is_valid : std::false_type {};

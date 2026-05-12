@@ -89,7 +89,7 @@ namespace h5 {
 /* initialized to invalid state
  * */
 inline h5::pt_t::pt_t() :
-	dxpl{H5Pcreate(H5P_DATASET_XFER)},ds{H5I_UNINIT},n{0},fill_value{NULL}{
+	dxpl{H5Pcreate(H5P_DATASET_XFER)},ds{H5I_UNINIT},n{0},fill_value{nullptr}{
 		for(hsize_t i=0; i<H5CPP_MAX_RANK; i++ )
 			count[i] = 1, offset[i] = 0;
 	}
@@ -158,9 +158,9 @@ inline void h5::pt_t::append( const std::string& ref ) {
 	h5::sp_t mem_space{H5Screate_simple(static_cast<int>(rank), &count, nullptr )};
 	h5::sp_t file_space{H5Dget_space( static_cast<::hid_t>(ds) )};
 	h5::select_all( mem_space );
-	H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, NULL, &block, &count);
-
-	H5Dwrite( static_cast<hid_t>( ds ),
+	H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, nullptr, &block, &count);
+	
+	H5Dwrite( static_cast<hid_t>( ds ), 
 		dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
 	n = 0;
 }
@@ -253,7 +253,7 @@ void h5::pt_t::flush(){
 	 	h5::sp_t mem_space{H5Screate_simple(static_cast<int>(rank), &count, nullptr )};
 		h5::sp_t file_space{H5Dget_space( static_cast<::hid_t>(ds) )};
 		h5::select_all( mem_space );
-		H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, NULL, &block, &count);
+		H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, nullptr, &block, &count);
 
 		H5Dwrite( static_cast<hid_t>( ds ), 
 			dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
