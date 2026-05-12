@@ -158,7 +158,7 @@ inline void h5::impl::pipeline_t<Derived>::set_cache( const h5::dcpl_t& dcpl, si
 	ptr0 = std::move( std::unique_ptr<char>{ (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size )} );
 	ptr1 = std::move( std::unique_ptr<char>{ (char*)aligned_alloc( H5CPP_MEM_ALIGNMENT, block_size )} );
 	// get an alias to smart ptr
-	if( (chunk0 = ptr0.get()) == NULL || (chunk1 = ptr1.get()) == NULL )
+	if( (chunk0 = ptr0.get()) == nullptr || (chunk1 = ptr1.get()) == nullptr )
 	   	throw h5::error::io::dataset::open( H5CPP_ERROR_MSG("CTOR: couldn't allocate memory for caching chunks, invalid/check size?"));
 }
 

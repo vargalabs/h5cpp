@@ -59,7 +59,7 @@ namespace h5 {
 	template <class T>
 	inline unsigned get_simple_extent_dims( const h5::sp_t& file_space, T& current_dims ){
 		int rank;
-		H5CPP_CHECK_NZ( (rank = H5Sget_simple_extent_dims(static_cast<hid_t>( file_space ), *current_dims, NULL )),
+		H5CPP_CHECK_NZ( (rank = H5Sget_simple_extent_dims(static_cast<hid_t>( file_space ), *current_dims, nullptr )),
 				std::runtime_error, h5::error::msg::get_simple_extent_dims );
 		// don't forget to set rank
 		current_dims.rank = rank;
@@ -144,7 +144,7 @@ namespace h5 {
 	inline void select_hyperslab(const h5::sp_t& sp, const T& offset, const h5::count_t& count ){
 		hsize_t cnt[] =  {1,1,1,1,1,1,1,1};
 		H5CPP_CHECK_NZ(
-				H5Sselect_hyperslab( static_cast<hid_t>(sp), H5S_SELECT_SET, *offset, NULL, cnt, *count),
+				H5Sselect_hyperslab( static_cast<hid_t>(sp), H5S_SELECT_SET, *offset, nullptr, cnt, *count),
 			   std::runtime_error,	h5::error::msg::select_hyperslab);
 	}
 	inline void select_hyperslab(const h5::sp_t& sp, const h5::offset_t& offset, const h5::stride_t& stride,
@@ -216,7 +216,7 @@ namespace h5 {
 					static_cast<::hid_t>(type), buffer );
 			return buffer;
 		} else
-			return NULL;
+			return nullptr;
 	}
 
 	inline void * get_fill_value(const h5::ds_t& ds){
