@@ -15,3 +15,6 @@ endfunction()
 
 add_example_test(test_string_io)
 add_example_test(test_stl_vector_io)
+add_example_test(test_basics_io)
+add_example_test(test_raw_memory_io)
+add_example_test(test_csv_io)
