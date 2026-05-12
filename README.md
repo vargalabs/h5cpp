@@ -1,10 +1,7 @@
-<!---
- Copyright (c) 2018 vargaconsulting, Toronto,ON Canada
- Author: Varga, Steven <steven@vargaconsulting.ca>
---->
-
 [![CI](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml/badge.svg)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/vargalabs/h5cpp/branch/main/graph/badge.svg)](https://app.codecov.io/gh/vargalabs/h5cpp/tree/main)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20123216.svg)](https://doi.org/10.5281/zenodo.20123216)
 [![GitHub release](https://img.shields.io/github/v/release/vargalabs/h5cpp.svg)](https://github.com/vargalabs/h5cpp/releases)
 [![Documentation](https://img.shields.io/badge/docs-stable-blue)](https://vargalabs.github.io/h5cpp)
 
@@ -13,232 +10,154 @@ Easy to use  [HDF5][hdf5] C++ templates for Serial and Paralell HDF5
 
 ## Build Matrix
 
-| OS / Compiler | GCC 13       | GCC 14       | GCC 15       | Clang 17       | Clang 18       | Clang 19       | Clang 20       |
-|---------------|--------------|--------------|--------------|----------------|----------------|----------------|----------------|
-| Ubuntu 22.04  |![gcc13][200] |![gcc14][201] |![gcc15][202] |![clang17][250] |![clang18][251] |![clang19][252] |![clang20][253] |
-| Ubuntu 24.04  |![gcc13][300] |![gcc14][301] |![gcc15][302] |![clang17][350] |![clang18][351] |![clang19][352] |![clang20][353] |
+| OS / Compiler | GCC 13        | GCC 14        | GCC 15      | Clang 17   | Clang 18     | Clang 19     | Clang 20     | Apple Clang | MSVC         |
+|---------------|---------------|---------------|-----------|--------------|--------------|--------------|--------------|-------------|--------------|
+| Ubuntu 22.04  | ![gcc13][200] | ![NA][NA]     | ![NA][NA] | ![cl17][250] | ![cl18][251] | ![cl19][252] | ![cl20][253] | ![NA][NA]   | ![NA][NA]    |
+| Ubuntu 24.04  | ![gcc13][300] | ![gcc14][301] | ![NA][NA] | ![NA][NA]    | ![cl18][351] | ![cl19][352] | ![cl20][353] | ![NA][NA]   | ![NA][NA]    |
+| macOS 15      | ![NA][NA]     | ![NA][NA]     | ![NA][NA] | ![NA][NA]    | ![NA][NA]    | ![NA][NA]    | ![NA][NA]    | ![ac][400]  | ![NA][NA]    |
+| Windows       | ![NA][NA]     | ![NA][NA]     | ![NA][NA] | ![NA][NA]    | ![NA][NA]    | ![NA][NA]    | ![NA][NA]    | ![NA][NA]   | ![msvc][500] |
 
-**News:**
-**optional custom dataype** is added to `h5::create` to allow custom dataypes passed along the other arguments. 
-```cpp
-hsize_t dataset_size = 1'000'000;
 
-using custom_t = char[42];
-h5::dt_t<custom_t> hdf5_data_type{H5Tcreate(H5T_STRING, sizeof(custom_t))};
-H5Tset_cset(hdf5_data_type, H5T_CSET_UTF8); // you can always call HDF5 CAPI functions on any H5CPP resource 
+**H5CPP is a modern C++ template library for serial and parallel HDF5 I/O**, designed to make high-performance persistence natural for C++ applications. It provides type-safe RAII wrappers around HDF5 resources, high-level create, read, write, and append operations, and seamless interoperability with the native HDF5 C API. H5CPP supports primitive numeric types, POD/C/C++ structs, std::vector, std::string, and major linear algebra containers including Armadillo, Eigen, Blaze, Blitz++, Boost uBLAS, IT++, and dlib.
 
-// `custom_t` is passed as template parameter, 
-h5::ds_t ds = h5::create<custom_t>(fd, "my/dataset", h5::chunk{4096}, h5::current_dims{dataset_size},
-    hdf5_data_type)); // <- h5::dt_t<custom_t> argument is passed along 
+**The library includes compiler-assisted object persistence** for complex user-defined types, **enabling efficient storage of structured C++ data in portable HDF5 containers**. It supports chunked and compressed datasets, extendable packet-table style streams, hyperslab selection, **custom HDF5 datatypes, and MPI-enabled parallel HDF5 workflows using independent or collective I/O**.
 
-//example interop with HDF5 CAPI, where you need to pass `dt_t<custom_t>` type descriptor
-h5::sp_t mem_space{H5Screate_simple(1, &dataset_size, nullptr )};
-H5Sselect_all(mem_space);
-// file space
-h5::sp_t file_space{H5Dget_space(ds)};
-H5Sselect_all(file_space);
+H5CPP **is intended for** scientific computing, **high-performance computing**, machine learning, numerical analysis, and data-intensive C++ applications **that require portable**, inspectable, **and efficient binary storage** compatible with the broader HDF5 ecosystem, **including Python, R, MATLAB, Fortran, Julia, and other HDF5-capable environments**.
 
-H5Dwrite( ds[idx], hdf5_data_type, mem_space, file_space, H5P_DEFAULT, data.data());
+
+
+## Migration and Contribution Workflow
+
+H5CPP is being migrated from its current stable state toward a modernized implementation with broader compiler coverage, improved platform support, and
+new library features. The migration is expected to be uneventful for existing users, but regressions, portability issues, and missing feature coverage should
+be tracked through GitHub issues. When you encounter a problem please file an issue in the pattern described under `issue naming`; if you have a fix, follow the steps further down.
+
+Fixes and contributions are welcome, including external feature branches and pull requests. All contributions are accepted under the MIT license.
+
+### Issue naming
+
+Issues should follow the form:
+
+```text
+<group/category>, <description>
 ```
 
+Examples:
 
-
-
-The [h5cpp source transformation tool](https://github.com/vargalabs/h5cpp-compiler) requires Clang/LLVM 14, 15, or 17.
-
-
-[Hierarchical Data Format][hdf5] prevalent in high performance scientific computing, sits directly on top of sequential or parallel file systems, providing block and stream operations on standardized or custom binary/text objects. Scientific computing platforms such as Python, R, Matlab, Fortran,  Julia [and many more...] come with the necessary libraries to read write HDF5 dataset. This edition simplifies interactions with [popular linear algebra libraries][304], provides [compiler assisted seamless object persistence][303], Standard Template Library support and equipped with novel [error handling architecture][400].
-
-H5CPP is a novel approach to  persistence in the field of machine learning, it provides high performance sequential and block access to HDF5 containers through modern C++ [Download packages from here.](http://h5cpp.org/download) If you are interested in h5cpp LLVM/clang based source code transformation tool [you find it in this separate project.](https://github.com/vargalabs/h5cpp-compiler)
-
-You can read this [blog post][500] published on HDFGroup Blog site to find out where the project is originated. [Click here Doxygen based Documentation][501] pages. Browse [highlighted examples][502], follow this link to [our spring presentation](http://webinar.h5cpp.org) or take a peek at the upcoming [ISC'19 BOF](http://isc19.hdf5.io), where I am [presenting H5CPP](https://forum.hdfgroup.org/t/hdf5-bof-at-isc-19/5692).
-
-H5CPP for MPI 
----------------
-Proud to announce to the HPC community that H5CPP is now MPI capable. The prerequisites are: c++17 capable MPI compiler, and linking against the Parallel HDF5 library. The template system provides the same easy to use functionality as in the serial version, and may be enabled by including parallel `hdf5.h` then passing `h5::mpiio({mpi_com, mpi_info})` to `h5::create | h5::open | h5::write | h5::read `, as well as `h5::independent` and `h5::collective` data transfer properties. There are examples for [independent][503], [collective][504] IO, as well as a [short program][505] to demonstrate throughput. The MPI extension supports all parallel HDF5 features, while the documentation is in progress please look at the tail end of `H5Pall.hpp` for details.
-
-**Note:** `h5::append` operator and attributes are not yet tested, and probably are non-functional.
-
-Tested against:
------------------
-- gcc 7.4.0, gcc 8.3.0, gcc 9.0.1
-- clang 6.0
-
-**Note:** the preferred compiler is gcc, however there is work put in to broaden the support for major modern C++ compilers. Please contact me if there is any shortcomings.
-
-Templates:
-----------
-
-**create dataset within an opened hdf5 file**
-
-```cpp
-file ::= const h5::fd_t& fd | const std::string& file_path;
-dataspace ::= const h5::sp_t& dataspace | const h5::current_dims& current_dim [, const h5::max_dims& max_dims ] |  
-    [,const h5::current_dims& current_dim] , const h5::max_dims& max_dims;
-
-template <typename T> h5::ds_t create( file, const std::string& dataset_path, dataspace, 
-    [, const h5::lcpl_t& lcpl] [, const h5::dcpl_t& dcpl] [, const h5::dapl_t& dapl] [const h5::dt_t<T>]);
-
+```text
+ci, add macOS AppleClang runner
+fix, resolve HDF5 discovery on Homebrew
+feature, add compiler metadata contract
+refactor, simplify datatype synthesis
+docs, update migration notes
 ```
 
-**read a dataset and return a reference of the created object**
-```cpp
-dataset ::= (const h5::fd_t& fd | const std::string& file_path, const std::string& dataset_path ) | const h5::ds_t& ds;
+The category should describe the intent of the work, for example:
 
-template <typename T> T read( dataset
-    [, const h5::offset_t& offset]  [, const h5::stride_t& stride] [, const h5::count_t& count]
-    [, const h5::dxpl_t& dxpl ] ) const;
-template <typename T> h5::err_t read( dataset, T& ref 
-    [, const h5::offset_t& offset]  [, const h5::stride_t& stride] [, const h5::count_t& count]
-    [, const h5::dxpl_t& dxpl ] ) [noexcept] const;						 
+```text
+fix
+feature
+refactor
+ci
+docs
+test
+legal
+cleanup
 ```
 
-**write dataset into a specified location**
-```cpp
-dataset ::= (const h5::fd_t& fd | const std::string& file_path, const std::string& dataset_path ) | const h5::ds_t& ds;
+### Branch naming
 
-template <typename T> h5::err_t write( dataset, const T* ptr
-    [,const hsize_t* offset] [,const hsize_t* stride] ,const hsize_t* count [, const h5::dxpl_t dxpl ]  ) noexcept;
-template <typename T> h5::err_t write( dataset,  const T& ref
-    [,const h5::offset_t& offset] [,const h5::stride_t& stride]  [,const& h5::dxcpl_t& dxpl] ) [noexept];
+Feature branches should be created from the current `staging` branch and follow
+the form:
+
+```text
+<#issue>-<category>-<description>
 ```
 
-**append to extendable C++/C struct dataset**
-```cpp
-#include <h5cpp/core>
-	#include "your_data_definition.h"
-#include <h5cpp/io>
-template <typename T> void h5::append(h5::pt_t& ds, const T& ref) [noexcept];
+Examples:
+
+```text
+138-ci-add-macos-appleclang-runner
+139-fix-hdf5-homebrew-discovery
+140-refactor-datatype-synthesis
 ```
 
-All **file and dataset io** descriptors implement [raii idiom][601] and close underlying resource when going out of scope, 
-and may be seamlessly passed to HDF5 CAPI calls when implicit conversion enabled. Similarly templates can take CAPI `hid_t` identifiers as arguments where applicable provided conversion policy allows. See [conversion policy][601] for details.
+This is the same style expected when creating an issue-linked development branch
+with `gh issue develop <#issue>`. If the generated branch name differs, rename or
+create the branch using the project convention.
 
-install:
------------
-On the [projects download page](http://h5cpp.org/download) you find debian, rpm and general tar.gz packages with detailed instructions. Or get the
-download link to the header only [h5cpp-dev_1.10.4.deb](http://h5cpp.org/download/h5cpp-dev_1.10.4.1_amd64.deb) and the binary compiler 
-[h5cpp_1.10.4.deb](http://h5cpp.org/download/h5cpp_1.10.4.1_amd64.deb) directly from this page.
+New work should always start from the current `staging` branch:
 
-
-supported classes:
-----------------------
-```yacc
-T := ([unsigned] ( int8_t | int16_t | int32_t | int64_t )) | ( float | double  )
-S := T | c/c++ struct | std::string
-ref := std::vector<S> 
-	| arma::Row<T> | arma::Col<T> | arma::Mat<T> | arma::Cube<T> 
-	| Eigen::Matrix<T,Dynamic,Dynamic> | Eigen::Matrix<T,Dynamic,1> | Eigen::Matrix<T,1,Dynamic>
-	| Eigen::Array<T,Dynamic,Dynamic>  | Eigen::Array<T,Dynamic,1>  | Eigen::Array<T,1,Dynamic>
-	| blaze::DynamicVector<T,rowVector> |  blaze::DynamicVector<T,colVector>
-	| blaze::DynamicVector<T,blaze::rowVector> |  blaze::DynamicVector<T,blaze::colVector>
-	| blaze::DynamicMatrix<T,blaze::rowMajor>  |  blaze::DynamicMatrix<T,blaze::colMajor>
-	| itpp::Mat<T> | itpp::Vec<T>
-	| blitz::Array<T,1> | blitz::Array<T,2> | blitz::Array<T,3>
-	| dlib::Matrix<T>   | dlib::Vector<T,1> 
-	| ublas::matrix<T>  | ublas::vector<T>
-ptr 	:= T* 
-accept 	:= ref | ptr 
-```
-In addition to the standard data types offered by BLAS/LAPACK systems and [POD struct][12] -s,  `std::vector` also supports `std::string` data-types mapping N dimensional variable-length C like string HDF5 data-sets to `std::vector<std::string>` objects.
-
-short  examples:
-----------------
-*to read/map a 10x5 matrix from a 3D array from location {3,4,1}*
-```cpp
-#include <armadillo>
-#include <h5cpp/all>
-...
-auto fd = h5::open("some_file.h5", H5F_ACC_RDWR);
-/* the RVO arma::Mat<double> object will have the size 10x5 filled*/
-try {
-	/* will drop extents of unit dimension returns a 2D object */
-	auto M = h5::read<arma::mat>(fd,"path/to/object", 
-        h5::offset{3,4,1}, h5::count{10,1,5}, h5::stride{3,1,1} ,h5::block{2,1,1} );
-} catch (const std::runtime_error& ex ){
-	...
-}
-// fd closes underlying resource (raii idiom)
-```
-*to write the entire matrix back to a different file*
-```cpp
-#include <Eigen/Dense>
-#include <h5cpp/all>
-
-h5::fd_t fd = h5::create("some_file.h5",H5F_ACC_TRUNC);
-h5::write(fd,"/result",M);
+```bash
+git fetch origin
+git checkout staging
+git pull --ff-only origin staging
+gh issue develop <#issue> --checkout
 ```
 
-*to create an dataset recording a stream of struct into an extendable chunked dataset with GZIP level 9 compression:*
-```cpp
-#include <h5cpp/core>
-	#include "your_data_definition.h"
-#include <h5cpp/io>
-...
-auto ds = h5::create<some_type>(fd,"bids", h5::max_dims{H5S_UNLIMITED}, h5::chunk{1000} | h5::gzip{9});
-```
-*to append records to an HDF5 datastream* 
-```cpp
-#include <h5cpp/core>
-	#include "your_data_definition.h"
-#include <h5cpp/io>
-auto fd = h5::create("NYSE high freq dataset.h5");
-h5::pt_t pt = h5::create<ns::nyse_stock_quote>( fd, 
-		"price_quotes/2018-01-05.qte",h5::max_dims{H5S_UNLIMITED}, h5::chunk{1024} | h5::gzip{9} );
-quote_update_t qu;
+If needed, ensure the resulting branch follows the project naming convention.
 
-bool having_a_good_day{true};
-while( having_a_good_day ){
-	try{
-		recieve_data_from_udp_stream( qu )
-		h5::append(pt, qu);
-	} catch ( ... ){
-        if( cant_fix_connection() )
-	  		having_a_good_day = false; 
-	}
-}
+### Commit format
+
+Each commit should follow this pattern:
+
+```text
+[#issue]:author:category, description
 ```
 
+Examples:
 
-[hdf5]: https://support.hdfgroup.org/HDF5/doc/H5.intro.html
-[1]: http://en.cppreference.com/w/cpp/container/vector
-[2]: http://arma.sourceforge.net
-[4]: https://support.hdfgroup.org/HDF5/doc/RM/RM_H5Front.html
-[5]: https://support.hdfgroup.org/HDF5/release/obtain5.html
-[6]: http://eigen.tuxfamily.org/index.php?title=Main_Page
-[7]: http://www.boost.org/doc/libs/1_65_1/libs/numeric/ublas/doc/matrix.htm
-[8]: https://julialang.org/
-[9]: https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_row_.28CSR.2C_CRS_or_Yale_format.29
-[10]: https://en.wikipedia.org/wiki/Sparse_matrix#Compressed_sparse_column_.28CSC_or_CCS.29
-[11]: https://en.wikipedia.org/wiki/List_of_numerical_libraries#C++
-[12]: http://en.cppreference.com/w/cpp/concept/StandardLayoutType
-[40]: https://support.hdfgroup.org/HDF5/Tutor/HDF5Intro.pdf
-[99]: https://en.wikipedia.org/wiki/C_(programming_language)#Pointers
-[100]: http://arma.sourceforge.net/
-[101]: http://www.boost.org/doc/libs/1_66_0/libs/numeric/ublas/doc/index.html
-[102]: http://eigen.tuxfamily.org/index.php?title=Main_Page#Documentation
-[103]: https://sourceforge.net/projects/blitz/
-[104]: https://sourceforge.net/projects/itpp/
-[105]: http://dlib.net/linear_algebra.html
-[106]: https://bitbucket.org/blaze-lib/blaze
-[107]: https://github.com/wichtounet/etl
-[303]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_compiler.html
-[304]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_linalg.html
-[305]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_install.html
-[400]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_error_handling.html
-[401]: https://www.hdfgroup.org/2018/07/cpp-has-come-a-long-way-and-theres-plenty-in-it-for-users-of-hdf5/
-[500]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_blog.html
-[501]: http://h5cpp.org/modules.html
-[502]: http://h5cpp.org/examples.html
-[503]: http://h5cpp.org/independent_8cpp-example.html
-[504]: http://h5cpp.org/collective_8cpp-example.html
-[505]: http://h5cpp.org/throughput_8cpp-example.html
-[601]: http://h5cpp.org/md__home_steven_Documents_projects_h5cpp_docs_pages_conversion.html
+```text
+[#138]:svarga:ci, add macOS AppleClang runner
+[#139]:svarga:fix, resolve HDF5 discovery on Homebrew
+[#140]:svarga:refactor, simplify datatype synthesis
+```
+
+Keep commits focused. Prefer several precise commits over one heroic commit
+that tries to solve the universe and accidentally invents another one.
+
+### Rebase-based development
+
+H5CPP uses a rebase-based feature-branch workflow. Feature branches are carried
+forward by rebasing onto the current `staging` branch rather than merging
+`staging` into the feature branch.
+
+Before opening or updating a pull request:
+
+```bash
+git fetch origin
+git checkout <feature-branch>
+git rebase origin/staging
+```
+
+Resolve conflicts locally, rerun the relevant build and test matrix where
+possible, then force-push safely:
+
+```bash
+git push --force-with-lease
+```
+
+Use `--force-with-lease`, not plain `--force`; we are civilized barbarians.
+
+### Pull requests
+
+Once the feature branch is complete, open a pull request targeting `staging`.
+
+A pull request should:
+
+* reference the issue it resolves;
+* follow the branch and commit naming convention;
+* keep the change scoped to the issue;
+* pass the relevant CI jobs;
+* document user-visible behavior changes.
+
+The preferred merge target for active development is `staging`. Release branches are promoted from `staging` after validation.
+
+
+[NA]: https://vargalabs.github.io/h5cpp/docs/assets/na.svg
 
 <!-- Ubuntu 22.04 -->
 [200]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-gcc-13.svg
-[201]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-gcc-14.svg
-[202]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-gcc-15.svg
 [250]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-17.svg
 [251]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-18.svg
 [252]: https://vargalabs.github.io/h5cpp/badges/ubuntu-22.04-clang-19.svg
@@ -247,8 +166,12 @@ while( having_a_good_day ){
 <!-- Ubuntu 24.04 -->
 [300]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-gcc-13.svg
 [301]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-gcc-14.svg
-[302]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-gcc-15.svg
-[350]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-17.svg
 [351]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-18.svg
 [352]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-19.svg
 [353]: https://vargalabs.github.io/h5cpp/badges/ubuntu-24.04-clang-20.svg
+
+<!-- macOS 15 -->
+[400]: https://vargalabs.github.io/h5cpp/badges/macos-15-apple-clang.svg
+
+<!-- Windows -->
+[500]: https://vargalabs.github.io/h5cpp/badges/windows-latest-msvc.svg
