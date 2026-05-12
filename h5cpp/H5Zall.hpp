@@ -6,8 +6,19 @@
 
 #include <string>
 #include <stdexcept>
+#include <cstring>
 #include <zlib.h>
 
+#if !defined(H5CPP_DISABLE_LIBDEFLATE)
+#if defined(H5CPP_HAS_LIBDEFLATE)
+#include <libdeflate.h>
+#elif defined(__has_include)
+#if __has_include(<libdeflate.h>)
+#include <libdeflate.h>
+#define H5CPP_HAS_LIBDEFLATE 1
+#endif
+#endif
+#endif
 namespace h5::impl::filter {
 	// TODO: figure something out to map c++ filters to C calls? 
 	template<class Derived>
@@ -36,24 +47,62 @@ namespace h5::impl::filter {
 		memcpy(dst,src,size);
 		return size;
 	}
+	inline unsigned compression_level(size_t n, const unsigned params[]) {
+		return n > 0 ? params[0] : H5CPP_DEFAULT_COMPRESSION;
+	}
+	inline size_t decompressed_size_hint(size_t input_size, size_t n, const unsigned params[]) {
+		return n > 1 ? params[1] : input_size;
+	}
+	inline size_t deflate_bound(size_t size) {
+		return static_cast<size_t>(compressBound(static_cast<uLong>(size)));
+	}
+	inline size_t zlib_deflate_encode(void* dst, const void* src, size_t size, unsigned level) {
+#if defined(H5CPP_HAS_LIBDEFLATE)
+		libdeflate_compressor* compressor = libdeflate_alloc_compressor(static_cast<int>(level));
+		if (!compressor)
+			return 0;
+		const size_t nbytes = libdeflate_zlib_compress(
+			compressor, src, size, dst, deflate_bound(size));
+		libdeflate_free_compressor(compressor);
+		return nbytes;
+#else
+		uLongf nbytes = static_cast<uLongf>(deflate_bound(size));
+		const int status = compress2(
+			static_cast<Bytef*>(dst), &nbytes,
+			static_cast<const Bytef*>(src), static_cast<uLong>(size),
+			static_cast<int>(level));
+		return status == Z_OK ? static_cast<size_t>(nbytes) : 0;
+#endif
+	}
+	inline size_t zlib_deflate_decode(void* dst, const void* src, size_t compressed_size, size_t output_size) {
+#if defined(H5CPP_HAS_LIBDEFLATE)
+		libdeflate_decompressor* decompressor = libdeflate_alloc_decompressor();
+		if (!decompressor)
+			return 0;
+		size_t actual_size = 0;
+		const libdeflate_result status = libdeflate_zlib_decompress(
+			decompressor, src, compressed_size, dst, output_size, &actual_size);
+		libdeflate_free_decompressor(decompressor);
+		return status == LIBDEFLATE_SUCCESS ? actual_size : 0;
+#else
+		uLongf actual_size = static_cast<uLongf>(output_size);
+		const int status = uncompress(
+			static_cast<Bytef*>(dst), &actual_size,
+			static_cast<const Bytef*>(src), static_cast<uLong>(compressed_size));
+		return status == Z_OK ? static_cast<size_t>(actual_size) : 0;
+#endif
+	}
 	inline size_t deflate( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
-		memcpy(dst,src,size);
-		return size;
+		if (flags & H5Z_FLAG_REVERSE)
+			return zlib_deflate_decode(dst, src, size, decompressed_size_hint(size, n, params));
+		return zlib_deflate_encode(dst, src, size, compression_level(n, params));
 	}
 	inline size_t scaleoffset( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
 		memcpy(dst,src,size);
 		return size;
 	}
 	inline size_t gzip( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
-		size_t nbytes = size;
-#ifdef _MSC_VER
-		uLongf dst_len = static_cast<uLongf>(size);
-		compress2( (unsigned char*)dst, &dst_len, (const unsigned char*)src, static_cast<uLong>(size), params[0]);
-		nbytes = dst_len;
-#else
-		compress2( (unsigned char*)dst, &nbytes, (const unsigned char*)src, size, params[0]);
-#endif
-		return nbytes;
+		return deflate(dst, src, size, flags, n, params);
 	}
 	inline size_t szip( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
 		memcpy(dst,src,size);
@@ -101,6 +150,4 @@ namespace h5::impl::filter {
 					return filter::error;
 		}
 	}
-
-
 }

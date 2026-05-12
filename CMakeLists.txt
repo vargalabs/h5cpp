@@ -42,6 +42,9 @@ endif()
 # ─── Options ──────────────────────────────────────────────────────────────────────
 option(H5CPP_BUILD_EXAMPLES "Build examples" OFF)
 option(H5CPP_BUILD_TESTS    "Build tests"    OFF)
+option(H5CPP_USE_LIBDEFLATE "Use libdeflate for H5CPP deflate/gzip filters when available" ON)
+option(H5CPP_REQUIRE_LIBDEFLATE "Fail configuration if H5CPP_USE_LIBDEFLATE is ON and libdeflate is not found" OFF)
+option(H5CPP_INSTALL_LIBDEFLATE "Install the resolved libdeflate header and library with H5CPP" OFF)
 
 # ─── System Dependencies ──────────────────────────────────────────────────────────
 include(GNUInstallDirs)
@@ -67,6 +70,7 @@ find_package(Threads REQUIRED QUIET)
 
 # ─── HDF5 ─────────────────────────────────────────────────────────────────────────
 find_package(HDF5 REQUIRED COMPONENTS C HL)
+find_package(ZLIB REQUIRED)
 
 if(HDF5_VERSION VERSION_LESS ${H5CPP_BASE_VERSION})
     message(FATAL_ERROR
@@ -97,7 +101,28 @@ list(APPEND H5CPP_INCLUDE_DIRS
 list(APPEND H5CPP_LIBS
     Threads::Threads
     ${HDF5_LIBRARIES}
+    ZLIB::ZLIB
 )
+
+if(H5CPP_USE_LIBDEFLATE)
+    find_path(LIBDEFLATE_INCLUDE_DIR NAMES libdeflate.h)
+    find_library(LIBDEFLATE_LIBRARY NAMES deflate libdeflate)
+    if(LIBDEFLATE_INCLUDE_DIR AND LIBDEFLATE_LIBRARY)
+        set(H5CPP_LIBDEFLATE_FOUND TRUE)
+        message(STATUS "H5CPP libdeflate support: ${LIBDEFLATE_LIBRARY}")
+    elseif(H5CPP_REQUIRE_LIBDEFLATE)
+        message(FATAL_ERROR "H5CPP_REQUIRE_LIBDEFLATE is ON, but libdeflate was not found")
+    else()
+        set(H5CPP_LIBDEFLATE_FOUND FALSE)
+        message(STATUS "H5CPP libdeflate support: not found; zlib fallback will be used")
+    endif()
+else()
+    set(H5CPP_LIBDEFLATE_FOUND FALSE)
+endif()
+
+if(H5CPP_INSTALL_LIBDEFLATE AND NOT H5CPP_LIBDEFLATE_FOUND)
+    message(FATAL_ERROR "H5CPP_INSTALL_LIBDEFLATE is ON, but libdeflate was not found")
+endif()
 
 # ─── Thirdparty ───────────────────────────────────────────────────────────────────
 add_subdirectory(thirdparty EXCLUDE_FROM_ALL)
@@ -113,6 +138,14 @@ target_include_directories(h5cpp INTERFACE
 
 target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBS})
 target_compile_features(h5cpp INTERFACE cxx_std_17)
+
+if(H5CPP_LIBDEFLATE_FOUND)
+    target_include_directories(h5cpp INTERFACE ${LIBDEFLATE_INCLUDE_DIR})
+    target_link_libraries(h5cpp INTERFACE ${LIBDEFLATE_LIBRARY})
+    target_compile_definitions(h5cpp INTERFACE H5CPP_HAS_LIBDEFLATE=1)
+else()
+    target_compile_definitions(h5cpp INTERFACE H5CPP_DISABLE_LIBDEFLATE=1)
+endif()
 
 # ─── Subdirectories ───────────────────────────────────────────────────────────────
 if(H5CPP_BUILD_EXAMPLES)
@@ -140,6 +173,11 @@ message(STATUS "Install directory: ${INSTALL_DIR_INCLUDE}")
 # Install header-only library
 install(DIRECTORY h5cpp DESTINATION ${INSTALL_DIR_INCLUDE})
 install(TARGETS h5cpp EXPORT h5cpp-targets)
+
+if(H5CPP_INSTALL_LIBDEFLATE AND H5CPP_LIBDEFLATE_FOUND)
+    install(FILES "${LIBDEFLATE_INCLUDE_DIR}/libdeflate.h" DESTINATION "${INSTALL_DIR_INCLUDE}")
+    install(FILES "${LIBDEFLATE_LIBRARY}" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+endif()
 
 # Install examples
 install(DIRECTORY examples/attributes   DESTINATION "${INSTALL_DIR_EXAMPLES}")

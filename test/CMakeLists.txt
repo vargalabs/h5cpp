@@ -14,6 +14,7 @@ set(LIBS
     ${HDF5_LIBRARIES}
     ZLIB::ZLIB
     libdoctest
+    libh5cpp-libdeflate
 )
 
 # thirdparty dependencies are added by the root CMakeLists.txt
@@ -57,4 +58,5 @@ add_test_case(H5Tmeta)
 add_test_case(H5Dio)
 # add_test_case(H5E_exceptions)
 add_test_case(H5Dio_roundtrip)
+add_test_case(H5Zdeflate)
 # add_test_case(H5Iall)
