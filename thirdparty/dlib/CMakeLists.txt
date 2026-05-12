@@ -31,6 +31,7 @@ if(NOT EXISTS ${dlib_build_dir}/libdlib.a)
             -DDLIB_USE_BLAS=OFF
             -DDLIB_USE_LAPACK=OFF
             -DDLIB_USE_CUDA=OFF
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         RESULT_VARIABLE dlib_configure_result
         OUTPUT_VARIABLE dlib_configure_output
         ERROR_VARIABLE dlib_configure_error

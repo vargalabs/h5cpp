@@ -66,7 +66,7 @@ endif()
 find_package(Threads REQUIRED QUIET)
 
 # ─── HDF5 ─────────────────────────────────────────────────────────────────────────
-find_package(HDF5 REQUIRED COMPONENTS C HL)
+find_package(HDF5 REQUIRED COMPONENTS C)
 
 if(HDF5_VERSION VERSION_LESS ${H5CPP_BASE_VERSION})
     message(FATAL_ERROR
