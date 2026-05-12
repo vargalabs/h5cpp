@@ -9,8 +9,8 @@ project(h5cpp-examples VERSION 1.10.4.5 LANGUAGES CXX C)
 
 # check if the correct version of hdf5 available
 set(H5CPP_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
-set(HDF5_FIND_DEBUG FALSE)
-include(FindHDF5)
+find_package(HDF5 REQUIRED COMPONENTS C)
+
 if(HDF5_VERSION VERSION_LESS ${H5CPP_VERSION})
 	message(FATAL_ERROR "H5CPP examples require of HDF5 v${H5CPP_VERSION} or greater!!!")
 else()
@@ -50,12 +50,6 @@ if( H5CPP )
 	set(H5CPP_COMPILER_FOUND TRUE)
 else()
 	set(H5CPP_COMPILER_FOUND FALSE)
-endif()
-
-#find_package(HDF5 1.10.4 REQUIRED QUIET)
-include(FindHDF5)
-if(HDF5_VERSION VERSION_LESS 1.10.4)
-	message(FATAL_ERROR "H5CPP examples require HDF5 minimum version is 1.10.4")
 endif()
 
 if(WIN32)
