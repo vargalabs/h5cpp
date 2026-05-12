@@ -30,6 +30,10 @@
 #include <zstd.h>
 #endif
 
+#if defined(H5CPP_HAS_SZIP)
+#include <szlib.h>
+#endif
+
 // Community HDF5 filter IDs
 #ifndef H5Z_FILTER_LZ4
 #define H5Z_FILTER_LZ4  32004
@@ -228,9 +232,42 @@ namespace h5::impl::filter {
 	inline size_t gzip( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
 		return deflate(dst, src, size, flags, n, params);
 	}
+	// H5Z_FILTER_SZIP (id=4): Rice/Golomb lossless compression via vendored libaec/szip.
+	// HDF5 cd_values layout (from H5Zszip.c):
+	//   params[0] = options_mask   (SZ_EC_OPTION_MASK | SZ_NN_OPTION_MASK | SZ_MSB/LSB | ...)
+	//   params[1] = bits_per_pixel (element size in bits, 1..24 or 32/64)
+	//   params[2] = pixels_per_block (2..32, must be even)
+	//   params[3] = pixels_per_scanline (= total elements in chunk)
 	inline size_t szip( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
-		memcpy(dst,src,size);
+#if defined(H5CPP_HAS_SZIP)
+		if (n < 4) return 0;
+
+		SZ_com_t param;
+		param.options_mask       = static_cast<int>(params[0]);
+		param.bits_per_pixel     = static_cast<int>(params[1]);
+		param.pixels_per_block   = static_cast<int>(params[2]);
+		param.pixels_per_scanline = static_cast<int>(params[3]);
+
+		if (flags & H5Z_FLAG_REVERSE) {
+			// Decompress: output is the original uncompressed chunk.
+			// SZ_BufftoBuffDecompress needs to know the number of output pixels:
+			// pixels = params[3] (pixels_per_scanline stores total chunk elements for HDF5).
+			size_t out_size = static_cast<size_t>(param.pixels_per_scanline)
+			                * ((static_cast<size_t>(param.bits_per_pixel) + 7) / 8);
+			int ret = SZ_BufftoBuffDecompress(dst, &out_size, src, size, &param);
+			return (ret == SZ_OK) ? out_size : 0;
+		} else {
+			// Compress.
+			size_t out_size = size + size / 2 + 128; // szip worst-case is ~1.5x
+			if (out_size < size + 128) out_size = size + 128;
+			int ret = SZ_BufftoBuffCompress(dst, &out_size, src, size, &param);
+			return (ret == SZ_OK) ? out_size : 0;
+		}
+#else
+		// Passthrough when szip not compiled in.
+		memcpy(dst, src, size);
 		return size;
+#endif
 	}
 	// H5Z_FILTER_NBIT (id=5): compact integer storage via bit-precision packing.
 	// Intentional passthrough: the HDF5 C library registers and applies this filter

@@ -47,6 +47,7 @@ option(H5CPP_REQUIRE_LIBDEFLATE "Fail configuration if H5CPP_USE_LIBDEFLATE is O
 option(H5CPP_INSTALL_LIBDEFLATE "Install the resolved libdeflate header and library with H5CPP" OFF)
 option(H5CPP_USE_LZ4  "Use LZ4 compression filter when available" ON)
 option(H5CPP_USE_ZSTD "Use Zstd compression filter when available" ON)
+option(H5CPP_USE_SZIP "Use vendored SZIP (Rice) compression filter when available" ON)
 
 # ─── System Dependencies ──────────────────────────────────────────────────────────
 include(GNUInstallDirs)
@@ -139,6 +140,15 @@ if(H5CPP_USE_ZSTD)
     endif()
 endif()
 
+# ─── SZIP (optional) ──────────────────────────────────────────────────────────────
+if(H5CPP_USE_SZIP)
+    if(H5CPP_SZIP_FOUND)
+        message(STATUS "H5CPP SZIP support: vendored ${H5CPP_SZIP_INCLUDE_DIR}")
+    else()
+        message(STATUS "H5CPP SZIP support: not found")
+    endif()
+endif()
+
 # ─── Header-only Library Target ───────────────────────────────────────────────────
 add_library(h5cpp INTERFACE)
 add_library(h5cpp::h5cpp ALIAS h5cpp)
@@ -165,6 +175,10 @@ endif()
 
 if(H5CPP_USE_ZSTD AND H5CPP_ZSTD_FOUND)
     target_link_libraries(h5cpp INTERFACE ${H5CPP_ZSTD_TARGET})
+endif()
+
+if(H5CPP_USE_SZIP AND H5CPP_SZIP_FOUND)
+    target_link_libraries(h5cpp INTERFACE ${H5CPP_SZIP_TARGET})
 endif()
 
 # ─── Subdirectories ───────────────────────────────────────────────────────────────
