@@ -19,7 +19,8 @@ TEST_CASE("[example] compound struct CSV-like round-trip") {
     std::filesystem::remove(filename);
     auto set_location = [](char (&dst)[STR_ARRAY_SIZE], const char* src) {
         std::memset(dst, 0, STR_ARRAY_SIZE);
-        std::strncpy(dst, src, STR_ARRAY_SIZE - 1);
+        const auto src_size = std::strlen(src);
+        std::memcpy(dst, src, src_size < STR_ARRAY_SIZE ? src_size : STR_ARRAY_SIZE - 1);
     };
 
     // BUILD test data (simulating parsed CSV rows)

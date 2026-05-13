@@ -75,8 +75,7 @@ namespace io{
                        
 	                        void set_file_name(const char*file_name){
 	                                if(file_name != nullptr){
-	                                        strncpy(this->file_name, file_name, sizeof(this->file_name)-1);
-	                                        this->file_name[sizeof(this->file_name)-1] = '\0';
+	                                        std::snprintf(this->file_name, sizeof(this->file_name), "%s", file_name);
 	                                }else{
                                         this->file_name[0] = '\0';
                                 }
@@ -422,8 +421,7 @@ namespace io{
 
 	                void set_file_name(const char*file_name){
 	                        if(file_name != nullptr){
-	                                strncpy(this->file_name, file_name, sizeof(this->file_name)-1);
-	                                this->file_name[sizeof(this->file_name)-1] = '\0';
+	                                std::snprintf(this->file_name, sizeof(this->file_name), "%s", file_name);
 	                        }else{
                                 this->file_name[0] = '\0';
                         }
