@@ -49,12 +49,13 @@ namespace h5::impl::filter {
 		htri_t can_apply(::hid_t dcpl, ::hid_t type, ::hid_t space){
 			return static_cast<Derived*>(this)->can_apply_impl(dcpl,type,space);
 		}
-		herr_t set_local(::hid_t dcpl, ::hid_t type, ::hid_t space){
-			return static_cast<Derived*>(this)->set_local_impl(dcpl,type,space);
-		}
-		size_t callback(unsigned int flags, size_t cd_nelmts, const unsigned int cd_values[], size_t nbytes, size_t *buf_size, void **buf){
-			return 0;
-		}
+			herr_t set_local(::hid_t dcpl, ::hid_t type, ::hid_t space){
+				return static_cast<Derived*>(this)->set_local_impl(dcpl,type,space);
+			}
+			size_t callback(unsigned int flags, size_t cd_nelmts, const unsigned int cd_values[], size_t nbytes, size_t *buf_size, void **buf){
+				(void)flags; (void)cd_nelmts; (void)cd_values; (void)nbytes; (void)buf_size; (void)buf;
+				return 0;
+			}
 		size_t apply( void* dst, const void* src, size_t size){
 			return static_cast<Derived*>(this)->apply(dst,src,size);
 		}
@@ -65,11 +66,12 @@ namespace h5::impl::filter {
 		std::string name;
 	};
 
-	using call_t = size_t (*)(void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] );
-	inline size_t mock( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
-		memcpy(dst,src,size);
-		return size;
-	}
+		using call_t = size_t (*)(void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] );
+		inline size_t mock( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+			(void)flags; (void)n; (void)params;
+			memcpy(dst,src,size);
+			return size;
+		}
 	inline unsigned compression_level(size_t n, const unsigned params[]) {
 		return n > 0 ? params[0] : H5CPP_DEFAULT_COMPRESSION;
 	}
@@ -146,12 +148,13 @@ namespace h5::impl::filter {
 	// H5Z_FILTER_SCALEOFFSET (id=6): quantised float/int pre-processing.
 	// Intentional passthrough: the HDF5 C library registers and applies this filter
 	// natively during H5Dread/H5Dwrite.  Reimplementing it in H5CPP provides no
-	// throughput benefit for the trading use-case and would introduce maintenance
-	// cost with no measurable gain.  Delegate to HDF5 C.
-	inline size_t scaleoffset( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
-		memcpy(dst,src,size);
-		return size;
-	}
+		// throughput benefit for the trading use-case and would introduce maintenance
+		// cost with no measurable gain.  Delegate to HDF5 C.
+		inline size_t scaleoffset( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
+			(void)flags; (void)n; (void)params;
+			memcpy(dst,src,size);
+			return size;
+		}
 
 	// Byte-level shuffle / unshuffle.
 	// Matching HDF5 H5Z_FILTER_SHUFFLE semantics: for n elements of `type_size` bytes
@@ -203,9 +206,10 @@ namespace h5::impl::filter {
 
 	// Fletcher32 checksum filter.
 	// Encode: appends a 4-byte big-endian checksum → returns size + 4.
-	// Decode: verifies, strips 4-byte checksum → returns size - 4, or 0 on mismatch.
-	inline size_t fletcher32( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
-		if (flags & H5Z_FLAG_REVERSE) {
+		// Decode: verifies, strips 4-byte checksum → returns size - 4, or 0 on mismatch.
+		inline size_t fletcher32( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
+			(void)n; (void)params;
+			if (flags & H5Z_FLAG_REVERSE) {
 			if (size < 4) return 0;
 			const size_t data_size = size - 4;
 			const uint8_t* stored_bytes = static_cast<const uint8_t*>(src) + data_size;
@@ -236,11 +240,12 @@ namespace h5::impl::filter {
 	// HDF5 cd_values layout (from H5Zszip.c):
 	//   params[0] = options_mask   (SZ_EC_OPTION_MASK | SZ_NN_OPTION_MASK | SZ_MSB/LSB | ...)
 	//   params[1] = bits_per_pixel (element size in bits, 1..24 or 32/64)
-	//   params[2] = pixels_per_block (2..32, must be even)
-	//   params[3] = pixels_per_scanline (= total elements in chunk)
-	inline size_t szip( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
+		//   params[2] = pixels_per_block (2..32, must be even)
+		//   params[3] = pixels_per_scanline (= total elements in chunk)
+		inline size_t szip( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
+			(void)flags; (void)n; (void)params;
 #if defined(H5CPP_HAS_SZIP)
-		if (n < 4) return 0;
+			if (n < 4) return 0;
 
 		SZ_com_t param;
 		param.options_mask       = static_cast<int>(params[0]);
@@ -273,30 +278,35 @@ namespace h5::impl::filter {
 	// Intentional passthrough: the HDF5 C library registers and applies this filter
 	// natively during H5Dread/H5Dwrite.  Reimplementing it in H5CPP provides no
 	// throughput benefit for the trading use-case (integer sensor data compression
-	// is not on the critical path) and would require reverse-engineering HDF5's
-	// internal cd_values descriptor format.  Delegate to HDF5 C.
-	inline size_t nbit( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
-		memcpy(dst,src,size);
-		return size;
-	}
-	inline size_t add( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
-		memcpy(dst,src,size);
-		return size;
-	}
-	inline size_t jpeg( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
-		memcpy(dst,src,size);
-		return size;
-	}
-	inline size_t disperse( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
-		memcpy(dst,src,size);
-		return size;
-	}
+		// is not on the critical path) and would require reverse-engineering HDF5's
+		// internal cd_values descriptor format.  Delegate to HDF5 C.
+		inline size_t nbit( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[]){
+			(void)flags; (void)n; (void)params;
+			memcpy(dst,src,size);
+			return size;
+		}
+		inline size_t add( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+			(void)flags; (void)n; (void)params;
+			memcpy(dst,src,size);
+			return size;
+		}
+		inline size_t jpeg( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+			(void)flags; (void)n; (void)params;
+			memcpy(dst,src,size);
+			return size;
+		}
+		inline size_t disperse( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+			(void)flags; (void)n; (void)params;
+			memcpy(dst,src,size);
+			return size;
+		}
 
-	// LZ4 extreme-throughput compression (community filter ID 32004).
-	// Enabled when compiled with H5CPP_HAS_LZ4; falls back to passthrough otherwise.
-	inline size_t lz4( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+		// LZ4 extreme-throughput compression (community filter ID 32004).
+		// Enabled when compiled with H5CPP_HAS_LZ4; falls back to passthrough otherwise.
+		inline size_t lz4( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+			(void)flags; (void)n; (void)params;
 #if defined(H5CPP_HAS_LZ4)
-		if (flags & H5Z_FLAG_REVERSE) {
+			if (flags & H5Z_FLAG_REVERSE) {
 			const int out = LZ4_decompress_safe(
 				static_cast<const char*>(src), static_cast<char*>(dst),
 				static_cast<int>(size),
@@ -314,11 +324,12 @@ namespace h5::impl::filter {
 #endif
 	}
 
-	// Zstd compression (community filter ID 32015).
-	// Enabled when compiled with H5CPP_HAS_ZSTD; falls back to passthrough otherwise.
-	inline size_t zstd( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+		// Zstd compression (community filter ID 32015).
+		// Enabled when compiled with H5CPP_HAS_ZSTD; falls back to passthrough otherwise.
+		inline size_t zstd( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+			(void)flags; (void)n; (void)params;
 #if defined(H5CPP_HAS_ZSTD)
-		if (flags & H5Z_FLAG_REVERSE) {
+			if (flags & H5Z_FLAG_REVERSE) {
 			const size_t out = ZSTD_decompress(
 				dst, decompressed_size_hint(size, n, params), src, size);
 			return ZSTD_isError(out) ? 0 : out;
@@ -334,9 +345,10 @@ namespace h5::impl::filter {
 #endif
 	}
 
-	inline size_t error( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
-		throw std::runtime_error("invalid filter");
-		return size;
+		inline size_t error( void* dst, const void* src, size_t size, unsigned flags, size_t n, const unsigned params[] ){
+			(void)dst; (void)src; (void)flags; (void)n; (void)params;
+			throw std::runtime_error("invalid filter");
+			return size;
 	}
 	inline call_t get_callback( H5Z_filter_t filter_id ){
 

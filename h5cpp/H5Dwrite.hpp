@@ -337,11 +337,10 @@ namespace h5 {
 	* 	h5::current_dims{vec.length()}, h5::max_dims{H5S_UNLIMITED}, h5::chunk{1024} | h5::gzip{9});
 	* @endcode 
  	*/ 
-	template <class T, class... args_t,
-		class = std::enable_if_t<!std::is_pointer_v<std::decay_t<T>>>>
-	inline h5::ds_t write( const h5::fd_t& fd, const std::string& dataset_path, const T& ref,  args_t&&... args  ){
-		using tcount  = typename arg::tpos<const h5::count_t&, const args_t&...>;
-		h5::ds_t ds; // initialized to H5I_UNINIT
+		template <class T, class... args_t,
+			class = std::enable_if_t<!std::is_pointer_v<std::decay_t<T>>>>
+		inline h5::ds_t write( const h5::fd_t& fd, const std::string& dataset_path, const T& ref,  args_t&&... args  ){
+			h5::ds_t ds; // initialized to H5I_UNINIT
 		// find out if we have to create the dataset
 		h5::mute();
 			// Returns a negative value when the function fails and may return a negative value if the link does not exist.
