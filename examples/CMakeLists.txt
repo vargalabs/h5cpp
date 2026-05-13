@@ -133,6 +133,11 @@ add_executable(examples-blitz EXCLUDE_FROM_ALL "linalg/blitz.cpp")
 target_link_libraries(examples-blitz ${LIBS} libblitz)
 add_dependencies(examples examples-blitz)
 
+message( "-- Vendored: xtensor added to examples" )
+add_executable(examples-xtensor EXCLUDE_FROM_ALL "linalg/xtensor.cpp")
+target_link_libraries(examples-xtensor ${LIBS} libxtensor)
+add_dependencies(examples examples-xtensor)
+
 # ublas headers are vendored but rely on system Boost config/compiler headers
 find_path(H5CPP_BOOST_CONFIG_INCLUDE_EX NAMES boost/config.hpp)
 if(H5CPP_BOOST_CONFIG_INCLUDE_EX)
