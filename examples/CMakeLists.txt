@@ -138,6 +138,16 @@ add_executable(examples-xtensor EXCLUDE_FROM_ALL "linalg/xtensor.cpp")
 target_link_libraries(examples-xtensor ${LIBS} libxtensor)
 add_dependencies(examples examples-xtensor)
 
+find_package(BLAS)
+if(BLAS_FOUND)
+    message( "-- Vendored: xtensor-blas added to examples" )
+    add_executable(examples-xtensor-blas EXCLUDE_FROM_ALL "linalg/xtensor-blas.cpp")
+    target_link_libraries(examples-xtensor-blas ${LIBS} libxtensor-blas ${BLAS_LIBRARIES})
+    add_dependencies(examples examples-xtensor-blas)
+else()
+    message("-- BLAS not found — xtensor-blas example disabled")
+endif()
+
 # ublas headers are vendored but rely on system Boost config/compiler headers
 find_path(H5CPP_BOOST_CONFIG_INCLUDE_EX NAMES boost/config.hpp)
 if(H5CPP_BOOST_CONFIG_INCLUDE_EX)
