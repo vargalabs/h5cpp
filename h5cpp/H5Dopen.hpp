@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include "H5Pdapl.hpp"
 #include <string>
 
 namespace h5{

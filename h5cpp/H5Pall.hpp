@@ -3,6 +3,9 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include <hdf5.h>
+#include "H5Tall.hpp"
+#include "H5Sall.hpp"
 #include <array>
 #include <tuple>
 #include <initializer_list>

@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include "H5Aopen.hpp"
 #include <string>
 #include <stdexcept>
 #include <type_traits>

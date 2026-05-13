@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include "H5capi.hpp"
 #include <string>
 #include <vector>
 #include <stdexcept>

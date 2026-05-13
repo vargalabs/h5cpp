@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include "H5capi.hpp"
 #include "H5Dopen.hpp" // be sure this precedes error handling macro-s !!!
 #include <string>
 #include <vector>
