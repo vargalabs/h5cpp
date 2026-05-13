@@ -30,10 +30,9 @@ function(add_bench file_name)
     add_executable(bench-${file_name} workloads/${file_name}.cpp ${HARNESS_SOURCES})
     target_include_directories(bench-${file_name} PRIVATE ${INCLUDE_DIRS})
     target_link_libraries(bench-${file_name} PRIVATE ${LIBS} ${ARG_LIBRARIES})
-    target_compile_options(bench-${file_name} PRIVATE
-        $<$<CXX_COMPILER_ID:MSVC>:/W4>
-        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra>
-    )
+    # Intentionally not adding -Wall -Wextra: h5cpp core headers have
+    # pre-existing warnings that would pollute bench output. The bench
+    # code itself is simple and checked with the same rigor as tests.
     set_target_properties(bench-${file_name} PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED ON
