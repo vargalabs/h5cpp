@@ -9,7 +9,6 @@
 int main(){
 	h5::fd_t fd = h5::create("raw.h5",H5F_ACC_TRUNC);
 
-    float  af[] = {values};
     double ad[] = {values};
 	double* ptr = static_cast<double*>( calloc(10,sizeof(double)) );
 
@@ -53,4 +52,3 @@ int main(){
 
 
 }
-

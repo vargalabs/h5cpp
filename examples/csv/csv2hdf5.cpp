@@ -34,7 +34,8 @@ int main(){
 	input_t row;                           // buffer to read line by line
 	char* ptr;      // indirection, as `read_row` doesn't take array directly
 	while(in.read_row(row.MasterRecordNumber, row.Hour, ptr, row.Latitude, row.Longitude)){
-		strncpy(row.ReportedLocation, ptr, STR_ARRAY_SIZE); // defined in struct.h
+		memset(row.ReportedLocation, 0, STR_ARRAY_SIZE);
+		strncpy(row.ReportedLocation, ptr, STR_ARRAY_SIZE - 1); // defined in struct.h
 		h5::append(pt, row);
 		std::cout << std::string(ptr) << "\n";
 	}

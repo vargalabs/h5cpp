@@ -105,7 +105,7 @@ namespace h5 {
 				const h5::offset_t& offset = arg::get( h5::default_offset, args...);
 				const h5::stride_t& stride = arg::get( h5::default_stride, args...);
 				if constexpr( tblock::present ){ // we have to normalise `count` such that `size[i] = count[i] * block[i]` holds
-					for(hsize_t i=0; i < rank; i++) count[i] /= block[i];
+					for(int i=0; i < rank; i++) count[i] /= block[i];
 					err = H5Sselect_hyperslab(file_space, H5S_SELECT_SET, *offset, *stride, *count, *block);
 				} else { // we have to convert h5::count_t{..} to h5::block{..} and initiate a single block transfer
 					h5::block_t block_ = static_cast<h5::block_t>(count);

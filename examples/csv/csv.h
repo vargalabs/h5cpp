@@ -73,11 +73,11 @@ namespace io{
                                 std::memset(file_name, 0, sizeof(file_name));
                         }
                        
-                        void set_file_name(const char*file_name){
-                                if(file_name != nullptr){
-                                        strncpy(this->file_name, file_name, sizeof(this->file_name));
-                                        this->file_name[sizeof(this->file_name)-1] = '\0';
-                                }else{
+	                        void set_file_name(const char*file_name){
+	                                if(file_name != nullptr){
+	                                        strncpy(this->file_name, file_name, sizeof(this->file_name)-1);
+	                                        this->file_name[sizeof(this->file_name)-1] = '\0';
+	                                }else{
                                         this->file_name[0] = '\0';
                                 }
                         }
@@ -420,11 +420,11 @@ namespace io{
                         set_file_name(file_name.c_str());
                 }
 
-                void set_file_name(const char*file_name){
-                        if(file_name != nullptr){
-                                strncpy(this->file_name, file_name, sizeof(this->file_name));
-                                this->file_name[sizeof(this->file_name)-1] = '\0';
-                        }else{
+	                void set_file_name(const char*file_name){
+	                        if(file_name != nullptr){
+	                                strncpy(this->file_name, file_name, sizeof(this->file_name)-1);
+	                                this->file_name[sizeof(this->file_name)-1] = '\0';
+	                        }else{
                                 this->file_name[0] = '\0';
                         }
                 }
@@ -1265,4 +1265,3 @@ namespace io{
         };
 }
 #endif
-
