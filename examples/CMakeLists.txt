@@ -77,6 +77,16 @@ if(NOT TARGET libeigen3)
 	endif()
 endif()
 
+# Expose find_package-style variables from vendored targets so the conditional
+# example blocks below work regardless of whether the libraries were found via
+# find_package or via the vendored thirdparty subdirectory.
+if(TARGET libarmadillo)
+    set(ARMADILLO_FOUND TRUE)
+endif()
+if(TARGET libeigen3)
+    set(Eigen3_FOUND TRUE)
+endif()
+
 list(APPEND LIBS ${HDF5_C_LIBRARIES} ZLIB::ZLIB libh5cpp-libdeflate)
 list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR} ${HDF5_INCLUDE_DIRS}  ${ZLIB_INCLUDE_DIRS})
 
