@@ -57,10 +57,6 @@
 	#define H5CPP_ERROR_MSG( msg ) std::string( __FILE__ ) + " line#  " + std::to_string( __LINE__ ) + " : " + msg
 #endif
 
-#ifndef H5CPP_ERROR_MSG
-	#define H5CPP_ERROR_MSG( msg ) std::string( __FILE__ ) + " line#  " + std::to_string( __LINE__ ) + " : " + msg
-#endif
-
 #define H5CPP_CHECK_EQ( call, exception, msg ) if( call == 0 ) throw exception( H5CPP_ERROR_MSG( msg ));
 #define H5CPP_CHECK_NZ( call, exception, msg ) if( call < 0 ) throw exception( H5CPP_ERROR_MSG( msg ));
 #define H5CPP_CHECK_NULL( call, exception, msg ) if( call == nullptr ) throw exception( H5CPP_ERROR_MSG( msg ));

@@ -4,7 +4,6 @@
  */
 
 #pragma once
-#include <zlib.h>
 #include <string>
 #include <vector>
 #include <stdexcept>

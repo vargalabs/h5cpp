@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_BLITZ_HPP 
-#define  H5CPP_BLITZ_HPP
+#pragma once
 
 #if defined(BZ_ARRAY_H) || defined(H5CPP_USE_BLITZ)
 namespace h5::blitz {
@@ -50,5 +49,4 @@ namespace h5::impl {
 			return h5::blitz::array<T,N>(shape);
 	}};
 }
-#endif
 #endif
