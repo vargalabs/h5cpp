@@ -17,7 +17,10 @@ static void cleanup() { std::remove(kFile); }
 
 int main() {
     bench::fixture::Synthetic gen(42);
-    const std::vector<std::size_t> sizes = {1'000, 10'000, 100'000, 1'000'000, 10'000'000};
+    const std::vector<std::size_t> sizes = {
+        125'000'000,    // 1 GB
+        1'250'000'000,  // 10 GB
+    };
 
     for (std::size_t n : sizes) {
         auto data = gen.doubles(n);

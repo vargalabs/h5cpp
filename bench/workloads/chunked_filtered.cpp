@@ -17,7 +17,7 @@ static void cleanup() { std::remove(kFile); }
 
 int main() {
     bench::fixture::Synthetic gen(42);
-    const std::size_t n = 1'000'000;
+    const std::size_t n = 125'000'000;  // 1 GB
     auto data = gen.doubles(n);
     const std::size_t bytes = n * sizeof(double);
 
