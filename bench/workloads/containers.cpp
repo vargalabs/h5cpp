@@ -5,6 +5,7 @@
 
 #define ANKERL_NANOBENCH_IMPLEMENT
 #include "../harness/nanobench.h"
+#include "../harness/config.hpp"
 #include "../fixtures/synthetic.hpp"
 #include <h5cpp/all>
 #include <vector>
@@ -15,7 +16,7 @@ static void cleanup() { std::remove(kFile); }
 
 int main() {
     bench::fixture::Synthetic gen(42);
-    const std::size_t n = 125'000'000;  // 1 GB
+    const std::size_t n = bench::default_payload_size();
     auto data = gen.doubles(n);
     const std::size_t bytes = n * sizeof(double);
 
