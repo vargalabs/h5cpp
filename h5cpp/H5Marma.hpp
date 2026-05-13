@@ -30,6 +30,13 @@ namespace h5::meta {
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
 
+	// Register Armadillo types so the structural decay fallback in H5Mstl.hpp
+	// does not create an ambiguous partial-specialisation with these explicit specs.
+	template <class T> struct detail::has_explicit_decay<h5::arma::rowvec<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::arma::colvec<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::arma::colmat<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::arma::cube<T>>   : std::true_type {};
+
 	template <class T> struct decay<h5::arma::rowvec<T>>{ using type = T; };
 	template <class T> struct decay<h5::arma::colvec<T>>{ using type = T; };
 	template <class T> struct decay<h5::arma::colmat<T>>{ using type = T; };

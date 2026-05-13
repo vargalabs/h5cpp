@@ -26,6 +26,12 @@ namespace h5::meta {
 
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+	// Register Blaze types in has_explicit_decay (Blaze vectors/matrices have value_type).
+	template <class T> struct detail::has_explicit_decay<h5::blaze::rowvec<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::blaze::colvec<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::blaze::rowmat<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::blaze::colmat<T>> : std::true_type {};
+
 	template <class T> struct decay<h5::blaze::rowvec<T>>{ using type = T; };
 	template <class T> struct decay<h5::blaze::colvec<T>>{ using type = T; };
 	template <class T> struct decay<h5::blaze::rowmat<T>>{ using type = T; };

@@ -21,6 +21,7 @@ namespace h5::meta {
 
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+	template <class T> struct detail::has_explicit_decay<h5::dlib::rowmat<T>> : std::true_type {};
 	template <class T> struct decay<h5::dlib::rowmat<T>>{ using type = T; };
 
 	// get read access to datastaore

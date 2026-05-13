@@ -27,6 +27,14 @@ namespace h5::meta {
 
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+	// Register Eigen types in has_explicit_decay to prevent ambiguity with the
+	// structural decay fallback (Eigen matrices expose value_type = Scalar).
+	template<class T,int R,int C, int O>
+	struct detail::has_explicit_decay<::Eigen::Matrix<T,R,C,O>> : std::true_type {};
+	template<class T,int R,int C, int O>
+	struct detail::has_explicit_decay<::Eigen::Array<T,R,C,O>>  : std::true_type {};
+
+	// 1.) object -> H5T_xxx
 	template<class T,int R,int C, int O> struct decay<::Eigen::Matrix<T,R,C,O>>{ using type = T; };
 	template<class T,int R,int C, int O> struct decay<::Eigen::Array<T,R,C,O>>{ using type = T; };
 	    

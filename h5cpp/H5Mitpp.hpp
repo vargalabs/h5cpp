@@ -16,6 +16,7 @@ namespace h5::meta {
 }
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+	template <class T> struct detail::has_explicit_decay<h5::itpp::rowmat<T>> : std::true_type {};
 	template <class T> struct decay<h5::itpp::rowmat<T>>{ using type = T; };
 
 	// get read access to datastaore
@@ -49,6 +50,7 @@ namespace h5::meta {
 		template <class T> struct is_contiguous<h5::itpp::rowvec<T>> : std::true_type {};
 }
 namespace h5::impl {
+	template <class T> struct detail::has_explicit_decay<h5::itpp::rowvec<T>> : std::true_type {};
 	template <class T> struct decay<h5::itpp::rowvec<T>>{ using type = T; };
 	template <class Object, class T = typename impl::decay<Object>::type> inline
 	std::enable_if_t< h5::itpp::is_supported_v<Object>::value,
