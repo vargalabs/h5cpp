@@ -1,0 +1,14 @@
+/*!
+\page spread Simulation of a Multicode CDMA system on an AWGN channel
+
+In this example we will introduce the multi-code spreading class \c Multicode_Spread_2d. This is the most general spreading class availiable in it++. Different spreading codes may be assigned to the I and Q branches. The number of multiple spreading codes and the spreading factor is determined by the number of rows and collumns respectively that is used when calling the member function set_codes. In this example we will use four Hadamard sequenced of length four, and the same spreading sequences will be used for the I and Q brances.
+
+\include spread.cpp
+
+A typical run of this program will look like this:
+
+\include spread.ref
+
+Use copy-and-paste to insert the variables \c EbN0dB and \c ber into Matlab and plot the result.
+
+*/

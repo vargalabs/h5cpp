@@ -97,8 +97,13 @@ tar-gz:
 	gpg --detach-sign --armor ../libh5cpp_${VERSION}.orig.tar.gz
 	scp ../libh5cpp_${VERSION}.orig.tar.* osaka:h5cpp.org/download/
 
+H5CPP_AMALGAMATED = h5cpp.hpp
+
+amalgamate:
+	$(PYTHON) scripts/amalgamate.py h5cpp $(H5CPP_AMALGAMATED)
+
 clean: docs_clean
-	@$(RM) h5cpp-*
+	@$(RM) h5cpp-* $(H5CPP_AMALGAMATED)
 
 dist-debian-src: tar-gz
 	debuild -i -us -uc -S

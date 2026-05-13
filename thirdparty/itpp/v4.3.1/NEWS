@@ -1,0 +1,51 @@
+===============================================================================
+IT++ version 4.3.0                                         Released: 2013-05-25
+-------------------------------------------------------------------------------
+
+IT++ 4.3.0 is the next release based on the IT++ stable master branch from git repository. 
+A list of new features and modifications is presented below:
+
+
+New features:
+-------------
+
+* The compilation system is replaced with cmake. Thus compilation and installation 
+on supported OSs (Linux, Windows, MacOS) is handled in an unified way.
+
+* IT++ library can be compiled as shared library on Windows. This removes an
+important limitation of previous releases.
+
+* Added unit testing support based on Google C++ Testing Framework
+
+* Added multilateration class for indoor localization
+
+* Added numerical integration with function objects as integrands
+
+* Added thread-safe Fourier and cosine transforms
+
+* Added thread-safe generation of random numbers
+
+* Added faster LLR demodulator
+
+* Added non-narrow-sense Reed-Solomon and Erasure Decoding
+
+* Added lte_turbo_interleaver_sequence
+
+* Added pyitpp module providing itload() function for Python, similar to MATLAB 
+itload.m
+
+* Added punctured turbo codec (PTC) class
+
+
+Modifications:
+--------------
+
+* fixed errors in Read Solomon and BCH decoders
+* fixed FastICA accesses unallocated memory/ bails out if whitenig
+* fixed help for OFDM class
+* extras/astylerc is now compatible with astyle 2.02.1
+* fixed systematic Reed-Solomon decoding
+* fixed convolutional Decoder for certain generators
+* added operator +- between scalar and complex
+* fixed bug in FastICA with APPROACH_DEFL
+* added new linspace function

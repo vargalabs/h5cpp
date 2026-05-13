@@ -3,8 +3,11 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_IALL_HPP
-#define  H5CPP_IALL_HPP
+#pragma once
+#include <string>
+#include <vector>
+#include <tuple>
+#include <initializer_list>
 
 #ifdef H5CPP_CONVERSION_IMPLICIT
 	#define H5CPP__EXPLICIT
@@ -12,7 +15,7 @@
 	#define H5CPP__EXPLICIT explicit
 #endif
 
-namespace h5 { namespace impl {
+namespace h5::impl {
 	using capi_close_t = ::herr_t(*)(::hid_t);
 	using defprop_t = ::hid_t(*)();
 
@@ -26,9 +29,9 @@ namespace h5 { namespace impl {
 	};
 	//forward declarations
 	struct at_t;
-}}
+}
 
-namespace h5 { namespace impl { namespace detail {
+namespace h5::impl::detail {
 	/* this mechanism is to alter the behaviour of h5::hid_t through 
 	 * template specialization. The base class is ::any which provides
 	 * conversion policy and resource cleanup
@@ -174,15 +177,15 @@ namespace h5 { namespace impl { namespace detail {
 		std::string name;
 	};
 
-}}}
+}
 
-namespace h5 { namespace impl {
+namespace h5::impl {
 	// redefine ::hid_t<..,from_capi,to_capi,...> to disable conversion, default setting: hid_t::<.., true,true,..>
 	template <class T, capi_close_t capi_call> using aid_t = detail::hid_t<T,capi_call, true,true,detail::hdf5::attribute>;
 	template <class T, capi_close_t capi_call> using hid_t = detail::hid_t<T,capi_call, true,true,detail::hdf5::any>;
 	template <class T, capi_close_t capi_call> using pid_t = detail::hid_t<T,capi_call, true,true,detail::hdf5::property>;
 	template <class T, capi_close_t capi_call> using did_t = detail::hid_t<T,capi_call, true,true,detail::hdf5::dataset>;
-}}
+}
 
 /*hide gory details, and stamp out descriptors */
 namespace h5 {
@@ -210,7 +213,6 @@ namespace h5 {
 	#undef H5CPP__defpid_t
 	#undef H5CPP__defhid_t
 }
-#endif
 // T ::= impl::T_ 
 // prop_t<h5::fapl_t, default_fapl,  capi, capi_call>
 // prop_base< prop_t<phid_t,init,capi,capi_call>, phid_t >

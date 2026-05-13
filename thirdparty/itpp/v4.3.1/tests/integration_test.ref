@@ -1,0 +1,6 @@
+=========================================
+  Test of numerical integration routines
+=========================================
+Integration of f(x)=x*log(x) over [1.5,3.5]
+quad = 4.71702
+quadl = 4.71702

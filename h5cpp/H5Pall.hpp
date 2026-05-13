@@ -2,10 +2,15 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_PALL_HPP
-#define  H5CPP_PALL_HPP
+#pragma once
+#include <array>
+#include <tuple>
+#include <initializer_list>
+#include <type_traits>
+#include <algorithm>
+#include <iterator>
 
-namespace h5 { namespace impl {
+namespace h5::impl {
 	/* proxy object that gets converted to property_id with restriction that 
 	 * only same class properties may be daisy chained */
 	template <class Derived, class phid_t>
@@ -22,8 +27,8 @@ namespace h5 { namespace impl {
 	  	}
 		// prevents property type mismatch at compile time:
 		template <class R>
-		typename std::enable_if< std::is_same<typename R::hidtype, hidtype>::value ,
-		const prop_base<Derived, phid_t>& >::type
+		std::enable_if_t< std::is_same_v<typename R::hidtype, hidtype> ,
+		const prop_base<Derived, phid_t>& >
 		operator|( const R& rhs ) const {
 			rhs.copy( handle );
 			return *this;
@@ -62,7 +67,7 @@ namespace h5 { namespace impl {
 			//int i = capi_call + 1;
 			/*CAPI needs `this` hid_t id passed along */
 			capi_t capi_args = std::tuple_cat( std::tie(id), args );
-			H5CPP_CHECK_NZ( h5::compat::apply(capi_call, capi_args),
+			H5CPP_CHECK_NZ( std::apply(capi_call, capi_args),
 					h5::error::property_list::argument,"failed to parse arguments...");
 		}
 
@@ -94,12 +99,12 @@ namespace h5 { namespace impl {
 		using base_t =  prop_t<phid_t,init,capi,capi_call>;
 
 		aprop_t( std::initializer_list<hsize_t> values )
-			: base_t( std::make_tuple( values.size(), this->values) ) {
+			: base_t( std::make_tuple( static_cast<int>(values.size()), this->values) ) {
 			std::copy( std::begin(values), std::end(values), this->values);
 		}
 		template <class T, size_t N>
 		aprop_t( std::array<T,N> values )
-			: base_t( std::make_tuple( values.size(), this->values) ) {
+			: base_t( std::make_tuple( static_cast<int>(values.size()), this->values) ) {
 			std::copy( std::begin(values), std::end(values), this->values);
 		}
 		hsize_t values[H5CPP_MAX_RANK];
@@ -124,7 +129,7 @@ namespace h5 { namespace impl {
 	H5CPP__capicall( lapl, H5P_LINK_ACCESS)      H5CPP__capicall( lcpl, H5P_LINK_CREATE	 )
 	H5CPP__capicall( ocpl, H5P_OBJECT_COPY)      H5CPP__capicall( ocrl, H5P_OBJECT_CREATE )
 	H5CPP__capicall( scpl, H5P_STRING_CREATE)
-	#undef H5CPP__defid
+	#undef H5CPP__capicall
 
 	// only data control property list set_chunk has this pattern, lets allow to define CAPI argument lists 
 	// the same way as with others
@@ -133,7 +138,7 @@ namespace h5 { namespace impl {
 	// only data control property list set_value has this pattern, lets allow to define CAPI argument lists 
 	// the same way as with others
 	template <class capi, typename capi::fn_t capi_call, class T> using dcpl_tcall = tprop_t<h5::dcpl_t,default_dcpl, capi, capi_call, T>;
-}}
+}
 
 namespace h5::impl {
 	template <bool version, class capi, typename capi::fn_t capi_call  > 
@@ -205,8 +210,10 @@ using mdc_config               = impl::fapl_call< impl::fapl_args<hid_t,H5AC_cac
 using mdc_image_config         = impl::fapl_call< impl::fapl_args<hid_t,H5AC_cache_image_config_t*>,H5Pset_mdc_image_config>;
 using mdc_log_options          = impl::fapl_call< impl::fapl_args<hid_t,hbool_t,const char*,hbool_t>,H5Pset_mdc_log_options>;
 #endif
-#if H5_VERSION_GE(1,14,0) //FIXME: find out why the compile error with valid 1.8.0 version 
-using fapl_direct              = impl::fapl_call<impl::fapl_args<hid_t,size_t,size_t,size_t, H5Pset_fapl_direct>;
+#if H5_VERSION_GE(1,14,0) //FIXME: find out why the compile error with valid 1.8.0 version
+#ifdef H5_HAVE_DIRECT
+using fapl_direct              = impl::fapl_call<impl::fapl_args<hid_t,size_t,size_t,size_t>, H5Pset_fapl_direct>;
+#endif
 #endif
 //
 namespace flag {
@@ -369,7 +376,7 @@ const static h5::dxpl_mpiio_collective_opt individual_io{H5FD_MPIO_INDIVIDUAL_IO
 #endif
 }
 
-namespace h5 { namespace notimplemented_yet { // OBJECT COPY PROPERTY LISTS
+namespace h5::notimplemented_yet { // OBJECT COPY PROPERTY LISTS
 	//using char_encoding_ =              = impl::fapl_call< impl::fapl_args<hid_t, >,H5Pset_char_encoding, H5T_cset_t)
 	//static h5::char_encoding_ ascii{H5T_CSET_ASCII};
 	//static h5::char_encoding_ utf8{H5T_CSET_UTF8};
@@ -379,24 +386,36 @@ namespace h5 { namespace notimplemented_yet { // OBJECT COPY PROPERTY LISTS
 	//NOT MAPPED: fapl_direct, mpiposix, fapl_multi
 	//MISSING:	H5CPP__PROPERTYLIST_FLAG(fapl, fapl_windows)
 	//MISSING:	using file_image_callbacks, H5_file_image_callbacks_t* >;
-}}
+}
 
 
 namespace h5 {
 	const static h5::acpl_t acpl = static_cast<h5::acpl_t>( H5P_DEFAULT );
 	const static h5::dcpl_t dcpl = static_cast<h5::dcpl_t>( H5P_DEFAULT );
 	const static h5::dxpl_t dxpl = static_cast<h5::dxpl_t>( H5P_DEFAULT );
-	const static h5::lcpl_t lcpl = h5::char_encoding{H5T_CSET_UTF8} | h5::create_intermediate_group{1};
+	// lcpl/default_lcpl allocate real handles via the `|` operator chain.
+	// See dapl singletons in H5Pdapl.hpp for the rationale; same fix applies.
+	namespace impl {
+		inline const h5::lcpl_t& _lcpl_singleton() {
+			static h5::lcpl_t* p = new h5::lcpl_t(
+				h5::char_encoding{H5T_CSET_UTF8} | h5::create_intermediate_group{1});
+			return *p;
+		}
+		inline const h5::lcpl_t& _default_lcpl_singleton() {
+			static h5::lcpl_t* p = new h5::lcpl_t(
+				h5::char_encoding{H5T_CSET_UTF8} | h5::create_intermediate_group{1});
+			return *p;
+		}
+	}
+	inline const h5::lcpl_t& lcpl = impl::_lcpl_singleton();
 	const static h5::fapl_t fapl = static_cast<h5::fapl_t>( H5P_DEFAULT );
 	const static h5::fcpl_t fcpl = static_cast<h5::fcpl_t>( H5P_DEFAULT );
 
 	const static h5::acpl_t default_acpl = static_cast<h5::acpl_t>( H5P_DEFAULT );
 	const static h5::dcpl_t default_dcpl = static_cast<h5::dcpl_t>( H5P_DEFAULT );
 	const static h5::dxpl_t default_dxpl = static_cast<h5::dxpl_t>( H5P_DEFAULT );
-	const static h5::lcpl_t default_lcpl = h5::char_encoding{H5T_CSET_UTF8} | h5::create_intermediate_group{1};
+	inline const h5::lcpl_t& default_lcpl = impl::_default_lcpl_singleton();
 	const static h5::fapl_t default_fapl = static_cast<h5::fapl_t>( H5P_DEFAULT );
 	const static h5::fcpl_t default_fcpl = static_cast<h5::fcpl_t>( H5P_DEFAULT );
 }
-
-#endif
 

@@ -2,33 +2,36 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_DLIB_HPP 
-#define  H5CPP_DLIB_HPP
+#pragma once
 
 #if defined(DLIB_MATRIx_HEADER) || defined(H5CPP_USE_DLIB)
-namespace h5 { 	namespace dlib {
+namespace h5::dlib {
 // dlib template:
 // const dlib::matrix<short int, 0, 0, dlib::memory_manager_stateless_kernel_1<char>, dlib::row_major_layout>&
 		template<class T> using rowmat = ::dlib::matrix<T, 0, 0,
 			::dlib::memory_manager_stateless_kernel_1<char>,
 			::dlib::row_major_layout>;
 		template <class Object, class T = typename impl::decay<Object>::type>
-			using is_supported = std::integral_constant<bool, std::is_same<Object,h5::dlib::rowmat<T>>::value>;
-}}
-namespace h5 { namespace impl {
+			using is_supported = std::bool_constant<std::is_same_v<Object,h5::dlib::rowmat<T>>>;
+}
+namespace h5::meta {
+		template <class T> struct is_contiguous<h5::dlib::rowmat<T>> : std::true_type {};
+}
+
+namespace h5::impl {
 	// 1.) object -> H5T_xxx
-	template <class T> struct decay<h5::dlib::rowmat<T>>{ typedef T type; };
+	template <class T> struct decay<h5::dlib::rowmat<T>>{ using type = T; };
 
 	// get read access to datastaore
 	template <class Object, class T = typename impl::decay<Object>::type> inline
-	typename std::enable_if< h5::dlib::is_supported<Object>::value,
-	const T*>::type data(const Object& ref ){
+	std::enable_if_t< h5::dlib::is_supported<Object>::value,
+	const T*> data(const Object& ref ){
 			return &ref(0,0);
 	}
 	// read write access
 	template <class Object, class T = typename impl::decay<Object>::type> inline
-	typename std::enable_if< h5::dlib::is_supported<Object>::value,
-	T*>::type data( Object& ref ){
+	std::enable_if_t< h5::dlib::is_supported<Object>::value,
+	T*> data( Object& ref ){
 			return &ref(0,0);
 	}
 	template<class T> struct rank<h5::dlib::rowmat<T>> : public std::integral_constant<size_t,2>{};
@@ -46,6 +49,5 @@ namespace h5 { namespace impl {
 		static inline h5::dlib::rowmat<T> ctor( std::array<size_t,2> dims ){
 			return h5::dlib::rowmat<T>( dims[1], dims[0] );
 	}};
-}}
-#endif
+}
 #endif

@@ -2,11 +2,10 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_BLAZE_HPP 
-#define  H5CPP_BLAZE_HPP
+#pragma once
 
 #if defined(_BLAZE_MATH_MODULE_H_) || defined(H5CPP_USE_BLAZE)
-namespace h5 { 	namespace blaze {
+namespace h5::blaze {
 		template<class T> using rowvec = ::blaze::DynamicVector<T,::blaze::rowVector>;
 		template<class T> using colvec = ::blaze::DynamicVector<T,::blaze::columnVector>;
 		template<class T> using rowmat = ::blaze::DynamicMatrix<T,::blaze::rowMajor>;
@@ -14,27 +13,34 @@ namespace h5 { 	namespace blaze {
 
 		// is_linalg_type := filter
 		template <class Object, class T = typename impl::decay<Object>::type> using is_supported =
-		std::integral_constant<bool, std::is_same<Object,rowmat<T>>::value || std::is_same<Object,colmat<T>>::value
-			|| std::is_same<Object,rowvec<T>>::value ||  std::is_same<Object,colvec<T>>::value>;
-}}
+		std::bool_constant<std::is_same_v<Object,rowmat<T>> || std::is_same_v<Object,colmat<T>>
+			|| std::is_same_v<Object,rowvec<T>> ||  std::is_same_v<Object,colvec<T>>>;
+}
 
-namespace h5 { namespace impl {
+namespace h5::meta {
+		template <class T> struct is_contiguous<h5::blaze::rowvec<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::blaze::colvec<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::blaze::rowmat<T>> : std::true_type {};
+		template <class T> struct is_contiguous<h5::blaze::colmat<T>> : std::true_type {};
+}
+
+namespace h5::impl {
 	// 1.) object -> H5T_xxx
-	template <class T> struct decay<h5::blaze::rowvec<T>>{ typedef T type; };
-	template <class T> struct decay<h5::blaze::colvec<T>>{ typedef T type; };
-	template <class T> struct decay<h5::blaze::rowmat<T>>{ typedef T type; };
-	template <class T> struct decay<h5::blaze::colmat<T>>{ typedef T type; };
+	template <class T> struct decay<h5::blaze::rowvec<T>>{ using type = T; };
+	template <class T> struct decay<h5::blaze::colvec<T>>{ using type = T; };
+	template <class T> struct decay<h5::blaze::rowmat<T>>{ using type = T; };
+	template <class T> struct decay<h5::blaze::colmat<T>>{ using type = T; };
 
 	// get read access to datastaore
 	template <class Object, class T = typename impl::decay<Object>::type> inline
-	typename std::enable_if< h5::blaze::is_supported<Object>::value,
-	const T*>::type data(const Object& ref ){
+	std::enable_if_t< h5::blaze::is_supported<Object>::value,
+	const T*> data(const Object& ref ){
 			return ref.data();
 	}
 	// read write access
 	template <class Object, class T = typename impl::decay<Object>::type> inline
-	typename std::enable_if< h5::blaze::is_supported<Object>::value,
-	T*>::type data( Object& ref ){
+	std::enable_if_t< h5::blaze::is_supported<Object>::value,
+	T*> data( Object& ref ){
 			return ref.data();
 	}
 	// rank
@@ -65,7 +71,6 @@ namespace h5 { namespace impl {
 		static inline h5::blaze::colmat<T> ctor( std::array<size_t,2> dims ){
 			return h5::blaze::colmat<T>( dims[0], dims[1] );
 	}};
-}}
+}
 
-#endif
 #endif

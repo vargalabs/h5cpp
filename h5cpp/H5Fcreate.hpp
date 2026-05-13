@@ -3,10 +3,10 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_FCREATE_HPP
-#define H5CPP_FCREATE_HPP
+#pragma once
+#include <string>
 
-/**  
+/**
  * @namespace h5
  * @brief public namespace
  */
@@ -58,5 +58,3 @@ namespace h5{
         return fd_t{fd};
     }
 }
-#endif
-

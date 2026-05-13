@@ -1,0 +1,12 @@
+/*!
+\page timer Using timers to measure execution time
+
+In this example we are using the Real_Timer class to measure the execution time of a simple program. The Real_Timer class is included in the itmisc library.
+
+\include timer.cpp
+
+When you run this program, the output will look something like this:
+
+\include timer.ref
+
+*/

@@ -1,0 +1,15 @@
+/*!
+\page bpsk BPSK modulation over an AWGN channel
+
+As a first example we will generate a sequence of 500000 random bits {0,1} and
+BPSK modulate these. Thereafter the BPSK signals will be transmitted over
+an AWGN channel with a signal-to-noise ratio \f$E_b/N_0 = 0\f$ dB. The received signal
+is then decoded and the number of bit errors are calculated.
+
+\include bpsk.cpp
+
+When you run this program, the output will look something like this:
+
+\include bpsk.ref
+
+*/

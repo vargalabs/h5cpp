@@ -2,25 +2,12 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_CAPI_HPP
-#define  H5CPP_CAPI_HPP
-
-/* rules:
- * h5::id_t{ hid_t } or direct initialization  doesn't increment reference count
- */ 
-namespace h5 { namespace impl {
-	struct free {
-		template <typename T>
-		void operator()(T *p) const {
-			using T_ = typename std::remove_const<T>::type;
-			std::free( const_cast<T_*>(p) );
-		}
-	};
-
-	template <typename T>
-		using unique_ptr = std::unique_ptr<T,h5::impl::free>;
-}}
-
+#pragma once
+#include <type_traits>
+#include <stdexcept>
+#include <string>
+#include <memory>
+#include <cstdlib>
 
 namespace h5 {
 	inline ::hid_t get_access_plist( const ds_t& ds ){
@@ -59,7 +46,7 @@ namespace h5 {
 	template <class T>
 	inline unsigned get_simple_extent_dims( const h5::sp_t& file_space, T& current_dims ){
 		int rank;
-		H5CPP_CHECK_NZ( (rank = H5Sget_simple_extent_dims(static_cast<hid_t>( file_space ), *current_dims, NULL )),
+		H5CPP_CHECK_NZ( (rank = H5Sget_simple_extent_dims(static_cast<hid_t>( file_space ), *current_dims, nullptr )),
 				std::runtime_error, h5::error::msg::get_simple_extent_dims );
 		// don't forget to set rank
 		current_dims.rank = rank;
@@ -132,7 +119,7 @@ namespace h5 {
 		return h5::sp_t{space};
 	}
 	inline h5::sp_t create_simple( const h5::current_dims& current_dims, const h5::max_dims& max_dims  ){
-		return h5::sp_t{H5Screate_simple( current_dims.size(), current_dims.begin(), max_dims.begin() )};
+		return h5::sp_t{H5Screate_simple( static_cast<int>(current_dims.size()), current_dims.begin(), max_dims.begin() )};
 	}
 
 
@@ -144,7 +131,7 @@ namespace h5 {
 	inline void select_hyperslab(const h5::sp_t& sp, const T& offset, const h5::count_t& count ){
 		hsize_t cnt[] =  {1,1,1,1,1,1,1,1};
 		H5CPP_CHECK_NZ(
-				H5Sselect_hyperslab( static_cast<hid_t>(sp), H5S_SELECT_SET, *offset, NULL, cnt, *count),
+				H5Sselect_hyperslab( static_cast<hid_t>(sp), H5S_SELECT_SET, *offset, nullptr, cnt, *count),
 			   std::runtime_error,	h5::error::msg::select_hyperslab);
 	}
 	inline void select_hyperslab(const h5::sp_t& sp, const h5::offset_t& offset, const h5::stride_t& stride,
@@ -175,17 +162,18 @@ namespace h5 {
 		H5CPP_CHECK_NZ(
 				H5Pset_chunk(static_cast<::hid_t>(dcpl), chunk.rank, *chunk ), std::runtime_error,	 h5::error::msg::set_chunk );
 	}
-	template<class T>
-	inline h5::ds_t createds(const h5::fd_t& fd, const std::string& path, const h5::dt_t<T>& type,
+	inline h5::ds_t createds(const h5::fd_t& fd, const std::string& path, ::hid_t type_id,
 		  const h5::sp_t& sp, const h5::lcpl_t& lcpl, const h5::dcpl_t& dcpl, const h5::dapl_t& dapl ){
 		hid_t ds;
-		H5CPP_CHECK_NZ(( ds = H5Dcreate2( static_cast<hid_t>(fd), path.data(), type, static_cast<hid_t>(sp),
+		H5CPP_CHECK_NZ(( ds = H5Dcreate2( static_cast<hid_t>(fd), path.data(), type_id, static_cast<hid_t>(sp),
 								static_cast<hid_t>(lcpl), static_cast<hid_t>(dcpl), static_cast<hid_t>( dapl )  )),
 			   std::runtime_error,	h5::error::msg::create_dataset );
 		//FIXME: hack to carry prop over
 		h5::ds_t ds_{ds};
 
 		switch( H5Pget_layout(static_cast<::hid_t>( dcpl)) ){
+			case H5D_LAYOUT_ERROR: break;
+			case H5D_NLAYOUTS: break;
 			case H5D_COMPACT: break;
 			case H5D_CONTIGUOUS: break;
 			case H5D_CHUNKED:
@@ -193,8 +181,8 @@ namespace h5 {
 					// grab pointer to uninitialized pipeline
 					h5::impl::pipeline_t<impl::basic_pipeline_t>* ptr;
 					H5Pget(dapl, H5CPP_DAPL_HIGH_THROUGHPUT, &ptr);
-					hid_t type_id = H5Dget_type( static_cast<::hid_t>(ds) );
-					size_t element_size = H5Tget_size( type_id );
+					hid_t elem_type_id = H5Dget_type( static_cast<::hid_t>(ds) );
+					size_t element_size = H5Tget_size( elem_type_id );
 					ptr->set_cache(dcpl, element_size);
 				}
 				break;
@@ -202,6 +190,12 @@ namespace h5 {
 		}
 		ds_.dapl = static_cast<::hid_t>( dapl );
 		return ds_;
+	}
+
+	template<class T>
+	inline h5::ds_t createds(const h5::fd_t& fd, const std::string& path, const h5::dt_t<T>& type,
+		  const h5::sp_t& sp, const h5::lcpl_t& lcpl, const h5::dcpl_t& dcpl, const h5::dapl_t& dapl ){
+		return h5::createds(fd, path, static_cast<::hid_t>(type), sp, lcpl, dcpl, dapl);
 	}
 
 	inline void * get_fill_value(const h5::dcpl_t& dcpl, const h5::dt_t<void*>& type, size_t size){
@@ -216,7 +210,7 @@ namespace h5 {
 					static_cast<::hid_t>(type), buffer );
 			return buffer;
 		} else
-			return NULL;
+			return nullptr;
 	}
 
 	inline void * get_fill_value(const h5::ds_t& ds){
@@ -227,5 +221,3 @@ namespace h5 {
 		return h5::get_fill_value(dcpl, type, size);
 	}
 }
-#endif
-

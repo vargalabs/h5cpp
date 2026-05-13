@@ -3,8 +3,16 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_MISC_HPP
-#define  H5CPP_MISC_HPP
+#pragma once
+#include <complex>
+#include <string>
+#include <vector>
+#include <random>
+#include <algorithm>
+#include <iterator>
+#include <type_traits>
+#include <memory>
+#include <cstdlib>
 namespace h5{
 	using cx_double =  std::complex<double>; /**< scientific type */
 	using cx_float = std::complex<float>;    /**< scientific type */
@@ -17,8 +25,8 @@ namespace h5{
 
 namespace h5::utils {
 	template <class T>
-	static constexpr bool is_supported = std::is_class<T>::value | std::is_arithmetic<T>::value;
-	//static constexpr bool is_supported = std::is_pod<T>::value && std::is_class<T>::value | std::is_arithmetic<T>::value;
+	static constexpr bool is_supported = std::is_class_v<T> | std::is_arithmetic_v<T>;
+	//static constexpr bool is_supported = std::is_pod_v<T> && std::is_class_v<T> | std::is_arithmetic_v<T>;
 }
 
 
@@ -49,7 +57,7 @@ namespace h5::utils {
 		std::random_device rd;
 		std::default_random_engine rng(rd());
 		std::uniform_int_distribution<> dist(0,sizeof(alphabet)/sizeof(*alphabet)-2);
-		std::uniform_int_distribution<> string_length(min, max);
+		std::uniform_int_distribution<size_t> string_length(min, max);
 
 		std::generate_n(std::back_inserter(data), data.capacity(),   [&] {
 				std::string str;
@@ -90,5 +98,15 @@ namespace h5::utils {
 	}
 
 }
-#endif
 
+namespace h5::impl {
+    struct free {
+        template <typename T>
+        void operator()(T *p) const {
+            using T_ = std::remove_const_t<T>;
+            std::free( const_cast<T_*>(p) );
+        }
+    };
+    template <typename T>
+        using unique_ptr = std::unique_ptr<T, h5::impl::free>;
+}

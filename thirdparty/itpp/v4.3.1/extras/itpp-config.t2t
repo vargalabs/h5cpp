@@ -1,0 +1,73 @@
+itpp-config
+IT++ @PACKAGE_VERSION@
+@PACKAGE_DATE@
+
+%!target: man
+
+
+= NAME =
+
+itpp-config - script to get information about intalled IT++ library
+prefix, compiler flags and its version
+
+
+= SYNOPSIS =
+
+**itpp-config** [--prefix] [--exec-prefix] [--debug] [--static]
+            [--cflags] [--libs] [--help] [--version]
+
+
+= DESCRIPTION =
+
+//itpp-config// is a tool that can be used to determine the compiler and
+linker flags required for compiling and linking programs that use IT++.
+It can be also used for checking the intalled libitpp library version.
+
+
+= OPTIONS =
+
+//itpp-config// accepts the following options:
+: **--prefix**
+output libitpp installation prefix
+: **--exec-prefix**
+output libitpp installation exec prefix
+: **--debug**
+use debugging pre-processor, compiler and linker flags (needs to be used
+in front of **--cflags** and **--libs**)
+: **--static**
+use static linker flags (needs to be used in front of **--libs**)
+: **--cflags**
+output pre-processor and compiler flags
+: **--libs**
+output linker flags
+: **--help**
+display brief help and exit
+: **--version**
+output version number
+
+
+= AUTHOR =
+
+This manual page was written by Adam Piatyszek <ediap@users.sourceforge.net>
+as a text file, then converted to man format by txt2tags.
+
+
+= COPYRIGHT =
+
+Copyright (C) 1995-2010  (see AUTHORS file for a list of contributors)
+
+This file is part of IT++ - a C++ library of mathematical, signal
+processing, speech processing, and communications classes and functions.
+
+IT++ is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+IT++ is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along
+with IT++.  If not, see <http://www.gnu.org/licenses/>.

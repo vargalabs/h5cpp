@@ -2,8 +2,7 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_EIGEN_HPP 
-#define H5CPP_EIGEN_HPP
+#pragma once
 #include <hdf5.h>
 #include "H5Tmeta.hpp"
 #include <tuple>
@@ -26,10 +25,10 @@ namespace h5::meta {
     template<class T,int R,int C, int O> struct is_contiguous<::Eigen::Array<T,R,C,O>> : std::true_type {};
 }
 
-namespace h5 { namespace impl {
+namespace h5::impl {
 	// 1.) object -> H5T_xxx
-	template<class T,int R,int C, int O> struct decay<::Eigen::Matrix<T,R,C,O>>{ typedef T type; };
-	template<class T,int R,int C, int O> struct decay<::Eigen::Array<T,R,C,O>>{ typedef T type; };
+	template<class T,int R,int C, int O> struct decay<::Eigen::Matrix<T,R,C,O>>{ using type = T; };
+	template<class T,int R,int C, int O> struct decay<::Eigen::Array<T,R,C,O>>{ using type = T; };
 	    
 
 	// TODO: remove const_cast
@@ -63,18 +62,11 @@ namespace h5 { namespace impl {
 		return {(hsize_t)ref.cols(), (hsize_t)ref.rows()};
 	}
 
-	/*rank:
-	// MATRICES:
-	template<class T,int R,int C,int MR=R,int MC=C>
-	inline struct rank<const ::Eigen::Matrix<T,R,C,::Eigen::RowMajor,MR,MC>> : public std::integral_constant<size_t,2>{};
-	template<class T,int R,int C,int MR=R,int MC=C>
-	inline struct rank<const ::Eigen::Matrix<T,R,C,::Eigen::ColMajor,MR,MC>> : public std::integral_constant<size_t,2>{};
-	// ARRAYS
-	template<class T,int R,int C,int MR=R,int MC=C>
-	inline struct rank<const ::Eigen::Array<T,R,C,::Eigen::RowMajor,MR,MC>> : public std::integral_constant<size_t,2>{};
-	template<class T,int R,int C,int MR=R,int MC=C>
-	inline struct rank<const ::Eigen::Array<T,R,C,::Eigen::ColMajor,MR,MC>> : public std::integral_constant<size_t,2>{};
-*/
+	// rank
+	template<class T,int R,int C,int O,int MR,int MC>
+	struct rank<::Eigen::Matrix<T,R,C,O,MR,MC>> : public std::integral_constant<size_t,2>{};
+	template<class T,int R,int C,int O,int MR,int MC>
+	struct rank<::Eigen::Array<T,R,C,O,MR,MC>>  : public std::integral_constant<size_t,2>{};
 	// CTOR-s
 	// MATRICES
 	template<class T,int R,int C>
@@ -118,7 +110,6 @@ namespace h5 { namespace impl {
 		static inline ::Eigen::Array<T,R,C,::Eigen::ColMajor,MR,MC> ctor( std::array<size_t,2> dims ){
 			return ::Eigen::Array<T,R,C,::Eigen::ColMajor,MR,MC>( dims[1], dims[0] );
 	}};
-}}
+}
 
-#endif
 #endif

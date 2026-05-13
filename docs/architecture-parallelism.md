@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 
     arma::mat returns = h5::read<arma::mat>(fd, "/research/input/returns");
 
-  4  auto [pnl, stats] = run_strategy(returns, rank);
+    auto [pnl, stats] = run_strategy(returns, rank);
 
     std::string base = "/research/output/strategy_" + std::to_string(rank);
 

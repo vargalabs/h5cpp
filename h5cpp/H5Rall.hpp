@@ -2,11 +2,10 @@
  * Copyright (c) 2018-2021 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
+#pragma once
 #include <initializer_list>
-
-
-#ifndef  H5CPP_RALL_HPP 
-#define  H5CPP_RALL_HPP
+#include <string>
+#include <tuple>
 
 namespace h5 {
     template <class... args_t>
@@ -159,4 +158,3 @@ namespace h5::exp {
 	
 
 }
-#endif 

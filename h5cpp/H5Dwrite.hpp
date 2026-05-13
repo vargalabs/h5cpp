@@ -1,10 +1,8 @@
-        /*
+/*
  * Copyright (c) 2018 - 2021 vargaconsulting, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-
-#ifndef H5CPP_DWRITE_HPP
-#define H5CPP_DWRITE_HPP
+#pragma once
 
 #include "H5Tmeta.hpp"
 #include "H5Dgather.hpp"
@@ -23,7 +21,7 @@ namespace h5 {
 	inline void write( const h5::ds_t& ds, const h5::sp_t& mem_space, const h5::sp_t& file_space, const h5::dxpl_t& dxpl, const T* ptr  ){
 		H5CPP_CHECK_PROP( dxpl, h5::error::io::dataset::write, "invalid data transfer property" );
 		using element_t = typename h5::impl::decay<T>::type;
-		h5::dt_t<element_t> type;
+		h5::meta::resolved_type_t<element_t> type;
 		H5CPP_CHECK_NZ(
 			H5Dwrite( static_cast<hid_t>( ds ), type, mem_space, file_space, static_cast<hid_t>(dxpl), ptr),
 				h5::error::io::dataset::write, h5::error::msg::write_dataset);
@@ -118,7 +116,17 @@ namespace h5 {
 				err = H5Sselect_all(file_space);
 			// throw an exception if eny error
 			H5CPP_CHECK_NZ(err, h5::error::io::dataset::write, h5::error::msg::select_hyperslab);
-			h5::write(ds, mem_space, file_space, dxpl, ptr);
+			// MSVC partial-ordering bug: the unqualified `::h5::write(ds, mem, file, dxpl, ptr)`
+			// is ambiguous between the inner overload at line 21 and the variadic forwarder at
+			// line 181 (with T=sp_t).  Inline the H5Dwrite call here — matches the H5Dread.hpp:73
+			// idiom — so there is no recursive call back into this overload set.
+			using element_t = typename impl::decay<T>::type;
+			h5::meta::resolved_type_t<element_t> type;
+			H5CPP_CHECK_NZ(
+				H5Dwrite( static_cast<hid_t>(ds), static_cast<hid_t>(type),
+					static_cast<hid_t>(mem_space), static_cast<hid_t>(file_space),
+					static_cast<hid_t>(dxpl), ptr),
+				h5::error::io::dataset::write, h5::error::msg::write_dataset);
 		}
 		return ds;
 	} catch ( const std::exception& err ){
@@ -179,7 +187,8 @@ namespace h5 {
 	* H5Dflush(ds); 
 	* @endcode 
  	*/
-	template <class T, class... args_t>
+	template <class T, class... args_t,
+		class = std::enable_if_t<!std::is_pointer_v<std::decay_t<T>>>>
 	inline h5::ds_t write(const h5::ds_t& ds, const T& ref,  args_t&&... args) try {
 		using tcount = typename arg::tpos<const h5::count_t&,const args_t&...>;
 		using element_t = typename impl::decay<T>::type;
@@ -187,21 +196,21 @@ namespace h5 {
 		if constexpr (h5::meta::is_contiguous<T>::value) { // arrays/vectors/matrices of pod_t, funcamental types, but NOT vector<std::string> ... etc
 			auto ptr = h5::impl::data(ref);
 			if constexpr (tcount::present) // explicitly set: mem_space and file_space are given
-				h5::write(ds, ptr,  args...);
+				::h5::write(ds, ptr,  args...);
 			else { // we have to find out the size of `ref` and compute h5::count{}	
 				h5::count_t count = impl::size( ref );
-				h5::write(ds, ptr, count, args...);
+				::h5::write(ds, ptr, count, args...);
 			}
 		} else { // variable length datasets: ragged arrays, vector of strings...
 			// SUBTLE: lowering element_t type here with one level 
 			using element_t = typename impl::decay<element_t>::type;
 			std::vector<element_t> elements;
-			element_t* ptrs = h5::gather(ref, elements);
+			const element_t* ptrs = h5::gather(ref, elements);
 			if constexpr (tcount::present) // explicitly set: mem_space and file_space are given
-				ds = h5::write<element_t>(ds, ptrs,  args...);
+				ds = ::h5::write<element_t>(ds, ptrs,  args...);
 			else { // we have to find out the size of `ref` and compute h5::count{}	
 				h5::count_t count = impl::size( ref );
-				h5::write<element_t>(ds, ptrs, count, args...);
+				::h5::write<element_t>(ds, ptrs, count, args...);
 			}
 		}
 		return ds;
@@ -279,7 +288,7 @@ namespace h5 {
 			}
 		}
 		// we either have `ds` != H5I_UNINIT or an exception thrown, safe to delegate
-		return h5::write(ds, ptr, args...);
+		return ::h5::write(ds, ptr, args...);
 	}
 
     /** @ingroup io-write
@@ -328,12 +337,13 @@ namespace h5 {
 	* 	h5::current_dims{vec.length()}, h5::max_dims{H5S_UNLIMITED}, h5::chunk{1024} | h5::gzip{9});
 	* @endcode 
  	*/ 
-	template <class T, class... args_t>
+	template <class T, class... args_t,
+		class = std::enable_if_t<!std::is_pointer_v<std::decay_t<T>>>>
 	inline h5::ds_t write( const h5::fd_t& fd, const std::string& dataset_path, const T& ref,  args_t&&... args  ){
 		using tcount  = typename arg::tpos<const h5::count_t&, const args_t&...>;
 		h5::ds_t ds; // initialized to H5I_UNINIT
 		// find out if we have to create the dataset
-		h5::mute(); 
+		h5::mute();
 			// Returns a negative value when the function fails and may return a negative value if the link does not exist.
 			// - name is not local to the group specified by loc_id or, if loc_id is something other than a group identifier, 
 			//        name is not local to the root group
@@ -358,7 +368,7 @@ namespace h5 {
 			}
 		}
 		// we either have `ds` != H5I_UNINIT or an exception thrown, safe to delegate
-		return h5::write(ds, ref,  args...);
+		return ::h5::write(ds, ref,  args...);
 	}
 
 
@@ -414,7 +424,6 @@ namespace h5 {
 	inline h5::ds_t write( const std::string& file_path, const std::string& dataset_path, args_t&&... args  ){
 		//TODO: refine delegation
 		h5::fd_t fd = h5::open( file_path, H5F_ACC_RDWR, h5::default_fapl );
-		return h5::write( fd, dataset_path, args...);
+		return ::h5::write( fd, dataset_path, args...);
 	}
 }
-#endif

@@ -1,0 +1,536 @@
+===============================================================================
+IT++ version 3.10.12                                       Released: 2007-07-12
+-------------------------------------------------------------------------------
+
+This bug-fix release is intended to be the final release of 3.10.x stable
+branch. The current development branch 3.99.x will soon become a new stable
+branch, starting from version 4.0.0. Therefore, we recommend to start using
+3.99.x releases instead of 3.10.x ones.
+As usual, this release includes only bug-fixes and minor modifications that
+do not change the interface.
+
+Modifications:
+--------------
+
+* Improvements in MKL detection macros: MKL release 9.1.018 has different
+  naming of a lapack shared library (-lmkl_lapack32 and -lmkl_lapack64
+  replaced with -lmkl_lapack).
+
+* Not setting "-fno-exceptions" flag in CXXFLAGS and CXXFLAGS_DEBUG, even if
+  "--disable-exceptions" switch is used.
+
+Bug-fixes:
+----------
+
+* Fixed bug [1752576] in operators "+=" and "-=", which gave wrong
+  results when adding or substracting a vector from itself.
+
+* Fixed bug [1739500] in hadamard() function. The initial recursion for
+  creating Hadamard matrices has to start with a 1x1 matrix H = [1], not
+  with a 2x2 matrix.
+
+* Fixed bug [1739267] in binom() and binom_i() functions, which gave wrong
+  results for n=k.
+
+* Fixed bug [1738716] by correcting the MSVC++ project files to include
+  proper source and header files
+
+* Fixed bug [1730610] by using binary mode when opening *.pnm and *.pgm
+  image files for reading (Source coding module)
+
+
+===============================================================================
+IT++ version 3.10.11                                       Released: 2007-06-02
+-------------------------------------------------------------------------------
+
+This is the next bug-fix release of the stable IT++ library. As usually, no
+new features have been added since our previous release 3.10.10. Only minor
+modifications and bug-fixes have been done.
+
+Bug-fixes:
+----------
+
+* Fixed bug [1727923]. Actually the behaviour of the function is not changed
+  at all. Instead, the documentation is improved to clearly describe what
+  this method does.
+
+* Fixed bug [1724746], i.e. a problem with modified input data in
+  ifft_real() function.
+
+* Fixed a minor problem in the schur_test program, which caused failed test
+  when linking IT++ with some LAPACK implementations
+
+* Fixed linking errors when trying to use Hadamard and Walsh-Hadamard
+  transform functions. This fixes bug [1719146].
+
+* Fixed bug [1703731] by implementing the missing double2mxArray() and
+  double_complex2mxArray() functions
+
+* Added missing #include <cstdlib> and <limits> header files. This fixes
+  problems when building using GCC 4.3 snapshot.
+
+
+===============================================================================
+IT++ version 3.10.10                                       Released: 2007-04-10
+-------------------------------------------------------------------------------
+
+This is the next bug-fix release of the stable IT++ library. Therefore, no
+new features have been added since 3.10.9 was released. Only minor
+modifications and bug-fixes have been done.
+
+Modifications:
+--------------
+
+* Test programs are linked to the optimised library by default.
+
+* A separate MSVC++ project file created to simplify linking the IT++
+  library with ACML (PGI build) under Windows. Documentation updated
+  accordingly.
+
+* Speed and portability improvements in the configuration scripts backported
+  from the development branch.
+
+Bug-fixes:
+----------
+
+* Fixed bug [1693384] in it_file low_level_write(std::string) method caused
+  by a missing explicit cast of string size to 32-bit int. Only 64-bit
+  architectures were affected by this bug.
+
+* CPU_Timer and Real_Timer tests are now independent of each other. This
+  should solve possible test failures in specific cases (e.g. high CPU
+  load).
+
+
+===============================================================================
+IT++ version 3.10.9                                        Released: 2007-02-10
+-------------------------------------------------------------------------------
+
+This is the next bug-fix release of the stable IT++ library. Therefore, no
+new features have been added since 3.10.8 was released. Only minor
+modifications and bug-fixes have been done.
+
+Modifications:
+--------------
+
+* Added test file for a binary it_file format. It is supposed to assert
+  wrong endianness detection on various platforms.
+
+* Added a manual page for itpp-config script
+
+* Improved portability by adding support for <endian.h> system header,
+  available at least on Linux systems.
+
+Bug-fixes:
+----------
+
+* Fixed bug [1635988] by implementing the twist() function in a similar way
+  as the original TWIST() macro from Takuji Nishimura's and Makoto
+  Matsumoto's C sources.
+
+* Fixed wrong assertion check in QAM modulator set_M() function. This
+  problem was reported on the Help forum.
+
+* Protected inheritance of the Convolutional_Code class replaced with a
+  public one. This fixes the problem of assigning the
+  Punctured_Convolutional_Code class object to a pointer of Channel_Code
+  class.
+
+* Added missing architecture checks, which should fix bugs [1641691] and
+  [1640347].
+
+* Minor fixes to prevent "unused variable" warnings when ASSERT_LEVEL flag
+  is not defined.
+
+* Fixed non-portable parts of the Makefile reported by the latest stable
+  automake 1.10
+
+
+===============================================================================
+IT++ version 3.10.8                                        Released: 2007-01-14
+-------------------------------------------------------------------------------
+
+This is the next bug-fix release of a stable IT++ library. Therefore, no new
+features have been added since 3.10.7 release. Only minor modifications and
+bug-fixes have been done.
+
+Modifications:
+--------------
+
+* Implemented feature request [1216416]. Multiply operator `*' of a vector
+  `v' and single-row matrix `m' now works for any size of vector `v'. This
+  change is backward compatible with the previous implementation.
+
+* Cleaned up the exception handling in the PNM class and added GCC specific
+  "-fno-exceptions" flag to CXXFLAGS_OPT and CXXFLAGS_DEBUG when
+  "--enable-exceptions" is not used.
+
+Bug-fixes:
+----------
+
+* Updated Mersenne Twister random number generator sources to the latest
+  version 1.0 published by Richard J. Wagner on 15th May, 2003.
+
+* Fixed a problem with discretization of the TDL_Channel delay profile in
+  the case when the sampling frequency is too low, as compared to the delay
+  profile resolution.
+
+* A few other minor fixes. For a full list of them, please check the
+  ChangeLog file.
+
+
+===============================================================================
+IT++ version 3.10.7                                        Released: 2006-12-04
+-------------------------------------------------------------------------------
+
+This is the next bug-fix release of a stable IT++ library. Therefore, no new
+features have been added since 3.10.6 release. Only minor modifications and
+bug-fixes have been done.
+
+Bug-fixes:
+----------
+
+* Fixed a problem with detection of the ACML library on 64-bit platforms.
+
+* Minor code readability and efficiency improvements in modulator_nd.cpp
+  file.
+
+* Fixed bug [1570388] by adding a warning message to `get_no_mixtures()'
+  function saying that it is deprecated and that `get_no_gaussians()' should
+  be used instead.
+
+* Function `needed_bits()' marked as deprecated, because its name was
+  misleading (see bug [1480535]). The following two functions were added
+  instead: `int2bits()' and `levels2bits()'. The first one returns the
+  number of bits required for representing an unsigned integer, e.g.
+  "int2bits(0) = 1", "int2bits(2) = 2". The latter one returns the number of
+  bits to code a certain, positive number of values (levels). For example:
+  "levels2bits(1) = 1", "levels2bits(2) = 1".
+
+* Fixed auto-detected library flags, which are required for linking with a
+  static IT++ library.
+
+
+===============================================================================
+IT++ version 3.10.6                                        Released: 2006-10-15
+-------------------------------------------------------------------------------
+
+This is a bug-fix release. Therefore, no new features have been added since
+release 3.10.5. Only minor modifications and bug-fixes have been done.
+
+Bug-fixes:
+----------
+
+* Fixed bug [1576333]. The problem with undefined non-weak symbols has been
+  solved according to the solution from Section 7.3.5 "Libtool Convenience
+  Libraries" of automake manual. Thanks to Ed Hill for reporting this bug
+  and his work on RPM package for Fedora Core.
+
+* Fixed an error in ND_UQAM class.
+
+* Changed the definition of LLRs from log(P(b=1)/P(b=0)) to
+  log(P(b=0)/P(b=1)) in the LLR and Modulator_ND classes. This was done to
+  conform to the conventions in the scalar modulator class.
+
+* Fixed bug [1572807]. Modulator_2d can not be initialised with non-even
+  number of symbols. Therefore, additional checks have been added to the
+  set() function. Thanks to George Jongren for reporting this bug.
+
+* Added a check for undersampled PDP in Channel_Specification::discretize()
+  function. Non default Doppler spectrum can not be used when sampling
+  frequency is too low.
+
+* Fixed bug [1545798]. Sparse vectors are now correctly compared using `=='
+  operator. Thanks to Timo for reporting this bug.
+
+* Fixed bug [1542064]. The problem was that the index in the
+  tap_doppler_spectrum array in the TDL_Channel::init() function could go
+  out of bounds, if the TDL_Channel class was used with two different channel
+  profile lengths. Thanks to Jordy Potman for reporting this bug and
+  providing a patch with a solution.
+
+* Fixed bug [1542482]. Now binom_i(n, k) works properly and gives the same
+  results as binom(n, k).
+
+
+===============================================================================
+IT++ version 3.10.5                                        Released: 2006-08-15
+-------------------------------------------------------------------------------
+
+This is a bug-fix release. Therefore, no new features have been added since
+release 3.10.4. Only minor modifications and bug-fixes have been done.
+
+Bug-fixes:
+----------
+
+* Documentation improvements in modulator_nd.{cpp,h}, llr.{cpp,h} and
+  verification.doc.
+
+* Replaced deprecated hypot(x, y) function with std::sqrt(x*x + y*y)
+  calculation. BTW, macro definition `M_2PI' replaced with a global constant
+  `m_2pi'. This prevents compilation warnings under MSVC++ .NET compiler.
+
+* Fixed bug [1538210], caused by an uninitialised variable `m2' used for
+  covariance calculation. Thanks to Max Moorkamp for reporting this bug.
+
+* Fixed bugs [1088420] and [1456235]. The problems reported in these bug
+  reports were caused by calculation of the log() or exp() function using
+  `Inf', `NaN' or `zero' argument, which came from previous calculation. Two
+  special functions `trunc_log()' and `trunc_exp()' have been implemented,
+  which performs some checks of their argument and eventually truncate or
+  saturate the result. This fixes all problems in MAP-decode function of the
+  RSC decoder and soft demodulate functions in various modulators.
+
+* Fixed a problem in Parser initialisation caused by passing a C-style
+  string as the argument of init(std::string) function.
+
+
+===============================================================================
+IT++ version 3.10.4                                        Released: 2006-08-07
+-------------------------------------------------------------------------------
+
+This is a bug-fix release. Therefore, no new features have been added
+since release 3.10.3. Only minor modifications and bug-fixes have been done.
+
+Bug-fixes:
+----------
+
+* A set of changes in the MSVC++ .NET project file, which is now located in
+  a separate `win32' subdirectory. Now IT++ should compile and link without
+  any warnings under MSVC++ compiler. Installation manual updated
+  accordingly.
+
+* Fixed a minor bug in the RSC code test program. The generator polynomials
+  were initialised with a string using octal notation, which is not
+  supported by Vec<> parser yet.
+
+* Added explicit check for a fortran compiler. If not found, BLAS, CBLAS and
+  LAPACK are not checked.
+
+* Fixed a bug that caused unresolved erfc() function under MSVC++ .NET
+  compiler. The function definition is now outside namespace itpp.
+
+* Fixed a minor problem with overloaded virtual	function open() (itfile.h).
+
+* Conversion from integer to std::string implemented in pure C++ by using
+  std::stringstream class (itassert.cpp).
+
+* Fixed a minor problem with duplicated declaration of tgamma(), lgamma()
+  and cbrt() functions.
+
+
+===============================================================================
+IT++ version 3.10.3                                        Released: 2006-07-11
+-------------------------------------------------------------------------------
+
+This is a bug-fix release. Therefore, no new features have been added
+since release 3.10.2. Only minor modifications and bug-fixes have been done.
+
+Bug-fixes:
+----------
+
+* Fixed bug [1516976] by setting the threshold of round_to_zero() function
+  to 1e-13. Thanks to Rosario for reporting this bug.
+
+* Fixed bug [1506524]. The `K' variable is now initialised in the
+  Convolutional_Code default constructor. Thanks to Hakan Eriksson for
+  finding this bug.
+
+* Fixed a small problem with possible hazard in timing test.
+
+
+===============================================================================
+IT++ version 3.10.2                                        Released: 2006-05-15
+-------------------------------------------------------------------------------
+
+This is a bug-fix release. Therefore, no new features have been added
+since release 3.10.1. Only minor modifications and bug-fixes have been done.
+
+Bug-fixes:
+----------
+
+* Fixed gettimeofday() function definition for Windows based platforms
+  (MinGW, MSVC++). No need for MINGW definition any more.
+
+* Added checks for `acosh', `asinh', `atanh', `lgamma' and `tgamma'
+  functions, and `signgam' declaration. This solves problems on some
+  platforms where these declaration and/or functions are not available.
+
+* Fixed a problem with different line endings on Windows based platforms.
+  Now, sed program is necessary for performing tests.
+
+* Fixed bug [1483125]. Now a complex dot product is properly returned by a
+  `dot' function when using ACML blas libraries. Thanks to Danilo Zanatta
+  for reporting this bug.
+
+* Fixed bug [1480535]. Now needed_bits() returns a proper number of bits
+  required to represent integer `n', e.g. "needed_bits(0) = 1",
+  "needed_bits(7) = 3", "needed_bits(8) = 4".
+
+* Fixed a small bug related to missing #include statement and cleaned up the
+  code of `itpp/itmex.h'.
+
+* Fixed a bug in the `==' operator in `itpp/base/svec.h'. Thanks to Mattias
+  Andersson for discovering the bug.
+
+* Fixed bug [1469860]. Now fir1() declaration matches its definition. Thanks
+  to Jordy Potman for reporting this bug.
+
+* A few other minor bug-fixes. For a full list of them, please check the
+  ChangeLog file.
+
+
+===============================================================================
+IT++ version 3.10.1                                        Released: 2006-04-11
+-------------------------------------------------------------------------------
+
+This is a bug-fix release. Therefore, no new features have been added
+since release 3.10.0. Only minor modifications and bug-fixes have been done.
+
+Bug-fixes:
+----------
+
+* Fixed a bug caused by improper wrapping of backslash functions using
+  it_assert1() macro.
+
+* Fixed bug [1468011], so AR_Filter now works when using a single
+  coefficient value, e.g. a = "0.5".
+
+* Fixed improper behaviour of the encode_trunc() and decode_trunc()
+  functions. Now, each execution of these functions does not reset the
+  encoder and decoder states, so it can be used to perform continous
+  decoding process. An additional reset() function has been added to reset
+  the encoder and decoder states.
+
+* Fixed lgamma() and gamma() functions definitions for MSVC++ .NET.
+
+* Fixed a problem with a few Bessel functions provided by <cmath> under
+  MSVC++ .NET (different naming conventions).
+
+* Fixed CBLAS interface when using ACML's BLAS implementation.
+
+* Fixes in configuration scripts due to linking problems uder Cygwin.
+
+* A few other minor bug-fixes. For a full list of them, please check the
+  ChangeLog file.
+
+
+===============================================================================
+IT++ version 3.10.0                                        Released: 2006-03-15
+-------------------------------------------------------------------------------
+
+This is a final release of the IT++ version 3.10.0. Here is a brief summary
+of the new features, modifications and bug fixes since IT++ version 3.9.1
+was released:
+
+
+New features:
+-------------
+
+* Documentation improvements:
+  - added a list of features of IT++
+  - added first draft of how a Matlab/IT++ conversion table can look like;
+    more to be added later
+  - verification pages redesigned to include more information
+
+* First version of the vector/MIMO modulator class added.
+
+* Added support for creating RPM packages using the itpp.spec file.
+
+* Added Newton search optimization routines (BFGS algorithm and
+  line-search). For matlab compatibility the fminunc() is implemented.
+
+* Added IDCT implementation based on Intel MKL library.
+
+* Added support for AMD Core Math Library (ACML): FFT/IFFT and DCT/IDCT.
+
+* New Log-Likelihood Ratio (LLR) algebra class added.
+
+* The turbo decoders can use table-lookup based computation of Jacobian
+  logarithm (set metric to "TABLE")
+
+* New blackman() windowing function added.
+
+* Added log() funtion for complex vectors and matrices.
+
+* New modified_yulewalker(), arma_estimator() and yulewalk() filter design
+  functions added.
+
+* New polyval() functions for vec and cvec input combinations added.
+
+* Implemented sqrtm() function that calculates the matrix square root for
+  real and complex matrices. Based on Octave implementation.
+
+* Implemented Schur decomposition functions for real and complex matrices
+  using LAPACK's DGEES and ZGEES routines.
+
+
+Modifications:
+--------------
+
+* Changes in the configuration process. It is now possible to build and
+  install two separate libraries: an optimised `libitpp.*' and debug
+  `libitpp_debug.*'. The latter one is only build when `--enable-debug'
+  switch is used during configuration.
+
+* Removed `--with-march' GCC-specific optimisation switch. CXXFLAGS should
+  be used instead.
+
+* Removed limits_test, which was only useful on	32-bit platforms.
+
+* Updated tutorial example programs and their description. Removed
+  unnecessary reference files for the tutorial programs.
+
+* Matlab/Octave itload.m and itsave.m scripts are now installed in
+  $PREFIX/share/doc.
+
+* Major redesign of the configuration scripts. The following things changed:
+  - checks for BLAS now detect MKL, ACML, ATLAS and reference (NetLib's)
+    BLAS implementations; if found, HAVE_BLAS is defined
+  - checks for LAPACK also detect MKL, ACML, ATLAS and reference LAPACK
+    library; if found, HAVE_LAPACK is defined
+  - checks for CBLAS detect MKL, ATLAS and reference implementation, however
+    CBLAS is fully optional; if found, HAVE_CBLAS is defined
+  - new checks for FFT: detects MKL or FFTW3 implementation; if found,
+    HAVE_FFT and either HAVE_FFTW3 or HAVE_FFT_MKL8 are defined
+  - new checks for <mkl_dfti.h> and <fftw3.h> header files provided by
+    external libraries; not using <itpp/base/fftw3.h> any more.
+  It is now possible to mix various implementation of BLAS, LAPACK and FFT
+  routines, e.g.:
+  - use MKL's BLAS, reference NetLib's LAPACK and FFTW3,
+  - use ACML for BLAS and LAPACK, reference NetLib's CBLAS and FFTW3.
+
+* Statistical norm() functions revised - from now the implementation is
+  similar to the one in Octave, i.e. both vector- and matrix-based functions
+  accept "fro" argument to choose the Frobenius norm.
+
+* Project files for MS Visual C++ .NET 2003/2005 updated and added.
+
+* Windowing function moved from specmat.{h,cpp} to new files window.{h,cpp}.
+  Documentation improved by the way.
+
+* Added zero-padding for fft_real() and ifft_real() functions.
+
+
+Bug-fixes:
+---------
+
+* Fixed a bug in cblas library detection when using BLAS and CBLAS from IT++
+  External package on Cygwin.
+
+* Fixed a bug in Makefile.common that caused that an improper
+  <itpp/config.h> header file was used during compilation.
+
+* Small fix in the automatic MKL's LAPACK library detection. Now using
+  shared libraries `-lmkl_lapack32' and `-lmkl_lapack64' instead of a static
+  one by default.
+
+* Small fix that solves MSVC++ .NET compilation problem (#include <ctime>)
+
+* Fixed bug [1418707] by adding the FFTW_UNALIGNED option to the plan
+  creation flags, which allows a standard memory allocation of input and
+  output data. This temporary solution reduces performance on processors
+  that use SSE and SSE2 instructions.
+
+* A lot of other minor bug-fixes. For a full list of them, please check the
+  ChangeLog file.

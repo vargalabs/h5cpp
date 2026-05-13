@@ -1,0 +1,87 @@
+===============================================================================
+IT++ version 4.2.0                                         Released: 2010-09-21
+-------------------------------------------------------------------------------
+
+IT++ 4.2.0 is a new stable release based on the SVN development branch
+(trunk). Additionally to the new features and modifications listed below, it
+comprises all bug fixes included in the previous 4.0.x stable releases.
+
+
+New features:
+-------------
+
+* Added SISO class implementing several algorithms used in turbo decoders/
+receivers
+
+* Added EXIT class for EXIT chart computation of turbo receivers
+
+* Added STC class for the generation of Space Time block codes used in MIMO
+systems with turbo receivers
+
+* Added support for testing IT++ library in Visual C++ (2008 and 2010). Current approach 
+relies on fc (file compare) utility.
+
+* Added rank() function, which calculates the rank of a matrix by counting
+  the number of non-zero singular values. SVD function from LAPACK is thus
+  required by this function.
+
+* Added implementation of Gamma(alpha, beta) random number generator. The
+  implementation of the Gamma_RNG::sample() function was taken from the R
+  statistical language.
+
+* Added qr() overloaded function that does not compute Q. For some tasks
+  (triangularization) the Q matrix is not really needed.
+
+* Added missing get(int i) method and operator=(const std::string &) to the
+  Mat class
+
+* Added element-wise division operator with a scalar as the dividend to the
+  Mat class
+
+* Added missing operator=(const std::string &) to the Vec class
+
+* Added missing operator(bin_list) and get(index_list) methods to the Vec
+  class
+
+* Added LDPC_Code::get_ninfo() function, which returns the number of
+  information bits in a codeword.
+
+* Added cheb() and chebwin() function to evaluate the coefficients of the
+  Dolph-Chebyshev window.
+
+
+Modifications:
+--------------
+
+* License updated from "GPLv2 or later" to "GPLv3 or later"
+
+* Mersenne Twister core random number generator replaced with an improved
+  Double-precision SIMD-oriented Fast Mersenne Twister (dSFMT)
+  implementation, which is 1.8-2.4 times faster than the previous code.
+
+* Vector string parser reimplemented to support multiple "a:b:c" format
+  strings. For instance:
+    ivec v = "1:2:5, 6 8 9:-1:0";
+  now works. Memory handling is also more efficient, i.e. for the cases when
+  "a:b:c" format is not used, memory is allocated only once. This solves
+  feature request #2041480.
+
+* Auto-calculate the BCH generator polynomial from (n, t) parameters. With
+  this change, the generator polynomial and 'k' (message word length)
+  parameters do not have to be explicitly passed to the class constructor.
+
+* Moved portability related definitions from config.h and other header files
+  to a common system and architecture dependent header itcompat.h
+
+* Deprecated Mat<>::set_submatrix(r1,r2,c1,c2,m) function
+
+* Deprecated elem_div(t,v) and set_subvector(i1, i2, &v) function of the Vec
+  class
+
+* Removed previously deprecated demodulate_soft_bits_approx() functions
+
+* Removed the deprecated multiplication operator of a column vector and a
+  matrix with only one row
+
+* Renamed check_big_endianness() to a simpler is_bigendian()
+

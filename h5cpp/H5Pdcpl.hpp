@@ -4,8 +4,7 @@
  *
  */
 
-#ifndef  H5CPP_PDCPL_HPP
-#define  H5CPP_PDCPL_HPP
+#pragma once
 
 #define H5CPP_DCPL_MULTI_DATASET "h5cpp_dcpl_multi_dataset"
 
@@ -16,7 +15,7 @@ namespace h5::impl {
     inline ::herr_t dcpl_multi_dataset(::hid_t dcpl, const char** values){
         // ignore if already set 
         if( H5Pexist(dcpl, H5CPP_DCPL_MULTI_DATASET) ) return 0;
-        return H5Pinsert2(dapl, H5CPP_DCPL_MULTI_DATASET, 8, 0,
+        return H5Pinsert2(dcpl, H5CPP_DCPL_MULTI_DATASET, 8, 0,
             nullptr, nullptr, nullptr, nullptr, nullptr,    nullptr);
     }
 
@@ -79,4 +78,3 @@ namespace h5 {
     const static h5::dcpl_t dcpl = static_cast<h5::dcpl_t>( H5P_DEFAULT );
     const static h5::dcpl_t default_dcpl = static_cast<h5::dcpl_t>( H5P_DEFAULT );
 }
-#endif

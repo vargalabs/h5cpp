@@ -1,0 +1,12 @@
+/*!
+\page interleaver Interleaving and de-interleaving of data
+
+This example shows how to use one of the interleaving classes.
+
+\include interleaver.cpp
+
+When you run this program, the output will look like this:
+
+\include interleaver.ref
+
+*/

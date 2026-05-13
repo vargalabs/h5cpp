@@ -2,13 +2,12 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_ARMA_HPP 
-#define  H5CPP_ARMA_HPP
+#pragma once
 
 //#include "H5Tmeta.hpp"
 
 #if defined(ARMA_INCLUDES) || defined(H5CPP_USE_ARMADILLO)
-namespace h5 { 	namespace arma {
+namespace h5::arma {
 		template<class T> using rowvec = ::arma::Row<T>;
 		template<class T> using colvec = ::arma::Col<T>;
 		template<class T> using colmat = ::arma::Mat<T>;
@@ -16,9 +15,9 @@ namespace h5 { 	namespace arma {
 
 		// is_linalg_type := filter
 		template <class Object, class T = typename impl::decay<Object>::type> using is_supported =
-		std::integral_constant<bool, std::is_same<Object,h5::arma::cube<T>>::value || std::is_same<Object,h5::arma::colmat<T>>::value
-			|| std::is_same<Object,h5::arma::rowvec<T>>::value ||  std::is_same<Object,h5::arma::colvec<T>>::value>;
-}}
+		std::bool_constant<std::is_same_v<Object,h5::arma::cube<T>> || std::is_same_v<Object,h5::arma::colmat<T>>
+			|| std::is_same_v<Object,h5::arma::rowvec<T>> ||  std::is_same_v<Object,h5::arma::colvec<T>>>;
+}
 
 namespace h5::meta {
     template <class T> struct is_contiguous<h5::arma::rowvec<T>> : std::true_type {};
@@ -28,25 +27,25 @@ namespace h5::meta {
 }
 
 
-namespace h5 { namespace impl {
+namespace h5::impl {
 	// 1.) object -> H5T_xxx
 
-	template <class T> struct decay<h5::arma::rowvec<T>>{ typedef T type; };
-	template <class T> struct decay<h5::arma::colvec<T>>{ typedef T type; };
-	template <class T> struct decay<h5::arma::colmat<T>>{ typedef T type; };
-	template <class T> struct decay<h5::arma::cube<T>>{ typedef T type; };
+	template <class T> struct decay<h5::arma::rowvec<T>>{ using type = T; };
+	template <class T> struct decay<h5::arma::colvec<T>>{ using type = T; };
+	template <class T> struct decay<h5::arma::colmat<T>>{ using type = T; };
+	template <class T> struct decay<h5::arma::cube<T>>{ using type = T; };
 
 	// get read access to datastaore
 	template <class Object, class T = typename impl::decay<Object>::type> inline
-	typename std::enable_if< h5::arma::is_supported<Object>::value,
-	const T*>::type data( const Object& ref ){
+	std::enable_if_t< h5::arma::is_supported<Object>::value,
+	const T*> data( const Object& ref ){
 			return ref.memptr();
 	}
 
 	// read write access
 	template <class Object, class T = typename impl::decay<Object>::type> inline
-	typename std::enable_if< h5::arma::is_supported<Object>::value,
-	T*>::type data( Object& ref ){
+	std::enable_if_t< h5::arma::is_supported<Object>::value,
+	T*> data( Object& ref ){
 			return ref.memptr();
 	}
 
@@ -79,6 +78,5 @@ namespace h5 { namespace impl {
 		static inline h5::arma::colmat<T> ctor( std::array<size_t,3> dims ){
 			return h5::arma::colmat<T>( dims[2], dims[0], dims[1] );
 	}};
-}}
-#endif
+}
 #endif

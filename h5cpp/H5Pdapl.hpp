@@ -2,12 +2,11 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_PDAPL_HPP
-#define  H5CPP_PDAPL_HPP
+#pragma once
 
 #define H5CPP_DAPL_HIGH_THROUGHPUT "h5cpp_dapl_highthroughput"
 
-namespace h5 { namespace impl {
+namespace h5::impl {
 	inline herr_t dapl_pipeline_close( const char *name, size_t size, void *ptr ){
 		delete *static_cast< impl::pipeline_t<impl::basic_pipeline_t>**>( ptr );
 		return 0;
@@ -25,7 +24,7 @@ namespace h5 { namespace impl {
 			return 0;
 #endif
 	}
-}}
+}
 
 namespace h5 {
 // DATA ACCESS PROPERTY LISTS
@@ -41,9 +40,22 @@ namespace h5 {
 	}
 	const static flag::high_throughput high_throughput;
 
-	const static h5::dapl_t dapl = static_cast<h5::dapl_t>( H5Pcreate(H5P_DATASET_ACCESS) );
+	namespace impl {
+		// Heap-allocated, intentionally never deleted.  HDF5's atexit handler
+		// closes the underlying property list.  Avoids the static-destruction-
+		// order race with HDF5's library shutdown that manifests as the
+		// "HDF5: infinite loop closing library" cascade on Windows MSVC.
+		inline const h5::dapl_t& _dapl_singleton() {
+			static h5::dapl_t* p = new h5::dapl_t(static_cast<h5::dapl_t>(H5Pcreate(H5P_DATASET_ACCESS)));
+			return *p;
+		}
+		inline const h5::dapl_t& _default_dapl_singleton() {
+			static h5::dapl_t* p = new h5::dapl_t(static_cast<h5::dapl_t>(H5Pcreate(H5P_DATASET_ACCESS)));
+			return *p;
+		}
+	}
+	inline const h5::dapl_t& dapl = impl::_dapl_singleton();
 	//const static h5::dapl_t default_dapl = high_throughput;
-	const static h5::dapl_t default_dapl = static_cast<h5::dapl_t>(  H5Pcreate(H5P_DATASET_ACCESS) );
+	inline const h5::dapl_t& default_dapl = impl::_default_dapl_singleton();
 }
 
-#endif

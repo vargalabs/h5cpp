@@ -3,9 +3,13 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef H5CPP_DAPPEND_HPP
-#define H5CPP_DAPPEND_HPP
+#pragma once
 #include <zlib.h>
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <type_traits>
+#include <ostream>
 
 namespace h5 {
 	struct pt_t;
@@ -48,8 +52,8 @@ namespace h5 {
                 this->chunk_dims[i] = pt.chunk_dims[i];
                 this->count[i] = pt.count[i];
             }
-            // since pt.rank = 0, we can skip 
-			return pt;
+            // since pt.rank = 0, we can skip
+			return *this;
 		}
 		friend std::ostream& ::operator<<(std::ostream &os, const h5::pt_t& pt);
 		template<class T>
@@ -59,12 +63,13 @@ namespace h5 {
 		void init(const h5::ds_t& ds_);
 		void flush();
 
-		template<class T> inline typename std::enable_if<h5::impl::is_scalar<T>::value,
-		void>::type append( const T* ptr );
-		template<class T> inline typename std::enable_if< h5::impl::is_scalar<T>::value && !std::is_pointer<T>::value,
-		void>::type append( const T& ref );
-		template<class T> inline typename std::enable_if< !h5::impl::is_scalar<T>::value,
-		void>::type append( const T& ref );
+		template<class T> inline std::enable_if_t<h5::impl::is_scalar<T>::value,
+		void> append( const T* ptr );
+		template<class T> inline std::enable_if_t< h5::impl::is_scalar<T>::value && !std::is_pointer_v<T>,
+		void> append( const T& ref );
+		template<class T> inline std::enable_if_t< !h5::impl::is_scalar<T>::value,
+		void> append( const T& ref );
+		void append( const std::string& ref );
 
 		impl::pipeline_t<impl::basic_pipeline_t> pipeline;
 		h5::dxpl_t dxpl;
@@ -84,7 +89,7 @@ namespace h5 {
 /* initialized to invalid state
  * */
 inline h5::pt_t::pt_t() :
-	dxpl{H5Pcreate(H5P_DATASET_XFER)},ds{H5I_UNINIT},n{0},fill_value{NULL}{
+	dxpl{H5Pcreate(H5P_DATASET_XFER)},ds{H5I_UNINIT},n{0},fill_value{nullptr}{
 		for(hsize_t i=0; i<H5CPP_MAX_RANK; i++ )
 			count[i] = 1, offset[i] = 0;
 	}
@@ -131,8 +136,8 @@ void h5::pt_t::init( const h5::ds_t& handle ){
 		throw h5::error::io::packet_table::misc( H5CPP_ERROR_MSG("CTOR: unable to create handle from dataset..."));
 	}
 }
-template<class T> inline typename std::enable_if< h5::impl::is_scalar<T>::value,
-void>::type h5::pt_t::append( const T* ptr ) try {
+template<class T> inline std::enable_if_t< h5::impl::is_scalar<T>::value,
+void> h5::pt_t::append( const T* ptr ) try {
 	//PTR: write directly chunk size from provided buffer/ptr
 	*offset = *current_dims;
 	*current_dims += *chunk_dims;
@@ -141,7 +146,6 @@ void>::type h5::pt_t::append( const T* ptr ) try {
 } catch( const std::runtime_error& err ){
 	throw h5::error::io::dataset::append( err.what() );
 }
-template <>
 inline void h5::pt_t::append( const std::string& ref ) {
 	static_cast<const char**>( ptr )[n++] = ref.data();
 	if( n != N ) return;
@@ -151,21 +155,38 @@ inline void h5::pt_t::append( const std::string& ref ) {
 	h5::set_extent(ds, current_dims);
 
 	hsize_t block = 1, count = n;
-	h5::sp_t mem_space{H5Screate_simple(rank, &count, nullptr )};
+	h5::sp_t mem_space{H5Screate_simple(static_cast<int>(rank), &count, nullptr )};
 	h5::sp_t file_space{H5Dget_space( static_cast<::hid_t>(ds) )};
 	h5::select_all( mem_space );
-	H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, NULL, &block, &count);
+	H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, nullptr, &block, &count);
 	
 	H5Dwrite( static_cast<hid_t>( ds ), 
 		dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
 	n = 0;
 }
-/*
-*/
+template <>
+inline void h5::pt_t::append( const char* ref ) {
+	static_cast<const char**>( ptr )[n++] = ref;
+	if( n != N ) return;
+
+	*offset = *current_dims;
+	*current_dims += *chunk_dims;
+	h5::set_extent(ds, current_dims);
+
+	hsize_t block = 1, count = n;
+	h5::sp_t mem_space{H5Screate_simple(static_cast<int>(rank), &count, nullptr )};
+	h5::sp_t file_space{H5Dget_space( static_cast<::hid_t>(ds) )};
+	h5::select_all( mem_space );
+	H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, NULL, &block, &count);
+
+	H5Dwrite( static_cast<hid_t>( ds ),
+		dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
+	n = 0;
+}
 
 
-template<class T> inline typename std::enable_if< h5::impl::is_scalar<T>::value && !std::is_pointer<T>::value,
-void>::type h5::pt_t::append( const T& ref ) try {
+template<class T> inline std::enable_if_t< h5::impl::is_scalar<T>::value && !std::is_pointer_v<T>,
+void> h5::pt_t::append( const T& ref ) try {
 //SCALAR: store inbound data directly in pipeline cache
 	static_cast<T*>( ptr )[n++] = ref;
 	if( n != N ) return;
@@ -179,8 +200,8 @@ void>::type h5::pt_t::append( const T& ref ) try {
 	throw h5::error::io::dataset::append( err.what() );
 }
 
-template<class T> inline typename std::enable_if< !h5::impl::is_scalar<T>::value,
-void>::type h5::pt_t::append( const T& ref ) try {
+template<class T> inline std::enable_if_t< !h5::impl::is_scalar<T>::value,
+void> h5::pt_t::append( const T& ref ) try {
 	auto dims = impl::size( ref );
 
 	*offset = *current_dims;
@@ -224,17 +245,15 @@ inline
 void h5::pt_t::flush(){
 	if( n == 0 ) return;
 	*offset = *current_dims;
-	*current_dims += *current_dims % *chunk_dims;
-	hsize_t r=1; for(hsize_t i=1; i<rank; i++) r*=chunk_dims[i];
-	*current_dims += (n % r) ? n / r + 1 : n / r;
+	*current_dims += *chunk_dims;
 	h5::set_extent(ds, current_dims);
 
 	if( H5Tis_variable_str(this->dt)) {
 		hsize_t block = 1, count = n;
-	 	h5::sp_t mem_space{H5Screate_simple(rank, &count, nullptr )};
+	 	h5::sp_t mem_space{H5Screate_simple(static_cast<int>(rank), &count, nullptr )};
 		h5::sp_t file_space{H5Dget_space( static_cast<::hid_t>(ds) )};
 		h5::select_all( mem_space );
-		H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, NULL, &block, &count);
+		H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, nullptr, &block, &count);
 
 		H5Dwrite( static_cast<hid_t>( ds ), 
 			dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
@@ -293,4 +312,3 @@ inline std::ostream& operator<<(std::ostream &os, const h5::pt_t& pt) {
     os << std::dec;
 	return os;
 }
-#endif

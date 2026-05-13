@@ -3,9 +3,13 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 
-#ifndef  H5CPP_DREAD_HPP
-#define  H5CPP_DREAD_HPP
+#pragma once
 #include "H5Dopen.hpp" // be sure this precedes error handling macro-s !!!
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <type_traits>
+#include <tuple>
 
 namespace h5 {
 /***************************  REFERENCE *****************************/
@@ -25,8 +29,8 @@ namespace h5 {
  	*/ 
 
 	template<class T, class... args_t>
-	inline typename std::enable_if<!std::is_same<T,char**>::value,
-	void>::type read( const h5::ds_t& ds, T* ptr, args_t&&... args ) try {
+	inline std::enable_if_t<!std::is_same_v<T,char**>,
+	void> read( const h5::ds_t& ds, T* ptr, args_t&&... args ) try {
 		using tcount   = typename arg::tpos<const h5::count_t&,const args_t&...>;
 		static_assert( tcount::present, "h5::count_t{ ... } must be specified" );
 		static_assert( utils::is_supported<T>, "error: " H5CPP_supported_elementary_types );
@@ -55,7 +59,7 @@ namespace h5 {
 
 		if( rank != count.rank ) throw h5::error::io::dataset::read( H5CPP_ERROR_MSG( h5::error::msg::rank_mismatch ));
 		using element_t = typename impl::decay<T>::type;
-		h5::dt_t<element_t> mem_type;
+		h5::meta::resolved_type_t<element_t> mem_type;
 		hid_t dapl = h5::get_access_plist( ds );
 		if( H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT) ){
 			h5::impl::pipeline_t<impl::basic_pipeline_t>* filters;
@@ -91,7 +95,7 @@ namespace h5 {
 	inline void read( const h5::fd_t& fd, const std::string& dataset_path, T* ptr, args_t&&... args ){
 		const h5::dapl_t& dapl = arg::get(h5::default_dapl, args...);
 		h5::ds_t ds = h5::open(fd, dataset_path, dapl ); // will throw its exception
-		h5::read<T>(ds, ptr, args...);
+		::h5::read<T>(ds, ptr, args...);
 	}
 
  	/** \func_read_hdr
@@ -109,7 +113,7 @@ namespace h5 {
 	template<class T, class... args_t>
 	inline void read( const std::string& file_path, const std::string& dataset_path,T* ptr, args_t&&... args ){
 		h5::fd_t fd = h5::open( file_path, H5F_ACC_RDWR );
-		h5::read( fd, dataset_path, ptr, args...);
+		::h5::read( fd, dataset_path, ptr, args...);
 	}
 
 
@@ -138,7 +142,7 @@ namespace h5 {
 		// get 'count' and underlying type 
 		h5::count_t count = impl::size(ref);
 		element_type* ptr = impl::data(ref);
-		read<element_type>(ds, ptr, count, args...);
+		::h5::read<element_type>(ds, ptr, count, args...);
 	}
  	/** \func_read_hdr
  	*  Updates the content of passed **ref** reference, which must have enough memory space to receive data.
@@ -156,7 +160,7 @@ namespace h5 {
 
 		const h5::dapl_t& dapl = arg::get(h5::default_dapl, args...);
 		h5::ds_t ds = h5::open(fd, dataset_path, dapl );
-		h5::read<T>(ds, ref, args...);
+		::h5::read<T>(ds, ref, args...);
 	}
 
  	/** \func_read_hdr
@@ -173,7 +177,7 @@ namespace h5 {
 	void read( const std::string& file_path, const std::string& dataset_path, T& ref, args_t&&... args ){
 
 		h5::fd_t fd = h5::open( file_path, H5F_ACC_RDWR );
-		h5::read( fd, dataset_path, ref, args...);
+		::h5::read( fd, dataset_path, ref, args...);
 	}
 
 /***************************  OBJECT *****************************/
@@ -188,8 +192,8 @@ namespace h5 {
 	* \par_ds \par_offset \par_stride \par_count \par_block \tpar_T \returns_object 
  	*/
 	template<class T, class D=typename impl::decay<T>::type, class... args_t>
-	inline typename std::enable_if<!std::is_same<D,std::string>::value,
-	T>::type read( const h5::ds_t& ds, args_t&&... args ){
+	inline std::enable_if_t<!std::is_same_v<D,std::string>,
+	T> read( const h5::ds_t& ds, args_t&&... args ){
 	// if 'count' isn't specified use the one inside the hdf5 file, once it is obtained
 	// collapse dimensions to the rank of the object returned and create this T object
 	// update the content by we're good to go, since stride and offset can be processed in the 
@@ -213,7 +217,7 @@ namespace h5 {
 		T ref = impl::get<T>::ctor( count );
 		element_type *ptr = impl::data( ref );
 
-		read<element_type>(ds, ptr, count, args...);
+		::h5::read<element_type>(ds, ptr, count, args...);
 		return ref;
 	}
 /***************************  STRING *****************************/
@@ -229,8 +233,8 @@ namespace h5 {
  	*/
 
 	template<class T, class D=typename impl::decay<T>::type, class... args_t>
-	inline typename std::enable_if<std::is_same<D,std::string>::value,
-	T>::type read( const h5::ds_t& ds, args_t&&... args ){
+	inline std::enable_if_t<std::is_same_v<D,std::string>,
+	T> read( const h5::ds_t& ds, args_t&&... args ){
 	// if 'count' isn't specified use the one inside the hdf5 file, once it is obtained
 	// collapse dimensions to the rank of the object returned and create this T object
 	// update the content by we're good to go, since stride and offset can be processed in the 
@@ -277,7 +281,7 @@ namespace h5 {
 					static_cast<hid_t>( ds ), static_cast<hid_t>(mem_type), static_cast<hid_t>(mem_space),
 					static_cast<hid_t>(file_space),	static_cast<hid_t>(dxpl), ptr ), h5::error::io::dataset::read, h5::error::msg::read_dataset);
 		for(int i=0; i<nelem; i++)
-				if( ptr[i] != NULL )
+				if( ptr[i] != nullptr )
 						ref[i] = std::string( ptr[i] );
 		H5Dvlen_reclaim (mem_type, mem_space, H5P_DEFAULT, ptr);
 		free(ptr);
@@ -300,7 +304,7 @@ namespace h5 {
 
 		const h5::dapl_t& dapl = arg::get(h5::default_dapl, args...);
 		h5::ds_t ds = h5::open(fd, dataset_path, dapl );
-		return h5::read<T>(ds, args...);
+		return ::h5::read<T>(ds, args...);
 	}
  	/** \func_read_hdr
  	*  Direct read from file and dataset path that returns the entire data space wrapped into the object specified.
@@ -314,7 +318,6 @@ namespace h5 {
 	template<class T, class... args_t> // dispatch to above
 	inline T read(const std::string& file_path, const std::string& dataset_path, args_t&&... args ){
 		h5::fd_t fd = h5::open( file_path, H5F_ACC_RDWR );
-		return h5::read<T>( fd, dataset_path, args...);
+		return ::h5::read<T>( fd, dataset_path, args...);
 	}
 }
-#endif

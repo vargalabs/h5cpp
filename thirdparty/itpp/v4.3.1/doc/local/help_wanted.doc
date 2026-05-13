@@ -1,0 +1,29 @@
+/*!
+\page help_wanted Make a Difference
+
+<b>Do not ask what IT++ can do for you. Ask what you can do for IT++.</b>
+
+You can help us to develop the IT++ library. There are always a lot of things
+you can do:
+
+- Start using IT++
+- Tell your friends about IT++ and help them to get started using it
+- If you find a bug, report it to us. Without your help we can never hope to
+produce a bug free code.
+- Help us to improve the documentation by providing information about
+documentation bugs
+- Answer support requests in the IT++ discussion forums on SourceForge. If
+you know the answer to a question, help others to overcome their IT++
+problems.
+- Help us to improve our algorithms. If you know of a better way (e.g. that
+is faster or requires less memory) to implement some of our algorithms, then
+let us know.
+- Help us to port IT++ to new platforms. If you manage to compile IT++ on a
+new platform, then tell us how you did it.
+- Send us your code. If you have a good IT++ compatible code, which you can
+release under the GPL, and you think it should be included in IT++, then
+send it to us.
+- Become an IT++ developer. Send us an e-mail and tell what you can do for
+IT++.
+
+*/

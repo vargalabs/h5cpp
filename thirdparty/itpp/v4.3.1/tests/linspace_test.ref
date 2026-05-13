@@ -1,0 +1,45 @@
+================================
+    Test of linspace() function 
+================================
+Generating a vector of 1 points, from 0 to 2
+Vector length is 1
+Vector element is 2
+Generating a vector of 30 points, from 0 to 10
+Vector length is 30
+Vector elements are: [0 0.344828 0.689655 1.03448 1.37931 1.72414 2.06897 2.41379 2.75862 3.10345 3.44828 3.7931 4.13793 4.48276 4.82759 5.17241 5.51724 5.86207 6.2069 6.55172 6.89655 7.24138 7.58621 7.93103 8.27586 8.62069 8.96552 9.31034 9.65517 10]
+==========================================
+    Test of linspace_fixed_step() function 
+==========================================
+Generating a vector with a step of 1, from 0 to 10
+Vector length is: 11
+Vector elements are: [0 1 2 3 4 5 6 7 8 9 10]
+Generating a vector with a step of 1.1, from 0 to 10
+Vector length is: 10
+Vector elements are: [0 1.1 2.2 3.3 4.4 5.5 6.6 7.7 8.8 9.9]
+Generating a vector with a step of 2, from 0 to 1
+Vector length is: 1
+Vector element is: [0]
+Generating a vector with a step of -2, from 0 to -1
+Vector length is: 1
+Vector element is: [0]
+Generating a vector with a step of 2, from 0 to -1
+Vector length is: 0
+Vector element is: []
+Generating a vector with a step of 2, from -1 to 0
+Vector length is: 1
+Vector element is: [-1]
+Generating a vector with a step of -2, from -1 to 0
+Vector length is: 0
+Vector element is: []
+Generating a vector with a step of 2, from -5 to 5
+Vector length is: 6
+Vector element is: [-5 -3 -1 1 3 5]
+Generating a vector with a step of -2, from 5 to -5
+Vector length is: 6
+Vector element is: [5 3 1 -1 -3 -5]
+Generating an integer vector with a step of 1, from 0 to 10
+Vector length is: 11
+Vector element is: [0 1 2 3 4 5 6 7 8 9 10]
+Generating a short integer vector with a step of 1, from 0 to 10
+Vector length is: 11
+Vector element is: [0 1 2 3 4 5 6 7 8 9 10]

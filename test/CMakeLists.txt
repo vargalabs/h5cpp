@@ -14,11 +14,10 @@ set(LIBS
     ${HDF5_LIBRARIES}
     ZLIB::ZLIB
     libdoctest
+    libh5cpp-libdeflate
 )
 
-## begin thirdparty library dependencies
-  add_subdirectory(thirdparty EXCLUDE_FROM_ALL)
-## end library dependencies
+# thirdparty dependencies are added by the root CMakeLists.txt
 
 # usage:
 #   add_test_case(H5cmake)
@@ -51,8 +50,129 @@ endfunction()
 add_test_case(example)
 
 # test content lands in issue/94
+add_test_case(H5Adelete)
 add_test_case(H5compat)
 add_test_case(H5Dgather)
 add_test_case(H5meta)
 add_test_case(H5Tmeta)
+add_test_case(H5Dio)
+# add_test_case(H5E_exceptions)
+add_test_case(H5Dio_roundtrip)
+add_test_case(H5Zdeflate)
+add_test_case(H5Zshuffle)
+add_test_case(H5Zfletcher32)
+add_test_case(H5Zlz4)
+add_test_case(H5Zzstd)
+add_test_case(H5Zszip)
 # add_test_case(H5Iall)
+
+# Example-derived I/O round-trip tests (issue/145)
+add_subdirectory(examples)
+
+# ---------------------------------------------------------------------------
+# MSVC overload-resolution regression tests — issue [#163].
+#
+# These probes pinned and now guard against the MSVC partial-ordering bug
+# where the inner h5::write at H5Dwrite.hpp:21 and the variadic ref-forwarder
+# at H5Dwrite.hpp:181 were ambiguous for the (ds, sp_t, sp_t, dxpl_t, T*)
+# shape, plus the related (T*, count) ambiguity between the pointer overload
+# at line 70/257 and the ref overload at line 181/330.
+#
+# Each binary is a single isolated mode so one crash never poisons the rest.
+# The bug was MSVC-specific so the probes run under WIN32 only; build cost is
+# negligible.  Do not bundle modes into a single doctest binary — that would
+# defeat the per-mode isolation that made bisection tractable.
+# ---------------------------------------------------------------------------
+add_executable(test-win_stack_probe win_stack_probe.cpp)
+set_target_properties(test-win_stack_probe PROPERTIES
+    CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+target_include_directories(test-win_stack_probe PRIVATE ${INCLUDE_DIRS})
+# Intentionally do NOT link libdoctest — keep the call chain pristine.
+target_link_libraries(test-win_stack_probe PRIVATE
+    ${HDF5_LIBRARIES}
+    ZLIB::ZLIB
+    libh5cpp-libdeflate)
+if(MSVC)
+    target_link_options(test-win_stack_probe PRIVATE "/STACK:67108864")
+endif()
+add_test(NAME test-win_stack_probe COMMAND test-win_stack_probe)
+
+if(WIN32)
+    function(add_win_lifecycle_probe name mode)
+        set(test_name test-win-lifecycle-${name})
+        add_executable(${test_name} win_hdf5_lifecycle_probe.cpp)
+        set_target_properties(${test_name} PROPERTIES
+            CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+        target_compile_definitions(${test_name} PRIVATE H5CPP_WIN_PROBE_MODE=${mode})
+        target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
+        target_link_libraries(${test_name} PRIVATE
+            ${HDF5_LIBRARIES}
+            ZLIB::ZLIB
+            libh5cpp-libdeflate)
+        add_test(NAME ${test_name} COMMAND ${test_name})
+    endfunction()
+
+    add_win_lifecycle_probe(raw-minimal 1)
+    add_win_lifecycle_probe(raw-property-lists 2)
+    add_win_lifecycle_probe(h5cpp-static-defaults 3)
+    add_win_lifecycle_probe(h5cpp-create-only 4)
+    add_win_lifecycle_probe(h5cpp-high-level-write 5)
+    add_win_lifecycle_probe(h5cpp-high-level-write-exit 6)
+    add_win_lifecycle_probe(h5cpp-high-level-read 7)
+    add_win_lifecycle_probe(h5cpp-attribute-write 8)
+
+    function(add_win_write_path_probe name mode)
+        set(test_name test-win-write-path-${name})
+        add_executable(${test_name} win_h5dwrite_path_probe.cpp)
+        set_target_properties(${test_name} PROPERTIES
+            CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+        target_compile_definitions(${test_name} PRIVATE H5CPP_WIN_WRITE_PROBE_MODE=${mode})
+        target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
+        target_link_libraries(${test_name} PRIVATE
+            ${HDF5_LIBRARIES}
+            ZLIB::ZLIB
+            libh5cpp-libdeflate)
+        add_test(NAME ${test_name} COMMAND ${test_name})
+    endfunction()
+
+    add_win_write_path_probe(ds-ptr-count 1)
+    add_win_write_path_probe(ds-object 2)
+    add_win_write_path_probe(fd-ptr-count 3)
+    add_win_write_path_probe(fd-object-explicit-dims 4)
+    add_win_write_path_probe(fd-object-explicit-plists 5)
+    add_win_write_path_probe(fd-object-existing-dataset 6)
+    add_win_write_path_probe(low-level-explicit-spaces 7)
+    add_win_write_path_probe(fd-object-high-throughput-dapl 8)
+
+    # ds.dapl validity & related lifecycle probes.
+    function(add_win_dapl_probe name mode)
+        set(test_name test-win-dapl-${name})
+        add_executable(${test_name} win_dapl_probe.cpp)
+        set_target_properties(${test_name} PROPERTIES
+            CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+        target_compile_definitions(${test_name} PRIVATE H5CPP_WIN_DAPL_PROBE_MODE=${mode})
+        target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
+        target_link_libraries(${test_name} PRIVATE
+            ${HDF5_LIBRARIES}
+            ZLIB::ZLIB
+            libh5cpp-libdeflate)
+        add_test(NAME ${test_name} COMMAND ${test_name})
+    endfunction()
+
+    add_win_dapl_probe(inspect-create          1)
+    add_win_dapl_probe(inspect-open            2)
+    # mode 3 (write-normalized-dapl) intentionally NOT registered — it forces
+    # ds.dapl=H5P_DEFAULT to confirm what HDF5 does with an invalid handle,
+    # not a real-world scenario.  Source kept for documentation.
+    add_win_dapl_probe(write-after-open        4)
+    add_win_dapl_probe(read-after-create       5)
+    add_win_dapl_probe(default-dapl-singleton  6)
+    add_win_dapl_probe(resolved-type           7)
+    add_win_dapl_probe(get-dapl-capi           8)
+    add_win_dapl_probe(dapl-through-move       9)
+    add_win_dapl_probe(inner-write-default     10)
+endif()

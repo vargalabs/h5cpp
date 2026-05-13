@@ -1,0 +1,89 @@
+/*!
+\page codingrules Coding Rules
+
+In the following sections we describe the naming conventions which are
+used for files, classes, structures, local variables, and global variables.
+
+
+\section cr_variables Default Naming Rules for Variables
+
+Variables are named using lower-case letters and words are separated
+using under-score. Abbreviations, when used in variable names, are also
+written with lower-case letters. Examples:
+
+<ul>
+<li> \c `fft_size' </li>
+<li> \c `nrof_paths' </li>
+<li> \c `my_variable_name' </li>
+</ul>
+
+Some variable names or parts of variable names are commonly used in
+several different functions and files to denote the same thing. For
+instance the following common names and prefixes should be used:
+
+<ul>
+<li> \c `rows' - number of rows in a matrix </li>
+<li> \c `cols' - number of columns in a matrix </li>
+<li> \c `nrof_' - number of ... </li>
+</ul>
+
+
+\section cr_files Default Naming Rules for Files
+
+Files are named using lower-case letters and words are separated using
+under-score. Abbreviations, when used in file names, are also written
+with lower-case letters.
+
+Source files are named using <tt>`.cpp'</tt> suffix, whereas header
+files end with <tt>`.h'</tt> extension. Examples:
+
+<ul>
+<li> <tt>`my_file.h'</tt> </li>
+<li> <tt>`my_file.cpp'</tt> </li>
+</ul>
+
+
+\section cr_functions Default Naming Rules for Functions
+
+Function names are named using lower-case letters and words are
+separated using under-score. Abbreviations, when used in function
+names, are also written with lower-case letters. This rule applies
+both to stand-alone functions as well as to member functions of
+classes. Example:
+
+<ul>
+<li> <tt>int my_function_name(int a, int b)</tt> </li>
+</ul>
+
+
+\section cr_classes Default Naming Rules for Classes and Structures
+
+Each new word in a class or structure name should always start with a
+capital letter and the words should be separated with an
+under-score. Abbreviations are written with capital letters. Examples:
+
+<ul>
+<li> \c `My_Class_Name' </li>
+<li> \c	`My_Struct_Name' </li>
+<li> \c `OFDM' </li>
+</ul>
+
+
+\section cr_classes_functionality Default Functionality of Classes
+
+All classes that are configured by input parameters should include:
+
+<ul>
+<li> default empty constructor </li>
+<li> one or more additional constructor(s) that takes input parameters
+and initializes the class instance </li>
+<li> setup function, preferably named \c `setup' or \c
+`set_parameters' </li>
+</ul>
+
+Explicit destructor functions are not required, unless they are
+needed. It shall not be possible to use any of the other member
+functions unless the class has been properly initiated with the input
+parameters.
+
+*/

@@ -1,0 +1,109 @@
+#!/bin/sh
+
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+debug_flag=no
+static_flag=no
+flags=""
+
+usage()
+{
+  cat <<EOF
+Usage: itpp-config [OPTION]
+
+Known values for OPTION are:
+
+  --prefix        output libitpp installation prefix
+  --exec-prefix   output libitpp installation exec prefix
+  --debug         output debugging pre-processor, compiler and linker
+                  flags (should be used in front of --cflags and --libs)
+  --static        output linker flags for static linking
+                  (needs to be used in front of --libs)
+  --cflags        output pre-processor and compiler flags
+  --libs          output linker flags
+  --help          display this help and exit
+  --version       output version information
+EOF
+  exit $1
+}
+
+if test $# -eq 0; then
+  usage 1
+fi
+
+while test $# -gt 0; do
+  case "$1" in
+  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+  *) optarg= ;;
+  esac
+
+  case $1 in
+    --prefix)
+      echo "$prefix"
+      exit 0
+      ;;
+    --exec-prefix)
+      echo "$exec_prefix"
+      exit 0
+      ;;
+    --version)
+  echo "@PACKAGE_VERSION@"
+      exit 0
+      ;;
+    --help)
+      usage 0
+      ;;
+    --debug)
+      debug_flag=yes
+      ;;
+    --static)
+      static_flag=yes
+      ;;
+    --cflags)
+      flags="${flags} -I${includedir}"
+      if test "x$debug_flag" = xyes; then
+      flags="${flags} @CMAKE_CXX_FLAGS_DEBUG@"
+      else
+      flags="${flags} @CMAKE_CXX_FLAGS_RELEASE@"
+      fi
+      ;;
+    --cflags-deb*)
+  echo "-I${includedir} @CMAKE_CXX_FLAGS_DEBUG@"
+      exit 0
+      ;;
+    --cflags-opt*)
+  echo "-I${includedir} @CMAKE_CXX_FLAGS_RELEASE@"
+      exit 0
+      ;;
+    --libs)
+      flags="${flags} -L${libdir}"
+      if test "x$debug_flag" = xno; then
+        flags="${flags} -l@libitpp_target@"
+      else
+        flags="${flags} -l@libitpp_target@"
+      fi
+      if test "x$static_flag" = xyes; then
+      flags="${flags} @ITPP_LIBS@"
+      fi
+      ;;
+    --libs-deb*)
+      echo "-L${libdir} -l@libitpp_target@"
+      exit 0
+      ;;
+    --libs-opt*)
+      echo "-L${libdir} -l@libitpp_target@"
+      exit 0
+      ;;
+    *)
+      usage 1
+      ;;
+  esac
+  shift
+done
+
+if test "x${flags}" != x; then
+  echo "${flags}"
+fi

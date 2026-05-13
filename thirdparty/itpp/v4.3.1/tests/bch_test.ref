@@ -1,0 +1,89 @@
+===================================
+    Test of BCH encoder/decoder    
+===================================
+A two error case (should be corrected)
+input =   [0 0 1 1 0 1 0 1 0 0 1 1 0 0 1 1 0 0 0 0 0]
+encoded = [0 0 1 0 0 0 0 0 0 1 1 1 1 0 1 1 1 1 0 0 0 0 1 0 1 1 0 0 0 0 0]
+err =     [0 1 0 0 0 0 0 0 0 1 1 1 1 0 1 1 1 1 0 0 0 0 1 0 1 1 0 0 0 0 0]
+decoded = [0 0 1 1 0 1 0 1 0 0 1 1 0 0 1 1 0 0 0 0 0]
+A three error case (will cause decoding errors)
+input =   [1 0 1 0 0 0 0 1 0 1 1 0 1 1 1 1 0 1 1 1 0]
+encoded = [1 1 0 1 0 1 1 1 1 1 1 1 0 1 0 0 0 0 0 1 1 1 0 1 1 0 1 1 1 1 0]
+err =     [1 0 1 1 0 1 1 1 1 1 1 1 0 1 0 0 0 0 0 1 1 1 0 1 1 0 1 0 1 1 0]
+decoded = [1 1 1 1 1 1 1 1 0 0 1 0 0 1 0 1 0 0 1 1 0]
+
+========================================
+   Systematic vs. non-systematic test   
+========================================
+Non-systematic case
+-------------------
+Encoded [0 0 0 0] to [0 0 0 0 0 0 0]
+One error added: [1 0 0 0 0 0 0]
+Decoded to:[0 0 0 0]
+
+Encoded [0 0 0 1] to [0 0 0 1 0 1 1]
+One error added: [0 1 0 1 0 1 1]
+Decoded to:[0 0 0 1]
+
+Encoded [0 0 1 0] to [0 0 1 0 1 1 0]
+One error added: [0 0 0 0 1 1 0]
+Decoded to:[0 0 1 0]
+
+Encoded [0 0 1 1] to [0 0 1 1 1 0 1]
+One error added: [0 0 1 0 1 0 1]
+Decoded to:[0 0 1 1]
+
+Encoded [0 1 0 0] to [0 1 0 1 1 0 0]
+One error added: [0 1 0 1 0 0 0]
+Decoded to:[0 1 0 0]
+
+Encoded [0 1 0 1] to [0 1 0 0 1 1 1]
+One error added: [0 1 0 0 1 0 1]
+Decoded to:[0 1 0 1]
+
+Encoded [0 1 1 0] to [0 1 1 1 0 1 0]
+One error added: [0 1 1 1 0 1 1]
+Decoded to:[0 1 1 0]
+
+Systematic case
+---------------
+Encoded [0 0 0 0] to [0 0 0 0 0 0 0]
+One error added: [1 0 0 0 0 0 0]
+Decoded to:[0 0 0 0]
+
+Encoded [0 0 0 1] to [0 0 0 1 0 1 1]
+One error added: [0 1 0 1 0 1 1]
+Decoded to:[0 0 0 1]
+
+Encoded [0 0 1 0] to [0 0 1 0 1 1 0]
+One error added: [0 0 0 0 1 1 0]
+Decoded to:[0 0 1 0]
+
+Encoded [0 0 1 1] to [0 0 1 1 1 0 1]
+One error added: [0 0 1 0 1 0 1]
+Decoded to:[0 0 1 1]
+
+Encoded [0 1 0 0] to [0 1 0 0 1 1 1]
+One error added: [0 1 0 0 0 1 1]
+Decoded to:[0 1 0 0]
+
+Encoded [0 1 0 1] to [0 1 0 1 1 0 0]
+One error added: [0 1 0 1 1 1 0]
+Decoded to:[0 1 0 1]
+
+Encoded [0 1 1 0] to [0 1 1 0 0 0 1]
+One error added: [0 1 1 0 0 0 0]
+Decoded to:[0 1 1 0]
+
+========================================
+   Systematic decoding failure test     
+========================================
+all codewords valid? 0
+valid codeword? = [0]
+A four error case (will cause decoding failure)
+input =   [1 1 0 0 1 1 0 0 1 0 0 0 1 1 1 0 0 1 1 1 0]
+encoded = [1 1 0 0 1 1 0 0 1 0 0 0 1 1 1 0 0 0 1 0 1 0 1 0 0 1 1 1 1 0 0]
+err =     [1 0 1 0 1 1 0 0 1 0 0 0 1 1 0 0 0 0 1 0 1 0 1 0 0 1 1 0 1 0 0]
+decoded = [1 0 1 0 1 1 0 0 1 0 0 0 1 1 0 0]
+
+

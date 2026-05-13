@@ -1,0 +1,12 @@
+/*!
+\page demapper_mimo Simulation of SISO demappers using ST codes in ideal MIMO channels
+
+This program shows the usage of Soft-Input Soft-Output (SISO) demappers with 
+Space Time (ST) codes in Multiple-Input Multiple-Output (MIMO) channels.
+The ST codes are generated using the STC class, the MIMO channels are ideal
+(no multi-antenna interferrence and no noise) and the receiver 
+is implemented by the demapper method of the SISO class.
+ 
+\include stbicm.cpp
+
+*/

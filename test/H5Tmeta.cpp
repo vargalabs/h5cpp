@@ -5,6 +5,7 @@
 #include <h5cpp/H5Tmeta.hpp>
 #include <array>
 #include <complex>
+#include <cstddef>
 #include <deque>
 #include <forward_list>
 #include <initializer_list>
@@ -618,4 +619,34 @@ TEST_CASE("H5Tmeta storage_representation leaves bitfield and opaque pointer sto
     CHECK(h5::meta::storage_representation_v<const void*> == h5::meta::storage_representation_t::unsupported);
     CHECK(h5::meta::storage_representation_v<void**> == h5::meta::storage_representation_t::unsupported);
     CHECK(h5::meta::storage_representation_v<const void**> == h5::meta::storage_representation_t::unsupported);
+}
+
+TEST_CASE("H5Tmeta storage_representation scalar covers arithmetic types") {
+    using sr_t = h5::meta::storage_representation_t;
+    CHECK(h5::meta::storage_representation_v<int>               == sr_t::scalar);
+    CHECK(h5::meta::storage_representation_v<double>            == sr_t::scalar);
+    CHECK(h5::meta::storage_representation_v<float>             == sr_t::scalar);
+    CHECK(h5::meta::storage_representation_v<unsigned long long> == sr_t::scalar);
+    CHECK(h5::meta::storage_representation_v<bool>              == sr_t::scalar);
+    CHECK(h5::meta::storage_representation_v<char>              == sr_t::scalar);
+}
+
+TEST_CASE("H5Tmeta storage_representation c_array covers ranks 1 2 and 3") {
+    using sr_t = h5::meta::storage_representation_t;
+    CHECK(h5::meta::storage_representation_v<int[4]>         == sr_t::c_array);
+    CHECK(h5::meta::storage_representation_v<double[2][3]>   == sr_t::c_array);
+    CHECK(h5::meta::storage_representation_v<float[2][2][2]> == sr_t::c_array);
+}
+
+TEST_CASE("H5Tmeta storage_representation vector and array cover contiguous linear") {
+    using sr_t = h5::meta::storage_representation_t;
+    CHECK(h5::meta::storage_representation_v<std::vector<int>>    == sr_t::linear_value_dataset);
+    CHECK(h5::meta::storage_representation_v<std::vector<double>> == sr_t::linear_value_dataset);
+    CHECK(h5::meta::storage_representation_v<std::vector<float>>  == sr_t::linear_value_dataset);
+    CHECK((h5::meta::storage_representation_v<std::array<int,4>>)    == sr_t::linear_value_dataset);
+    CHECK((h5::meta::storage_representation_v<std::array<double,8>>)  == sr_t::linear_value_dataset);
+    // more-specific specializations must still win
+    CHECK((h5::meta::storage_representation_v<std::vector<std::vector<int>>>)    == sr_t::ragged_vlen_dataset);
+    CHECK((h5::meta::storage_representation_v<std::vector<std::array<int,4>>>)   == sr_t::fixed_inner_extent_dataset);
+    CHECK((h5::meta::storage_representation_v<std::vector<std::string>>)         == sr_t::vlen_text_dataset);
 }

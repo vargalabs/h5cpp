@@ -1,0 +1,794 @@
+/*!
+\page verification IT++ Supported Systems
+
+\section toc Table of Contents
+- \ref intro
+
+- \ref itpp_4_3
+  - \ref linux_4_3
+    - \ref opensuse_12_3
+  - \ref macos_4_3
+    - \ref macos_4_3_lion
+  - \ref win_4_3
+    - \ref win_4_3_8
+    - \ref win_4_3_7
+    - \ref win_4_3_cygwin
+    - \ref win_4_3_mingw
+
+- \ref itpp_4_0
+  - \ref linux_4_0
+    - \ref ubuntu_910_4_0
+    - \ref ubuntu_904_4_0
+    - \ref ubuntu_804_4_0
+    - \ref ubuntu_710_4_0
+
+- \ref itpp_3_99
+  - \ref linux_3_99
+    - \ref debian_etch_3_99
+    - \ref gentoo_atlas_3_99
+    - \ref gentoo_mkl_3_99
+    - \ref rhel4_3_99
+  - \ref windows_3_99
+    - \ref cygwin_3_99
+    - \ref cygwin_acml_3_99
+    - \ref mingw_acml_3_99
+    - \ref mingw_netlib_3_99
+    - \ref msvc_acml_3_99
+    - \ref msvc_mkl_3_99
+  - \ref unix_3_99
+    - \ref sunos59_atlas_3_99
+    - \ref sunos59_netlib_3_99
+
+- \ref itpp_3_10
+  - \ref linux
+    - \ref fedora_atlas
+    - \ref gentoo_acml
+    - \ref gentoo_atlas
+    - \ref gentoo_mkl
+    - \ref gentoo_netlib
+    - \ref rhel
+    - \ref suse_netlib
+    - \ref suse_mkl
+  - \ref windows
+    - \ref cygwin
+    - \ref cygwin_atlas
+    - \ref cygwin_acml
+    - \ref mingw_acml
+    - \ref mingw_netlib
+    - \ref msvc_mkl
+  - \ref unix
+    - \ref sunos59
+
+
+\section intro Introdution
+
+This page is intended to provide a list of IT++ supported systems, i.e. the
+systems on which configuration, installation and testing process of the IT++
+library has been sucessful. Results are grouped based on minor release
+number. Therefore, only the latest tests for bug-fix releases are included.
+Besides, the information on this page is divided into sections dependent on
+the operating system.
+
+Where necessary, some extra information is given for each tested
+configuration, e.g. external libraries installed, configuration commands
+used, etc.
+
+If you manage to compile, install and test the IT++ library on a system not
+mentioned below, please let us know, so we could update this database.
+
+\htmlonly <hr> \endhtmlonly
+
+\section itpp_4_3 IT++ 4.3.x (Stable)
+
+\subsection  linux_4_3 Linux Systems
+
+\subsubsection opensuse_12_3 OpenSUSE 12.3
+
+- <b>Platform</b>: AMD Athlon 64 X2 Dual Core Processor 3800+
+- <b>Operating System</b>: OpenSUSE 12.3
+- <b>Compiler</b>: g++ (GCC) 4.7.2
+- <b>IT++ release</b>: 4.3.0
+- <b>External Libraries</b>: blas, lapack and fftw from OpenSUSE repositories or ACML 5.1.0 or MKL 11.0.2
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Please read Installation section of the main help page
+- <b>Date</b>: May 24, 2013
+- <b>Tester</b>: Bogdan Cristea
+
+\subsection  macos_4_3 MacOS Systems
+
+\subsubsection macos_4_3_lion MacOS Lion
+
+- <b>Platform</b>: Virtual Box 4.2.12 installed on Windows 8 x86_64 (Intel Core i7-3667U)
+- <b>Operating System</b>: MacOS Lion
+- <b>Compiler</b>: g++ (GCC) 4.2.1
+- <b>IT++ release</b>: 4.3.0
+- <b>External Libraries</b>: blas, lapack and fftw from MacOS repositories
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Please read Installation section of the main help page
+- <b>Date</b>: May 24, 2013
+- <b>Tester</b>: Bogdan Cristea
+
+\subsection  win_4_3 Windows Systems
+
+\subsubsection win_4_3_8 Windows 8
+
+- <b>Platform</b>: Intel Core i7-3667U
+- <b>Operating System</b>: Windows 8 x86_64
+- <b>Compiler</b>: Visual Studio 2010
+- <b>IT++ release</b>: 4.3.0
+- <b>External Libraries</b>: ACML 5.1.0 or MKL 11.0.2
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Please read Installation section of the main help page
+- <b>Date</b>: May 24, 2013
+- <b>Tester</b>: Bogdan Cristea
+
+\subsubsection win_4_3_7 Windows 7
+
+- <b>Platform</b>: Virtual Box 4.2.12 installed on Windows 8 x86_64 (Intel Core i7-3667U)
+- <b>Operating System</b>: Windows 7 x86
+- <b>Compiler</b>: Visual Studio 2010
+- <b>IT++ release</b>: 4.3.0
+- <b>External Libraries</b>: MKL 11.0.2
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Please read Installation section of the main help page
+- <b>Date</b>: May 25, 2013
+- <b>Tester</b>: Bogdan Cristea
+
+\subsubsection win_4_3_cygwin Cygwin 1.7.18-1
+
+- <b>Platform</b>: Intel Core i7-3667U
+- <b>Operating System</b>: Windows 8 x86_64
+- <b>Compiler</b>: g++ (GCC) 4.5.3
+- <b>IT++ release</b>: 4.3.0
+- <b>External Libraries</b>: blas, lapack, fftw from cygwin repositories
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Please read Installation section of the main help page
+- <b>Date</b>: May 24, 2013
+- <b>Tester</b>: Bogdan Cristea
+
+\subsubsection win_4_3_mingw MinGW/MSYS
+
+- <b>Platform</b>: Intel Core i7-3667U
+- <b>Operating System</b>: Windows 8 x86_64
+- <b>Compiler</b>: g++ (GCC) 4.7.2
+- <b>IT++ release</b>: 4.3.0
+- <b>External Libraries</b>: MKL 11.0.2
+- <b>Tests Status</b>: All tests PASSED (Timer test might fail)
+- <b>Comments</b>: Please read Installation section of the main help page
+- <b>Date</b>: May 24, 2013
+- <b>Tester</b>: Bogdan Cristea
+
+\htmlonly <hr> \endhtmlonly
+
+\section itpp_4_0 IT++ 4.0.x (Stable)
+
+\subsection  linux_4_0 Linux Systems
+
+\subsubsection ubuntu_910_4_0 Ubuntu 9.10
+
+- <b>Platform</b>: Intel Core 2 Quad
+- <b>Operating System</b>: Ubuntu 9.10
+- <b>Compiler</b>: g++ (GCC) 4.4.1
+- <b>IT++ release</b>: 4.0.7
+- <b>External Libraries</b>: The following Ubuntu packages were installed to provide BLAS, LAPACK and ATLAS: liblapack-dev, libblas-dev, libatlas-base-dev, libfftw3-dev
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: A clean installation of Ubuntu is advised, some tests may fail if different gcc versions are jointly installed.
+- <b>Date</b>: January 5, 2010
+- <b>Tester</b>: Erik G. Larsson
+
+\subsubsection ubuntu_904_4_0 Ubuntu 9.04 The Jaunty Jackalope
+
+- <b>Platform</b>: Intel Core 2 Quad
+- <b>Operating System</b>: Ubuntu 9.04 The Jaunty Jackalope
+- <b>Compiler</b>: g++ (GCC) 4.3.3
+- <b>IT++ release</b>: 4.0.6
+- <b>External Libraries</b>: The following Ubuntu packages were installed to provide BLAS, LAPACK and ATLAS: liblapack-dev, libblas-dev, libatlas-base-dev, libfftw3-dev
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: A clean installation of Ubuntu is advised, some tests may fail if different gcc versions are jointly installed.
+- <b>Date</b>: May 10, 2009
+- <b>Tester</b>: Mirsad Cirkic
+
+
+\subsubsection ubuntu_804_4_0 Ubuntu 8.04
+
+- <b>Platform</b>: Intel Core 2 Duo
+- <b>Operating System</b>: Ubuntu 8.04
+- <b>Compiler</b>: g++ (GCC) 4.2.3
+- <b>IT++ release</b>: 4.0.5
+- <b>External Libraries</b>: The following Ubuntu packages were installed to provide BLAS, LAPACK and ATLAS:
+lapack3, lapack3-dev, lapack3-pic, refblas3, refblas3-dev, atlas3-base, atlas3-base-dev, atlas3-headers, fftw3, fftw3-dev
+- <b>Tests Status</b>: All tests PASSED
+- <b>Date</b>: October 5, 2008
+- <b>Tester</b>: Erik G. Larsson
+
+
+\subsubsection ubuntu_710_4_0 Ubuntu 7.10
+
+- <b>Platform</b>: Intel Pentium 4
+- <b>Operating System</b>: Ubuntu 7.10
+- <b>Compiler</b>: g++ (GCC) 4.1.3
+- <b>IT++ release</b>: 4.0.1
+- <b>External Libraries</b>: The following Ubuntu packages were installed to provide BLAS, LAPACK and ATLAS:
+lapack3, lapack3-dev, lapack3-pic, refblas3, refblas3-dev, atlas3-base, atlas3-base-dev, atlas3-headers
+- <b>Tests Status</b>: All tests PASSED
+- <b>Date</b>: December 30, 2007
+- <b>Tester</b>: Erik G. Larsson
+
+\htmlonly <hr> \endhtmlonly
+
+
+
+\section itpp_3_99 IT++ 3.99.x (Development Releases)
+
+\subsection linux_3_99 Linux Systems
+
+\subsubsection debian_etch_3_99 Debian Etch
+
+- <b>Platform</b>: Intel Pentium 4
+- <b>Operating System</b>: Debian Etch
+- <b>Compiler</b>: g++ (GCC) 4.1.2
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>: ATLAS, LAPACK and FFTW from Debian packages (on
+  the computer where the test was done the following packages were
+  installed, among others: fftw3, fftw3-dev, atlas3-base, atlas3-base-dev,
+  atlas3-headers, atlas3-sse, atlas3-sse-dev, atlas3-sse2, atlas3-sse2-dev,
+  atlas3-test)
+- <b>Tests Status</b>: All tests PASSED
+- <b>Date</b>: January 18, 2007
+- <b>Tester</b>: Erik G. Larsson
+
+
+\subsubsection gentoo_atlas_3_99 Gentoo Linux with ATLAS
+
+- <b>Platform</b>: Intel Pentium M Centrino
+- <b>Operating System</b>: Gentoo Linux 2006.1 (x86)
+- <b>Compiler</b>: g++ (GCC) 4.1.1
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>: Compiled and installed from the portage tree:
+  - <tt>sci-libs/fftw-3.1.2</tt>
+  - <tt>sci-libs/blas-atlas-3.7.24</tt>
+  - <tt>sci-libs/lapack-atlas-3.7.24</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: BLAS and LAPACK libs set up by using the following system
+  commands:
+\verbatim
+% eselect blas set atlas
+% eselect cblas set atlas
+% eselect lapack set atlas
+\endverbatim
+  IT++ configured with:
+\verbatim
+% export CXXFLAGS="-march=pentium-m -O3 -fno-exceptions -pipe"
+% ./configure --with-blas="-lblas" --enable-debug
+\endverbatim
+- <b>Date</b>: January 18, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection gentoo_mkl_3_99 Gentoo Linux with MKL
+
+- <b>Platform</b>: Intel Pentium M Centrino
+- <b>Operating System</b>: Gentoo Linux 2006.1 (x86)
+- <b>Compiler</b>: g++ (GCC) 4.1.1
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>: Intel Math Kernel Library (MKL) 8.1.014
+  installed from the portage three:
+\verbatim
+% emerge sci-libs/mkl
+\endverbatim
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: IT++ configured using the following commands:
+\verbatim
+% export LDFLAGS="-L/opt/intel/mkl/8.1/lib/32"
+% export CPPFLAGS="-I/opt/intel/mkl/8.1/include"
+% ./configure --enable-debug
+\endverbatim
+- <b>Date</b>: January 18, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection rhel4_3_99 Red Hat Enterprise Linux 4 with IT++ External
+
+- <b>Platform</b>: Intel Pentium 4
+- <b>Operating System</b>: Red Hat Enterprise Linux 4
+- <b>Compiler</b>: g++ (GCC) 3.4.6
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>: ATLAS, LAPACK, and FFTW separately compiled
+  from IT++ External 2.3.0 sources and installed in a local directory
+- <b>Tests Status</b>: All tests PASSED
+- <b>Date</b>: January 18, 2007
+- <b>Tester</b>: Erik G. Larsson
+
+
+\subsection windows_3_99 Windows Systems
+
+\subsubsection cygwin_3_99 Cygwin
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2, Cygwin 1.5.23-2
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.4 (cygming special)
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>: Installed from Cygwin repository:
+  - <tt>fftw3-3.0.1-2, fftw3-dev-3.0.1-2</tt>
+  - <tt>lapack-3.0-5</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built. IT++ configured with:
+\verbatim
+% ./configure --enable-debug
+\endverbatim
+- <b>Date</b>: January 19, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection cygwin_acml_3_99 Cygwin with ACML
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2, Cygwin 1.5.23-2
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.4 (cygming special)
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>:  ACML version 3.6.0
+  (<tt>acml3.6.0-32-g77.exe</tt>) installed into a default directory,
+  i.e. <tt>"c:\Program Files\AMD\acml3.6.0"</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built. IT++ configured with:
+\verbatim
+% export LDFLAGS="-L/cygdrive/c/Progra~1/AMD/acml3.6.0/gnu32/lib"
+% export CPPFLAGS="-I/cygdrive/c/Progra~1/AMD/acml3.6.0/gnu32/include"
+% ./configure --enable-debug
+\endverbatim
+- <b>Date</b>: January 19, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection mingw_acml_3_99 MinGW/MSYS with ACML
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2, MinGW 5.1.3, MSYS 1.0.11
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.5 (mingw special)
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>: ACML version 3.6.0
+  (<tt>acml3.6.0-32-g77.exe</tt>) installed into a default directory,
+  i.e. <tt>"c:\Program Files\AMD\acml3.6.0"</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built. IT++ configured with:
+\verbatim
+% export LDFLAGS="-L/c/Progra~1/AMD/acml3.6.0/gnu32/lib"
+% export CPPFLAGS="-I/c/Progra~1/AMD/acml3.6.0/gnu32/include"
+% ./configure --enable-debug
+\endverbatim
+- <b>Date</b>: January 18, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection mingw_netlib_3_99 MinGW/MSYS with IT++ External
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2, MinGW 5.1.3, MSYS 1.0.11
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.5 (mingw special)
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>: BLAS, CBLAS, LAPACK and FFTW libraries from
+  IT++ External 2.99.1 package
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built. IT++ configured with:
+\verbatim
+% export LDFLAGS="-L/usr/local/lib"
+% export CPPFLAGS="-I/usr/local/include"
+% export CXXFLAGS="-Wall -O3 -march=athlon-tbird -pipe"
+% ./configure --disable-html-doc --enable-debug
+\endverbatim
+- <b>Date</b>: January 18, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection msvc_acml_3_99 MS Visual C++ .NET with ACML
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2
+- <b>Compiler(s)</b>: Microsoft Visual C++ 2005 .NET
+- <b>IT++ release</b>: 3.99.1
+- <b>External Libraries</b>: ACML version 3.6.0 (PGI)
+  (<tt>acml3.6.0-32-pgi.exe</tt>) installed into a default directory,
+  i.e. <tt>"c:\Program Files\AMD\acml3.6.0"</tt>
+- <b>Tests Status</b>: Not fully tested. Some IT++ based programs compiled
+  and run with success.
+- <b>Comments</b>: Only static library can be built. IT++ built by opening
+  the <tt>"win32\itpp_acml.vcproj"</tt> project file in MSVC++ and executing
+  <tt>"Build -> Build Solution"</tt> command from menu.
+- <b>Date</b>: March 21, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection msvc_mkl_3_99 MS Visual C++ .NET with Intel MKL
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2
+- <b>Compiler(s)</b>: Microsoft Visual C++ 2005 .NET
+- <b>IT++ release</b>: 3.99.1
+- <b>External Libraries</b>: Intel Math Kernel Library (MKL) 8.1 installed
+  manually in the following directory:
+  <tt>"C:\Program Files\Intel\MKL\8.1"</tt>
+- <b>Tests Status</b>: Not fully tested. Some IT++ based programs compiled
+  and run with success.
+- <b>Comments</b>: Only static library can be built. IT++ built by opening
+  the <tt>"win32\itpp_mkl.vcproj"</tt> project file in MSVC++ and executing
+  <tt>"Build -> Build Solution"</tt> command from menu.
+- <b>Date</b>: March 21, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsection unix_3_99 Unix Systems
+
+\subsubsection sunos59_atlas_3_99 SunOS 5.9 with ATLAS
+
+- <b>Platform</b>: SUNW, Sun-Blade-100 (SPARC)
+- <b>Operating System</b>: SunOS 5.9 Generic_112233-10
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.5
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>: LAPACK and FFTW libraries installed from IT++
+  External 2.99.1 package. ATLAS 3.7.24 development version build from
+  sources using the following configuration command:
+\verbatim
+% ../configure --with-netlib-lapack="/usr/local/lib/liblapack.a"
+\endverbatim
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built due to the ATLAS
+  installation. IT++ configured with:
+\verbatim
+% export LDFLAGS="-L/usr/local/atlas/lib -L/usr/local/lib"
+% export CPPFLAGS="-I/usr/local/include"
+% ./configure --disable-shared
+\endverbatim
+- <b>Date</b>: January 20, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection sunos59_netlib_3_99 SunOS 5.9 with IT++ External
+
+- <b>Platform</b>: SUNW, Sun-Blade-100 (SPARC)
+- <b>Operating System</b>: SunOS 5.9 Generic_112233-10
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.5
+- <b>IT++ release</b>: 3.99.0
+- <b>External Libraries</b>: BLAS, CBLAS, LAPACK and FFTW libraries from
+  IT++ External 2.99.1 package
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: IT++ configured with:
+\verbatim
+% export LDFLAGS="-L/usr/local/lib"
+% export CPPFLAGS="-I/usr/local/include"
+% ./configure
+\endverbatim
+- <b>Date</b>: January 19, 2007
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\htmlonly <hr> \endhtmlonly
+
+
+\section itpp_3_10 IT++ 3.10.x (Stable Releases)
+
+\subsection linux Linux Systems
+
+\subsubsection fedora_atlas Fedora Core 4 with ATLAS
+
+- <b>Platform</b>: Intel Pentium 4
+- <b>Operating System</b>: Fedora Core 4 (x86)
+- <b>Compiler</b>: g++ (GCC) 4.0.2 20051125
+- <b>IT++ release</b>: 3.10.0
+- <b>External Libraries</b>: From FC4 distribution:
+  - <tt>fftw3.i386-3.0.1-3</tt>
+  - <tt>fftw3-devel.i386-3.0.1-3</tt>
+  - <tt>atlas-sse2.i386-3.6.0-8.fc4</tt>
+  - <tt>atlas-sse2-devel.i386-3.6.0-8.fc4</tt>
+  - <tt>blas.i386-3.0-35.fc4</tt>
+  - <tt>lapack.i386-3.0-35.fc4</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: IT++ configured with:
+\code
+% CXXFLAGS="-O3 -pipe -march=pentium4" ./configure
+\endcode
+- <b>Date</b>: March 7, 2006
+- <b>Tester</b>: Tony Ottosson
+
+
+\subsubsection gentoo_acml Gentoo Linux with ACML
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Gentoo Linux 2006.0 (x86 arch)
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.5
+- <b>IT++ release</b>: 3.10.1
+- <b>External Libraries</b>: Compiled and installed from portage tree:
+  - <tt>sci-libs/acml-3.0.0</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: BLAS and LAPACK libs set by using the following system
+  commands:
+\code
+% eselect blas set ACML
+% eselect lapack set ACML
+\endcode
+  IT++ configured with:
+\code
+% export CPPFLAGS="-I/usr/include/acml"
+% ./configure --with-blas="-lblas"
+\endcode
+- <b>Date</b>: March 31, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection gentoo_atlas Gentoo Linux with ATLAS
+
+- <b>Platform</b>: Intel Pentium M Centrino
+- <b>Operating System</b>: Gentoo Linux 2006.0 (x86)
+- <b>Compiler</b>: g++ (GCC) 3.4.5
+- <b>IT++ release</b>: 3.10.1
+- <b>External Libraries</b>: Compiled and installed from portage tree:
+  - <tt>sci-libs/fftw-3.1</tt>
+  - <tt>sci-libs/blas-atlas-3.6.0-r1</tt>
+  - <tt>sci-libs/lapack-atlas-3.6.0</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: BLAS and LAPACK libs set by using the following system
+  commands:
+\code
+% eselect blas set ATLAS
+% eselect lapack set ATLAS
+\endcode
+  IT++ configured with:
+\code
+% ./configure --with-blas="-lblas"
+\endcode
+- <b>Date</b>: March 31, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection gentoo_mkl Gentoo Linux with MKL
+
+- <b>Platform</b>: Intel Pentium M Centrino
+- <b>Operating System</b>: Gentoo Linux 2006.0 (x86 arch)
+- <b>Compiler</b>: g++ (GCC) 3.4.5
+- <b>IT++ release</b>: 3.10.0
+- <b>External Libraries</b>: Intel Math Kernel Library (MKL) 8.0.1
+  installed manually in the following directory: <tt>/opt/intel/mkl/8.0.1</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: IT++ configured using the following commands:
+\code
+% export LDFLAGS="-L/opt/intel/mkl/8.0.1/lib/32"
+% export CPPFLAGS="-I/opt/intel/mkl/8.0.1/include"
+% ./configure
+\endcode
+- <b>Date</b>: February 28, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection gentoo_netlib Gentoo Linux with NetLib's BLAS and LAPACK
+
+- <b>Platform</b>: Intel Pentium M Centrino
+- <b>Operating System</b>: Gentoo Linux 2006.0 (x86)
+- <b>Compiler</b>: g++ (GCC) 3.4.5
+- <b>IT++ release</b>: 3.10.1
+- <b>External Libraries</b>: Compiled and installed from portage tree:
+  - <tt>sci-libs/fftw-3.1</tt>
+  - <tt>sci-libs/blas-reference-19940131-r2</tt>
+  - <tt>sci-libs/cblas-reference-20030223</tt>
+  - <tt>sci-libs/lapack-reference-3.0-r2</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: BLAS and LAPACK libs set by using the following system
+  commands:
+\code
+% blas-config reference
+% lapack-config reference
+\endcode
+  IT++ configured with:
+\code
+% ./configure --with-blas="-lblas"
+\endcode
+- <b>Date</b>: March 31, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection rhel Red Hat Enterprise Linux with IT++ External
+
+- <b>Platform</b>: Intel Pentium 4
+- <b>Operating System</b>: Red Hat Enterprise Linux AS release 4 (Nahant
+  Update 2)
+- <b>Compiler</b>: g++ (GCC) 3.4.4 20050721 (Red Hat 3.4.4-2)
+- <b>IT++ release</b>: 3.10.0
+- <b>External Libraries</b>: BLAS, CBLAS, LAPACK and FFTW libraries from
+  IT++ External 2.1.1 package
+- <b>Tests Status</b>: All tests PASSED
+- <b>Date</b>: March 7, 2006
+- <b>Tester</b>: Erik G. Larsson
+
+
+\subsubsection suse_netlib SUSE Linux 10.0 with NetLib's BLAS and LAPACK
+
+- <b>Platform</b>: Intel Pentium 4 CPU 3.20GHz (64-bit)
+- <b>Operating System</b>: SUSE Linux 10.0 (x86_64)
+- <b>Compiler(s)</b>: g++ (GCC) 4.0.2
+- <b>IT++ release</b>: 3.10.0
+- <b>External Libraries</b>: BLAS, LAPACK and FFTW libraries installed from
+  OpenSuse 10.0 RPM repository:
+  - <tt>blas-3.0-926</tt>
+  - <tt>lapack-3.0-926</tt>
+  - <tt>fftw3-3.0.1-114</tt>
+  - <tt>fftw3-threads-3.0.1-114</tt>
+  - <tt>fftw3-devel-3.0.1-114</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: IT++ configured with:
+\code
+% export CXXFLAGS="-m64 -march=nocona -O3 -pipe"
+% ./configure --with-lapack="/usr/lib64/liblapack.so.3"
+\endcode
+- <b>Date</b>: March 1, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection suse_mkl SUSE Linux 10.0 with MKL
+
+- <b>Platform</b>: Intel Pentium 4 CPU 3.20GHz (64-bit)
+- <b>Operating System</b>: SUSE Linux 10.0 (x86_64)
+- <b>Compiler(s)</b>: g++ (GCC) 4.0.2
+- <b>IT++ release</b>: 3.10.0
+- <b>External Libraries</b>: Intel Math Kernel Library (MKL) 8.0.1
+  installed manually in the following directory: <tt>/opt/intel/mkl/8.0.1</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: IT++ configured with:
+\code
+% export CXXFLAGS="-m64 -march=nocona -O3 -pipe"
+% export LDFLAGS="-L/opt/intel/mkl/8.0.1/lib/em64t"
+% export CPPFLAGS="-I/opt/intel/mkl/8.0.1/include"
+% ./configure
+\endcode
+- <b>Date</b>: March 1, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsection windows Windows Systems
+
+\subsubsection cygwin Microsoft Windows XP with Cygwin
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2, Cygwin 1.5.19-4
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.4 (cygming special)
+- <b>IT++ release</b>: 3.10.1
+- <b>External Libraries</b>: Installed from Cygwin's repository:
+  - <tt>fftw-3.0.1-2</tt>
+  - <tt>fftw-dev-3.0.1-1</tt>
+  - <tt>lapack-3.0-4</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built. IT++ configured with:
+\code
+% ./configure
+\endcode
+- <b>Date</b>: March 31, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection cygwin_atlas Microsoft Windows XP with Cygwin and ATLAS
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2, Cygwin 1.5.19-4
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.4 (cygming special)
+- <b>IT++ release</b>: 3.10.1
+- <b>External Libraries</b>: Installed from Cygwin's repository:
+  - <tt>fftw-3.0.1-2</tt>
+  - <tt>fftw-dev-3.0.1-1</tt>
+  .
+  ATLAS BLAS and LAPACK libraries from IT++ External 2.1.1 package
+  configured using:
+\code
+% ./configure --enable-atlas --disable-fftw
+\endcode
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built. IT++ configured with:
+\code
+% export LDFLAGS="-L/usr/local/lib"
+% ./configure
+\endcode
+- <b>Date</b>: March 31, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection cygwin_acml Microsoft Windows XP with Cygwin and ACML
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2, Cygwin 1.5.19-4
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.4 (cygming special)
+- <b>IT++ release</b>: 3.10.2
+- <b>External Libraries</b>:  ACML version 3.1.0
+  (<tt>acml3.1.0-32-win32-g77.exe</tt>) installed into a default directory,
+  i.e. <tt>"c:\Program Files\AMD\acml3.1.0"</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built. IT++ configured with:
+\code
+% export LDFLAGS="-L/cygdrive/c/Progra~1/AMD/acml3.1.0/gnu32/lib"
+% export CPPFLAGS="-I/cygdrive/c/Progra~1/AMD/acml3.1.0/gnu32/include"
+% ./configure --enable-debug
+\endcode
+- <b>Date</b>: May 15, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection mingw_acml Microsoft Windows XP with MinGW, MSYS and ACML
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2, MinGW 5.0.2, MSYS 1.0.10
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.4 (mingw special)
+- <b>IT++ release</b>: 3.10.2
+- <b>External Libraries</b>: ACML version 3.1.0
+  (<tt>acml3.1.0-32-win32-g77.exe</tt>) installed into a default directory,
+  i.e. <tt>"c:\Program Files\AMD\acml3.1.0"</tt>
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built. IT++ configured with:
+\code
+% export LDFLAGS="-L/c/Progra~1/AMD/acml3.1.0/gnu32/lib"
+% export CPPFLAGS="-I/c/Progra~1/AMD/acml3.1.0/gnu32/include"
+% ./configure --enable-debug
+\endcode
+- <b>Date</b>: May 15, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection mingw_netlib Microsoft Windows XP with MinGW, MSYS and IT++ External
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2, MinGW 5.0.2, MSYS 1.0.10
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.4 (mingw special)
+- <b>IT++ release</b>: 3.10.5
+- <b>External Libraries</b>: BLAS, CBLAS, LAPACK and FFTW libraries from
+  IT++ External 2.2.0 package
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: Only static library can be built. IT++ configured with:
+\code
+% export LDFLAGS="-L/usr/local/lib"
+% export CPPFLAGS="-I/usr/local/include"
+% export CXXFLAGS="-Wall -O3 -march=athlon-tbird -pipe"
+% ./configure --disable-html-doc
+\endcode
+- <b>Date</b>: August 11, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsubsection msvc_mkl Microsoft Windows XP with MS Visual C++ and Intel MKL
+
+- <b>Platform</b>: AMD Sempron 3000+
+- <b>Operating System</b>: Microsoft Windows XP SP2
+- <b>Compiler(s)</b>: Microsoft Visual C++ 2005 .NET
+- <b>IT++ release</b>: 3.10.5
+- <b>External Libraries</b>: Intel Math Kernel Library (MKL) 8.1 installed
+  manually in the following directory:
+  <tt>"C:\Program Files\Intel\MKL\8.1"</tt>
+- <b>Tests Status</b>: Not fully tested. Some IT++ based programs compiled
+  and run with success.
+- <b>Comments</b>: Only static library can be built. IT++ built by opening
+  the <tt>"win32\itpp.vcproj"</tt> project file in MSVC++ and executing
+  <tt>"Build -> Build Solution"</tt> command from menu.
+- <b>Date</b>: August 11, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+
+\subsection unix Unix Systems
+
+\subsubsection sunos59 SunOS 5.9 with IT++ External
+
+- <b>Platform</b>: SUNW, Sun-Blade-100 (SPARC)
+- <b>Operating System</b>: SunOS 5.9 Generic_112233-10
+- <b>Compiler(s)</b>: g++ (GCC) 3.4.5
+- <b>IT++ release</b>: 3.10.2
+- <b>External Libraries</b>: BLAS, CBLAS, LAPACK and FFTW libraries from
+  IT++ External 2.1.1 package. The following configuration command has been
+  used:
+\code
+% export CFLAGS="-mcpu=ultrasparc -O2 -pipe -funroll-all-loops"
+% ./configure
+\endcode
+- <b>Tests Status</b>: All tests PASSED
+- <b>Comments</b>: IT++ configured with:
+\code
+% export LDFLAGS="-L/usr/local/lib"
+% export CPPFLAGS="-I/usr/local/include"
+% export CXXFLAGS="-mcpu=ultrasparc -O2 -pipe"
+% ./configure --enable-debug
+\endcode
+- <b>Date</b>: May 15, 2006
+- <b>Tester</b>: Adam Piątyszek (ediap)
+
+*/

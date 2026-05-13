@@ -2,8 +2,11 @@
  * Copyright (c) 2018-2021 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_DCREATE_HPP 
-#define  H5CPP_DCREATE_HPP
+#pragma once
+#include <string>
+#include <stdexcept>
+#include <tuple>
+#include <utility>
 
 //TODO: if constexpr(..){} >= c++17
 namespace h5 {
@@ -74,7 +77,7 @@ namespace h5 {
 				for(hsize_t i=0; i<rank; i++)
 					current_dims_default[i] = max_dims[i] != H5S_UNLIMITED
 						? max_dims[i] : (has_unlimited_dimension=true, static_cast<hsize_t>(0));
-				current_dims_default.rank = rank;
+				current_dims_default.rank = static_cast<int>(rank);
 			}
 		} else static_assert( tcurrent_dims::present,"current or max dimensions must be present in order to create a dataset!" );
 
@@ -88,16 +91,11 @@ namespace h5 {
 		space_id =  tmax_dims::present ?
 			std::move( h5::create_simple( current_dims, max_dims ) ) :  std::move( h5::create_simple( current_dims ) );
 		using element_t = typename impl::decay<T>::type;
-		// create a base HDF5 type from decayed template T type, then over write this 
-		// if custom dt_t<T> type is present in the passed `args...`
-		h5::dt_t<element_t> type;
-		// since the underlying type is binary compatible with `hid_t` we are circumventing 
-		// H5CPP compile time enforced type system; as impl::decay<T> ?!= T !!!
+		h5::meta::resolved_type_t<element_t> type;
 		if constexpr (tdt_t::present)
-			type = static_cast<hid_t>(
-				std::get<tdt_t::value>( std::forward_as_tuple( args...))); 
-		// we have the correct type, either the decayed one, or the custom	
-		return h5::createds(fd, dataset_path, type, space_id, lcpl, dcpl, dapl);
+			type = static_cast<::hid_t>(
+				std::get<tdt_t::value>( std::forward_as_tuple( args...)));
+		return h5::createds(fd, dataset_path, static_cast<::hid_t>(type), space_id, lcpl, dcpl, dapl);
 	} catch( const std::runtime_error& err ) {
 			throw h5::error::io::dataset::create( err.what() );
 	}
@@ -137,8 +135,6 @@ namespace h5 {
 	template<class T, class... args_t>
 	inline h5::ds_t create( const std::string& file_path, const std::string& dataset_path, args_t&&... args ){
 		h5::fd_t fd = h5::open(file_path, H5F_ACC_RDWR, h5::default_fapl);
-		return h5::create<T>(fd, dataset_path, args...);
+		return ::h5::create<T>(fd, dataset_path, args...);
 	}
 }
-#endif
-

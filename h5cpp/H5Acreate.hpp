@@ -2,23 +2,24 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_ACREATE_HPP
-#define  H5CPP_ACREATE_HPP
+#pragma once
+#include <string>
+#include <stdexcept>
+#include <type_traits>
 namespace h5 {
 	namespace impl {
 		/*this template defines what HDF5 object types may have attributes */
 		template <class H, class T=void> using is_valid_attr =
-			std::integral_constant<bool, std::is_same<H, ::hid_t>::value ||
-				std::is_same<H, h5::gr_t>::value || std::is_same<H, h5::ds_t>::value ||
-				std::is_same<H, h5::ob_t>::value || std::is_same<H, h5::dt_t<T>>::value>;
+			std::bool_constant<std::is_same_v<H, ::hid_t> ||
+				std::is_same_v<H, h5::gr_t> || std::is_same_v<H, h5::ds_t> ||
+				std::is_same_v<H, h5::ob_t> || std::is_same_v<H, h5::dt_t<T>>>;
 		/*template <class H, class T=void> using is_valid_attr =
-			std::integral_constant<bool,
-				std::is_same<H, h5::ds_t>::value>;*/
+			std::bool_constant<std::is_same_v<H, h5::ds_t>>;*/
 	}
 
 	template<class T, class HID_T, class... args_t> 
-	inline typename std::enable_if<h5::impl::is_valid_attr<HID_T>::value,
-	h5::at_t>::type create( const HID_T& parent, const std::string& path, args_t&&... args ){
+	inline std::enable_if_t<h5::impl::is_valid_attr<HID_T>::value,
+	h5::at_t> create( const HID_T& parent, const std::string& path, args_t&&... args ){
 		try {
 			h5::acpl_t default_acpl{ H5Pcreate(H5P_ATTRIBUTE_CREATE) };
 			const h5::acpl_t& acpl = arg::get(default_acpl, args...);
@@ -42,7 +43,4 @@ namespace h5 {
 				throw h5::error::io::attribute::create( err.what() );
 		}
 	}
-
 }
-#endif
-

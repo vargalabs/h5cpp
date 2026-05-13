@@ -1,0 +1,329 @@
+2010-12-31  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* win32/itpp_acml_tests/itpp_acml_tests.sln,
+	  win32/itpp_mkl_tests/itpp_mkl_tests.sln: corrected solution files
+	  for ACML and MKL for backward compatibility
+
+2010-12-31  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* ChangeLog, ChangeLog-2009: separated ChangeLog file into
+	  ChangeLog-2009 and ChangeLog (contains only logs from 2010)
+
+2010-12-31  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/base/specmat.cpp, tests/linspace_test.cpp,
+	  tests/linspace_test.ref: changed algorithm for
+	  linspace_fixed_step so that it works when generating vectors in
+	  ascending or descending order
+
+2010-12-04  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/base/specmat.cpp, itpp/base/specmat.h,
+	  tests/linspace_test.cpp, tests/linspace_test.ref:
+	  linspace_fixed_step() is now a templated function
+
+2010-12-03  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+        * win32/itpp_mkl.sln, win32/itpp_mkl_tests/itpp_mkl_tests.sln,
+          win32/itpp_mkl_tests/linspace_test.vcproj: added tests for
+	  Visual Studio C++ with MKL
+
+2010-12-03  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+        * tests/linspace_test.cpp, win32/itpp_acml.sln,
+  	  win32/itpp_acml_tests/itpp_acml_tests.sln,
+          win32/itpp_acml_tests/linspace_test.vcproj: added test support
+          for Visual Studio C++ with ACML
+
+2010-12-03  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/base/specmat.cpp, itpp/base/specmat.h, tests/Makefile.am,
+	  tests/linspace_test.ref, tests/linspace_test.cpp: changed linspace()
+	  in order to have MATLAB like behavior, added linspace_fixed_step()
+	  in order to provide an equivalent for from:step:to from MATLAB
+
+2010-10-28  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/comm/rec_syst_conv_code.cpp, itpp/comm/rec_syst_conv_code.h:
+	  data members of the Rec_Syst_Conv_Code class used as internal
+	  variables of the MAP algorithm (alpha, beta, gamma and denom) are
+	  now declared local to each decode method, thus the allocated heap
+	  memory is immediately freed when the MAP algorithm ends
+
+2010-10-12  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* NEWS: updated NEWS file
+
+2010-10-12  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* tests/fastica_test.cpp, tests/fastica_test.ref: improved fastica
+	  test
+
+2010-10-12  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/signal/fastica.cpp, itpp/signal/fastica.h,
+	  tests/fastica_test.cpp, tests/fastica_test.ref: Solved bug
+	  report: FastICA may run forever with APPROACH_DEFL - ID 3028968
+	  Thanks to Gert Wollny for the patch
+
+2010-09-26  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* itpp/base/math/log_exp.h: Fix spelling error in documentation
+	This closes #3075538
+
+2010-09-22  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* doc/Makefile.am: Improve installation target for HTML
+	documentation
+
+2010-09-22  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* doc/Makefile.am: add support for copying search index
+	which now is found in search folder under html folder
+
+2010-09-22  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* doxygen_html.cfg.in: updated doxygen configuration
+
+2010-09-21  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* VERSION: add version number for development version after
+	releasing IT++ 4.2.0
+
+-------------------------------------------------------------------------------
+
+2010-09-21  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* IT++ 4.2.0 release (SVN tag: release-4-2-0)
+	* NEWS, VERSION: Add release notes and update version number for
+	IT++ 4.2.0 release.
+
+2010-09-05  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* extras/itload.m: corrected case when loading arrays of cvec,
+	  bug ID 3035034
+
+2010-08-30  Bogdan Cristea  <cristeab@users.sourceforge.net>
+	* itpp/base/binfile.cpp, itpp/base/itfile.cpp, itpp/comm/exit.cpp,
+	  itpp/comm/exit.h, itpp/comm/siso.h, itpp/comm/siso_dem.cpp,
+	  itpp/comm/siso_eq.cpp, itpp/comm/siso_mud.cpp,
+	  itpp/comm/siso_nsc.cpp, itpp/comm/siso_rsc.cpp, itpp/comm/stc.h,
+	  itpp/srccode/audiofile.cpp: corrected warnings in VS 2010
+	  moved itcompat.h include to cpp files
+
+2010-08-28  Adam Piatyszek  <ediap@users.sourceforge.net>
+	* doc/local/linking.doc: Update ToC of the "Linking with IT++..."
+	  webpage
+
+2010-08-28  Adam Piatyszek  <ediap@users.sourceforge.net>
+	* doc/local/index.doc.in: Remove dead link to NEWCOM web page
+
+2010-04-25  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* itpp/comm/exit.h, itpp/comm/siso.h: remove unnecessary include
+	  statement
+
+2010-04-19  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/base/array.h: corrected concat(const T &e, const Array<T>
+	  &a) definition in order to match its forward declaration
+
+2010-04-05  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* doc/tutorial/sccc_bersim_awgn.doc, doc/tutorial/sources.mk,
+	  doc/tutorial/src/Makefile.am,
+	  doc/tutorial/src/sccc_bersim_awgn.cpp,
+	  doc/tutorial/src/turbo_equalizer_bersim_multipath.cpp,
+	  doc/tutorial/turbo_equalizer_bersim_multipath.doc,
+	  doc/tutorial/tutorial.doc: added tutorials for SCCCs and turbo
+	  equalizer
+
+2010-04-04  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* doc/tutorial/vector_and_matrix.doc: corrected minor typo:
+	  matrices instead of matries
+
+2010-04-04  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* doc/tutorial/exit_pccc.doc, doc/tutorial/sources.mk,
+	  doc/tutorial/src/Makefile.am, doc/tutorial/src/exit_pccc.cpp,
+	  doc/tutorial/tutorial.doc: added tutorial for EXIT chart of PCCCs
+
+2010-04-04  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* doc/tutorial/pccc_bersim_awgn.doc, doc/tutorial/sources.mk,
+	  doc/tutorial/src/Makefile.am,
+	  doc/tutorial/src/pccc_bersim_awgn.cpp, doc/tutorial/tutorial.doc,
+	  itpp/comm/siso.h, itpp/comm/siso_rsc.cpp: added tutorial for
+	  PCCCs
+
+2010-04-03  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* tests/matfunc_test.cpp: changed for compatibility with Visual C++ 2010
+
+2010-03-18  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* win32/itpp_acml_tests/exit_test.vcproj,
+win32/itpp_acml_tests/itpp_acml_tests.sln,
+	win32/itpp_acml_tests/siso_test.vcproj, win32/itpp_mkl.vcproj,
+win32/itpp_mkl_tests/exit_test.vcproj
+	win32/itpp_mkl_tests/itpp_mkl_tests.sln,
+win32/itpp_mkl_tests/siso_test.vcproj: added Visual Studio
+	projects for ACML and MKL.
+
+2010-03-14  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/comm/siso.h, itpp/comm/siso_rsc.cpp, itpp/comm/siso_nsc.cpp,
+	itpp/comm/siso_mud.cpp,	itpp/comm/siso_eq.cpp, itpp/comm/siso_dem.cpp,
+	itpp/comm/exit.h, itpp/comm/exit.cpp, itpp/comm/stc.h, itpp/comm/stc.cpp,
+	tests/exit_test.cpp, tests/siso_test.cpp: added Soft Input Soft Output
+	(SISO) class for turbo receivers design, EXtrinsic Information
+	Transfer (EXIT) class for studying the convergence of turbo receivers
+	and Space-Time Codes (STC) class, implementing space-time codes used
+	in Multiple-Input Multiple-Output (MIMO) systems with turbo receivers
+	implemented by SISO class. Two new tests were added, siso_test.cpp and
+	exit_test.cpp with their corresponding *.ref files.
+
+2010-03-04  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/base/converters.cpp, itpp/base/converters.h: added round_to_infty()
+function,
+	changed threshold value in round_to_infty() from 1e6 to 1e9
+
+2010-03-03  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/tests/bessel_test.cpp, itpp/tests/newton_search_test.cpp: changed
+tests files in order to
+	pass tests under Ubuntu. The corresponding *.ref files were also changed.
+
+2010-02-24  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/tests/bessel_test.cpp, itpp/tests/filter_design_test.cpp,
+	itpp/tests/itfile_test.cpp, itpp/tests/newton_search_test.cpp,
+	itpp/tests/pulse_shape_test.cpp: fixed format is used instead of
+	scientific format in order to pass tests checking in Visual C++.
+	As a consequence, the itpp/tests/*.ref files corresponding to the above tests
+are also changed.
+
+	* itpp/win32/itpp_acml.vcproj, itpp/win32/itpp_acml_tests/*vcproj,
+	itpp/win32/itpp_mkl.vcproj, itpp/win32/itpp_mkl_tests/*vcproj: added
+	automatic test checking in Visual C++, project files are converted to Visual
+C++ 2008.
+	The tests checking is implemented for each project as a "Post-Build Event".
+
+	* itpp/extras/check_tests.bat: added batch file for checking test results in
+Windows
+
+2010-02-08  Robert Orzechowski  <tytusz@users.sourceforge.net>
+
+	* AUTHORS, itpp/comm/galois.h: Fixes bug report #2936395
+
+2010-01-24  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* AUTHORS, itpp/comm/ldpc.h, itpp/comm/ldpc.cpp: Improvements to
+	the LDPC decoder. 1) Generalization to handle codes with arbitrary
+	check node degrees. 2) Efficiency improvements for large node
+	degrees.
+
+	Thanks to Gorka Prieto for this patch.
+
+2010-01-10  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/algebra/lapack.h, itpp/base/blas.h: Support latest
+	ACML built with Intel Fortran compiler. It uses uppercase naming
+	conventions for BLAS and LAPACK routines. This is only required on
+	MS Windows (MSVC++).
+
+	* configure.ac.in, itpp/base/Makefile.am, itpp/base/blas.h,
+	itpp/base/sources.mk, itpp/base/vec.cpp, itpp/base/vec.h,
+	itpp/base/zdotusub.f, m4/acx_blas.m4: Do not use zdotusub.f
+	Fortran function for complex version of dot(). The call of Fortran
+	zdotusub_() caused portability problems, which were difficult to
+	debug and fix on all platforms.
+
+	* win32/itpp_acml.vcproj, win32/itpp_mkl.vcproj: Update MSVC++
+	project files to include recently added source files
+
+	* configure.ac.in, itpp/Makefile.am, itpp/base/binfile.h,
+	itpp/base/itcompat.h, itpp/base/itfile.h, itpp/base/ittypes.h,
+	itpp/base/math/elem_math.cpp, itpp/base/math/elem_math.h,
+	itpp/base/math/error.cpp, itpp/base/math/error.h,
+	itpp/base/math/log_exp.cpp, itpp/base/math/log_exp.h,
+	itpp/base/math/sources.mk, itpp/base/math/trig_hyp.cpp,
+	itpp/base/math/trig_hyp.h, itpp/base/sources.mk,
+	itpp/base/specmat.cpp, itpp/comm/galois.cpp,
+	itpp/comm/modulator_nd.cpp, itpp/fixed/fix_base.h, itpp/itbase.h,
+	itpp/signal/sigfun.cpp: Make itcompat.h a private (non-installable)
+	header file. For the purpose of non-standard integer type
+	definitions, a new header file ittypes.h is introduced. A few
+	inlined functions from the math submodule are moved to newly
+	created source files.
+
+	* itpp/base/converters.cpp, itpp/base/converters.h: Remove
+	workaround for GCC 3.3 error for a few template instantiations
+
+	* configure.ac.in, itpp/base/converters.h,
+	itpp/base/help_functions.h, itpp/base/mat.h, itpp/base/matfunc.h,
+	itpp/base/smat.h, itpp/base/svec.h, itpp/base/vec.h,
+	itpp/comm/interleave.h, itpp/comm/pulse_shape.h,
+	itpp/fixed/cfixed.h, itpp/fixed/fixed.h, itpp/signal/filter.h,
+	itpp/signal/transforms.h, m4/ac_cxx_extern_template.m4: Do not
+	check for "extern template" in configure script. Instead, switch
+	this C++ extension for MSVC++ compiler only.
+
+	* itpp/base/converters.cpp, itpp/base/converters.h: Make
+	converters.h public header file independent of itcompat.h
+
+	* itpp/base/Makefile.am, itpp/base/sources.mk: Do not install
+	blas.h header file
+
+	* itpp/base/mat.cpp, itpp/base/mat.h: Move configure dependent
+	implementations to mat.cpp file
+
+	* itpp/base/copy_vector.cpp, itpp/base/copy_vector.h,
+	itpp/base/sources.mk, itpp/base/vec.cpp: Move configure dependent
+	implementations to copy_vector.cpp file
+
+	* itpp/base/vec.cpp, itpp/base/vec.h: Move dot() and
+	outer_product() specialisations to vec.cpp
+
+	* win32/itpp_mkl_tests/*.vcproj: Update MKL libraries in MSVC++
+	project files for test programs
+
+2010-01-06  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* configure.ac.in, itpp/base/itcompat.h, itpp/config_msvc.h:
+	Undefine min, max and log2 macros.
+
+	If these macros were defined they would collide with our
+	overloaded functions.
+
+2010-01-05  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* doc/local/verification.doc: Added Ubuntu 9.10 to list of tested
+	systems
+
+2010-01-05  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* AUTHORS, doc/local/authors.doc: Add Bogdan to the list of
+	developers
+
+	* Makefile.am: Do not install itpp-config.1 man page two times.
+
+	This resulted in installation errors on Ubuntu 9.10. By the way,
+	add missing files to the distribution package.
+
+2010-01-02  Bogdan Cristea  <cristeab@users.sourceforge.net>
+
+	* itpp/base/itcompat.h: Fixes bug report #2924984
+
+2010-01-02  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* NEWS: Prepare release notes for the new stable release
+
+	* NEWS, NEWS-4.0: Move 4.0.x release notes to a separate file
+
+	* configure.ac.in: Update bugs reporting link
+
+	* configure.ac.in, itpp-config.1.in, extras/*, itpp/**/*.cpp,
+	itpp/**/*.h, tests/*.cpp: Update copyright dates to `1995-2010'

@@ -1,173 +1,364 @@
 name: CI
 
+env:
+  HDF5_VERSION: 1.10.10
+  HDF5_CACHE_VERSION: v2
+
 on:
   push:
     branches: [ release, staging ]
   pull_request:
     branches: [ release, staging ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: ${{ matrix.os }} / ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
-        compiler: [gcc-13, gcc-14, gcc-15, clang-17, clang-18, clang-19, clang-20]
         include:
-          - compiler: gcc-13
+          - os: ubuntu-22.04
+            compiler: gcc-13
             compiler-version: 13
-          - compiler: gcc-14
-            compiler-version: 14
-          - compiler: gcc-15
-            compiler-version: 15
-          - compiler: clang-17
+          - os: ubuntu-22.04
+            compiler: clang-17
             compiler-version: 17
-          - compiler: clang-18
+          - os: ubuntu-22.04
+            compiler: clang-18
             compiler-version: 18
-          - compiler: clang-19
+          - os: ubuntu-22.04
+            compiler: clang-19
             compiler-version: 19
-          - compiler: clang-20
+          - os: ubuntu-22.04
+            compiler: clang-20
             compiler-version: 20
+          - os: ubuntu-24.04
+            compiler: gcc-13
+            compiler-version: 13
+          - os: ubuntu-24.04
+            compiler: gcc-14
+            compiler-version: 14
+          - os: ubuntu-24.04
+            compiler: clang-18
+            compiler-version: 18
+          - os: ubuntu-24.04
+            compiler: clang-19
+            compiler-version: 19
+          - os: ubuntu-24.04
+            compiler: clang-20
+            compiler-version: 20
+          - os: macos-15
+            compiler: apple-clang
+            compiler-version: native
+          - os: windows-latest
+            compiler: msvc
+            compiler-version: native
+
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Set badge output directory
-      id: path
-      run: |
-        if [[ "${GITHUB_REF##*/}" == "staging" ]]; then
-          echo "dir=status-staging" >> $GITHUB_OUTPUT
-        else
-          echo "dir=status" >> $GITHUB_OUTPUT
-        fi
+      - name: Install system dependencies on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euxo pipefail
 
-    - name: Check skip list
-      id: skip_check
-      run: |
-        skip_list=(
-          "ubuntu-22.04:gcc-14"
-          "ubuntu-22.04:gcc-15"
-          "ubuntu-24.04:gcc-15"
-          "ubuntu-24.04:clang-17"
-          "macos-13:gcc-13"
-          "macos-13:gcc-14"
-          "macos-13:gcc-15"          
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build wget gnupg lsb-release software-properties-common libhdf5-dev
+
+      - name: Setup compiler on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          compiler="${{ matrix.compiler }}"
+          version="${{ matrix.compiler-version }}"
+
+          if [[ "$compiler" == clang-* ]]; then
+            wget https://apt.llvm.org/llvm.sh
+            chmod +x llvm.sh
+            sudo ./llvm.sh "$version" all
+
+            echo "CC=$(command -v clang-$version)" >> "$GITHUB_ENV"
+            echo "CXX=$(command -v clang++-$version)" >> "$GITHUB_ENV"
+
+            clang++-"$version" --version
+
+          elif [[ "$compiler" == gcc-* ]]; then
+            if ! command -v "gcc-$version" &>/dev/null; then
+              sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+              for attempt in 1 2 3; do
+                sudo apt-get update
+                if apt-cache show "gcc-$version" >/dev/null 2>&1; then
+                  break
+                fi
+                if [[ $attempt -lt 3 ]]; then
+                  echo "Package gcc-$version not found after update (attempt $attempt), retrying in 30s..."
+                  sleep 30
+                else
+                  echo "Package gcc-$version not found in PPA after $attempt attempts" >&2
+                  exit 1
+                fi
+              done
+              sudo apt-get install -y "gcc-$version" "g++-$version"
+            fi
+
+            echo "CC=$(command -v gcc-$version)" >> "$GITHUB_ENV"
+            echo "CXX=$(command -v g++-$version)" >> "$GITHUB_ENV"
+
+            g++-"$version" --version
+          fi
+
+      - name: Install system dependencies on macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          brew update
+          brew install cmake ninja hdf5
+
+          HDF5_PREFIX="$(brew --prefix hdf5)"
+
+          echo "CC=clang" >> "$GITHUB_ENV"
+          echo "CXX=clang++" >> "$GITHUB_ENV"
+
+          echo "HDF5_ROOT=${HDF5_PREFIX}" >> "$GITHUB_ENV"
+          echo "CMAKE_PREFIX_PATH=${HDF5_PREFIX}" >> "$GITHUB_ENV"
+          echo "HDF5_C_COMPILER_EXECUTABLE=${HDF5_PREFIX}/bin/h5cc" >> "$GITHUB_ENV"
+
+          if [[ -x "${HDF5_PREFIX}/bin/h5c++" ]]; then
+            echo "HDF5_CXX_COMPILER_EXECUTABLE=${HDF5_PREFIX}/bin/h5c++" >> "$GITHUB_ENV"
+          fi
+
+          echo "${HDF5_PREFIX}/bin" >> "$GITHUB_PATH"
+
+          clang++ --version
+          brew info hdf5
+          test -x "${HDF5_PREFIX}/bin/h5cc"
+          "${HDF5_PREFIX}/bin/h5cc" -show
+
+          if [[ -x "${HDF5_PREFIX}/bin/h5c++" ]]; then
+            "${HDF5_PREFIX}/bin/h5c++" -show
+          fi
+
+          ls -la "${HDF5_PREFIX}/include/hdf5.h"
+          ls -la "${HDF5_PREFIX}/lib"/libhdf5*
+
+      - name: Build Windows zlib from source
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          # Build zlib ourselves rather than relying on vcpkg.  The vcpkg
+          # `x64-windows` install was flaky: its ZLIBConfig.cmake referenced a
+          # non-existent ZLIB-static.cmake, and even after sidestepping that the
+          # linker intermittently failed to open the installed import lib.
+          # Building from source takes ~30s, gives us a predictable layout, and
+          # lets both HDF5 and h5cpp link against the same zlib.
+
+          $zlib_version = "1.3.1"
+          $zlib_archive = "$env:RUNNER_TEMP\zlib-$zlib_version.tar.gz"
+          $zlib_source  = "$env:RUNNER_TEMP\zlib-$zlib_version"
+          $zlib_build   = "$env:RUNNER_TEMP\zlib-build"
+          $zlib_prefix  = "$env:RUNNER_TEMP\zlib-install"
+
+          Invoke-WebRequest `
+            -Uri "https://github.com/madler/zlib/archive/refs/tags/v$zlib_version.tar.gz" `
+            -OutFile $zlib_archive
+          tar -xzf $zlib_archive -C $env:RUNNER_TEMP
+
+          cmake -S $zlib_source -B $zlib_build `
+            -G "Visual Studio 17 2022" -A x64 `
+            -DCMAKE_INSTALL_PREFIX="$zlib_prefix"
+          cmake --build $zlib_build --parallel --config Release
+          cmake --install $zlib_build --config Release
+
+          Get-ChildItem -Recurse "$zlib_prefix\lib","$zlib_prefix\include"
+
+      - name: Restore HDF5 1.10.10 cache
+        if: runner.os == 'Windows'
+        id: cache-hdf5
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}\hdf5-${{ env.HDF5_VERSION }}-install
+          key: hdf5-${{ runner.os }}-${{ matrix.compiler }}-${{ env.HDF5_VERSION }}-${{ env.HDF5_CACHE_VERSION }}
+
+      - name: Build HDF5 1.10.10
+        if: runner.os == 'Windows' && steps.cache-hdf5.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $hdf5_version = "${{ env.HDF5_VERSION }}"
+          $hdf5_archive = "$env:RUNNER_TEMP\hdf5-$hdf5_version.tar.gz"
+          $hdf5_source = "$env:RUNNER_TEMP\hdf5-$hdf5_version"
+          $hdf5_build = "$env:RUNNER_TEMP\hdf5-$hdf5_version-build"
+          $hdf5_prefix = "$env:RUNNER_TEMP\hdf5-$hdf5_version-install"
+
+          Invoke-WebRequest `
+            -Uri "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-$hdf5_version/src/hdf5-$hdf5_version.tar.gz" `
+            -OutFile $hdf5_archive
+          tar -xzf $hdf5_archive -C $env:RUNNER_TEMP
+
+          cmake -S $hdf5_source -B $hdf5_build `
+            -G "Visual Studio 17 2022" `
+            -A x64 `
+            -DCMAKE_INSTALL_PREFIX="$hdf5_prefix" `
+            -DHDF_CFG_NAME=Release `
+            -DBUILD_SHARED_LIBS=ON `
+            -DBUILD_TESTING=OFF `
+            -DHDF5_BUILD_TOOLS=OFF `
+            -DHDF5_BUILD_UTILS=OFF `
+            -DHDF5_BUILD_EXAMPLES=OFF `
+            -DHDF5_BUILD_CPP_LIB=OFF `
+            -DHDF5_BUILD_HL_LIB=OFF `
+            -DHDF5_BUILD_FORTRAN=OFF `
+            -DHDF5_ENABLE_Z_LIB_SUPPORT=ON `
+            -DHDF5_ENABLE_SZIP_SUPPORT=OFF `
+            -DZLIB_USE_EXTERNAL=OFF `
+            -DZLIB_INCLUDE_DIR="$env:RUNNER_TEMP/zlib-install/include" `
+            -DZLIB_LIBRARY="$env:RUNNER_TEMP/zlib-install/lib/zlib.lib"
+
+          cmake --build $hdf5_build --parallel --config Release
+          cmake --install $hdf5_build --config Release
+
+      - name: Save HDF5 1.10.10 cache
+        if: runner.os == 'Windows' && steps.cache-hdf5.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}\hdf5-${{ env.HDF5_VERSION }}-install
+          key: ${{ steps.cache-hdf5.outputs.cache-primary-key }}
+
+      - name: Export Windows HDF5 environment
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $hdf5_version = "${{ env.HDF5_VERSION }}"
+          $hdf5_prefix = "$env:RUNNER_TEMP\hdf5-$hdf5_version-install"
+
+          if (!(Test-Path "$hdf5_prefix")) {
+            throw "HDF5 install prefix not found: $hdf5_prefix"
+          }
+
+          $hdf5_cmake_prefix = $hdf5_prefix -replace '\\','/'
+          $zlib_cmake_prefix = "$env:RUNNER_TEMP\zlib-install" -replace '\\','/'
+
+          "HDF5_ROOT=$hdf5_cmake_prefix" >> $env:GITHUB_ENV
+          "CMAKE_PREFIX_PATH=$hdf5_cmake_prefix;$zlib_cmake_prefix" >> $env:GITHUB_ENV
+          "$hdf5_prefix\bin" >> $env:GITHUB_PATH
+          "$env:RUNNER_TEMP\zlib-install\bin" >> $env:GITHUB_PATH
+
+      - name: Configure
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          cmake_args=(
+            -S .
+            -B build
+            -G Ninja
+            -DCMAKE_C_COMPILER="$CC"
+            -DCMAKE_CXX_COMPILER="$CXX"
+            -DCMAKE_CXX_STANDARD=23
+            -DCMAKE_BUILD_TYPE=Release
+            -DH5CPP_BUILD_TESTS=ON
           )
 
-        combo="${{ matrix.os }}:${{ matrix.compiler }}"
-        echo "Checking combination: $combo"
-        for skip in "${skip_list[@]}"; do
-          if [[ "$combo" == "$skip" ]]; then
-            echo "SKIP_COMPILE=true" >> "$GITHUB_ENV"
-            exit 0
+          if [[ -n "${HDF5_ROOT:-}" ]]; then
+            cmake_args+=(-DHDF5_ROOT="$HDF5_ROOT")
           fi
-        done
-          echo "SKIP_COMPILE=false" >> "$GITHUB_ENV"
 
-    - name: Setup compiler on macOS
-      if: ${{ env.SKIP_COMPILE == 'false' && runner.os == 'macOS' }}
-      run: |
-        brew install llvm@${{ matrix.compiler-version }}
-        echo "CC=$(brew --prefix llvm@${{ matrix.compiler-version }})/bin/clang" >> $GITHUB_ENV
-        echo "CXX=$(brew --prefix llvm@${{ matrix.compiler-version }})/bin/clang++" >> $GITHUB_ENV
+          if [[ -n "${CMAKE_PREFIX_PATH:-}" ]]; then
+            cmake_args+=(-DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH")
+          fi
 
-    - name: Setup compiler on Linux
-      if: ${{ env.SKIP_COMPILE == 'false' && runner.os == 'Linux' }}
-      run: |
-        compiler="${{ matrix.compiler }}"
-        version="${{ matrix.compiler-version }}"
+          if [[ -n "${HDF5_C_COMPILER_EXECUTABLE:-}" ]]; then
+            cmake_args+=(-DHDF5_C_COMPILER_EXECUTABLE="$HDF5_C_COMPILER_EXECUTABLE")
+          fi
 
-        if [[ "$compiler" == clang-* ]]; then
-          sudo apt-get update
-          sudo apt-get install -y wget gnupg lsb-release software-properties-common
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo DISTRIB_CODENAME=jammy ./llvm.sh "$version" all
-          CXX="clang++-$version"
-        elif [[ "$compiler" == gcc-* ]]; then
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-          sudo apt-get update
-          sudo apt-get install -y g++-"$version"
-          CXX="g++-$version"
-        else
-          CXX="g++"
-        fi
+          if [[ -n "${HDF5_CXX_COMPILER_EXECUTABLE:-}" ]]; then
+            cmake_args+=(-DHDF5_CXX_COMPILER_EXECUTABLE="$HDF5_CXX_COMPILER_EXECUTABLE")
+          fi
 
-        which "$CXX" || { echo "$CXX not found in PATH"; exit 1; }
-        echo "CXX=$(which $CXX)" >> "$GITHUB_ENV"
+          cmake "${cmake_args[@]}"
 
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Configure Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          cmake -S . -B build `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake" `
+            -DHDF5_ROOT="$env:HDF5_ROOT" `
+            -DCMAKE_PREFIX_PATH="$env:CMAKE_PREFIX_PATH" `
+            -DCMAKE_CXX_STANDARD=23 `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DH5CPP_BUILD_TESTS=ON `
+            -DH5CPP_BUILD_EXAMPLES=ON
 
-    - name: Install system dependencies on macOS
-      if: ${{ env.SKIP_COMPILE == 'false' && runner.os == 'macOS' }}
-      run: |
-        brew update
-        brew install hdf5
+      - name: Build
+        run: cmake --build build --parallel --config Release
 
-    - name: Install system dependencies on Linux
-      if: ${{ env.SKIP_COMPILE == 'false' && runner.os == 'Linux' }}
-      run: sudo apt-get update && sudo apt-get install -y libhdf5-dev
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
 
+      - name: Record Badge Status
+        if: always()
+        shell: bash
+        run: |
+          set -euxo pipefail
 
-    - name: Configure
-      if: env.SKIP_COMPILE == 'false'
-      run: cmake -B build -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_STANDARD=23 -DCMAKE_BUILD_TYPE=Release
+          mkdir -p badge-status
 
-    - name: Build
-      if: env.SKIP_COMPILE == 'false'
-      run: cmake --build build --parallel
+          cat <<EOF > "badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json"
+          {
+            "os": "${{ matrix.os }}",
+            "compiler": "${{ matrix.compiler }}",
+            "status": "${{ job.status }}"
+          }
+          EOF
 
-    - name: Test
-      if: env.SKIP_COMPILE == 'false'
-      run: ctest --test-dir build --output-on-failure
+      - name: Upload Status Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ matrix.os }}-${{ matrix.compiler }}
+          path: badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
 
-    - name: Record Badge Status
-      if: always()
-      run: |
-        mkdir -p badge-status
-        status="skipped"
-        if [[ "$SKIP_COMPILE" == "false" ]]; then
-          status="${{ job.status }}"
-        fi
-
-        cat <<EOF > badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
-        {
-          "os": "${{ matrix.os }}",
-          "compiler": "${{ matrix.compiler }}",
-          "status": "$status"
-        }
-        EOF
-    - name: Upload Status Artifact
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: status-${{ matrix.os }}-${{ matrix.compiler }}
-        path: badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
-
-  generate-badges:
+  badge:
     name: Generate SVG Badges
-    runs-on: ubuntu-latest
-    needs: build
     if: always()
+    needs: build
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Determine badge target directory
-        id: badge_dir
+      - name: Install badge tools
+        shell: bash
         run: |
-          if [[ "${GITHUB_REF##*/}" == "staging" ]]; then
-            echo "dir=badges-staging" >> $GITHUB_OUTPUT
-          else
-            echo "dir=badges" >> $GITHUB_OUTPUT
-          fi
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y jq curl
 
-      - name: Download all badge status artifacts
+      - name: Download all status artifacts
         uses: actions/download-artifact@v4
         with:
           path: badge-status
@@ -175,31 +366,175 @@ jobs:
           merge-multiple: true
 
       - name: Generate SVG Badges
+        shell: bash
         run: |
-          mkdir -p ${{ steps.badge_dir.outputs.dir }}
-          for f in badge-status/*.json; do
-            echo "file name: $f"
-            [[ ! -f "$f" ]] && continue
-            os=$(jq -r .os "$f")
-            compiler=$(jq -r .compiler "$f")
-            status=$(jq -r .status "$f")
+          set -euxo pipefail
 
-            color="gray"
-            symbol="□"
+          ref_name="${GITHUB_REF_NAME:-}"
 
-            [[ "$status" == "success" ]] && { symbol="✔"; color="green"; prefix="ok"; }
-            [[ "$status" == "skipped" ]] && { symbol="○"; color="gray";  prefix="na"; }
-            [[ "$status" == "failure" ]] && { symbol="✘"; color="red";   prefix="failed"; }
+          if [[ "$ref_name" == "staging" ]]; then
+            badge_dir="badges-staging"
+          else
+            badge_dir="badges"
+          fi
+
+          mkdir -p "$badge_dir"
+
+          na_badge="$badge_dir/na.svg"
+          na_url="https://img.shields.io/badge/na-%E2%97%8B-gray.svg"
+
+          if [[ ! -f "$na_badge" ]]; then
+            echo "$na_url -> $na_badge"
+            curl -fsSL "$na_url" -o "$na_badge"
+          fi
+
+          for status_file in badge-status/*.json; do
+            os=$(jq -r '.os' "$status_file")
+            compiler=$(jq -r '.compiler' "$status_file")
+            status=$(jq -r '.status' "$status_file")
+
+            prefix="unknown"
+            symbol="%3F"
+            color="lightgrey"
+
+            case "$status" in
+              success)
+                prefix="ok"
+                symbol="%E2%9C%94"
+                color="green"
+                ;;
+              failure)
+                prefix="failed"
+                symbol="%E2%9C%98"
+                color="red"
+                ;;
+              cancelled)
+                prefix="cancelled"
+                symbol="%E2%97%87"
+                color="yellow"
+                ;;
+              skipped)
+                prefix="na"
+                symbol="%E2%97%8B"
+                color="gray"
+                ;;
+            esac
 
             label="${os}-${compiler}"
-            badge="${{ steps.badge_dir.outputs.dir }}/${label}.svg"
-            echo "https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg  $badge"
-            curl -s "https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg" -o "$badge"
+            badge="$badge_dir/${label}.svg"
+            url="https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg"
+
+            echo "$url -> $badge"
+            curl -fsSL "$url" -o "$badge"
           done
 
-      - name: Upload badge folder to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload badges artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
+          path: ${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
+
+      - name: Deploy badges to GitHub Pages
+        if: github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./${{ steps.badge_dir.outputs.dir }}
-          destination_dir: ${{ steps.badge_dir.outputs.dir }}
+          publish_dir: ./${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
+          destination_dir: ${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
+          keep_files: true   # prevents wiping the other branch's folder on every deploy
+
+  coverage:
+    name: coverage / ubuntu-24.04 / gcc-14
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    env:
+      CC: gcc-14
+      CXX: g++-14
+      GCOV: gcov-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            gcc-14 \
+            g++-14 \
+            lcov \
+            libhdf5-dev
+
+      - name: Clean and configure
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          rm -rf build coverage*.info
+
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_STANDARD=17 \
+            -DCMAKE_C_COMPILER=gcc-14 \
+            -DCMAKE_CXX_COMPILER=g++-14 \
+            -DCMAKE_C_FLAGS="--coverage -O0 -g" \
+            -DCMAKE_CXX_FLAGS="--coverage -O0 -g" \
+            -DH5CPP_BUILD_TESTS=ON
+
+      - name: Build
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cmake --build build --parallel
+
+      - name: Test
+        shell: bash
+        run: |
+          set -euxo pipefail
+          ctest --test-dir build --output-on-failure --parallel
+
+      - name: Capture coverage
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          lcov \
+            --gcov-tool /usr/bin/gcov-14 \
+            --rc geninfo_unexecuted_blocks=1 \
+            --ignore-errors mismatch,inconsistent \
+            --no-function-coverage \
+            --directory build \
+            --capture \
+            --output-file coverage.full.info
+
+          lcov \
+            --gcov-tool /usr/bin/gcov-14 \
+            --remove coverage.full.info \
+            '/usr/*' \
+            '*/test/*' \
+            '*/thirdparty/*' \
+            '*/examples/*' \
+            --ignore-errors unused,mismatch,inconsistent \
+            --output-file coverage.info
+
+          rm coverage.full.info
+          lcov --gcov-tool /usr/bin/gcov-14 --list coverage.info
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.info
+          disable_search: true
+          fail_ci_if_error: true
+          disable_telem: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

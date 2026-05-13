@@ -1,0 +1,1348 @@
+2008-12-11  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/matfunc.cpp, itpp/base/matfunc.h: Add missing template
+	instantiations.
+
+	The templates is_hermitian() and is_unitary() had extern
+	instantiations in the header file, but were never instantiated in
+	the corresponding source file, which lead to linking errors when
+	using these functions.
+
+	This patch fixes this bug (#2392728) by adding the corresponding
+	template instantiations in matfunc.cpp.
+
+	Signed-off-by: David Hammarwall <davidhammarwall@users.sourceforge.net>
+
+	* itpp/stat/misc_stat.cpp, itpp/stat/misc_stat.h: Improve
+	performance of the Frobenius norm.
+
+	The implementation of the Frobenius norm calculation for matrix M
+	was done by multiplying M' times M and then throwing away
+	everything but the diagonal. This was definitely not the optimum
+	way to calculate.
+
+	Signed-off-by: Bo Lincoln <blincoln@users.sourceforge.net>
+
+2008-12-02  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* tests/bch_test.ref, tests/blas_test.ref, tests/channel_test.ref,
+	tests/cholesky_test.ref, tests/circular_buffer_test.ref,
+	tests/convcode_test.ref, tests/converters_test.ref,
+	tests/det_test.ref, tests/eigen_test.ref, tests/fastica_test.ref,
+	tests/filter_design_test.ref, tests/filter_test.ref,
+	tests/histogram_test.ref, tests/interleaver_test.ref,
+	tests/inv_test.ref, tests/ldpc_test.ref, tests/ls_solve_test.ref,
+	tests/lu_test.ref, tests/mat_test.ref, tests/matfunc_test.ref,
+	tests/modulator_nd_test.ref, tests/modulator_test.ref,
+	tests/poly_test.ref, tests/pulse_shape_test.ref,
+	tests/qr_test.ref, tests/rand_test.ref,
+	tests/reedsolomon_test.ref, tests/schur_test.ref,
+	tests/sigfun_test.ref, tests/sort_test.ref, tests/sparse_test.ref,
+	tests/specmat_test.ref, tests/stat_test.ref, tests/svd_test.ref,
+	tests/transforms_test.ref, tests/turbo_test.ref,
+	tests/vec_test.ref: Update test reference files for the new RNG
+	implementation.
+
+	* itpp/base/random.cpp, itpp/base/random.h: Replace random_01*
+	with genrand_* methods.
+
+	random_01(), random_01_lclosed() and random_01_rclosed() methods
+	are only backward compatible wrappers for genrand_open_open(),
+	genrand_close_open() and genrand_open_close(). Besides, the
+	semi-closed methods are a little bit faster, therefore prefer
+	genrand_close_open() and genrand_open_close() where appropriate.
+
+	* itpp/base/random.cpp, itpp/base/random.h,
+	itpp/base/random_dsfmt.h, itpp/base/sources.mk: Add DSFMT
+	implementation of random number generator.
+
+	The DSFMT class implements parts of the Double precision
+	SIMD-oriented Fast Mersenne Twister (dSFM) random number
+	generator. DSFMT directly generates double precision floating
+	point random numbers, which have the IEEE 754 floating-point
+	format. Besides, unsigned integer numbers can also be directly
+	generated using genrand_uin32() method.
+
+	This implementation is 1.8-2.4 times faster than the previous MT
+	implementation.
+
+	Thanks to Mutsuo Saito and Makoto Matsumoto from Hiroshima
+	University for their original implementation in C, which is a base
+	for this C++ DSFMT class.
+
+2008-12-01  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/binfile.cpp, itpp/base/math/misc.cpp,
+	itpp/base/math/misc.h, itpp/srccode/audiofile.cpp: Rename
+	check_big_endianness() to is_bigendian().
+
+	check_big_endianness() function is still available for backward
+	compatibility, but marked as deprecated.
+
+2008-11-13  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/timing.cpp, itpp/base/vec.cpp, itpp/fixed/cfix.cpp,
+	itpp/fixed/fix.cpp: Add missing #include files required by GCC 4.4
+
+	GCC 4.4 cleaned up some more C++ headers. Required header files
+	have to be included explicitly.
+
+	Signed-off-by: Martin Michlmayr <tbm@cyrius.com>
+
+2008-11-12  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/signal/transforms.cpp: Let IT++ compile and link with MKL 10.1.
+
+	The updated MKL 10.1 package defines DftiCreateDescriptor macro in
+	mkl_dfti.h header file, which caused compilation errors in IT++
+	transforms.cpp file. This patch fixes this problem.
+
+-------------------------------------------------------------------------------
+
+2008-10-08  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* IT++ 4.0.6 release (SVN tag: release-4-0-6)
+
+	* NEWS, VERSION: Add release notes and update version number for
+	IT++ 4.0.6.
+
+	* itpp/itpp_acml_tests/Makefile.am, itpp/itpp_mkl_tests/Makefile.am:
+	Add specmat_test.vcproj files to the list of distributed files.
+
+2008-10-05  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* doc/local/verification.doc: Added Ubuntu 8.04 to list of tested
+	systems
+
+	* doc/local/installation.doc: Minor fix
+
+2008-09-17  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/mat.h, itpp/base/vec.h: Do not explicitly inline
+	elem_mult_inplace() when using MSVC++.
+
+	This is a workaround for a warning reported by Microsoft Visual
+	C++ Express 2008.
+
+	* win32/itpp_acml.sln, win32/itpp_mkl.sln: Use CRLF line endings
+	in MSVC++ solution files.
+
+	* win32/itpp_acml_tests/itpp_acml_tests.sln,
+	win32/itpp_acml_tests/specmat_test.vcproj,
+	win32/itpp_mkl_tests/itpp_mkl_tests.sln,
+	win32/itpp_mkl_tests/specmat_test.vcproj: Add MSVC++ project files
+	for specmat_test.
+
+2008-09-12  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* tests/Makefile.am, tests/specmat_test.cpp,
+	tests/specmat_test.ref: Add specmat_test program for testing
+	special vectors and matrices.
+
+	Initially only toeplitz() function is tested.
+
+	* itpp/base/specmat.cpp, itpp/base/specmat.h: Fix broken
+	implementation of toeplitz() function.
+
+	The previous implementation generated incorrect matrices for two
+	complex-valued input vectors. This patch fixes this problem. BTW,
+	the implementation is now based on a template function, so bmat,
+	smat and imat matrices can now be generated.
+
+	Thanks to Niklas Johansson for reporting this issue. This closes
+	bug report [2110119].
+
+2008-09-01  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* test/vec_test.cpp, test/vec_test.ref: Revert part of SVN
+	revision 1613.
+
+	I/O stream labels for infinity and not-a-number have different
+	case sensitivity in various supported GCC versions ("inf" vs.
+	"Inf", "nan" vs. "NaN"). Thus we can not test for them in a vector
+	initialisation from string.
+
+2008-08-30  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/itassert.h: Get rid of config.h dependency from
+	itassert.h header file.
+
+	* itpp/comm/galois.cpp: Fix bug in GF::set_size() method, which
+	was reported by Stephan Ludwig.
+
+	Because "alphapow" and "logalpha" are static variables, every
+	instantiation of the GF class uses the very same of them. If
+	different instantiations of different Galois fields access this
+	(e.g. 2^8 and 2^6, while 2^6 has been created first), the latter
+	might overwrite/delete the log table of the previous while calling
+	GF::set_size() method (2^8 widens the array to m+1=9, while not
+	copying the 2^6 entries). The solution is to copy the contents of
+	"alphapow" and "logalpha" when resizing them.
+
+	Thanks to Stephan Ludwig for noticing this problem and also to
+	EndZone for confirming it.
+
+	* itpp/base/sort.h: Make sort() and sort_index() work for vectors
+	with less than two elements.
+
+	Without this patch, the above two functions resulted in an
+	assertion error. Thanks to Yngve Seln for reporting this problem.
+
+2008-08-18  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* extras/gdb_macros_for_itpp, extras/Makefile.am: added GDB
+	debugger display macros for it++ data types.
+
+	This closes feature request [1913404]. Thanks to Vasek for
+	providing an initial version of the macros.
+
+2008-08-11  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* tests/vec_test.cpp, tests/vec_test.ref: Modified existing and
+	added new tests of vector initialisations with string
+
+	* tests/vec_test.cpp, tests/vec_test.ref: Fix vector
+	initialisation test with "a:b" format when a > b
+
+	This test is not valid with the new string parser implementation,
+	because negative decrements have to be explicitly gived as 'b' in
+	"a:b:c" format string. This is consistant with GNU Octave way of
+	parsing such strings.
+
+	* itpp/base/vec.cpp, itpp/base/vec.h: String parser reimplemented
+	to support multiple "a:b:c" format strings
+
+	The new implementation supports multiple "a:b[:c]" formats in one
+	string. For instance:
+	  ivec v = "1:2:5, 6 8 9:-1:0";
+	now works.
+
+	Memory handling is also more efficient, i.e. for the cases when
+	"a:b:c" format is not used, memory is allocated only once.
+	Besides, the new implementation should be easier to maintain,
+	because the code is much more modular.
+
+	This patch resolves feature request [2041480].
+
+	* win32/itpp_acml.vcproj, win32/itpp_acml_tests/*.vcproj,
+	win32/itpp_mkl.vcproj, win32/itpp_mkl_tests/*.vcproj: Suppress
+	warnings about deprecated "/Wp64" options in MSVC++ project files
+
+2008-08-10  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* doc/tutorial/src/ldpc_bersim_awgn.cpp: Add missing "LL" suffix
+	to 64-bit inteager initialisation
+
+	This eventually fixes integer overflow error in LDPC BER
+	simulation tutorial example.
+
+2008-08-09  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/stat/mog_diag.h: Suppress a minor warning reported by
+	Doxygen
+
+	* doc/tutorial/src/ldpc_bersim_awgn.cpp: Fix minor problem with
+	integer overflow in expression
+
+	The initialisation of int64_t variable with a multiplied inteager
+	constants caused an integer overflow of the temporary calculation
+	result. This patch fixes this issue by using one big constant
+	in the initialisation.
+
+2008-08-07  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/vec.h, tests/vec_test.cpp, tests/vec_test.ref: Fix
+	regression [2041474] in Vec<>::split() method
+
+	In IT++ 3.10.x releases it was possible to split a vector at its
+	end, e.g.:
+	  vec v1 = "1 2 3 4 5";
+	  vec v2 = v1.split(5);
+	In the current stable branch (4.0.x) the above code results in an
+	assertion. This patch fixes this regression and also improves the
+	documentation, so it is clearly explained which elements are
+	returned and which are stored in the original vector.
+
+	Besides, the vec_test program now includes a new test for
+	splitting a vector at pos = 0 and pos = datasize.
+
+	Thanks to Yngve Selén for reporting this bug.
+
+2008-08-02  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* m4/acx_blas.m4: MKL requires zdotusub Fortran wrapper function
+	on x86_64 architecture
+
+	This fixes broken blas_test and vector_test on 64-bit linux
+	architectures when IT++ is linked to Intel MKL BLAS library. This
+	fix is equivalent to passing "--with-zdotu=zdotusub" option to
+	configure.
+
+-------------------------------------------------------------------------------
+
+2008-07-18  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* NEWS, VERSION: Add release notes and update version number for
+	IT++ 4.0.5
+
+	* tests/vec_test.cpp, tests/vec_test.ref: Add a test-case to
+	reproduce bug [2017948]
+
+	* itpp/base/vec.cpp: Fix bug [2017948] in parsing error of "a:b:c"
+	ivec initialisation
+
+	There was a bug in vec.cpp that caused an assertion error when
+	integer vectors were initialized using the "a:b:c" notation. For
+	example: ivec iv = "0:2:4"; raised an exception. This patch fixes
+	this bug by removing an unnecessary "seekg" operation.
+
+	Thanks to David Hammarwall for reporting the problem and solution
+	to it.
+
+2008-07-11  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/mat.h: Fix bug [2004345] causing incorrect result of
+	Mat::concat_vertical()
+
+	In case when one of the input matrices to concat_horizontal() or
+	concat_vertical() functions was empty, an error occurred. With
+	this patch the result of concatenating an empty matrix with
+	some other matrix is defined and a copy of the other matrix is
+	returned. This fixes bug [2004345].
+
+	Thanks to Carlos Pineda for reporting this problem.
+
+	* itpp/base/mat.h: Reset number of rows/columns if one of the
+	dimensions given to Mat::set_size() is zero
+
+	Without this patch, the Mat::set_size() function set number of
+	rows or cols to non zero value, even if the other matrix
+	dimension was zero. This was not compatible with the constructor.
+	Besides, setting one of the dimensions of a matrix to non zero
+	value, if the other one is zero does not makes sense and might
+	cause problems with other functions operating on matrices. This
+	patch fixes this problem.
+
+2008-06-17  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/comm/bch.cpp: Fix bug [1995743] in BCH::decode() function
+
+	The second argument of
+	  if ((delta == GF(n + 1, -1)) || (OldLambda.get_degree() > kk))
+	takes the degree of OldLambda. But get_degree() does not return
+	the true degree of that polynomial but its allocated space.
+	GFX::get_true_degree() does what we want.
+
+	If OldLambda's "degree" is larger than its "true degree", a wrong
+	decision is made in the if statement, resulting in a wrong
+	Lambda(x), which in general leads to a decoding failure, while the
+	code word should have been correctable in theory.
+
+	This patch fixes this bug and also removes a redundant "temp"
+	variable.
+
+	Signed-off-by: Stephan Ludwig <donludovico@users.sourceforge.net>
+
+2008-06-12  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* AUTHORS, doc/local/authors.doc: Add Stephan Ludwig (donludovico)
+	to the list of contributors
+
+	* itpp/comm/bch.cpp, itpp/comm/bch.h, tests/bch_test.cpp:
+	Auto-calculate the BCH generator polynomial from (n, t) parameters
+
+	This patch improves the previous patch, so only n (codeword
+	length) and t (error-correcting capability) parameters are
+	required to specify a particular BCH code. The generator
+	polynomial and k (message word length) are calculated
+	automatically.
+
+	The new constructor does no longer break the implicit cast
+	ivec("...") of the generator polynomial parameter in the old
+	constructor.
+
+	Signed-off-by: Stephan Ludwig <donludovico@users.sourceforge.net>
+
+2008-06-09  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/comm/bch.cpp, itpp/comm/bch.h, tests/bch_test.cpp:
+	Auto-calculate the BCH generator polynomial from (n, k, t)
+	parameters
+
+	Beside the known Parameters n (codeword length), k (message word
+	length), t (designed error-correcting capability) the actual BCH
+	class needs to be handed over the generator polynomial in octal
+	form. This can be very long for some codes and thus hard-copying
+	from textbooks often leads to copying errors.
+
+	Since the generator polynomial is unique (as far as I know) for
+	given parameters n, k, t, this generator polynomial can be
+	calculated during instantiation of the BCH class - given the
+	parameters n, k, t. Thus, copying errors can be avoided. This new
+	feature is supplied as a second constructor for the BCH class by
+	the attached patch. In other words: With the new constructor, you
+	no longer have to pass on the generator polynomial but only the
+	parameters n, k, and t. The constructor generates the generator
+	polynomials according to Wicker: "Error control systems for
+	digital communication and storage" as given in Appendix E of this
+	book. The polynomials are also the same as in Lin/Costello: "Error
+	control coding".
+
+	Unfortunately, the usual call (cf. IT++ documentation), i.e.
+	  BCH bch(31, 21, 2, "3 5 5 1");
+	does no longer work, since both constructors confuse at run-time:
+	The new constructor is called and the string is interpreted as
+	bool systematic. The correct usage would now be:
+	  BCH bch(31, 21, 2, ivec("3 5 5 1"));
+
+	Signed-off-by: Stephan Ludwig <donludovico@users.sourceforge.net>
+
+2008-06-05  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/comm/hammcode.cpp, itpp/comm/hammcode.h,
+	itpp/comm/sequence.cpp, itpp/comm/spread.h: Replace "short"
+	variables with "int" to prevent implicit conversions
+
+	MSVC++ warns about implicit conversions between "int" and "short"
+	types, which can cause lost of data. Therefore use "int" type for
+	indexing purposes as most of the IT++ codes do.
+
+	* itpp/comm/modulator.cpp, itpp/comm/modulator.h: Remove redundant
+	argument from calculate_softbit_matrices() function
+
+	Since calculate_softbit_matrices() is a private method of a class,
+	in which "bits2symbols" variable is also declared, there is no need
+	to pass this variable as an argument of this method.
+
+	* itpp/base/itfile.h, itpp/base/random.h, itpp/comm/bch.h,
+	itpp/comm/rec_syst_conv_code.h, itpp/comm/reedsolomon.h: Suppress
+	MSVC++ warning C4512: "assignment operator could not be generated"
+
+	MSVC++ warns when an assignment operator can not be automatically
+	generated because of constant variables existing in a class. To
+	suppress this warning an dummy assignment operator can be added as
+	in this patch.
+
+	* itpp/base/vec.cpp, itpp/fixed/fix.cpp: Suppress MSVC++ warning
+	C4701: "potentially uninitialized local variable..."
+
+	* itpp/base/gf2mat.cpp, itpp/base/itfile.cpp, itpp/base/mat.h,
+	itpp/base/math/misc.h, itpp/base/vec.h, itpp/comm/galois.cpp,
+	itpp/srccode/audiofile.cpp, itpp/srccode/pnm.cpp: Suppress MSVC++
+	warning C4244: "conversion from 'int' to 'char'..."
+
+	Some of the expressions require explicit casts to "char". Where
+	appropriate "int get()" method of iostream class is replaced with
+	"get(char &)" function. Besides, GF::set_size() method is
+	re-factored a little bit, so the "mtemp" integer variable is no
+	longer necessary.
+
+	* itpp/base/factory.h, itpp/base/mat.h, itpp/base/matfunc.h,
+	itpp/base/timing.cpp, itpp/base/vec.h, itpp/comm/bch.cpp,
+	itpp/comm/channel.cpp, itpp/comm/convcode.cpp,
+	itpp/comm/egolay.cpp, itpp/comm/hammcode.cpp, itpp/comm/ldpc.h,
+	itpp/comm/modulator.cpp, itpp/comm/punct_convcode.cpp,
+	itpp/comm/reedsolomon.cpp, itpp/fixed/cfix.h, itpp/fixed/cfixed.h,
+	itpp/fixed/fix.h, itpp/fixed/fix_functions.h,
+	itpp/protocol/tcp.cpp, itpp/protocol/tcp.h,
+	itpp/stat/misc_stat.cpp, itpp/stat/mog_diag.cpp,
+	itpp/stat/mog_diag.h, itpp/stat/mog_diag_em.cpp: Suppress MSVC++
+	warning C4100: "unreferenced formal parameter"
+
+	This warning is suppressed by omitting named parameters in
+	arguments of functions. Only types of parameters are passed.
+
+	* configure.ac.in: Change default debugging flags to "-g -O1" or
+	"-Wall -ggdb -O1 -pipe"
+
+	The latter set is only used when GCC compiler is used, so it
+	implicitly assumes that GDB debugger will be used in such a case.
+
+2008-05-30  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/comm/bch.cpp, itpp/comm/bch.h, tests/bch_test.cpp:
+	Auto-calculate the BCH generator polynomial from (n, k, t)
+	parameters
+
+	Beside the known parameters n (codeword length), k (message word
+	length) and t (error-correcting capability), a generator
+	polynomial in octal form needs to be handed over to the actual BCH
+	class. This generator can be very long for some codes and thus
+	copying by hand from textbooks often leads to errors.
+
+	Since the generator polynomial is unique for given parameters (n,
+	k, t), this generator polynomial can be calculated during
+	instantiation of the BCH class. This new feature is supplied as a
+	second constructor for the BCH class in this patch.
+
+	The constructor generates the generator polynomials according to
+	Wicker: "Error control systems for digital communication and
+	storage" as given in Appendix E of this book. The polynomials are
+	also the same as in Lin/Costello: "Error control coding".
+
+	Unfortunately, the usual call BCH bch(31, 21, 2, "3 5 5 1"); does
+	no longer work, since both constructors confuse at run-time: The
+	new constructor is called and the string is interpreted as bool
+	systematic (that's what I guess). The correct usage of the old
+	constructor would now be BCH bch(31, 21, 2, ivec("3 5 5 1"));
+
+	Signed-off-by: Stephan Ludwig <donludovico@users.sourceforge.net>
+
+	* itpp/base/math/log_exp.h, itpp/srccode/gmm.h: Remove functions
+	marked as deprecated before 3.10.7 release
+
+	GMM::get_no_mixtures() was replaced a long time ago with
+	GMM::get_no_gaussians(), whereas needed_bits() was replaced with
+	either int2bits() or levels2bits(). Therefore it is the highest
+	time to remove the deprecated interfaces in our development
+	branch.
+
+2008-05-21  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* doc/local/users_guide.doc: Minor documentation fix in Users
+	Guide
+
+	There is no such functions as swap_row() and swap_col() in IT++.
+	swap_rows() and swap_cols() are the proper ones. This fixes bug
+	[1968377]. Thanks to Allan Murray for reporting this issue.
+
+2008-05-17  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/bessel/hyperg.cpp, itpp/base/itfile.cpp,
+	itpp/base/random.cpp, itpp/comm/punct_convcode.cpp,
+	itpp/fixed/cfix.cpp, itpp/fixed/fix.cpp, itpp/srccode/pnm.cpp,
+	itpp/stat/mog_diag_em.cpp, itpp/stat/mog_diag_kmeans.cpp,
+	itpp/stat/mog_generic.cpp: Fix GCC 4.3 warnings on "ambiguous
+	else" due to missing braces
+
+	The latest GCC compiler is much more picky when it comes to if/else
+	statements without explicit braces. This results in a lot of warnings
+	when "-Wall" flag is used. This patch adds missing braces or
+	refactors code for which such warnings were reported by GCC 4.3.
+
+2008-05-15  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* configure.ac.in: Set CXXFLAGS_DEBUG to CXXFLAGS when
+	--enable-debug is not used
+
+	This new behaviour is consistent with setting the same set of
+	libraries for both the debug and optimised cases, when
+	--enable-debug is not used. Besides, the CXXFLAGS_DEBUG variable
+	is now documented when "configure --help" is used.
+
+2008-05-09  Erik G. Larsson  <erik_g_larsson@users.sourceforge.net>
+
+	* doc/tutorial/matlab_itpp.doc: Documentation improvement
+
+2008-04-25  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* tests/modulator_nd_test.cpp: Cosmetic fix - remove doubled
+	semicolon
+
+	* Unify coding style using an astyle source code formatter
+
+	This huge patch is intended to unify the coding style for all IT++
+	source and header files. The formatting has been performed with
+	the astyle v1.22 program, using the configuration stored in
+	extras/astylerc file.
+
+2008-04-15  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/vec.h: Fix regression of a missing inline keyword in
+	outer_product() specialisation
+
+	The inline keyword is necessary for template specialisations that
+	are defined in the header file. This bug resulted in linking
+	problems without any external BLAS library, when this particular
+	specialisation was used.
+
+	Thanks to Markus Dittrich for investigating this problem and
+	providing a patch for it on Gentoo Bugzilla (bug #217621).
+
+2008-04-14  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/signal/fastica.cpp: Fix broken initialisation of
+	Fast_ICA::set_init_guess() method
+
+	The set_init_guess() now changes initState, which is checked in
+	separate(), so that the provided guess is passed into the solver,
+	rather than a zero matrix as before.
+
+	This patch fixes bug report [1941219].
+
+	Signed-off-by: Matthew Chaudhuri <mchaudhuri@users.sourceforge.net>
+
+2008-04-09  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/converters.cpp, itpp/base/converters.h,
+	itpp/base/itcompat.cpp, itpp/base/itcompat.h: Move rint() to
+	itcompat.{cpp,h}
+
+	This function is conditionally defined on platforms, which do not
+	provide their own implementation. Therefore the best place for it
+	is in itcompat.{cpp,h} files.
+
+	* itpp/base/itcompat.h, itpp/base/math/trig_hyp.h,
+	itpp/signal/poly.cpp, itpp/signal/window.cpp,
+	itpp/base/itcompat.cpp: Move asinh(), acosh() and atanh() to
+	itcompat.{cpp,h}
+
+	These functions are conditionally defined on platforms, which do
+	not provide their own implementations. Therefore the best place
+	for them is in itcompat.{cpp,h} files.
+
+	* itpp/base/itcompat.h, itpp/base/math/log_exp.h: Move log1p() and
+	log2() definitions from log_exp.h to itcompat.h
+
+	BTW, log2() now uses "static const double" variable initialised
+	with the result of "1.0 / std::log(2.0)" division.
+
+	* itpp/base/itcompat.cpp, itpp/base/itcompat.h,
+	itpp/base/math/error.cpp, itpp/base/math/error.h: Move erf(double)
+	and erfc(double) error functions to itcompat.{cpp,h}
+
+	These functions are conditionally defined on platforms, which do
+	not provide their own implementations. Therefore the best place
+	for them is in itcompat.{cpp,h} files.
+
+	* itpp/base/itcompat.cpp, itpp/base/itcompat.h,
+	itpp/base/math/elem_math.cpp, itpp/base/math/elem_math.h: Move
+	tgamma(), lgamma() and cbrt() definitions to itcompat.{cpp,h}
+
+	These three functions are conditionally defined on platforms, which
+	do not provide their own implementations. Therefore the best place
+	for them is in itcompat.{cpp,h} files.
+
+	* configure.ac.in, itpp/base/converters.h, itpp/base/itcompat.h,
+	itpp/config_msvc.h: Move portability related definitions from
+	config.h to itcompat.h
+
+	* itpp/base/bessel/gamma.cpp, itpp/base/itcompat.h,
+	itpp/base/math/log_exp.h, itpp/base/math/misc.cpp,
+	itpp/base/math/misc.h, itpp/base/random.cpp,
+	itpp/stat/mog_generic.cpp: Move isinf(), isnan() and isfinite()
+	definitions to itcompat.h
+
+	These three functions are conditionally defined on platforms,
+	which do not have them in standard headers. Therefore, the best
+	location for them in IT++ is the itcompat.h header file.
+
+	* configure.ac.in, itpp/base/itcompat.cpp, itpp/base/itcompat.h,
+	itpp/base/random.cpp, itpp/base/sources.mk, itpp/config_msvc.h,
+	win32/itpp_acml.vcproj, win32/itpp_mkl.vcproj:
+	Add implementation of expm1() function
+
+	The expm1() function from C99 standard is not available in MSVC++
+	compiler. This implementation is taken from the GNU Scientific
+	Library (GSL) and will be only used on platforms that do not have
+	their own expm1() function.
+
+	* itpp/base/binfile.h, itpp/base/itcompat.h, itpp/base/itfile.h,
+	itpp/base/ittypes.h, itpp/base/sources.mk, itpp/fixed/fix_base.h,
+	itpp/itbase.h, win32/itpp_acml.vcproj, win32/itpp_mkl.vcproj:
+	Rename ittypes.h to itcompat.h
+
+	Beside fixed size integer type definitions, the new file
+	itcompat.h will include all conditional implementations of
+	functions, which are non available on various platforms and
+	compilers, e.g. std::isfinite() or expm1().
+
+2008-04-08  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* README, doc/local/index.doc.in: Reworded and rearranged the
+	brief description of the IT++ library
+
+	Thanks to Kumar Appaiah for some language suggestions.
+
+-------------------------------------------------------------------------------
+
+2008-03-31  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* IT++ 4.0.4 release (SVN tag: release-4-0-4)
+
+	* NEWS, VERSION: Add release notes and update version number for
+	IT++ 4.0.4
+
+	* win32/itpp_acml_tests/Makefile.am,
+	win32/itpp_mkl_tests/Makefile.am: Add converters_test.vcproj to
+	EXTRA_DISTS variable of Makefiles
+
+	Without this patch, the project files for converters_test were not
+	included in the distribution package.
+
+2008-03-26  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* tests/itfile_test.cpp: Remove setf(ios::scientific) and
+	setf(ios::fixed) from itfile_test.cpp
+
+	These two formatting options causes broken output of
+	floating-point data when using MSVC++ Express 2008. In spite of
+	the fact that this seems to be a bug in MSVC++ Express 2008,
+	removal of these formatting options fixes this problem.
+
+2008-03-25  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* tests/itfile_test.cpp, tests/itfile_test_data.it: Improve
+	itfile_test by using a non-continuous reference data file
+
+	Such a data file is prepared by first saving a longer data structure
+	(ivec in this case), then deleting it and finally saving a shorter
+	data structure in the same place.
+
+	* itpp/base/itfile.cpp: Do not duplicate seek operation after
+	reading data_header fields
+
+	When reading each field of a data_header structure of an IT++
+	file, the reading position is automatically incremented. So, the
+	additional seekg() operation afterwards is redundant. This small
+	modification fixes a problem with endless loop while reading an
+	itfile in programs compiled with MSVC++ 2008. Previous MSVC++
+	version (2005) does not show this strange behaviour.
+
+	* tests/Makefile.am, tests/converters_test.cpp,
+	tests/converters_test.ref,
+	win32/itpp_acml_tests/converters_test.vcproj,
+	win32/itpp_acml_tests/itpp_acml_tests.sln,
+	win32/itpp_mkl_tests/converters_test.vcproj,
+	win32/itpp_mkl_tests/itpp_mkl_tests.sln: Create a simple test
+	program of various conversion functions
+
+	This test should catch possible incompatible implementation of the
+	rint() function, which is not available under MSVC++ compiler.
+
+	* itpp/base/converters.cpp, itpp/base/converters.h: Fix incorrect
+	implementation of rint() function used under MSVC++
+
+	The rint() function is not available under MSVC++ compiler. Thus,
+	the local implementation has to be conditionally enabled for this
+	compiler. This patch fixes the incorrect implementation of rint()
+	function, which behaved like a similar round() function. It also
+	moves the "double rint(double)" definition out of the itpp
+	namespace.
+
+2008-03-20  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* win32/itpp_acml.vcproj, win32/itpp_mkl.vcproj: Do not treat
+	warnings as errors in MSVC++ projects
+
+	This is a workaround for MS Visual C++ Express 2008 problem in
+	compiling a correct piece of templated code.
+
+	* itpp/base/algebra/cholesky.h, itpp/base/algebra/det.h,
+	itpp/base/algebra/eigen.h, itpp/base/algebra/ls_solve.h,
+	itpp/base/algebra/lu.h, itpp/base/algebra/qr.h,
+	itpp/base/binary.h, itpp/base/binfile.h, itpp/base/copy_vector.h,
+	itpp/base/gf2mat.h, itpp/base/itassert.h, itpp/base/itfile.h,
+	itpp/base/ittypes.h, itpp/base/mat.h, itpp/base/sort.h,
+	itpp/base/svec.h, itpp/base/vec.h: Minor spelling fixes in IT++
+	base module documentation
+
+	This commit fixes several little spelling mistakes in the IT++
+	base module documentation.
+
+	Signed-off-by: Kumar Appaiah <akumar@ee.iitm.ac.in>
+
+2008-03-18  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* tests/ldpc_test.cpp, tests/ldpc_test.ref: Minor workaround for a
+	failing ldpc_test on win32 platforms
+
+	MinGW and MSVC++ produce win32 executables, which use slightly
+	different rounding approach for real numbers output through cout
+	or cerr I/O streams. This patch just changes the precision of the
+	output values, so the problematic case does not occur any more.
+
+	* itpp/base/random.cpp, itpp/base/random.h, tests/rand_test.cpp,
+	tests/rand_test.ref: Add implementation of Gamma(alpha, beta)
+	random number generator
+
+	The implementation of the Gamma_RNG::sample() function is taken
+	from the R statistical language.
+
+	Thanks to Vasek Smidl for providing the initial patch in feature
+	request [1913411].
+
+	* AUTHORS, doc/local/authors.doc: Add Vasek Smidl to the list of
+	contributors
+
+	* itpp/base/operators.cpp: Fix complex constructors in
+	operators.cpp to build with g++ 4.3
+
+	It appears that g++ 4.3 is a bit more strict with respect to type
+	checking when we attempt to overload the std::complex constructor for
+	use with non-double types. Use of an explicit static_cast is needed to
+	overcome this restriction. This patch does the needful by converting
+	those constructors to use static_casts.
+
+	Signed-off-by: Kumar Appaiah <akumar@ee.iitm.ac.in>
+
+	* itpp/base/algebra/qr.cpp, itpp/base/algebra/qr.h,
+	tests/qr_test.cpp, tests/qr_test.ref: Add qr() overloaded function
+	that do not compute Q.
+
+	For some tasks (triangularization) the Q matrix is not really needed.
+	This patch implements an overloaded version of the qr() function
+	that does not compute Q.
+
+	Thanks to Vasek Smidl for submitting the patch.
+
+2008-03-13  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/mat.h, itpp/base/vec.h: Fix it_assert_debug()
+	conditions in elem_mult_out() methods of the Vec and Mat classes
+
+	The checks for equal sizes of three and more variables can not be
+	written like this: "a.size == b.size == c.size". The proper form
+	is: "(a.size == b.size) && (a.size == c.size)". This patch fixes
+	this bug. It also removes the redundant checks for different
+	dimensions of a matrix before invoking the set_size(rows, cols)
+	method.
+
+	Thanks to Martin Senst for reporting this bug.
+
+2008-03-12  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/comm/ldpc.cpp, itpp/comm/ldpc.h: Simplify
+	BLDPC_Parity::calculate_base_matrix() function
+
+	The previous implementation used to create a temporary dense
+	parity check matrix and then extracted Z by Z submatrices from it
+	for further processing. With this patch, the temporary Z by Z
+	submatrices are sparse and extracted directly from the sparse
+	parity check matrix H. Besides, the checks for cyclic-shifted
+	identity matrices are simplified. Therefore, an additional method
+	circular_eye_b() is no longer needed.
+
+	* itpp/comm/ldpc.cpp: Simplify BLDPC_Parity::expand_base()
+	implementation
+
+	The previous implementation used to create a temporary dense
+	parity check matrix and then copied its ones to the final sparse
+	matrix. This patch changes the code so the sparse parity check
+	matrix is constructed directly from the input base matrix.
+
+	* tests/ldpc_test.cpp, tests/ldpc_test.ref: Add simple tests of
+	BLDPC_Parity and BLDPC_Generator classes
+
+2008-03-11  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/random.cpp, itpp/base/random.h: Move the
+	implementation of Normal_RNG::sample() to the source file
+
+	The implementation of Normal_RNG::sample() function is too
+	complicated for inlining, so it should not be included inside the
+	class declaration. This patch moves the actual code from the header
+	file to the source file.
+
+	* itpp/base/vec.h: Remove checks for different sizes before
+	invoking set_size() function
+
+	set_size() methods first checks if the requested new size differs
+	from the current one. Therefore, there is no need to check this
+	condition explicitly before invoking set_size() method.
+
+2008-03-10  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/mat.h, itpp/base/vec.h: Decrease the number of inline
+	functions in the Vec and Mat classes
+
+	Overusing the inline keyword usually causes unnecessary code bloat,
+	which results in a rather slower performance of the resulting
+	code. Therefore, this patch reduces the number of inline functions
+	and lefts only the ones which are really trivial or frequently
+	reused.
+
+	* itpp/base/factory.cpp, itpp/base/factory.h,
+	itpp/base/sources.mk, win32/itpp_acml.vcproj,
+	win32/itpp_mkl.vcproj: Mark all create_elements() functions as
+	inline ones
+
+	These functions have 2-4 lines and are only used by alloc() and
+	free() methods only, so we might gain more by inlining them
+	instead of more general functions of Vec, Mat and Array classes.
+
+2008-03-06  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/mat.h: Add missing get(int i) method to the Mat class
+
+	This method returns a copy of the i-th element of the matrix
+	using linear addressing, which is what the const version of
+	operator()(int i) does.
+
+	* itpp/base/mat.h: Add missing operator=(const std::string &) to
+	the Mat class
+
+	There is a Mat(const std::string &) constructor but the assignment
+	operator for this type of argument has not been implemented. This
+	patch adds this missing operator.
+
+	* itpp/base/mat.cpp, itpp/base/mat.h: Add element-wise division
+	operator with a scalar as the dividend
+
+	This new operator complements a similar one, which performs
+	element-wise division of a matrix by a scalar.
+
+	* itpp/base/mat.h, itpp/base/matfunc.h, itpp/base/specmat.cpp,
+	tests/mat_test.cpp, tests/mat_test.ref: Deprecate
+	Mat<>::set_submatrix(r1,r2,c1,c2,m) function
+
+	This function provides identical results as set_submatrix(r,c,m).
+	Moreover, the r2 and c2 indexing arguments are redundant, because
+	their values are determined by the size of the input matrix m.
+	This patch marks this function as deprecated, for possible removal
+	from future IT++ major releases.
+
+	* itpp/base/mat.cpp, itpp/base/mat.h: Add in_range(r,c),
+	col_in_range(c) and row_in_range(r) inline methods
+
+	This is a pure clean-up patch which simplifies it_assert_debug()
+	checks. BTW, it also includes a few cosmetic changes to other
+	assertion checks.
+
+	* itpp/base/mat.cpp, itpp/base/mat.h: Make consistent naming of
+	variables used in the Mat class interface
+
+	This patch unifies the variable names in the Mat class interface.
+	The following names are now commonly used:
+	- m, m1, m2, etc.: matrix
+	- v: vector
+	- t: simple numeric type Num_T, e.g. bin, int, double
+	- r, r1, r2: row index
+	- c, c1, c2: column index
+	- i: generic index
+
+	* itpp/base/mat.cpp, itpp/base/mat.h: Clean-up redundant use of
+	"const" keyword in the Mat class
+
+	There is no need for declaring the returned by value types with an
+	additional "const" keyword. Moreover, Num_T is assumed a simple or
+	built in type for the Mat class, i.e. bin, short int, int, double
+	and complex<double>. Therefore it might be more efficient to pass
+	arguments of this type by value, in which case the "const" keyword
+	is also redundant.
+
+	* itpp/base/vec.h: Deprecate elem_div(t,v) function of the Vec
+	class
+
+	This function is only an alias to operator/(t,v). Besides, no
+	similar methods for operator/(v,t), operator*(t,v) and
+	operator*(v,t) exist.
+
+	* itpp/comm/modulator.h, tests/modulator_test.cpp,
+	tests/modulator_test.ref: Fix bug [1908644] in
+	Modulator<>::set(symbols, bits2symbols) function
+
+	The bitmap matrix used in the demodulate_bits() function of the
+	Modulator<> base class was improperly constructed from the input
+	bits2symbols mapping vector. This resulted in demodulation errors
+	for some constellations, e.g. 64-QAM or 8-PSK. This patch fixes
+	this problem.
+
+	Thanks to Yann Cocheril for reporting this problem.
+
+2008-03-04  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/comm/llr.cpp, itpp/comm/llr.h: In case of an overflow
+	saturate QLLR values instead of aborting
+
+	An overflow may occur when converting real-valued LLR values into
+	QLLR ones and also when calculating the Hagenauer's "boxplus"
+	operator. This patch implements a conditional QLLR saturation in
+	such cases. Moreover, the Boxplus() function is no longer an
+	inline function, because this actually caused performance loss of
+	the LDPC codes decoder.
+
+	Finally, make the argument of to_double(QLLR) and to_qllr(double)
+	pass-by-value instead of const-reference, since that's faster for
+	POD like double and int.
+
+	Thanks to Martin Senst for providing the initial patch.
+
+2008-03-02  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/vec.cpp, itpp/base/vec.h: Clean-up redundant use of
+	"const" keyword in the Vec class
+
+	There is no need for declaring the returned by value types with an
+	additional "const" keyword. Moreover, Num_T is assumed a simple or
+	built in type for the Vec class, i.e. bin, short int, int, double
+	and complex<double>. Therefore it might be more efficient to pass
+	arguments of this type by value, in which case the "const" keyword
+	is also redundant.
+
+	Logical operators (==, !=, >, >=, < and <=) no longer create a
+	local copy of the vector contents.
+
+	By the way, use consistent name "t" for Num_T variables and wrap
+	long lines before 80 column.
+
+	* itpp/base/vec.h: Add missing operator=(const std::string &) to
+	the Vec class
+
+	There is a Vec(const std::string &) constructor but the assignment
+	operator for this type of argument has not been implemented. This
+	patch fixes this problem and unifies the argument names by the
+	way.
+
+	* doc/local/users_guide.doc, itpp/base/vec.h, tests/vec_test.cpp,
+	tests/vec_test.ref: Add missing operator(bin_list) and
+	get(index_list) methods to the Vec class
+
+	This patch also simplifies the implementation so get() methods
+	just call inline indexing "()" operators. The documentation and
+	vec_test program are updated accordingly.
+
+	* itpp/base/vec.h: Replace ((i < datasize) && (i >= 0)) with
+	in_range(i) inline method
+
+	This is a pure clean-up patch which simplifies it_assert_debug()
+	checks. BTW, it also includes a few cosmetic changes to other
+	assertion checks.
+
+2008-02-28  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* AUTHORS, doc/local/authors.doc: Update list of contributors with
+	Martin Senst and Kumar Appaiah
+
+	* win32/itpp_acml_tests/Makefile.am,
+	win32/itpp_acml_tests/error_count_test.vcproj,
+	win32/itpp_acml_tests/itpp_acml_tests.sln,
+	win32/itpp_mkl_tests/Makefile.am,
+	win32/itpp_mkl_tests/error_count_test.vcproj,
+	win32/itpp_mkl_tests/itpp_mkl_tests.sln: Add MSVC++ project files
+	for test program of BERC and BLERC classes
+
+	* tests/error_count_test.cpp: Clean-up redundant casts to short
+	integer
+
+	* tests/error_count_test.cpp: Use constructor's initialisation
+	list in BERC and BLERC constructors
+
+	* tests/Makefile.am, tests/error_count_test.cpp,
+	tests/error_count_test.ref: Add simple test program for BERC and
+	BLERC error counters
+
+	* itpp/comm/error_counters.cpp, itpp/comm/error_counters.h: Make
+	const member functions actually const
+
+	Introduce the keyword const for member functions like
+	get_errorrate() that do not change any member variables. Patch
+	submitted by Martin Senst.
+
+	* itpp/comm/channel.h: Unhide Fading_Generator::generate(int)
+	method for derived classes
+
+	The "cvec Fading_Generator::generate(int no_samples)" function
+	used to be hidden. This change makes it accessible from derived
+	classes. Patch submitted by Martin Senst.
+
+	* itpp/base/converters.h: Add specialisations of to_cvec(cvec) and
+	to_cmat(cmat)
+
+	These specialisations make it possible to call to_cvec() and
+	to_cmat() with complex arguments. The functions then simply return
+	their argument. This fixes the problem with instantiating the
+	Freq_Filt class with std::complex<double> type. Patch submitted by
+	Martin Senst.
+
+	* itpp/base/math/elem_math.h: Documentation improvements
+
+	Clarify that sqr(cvec) and sqr(cmat) compute the absolute square,
+	not simply the square. Patch submitted by Martin Senst.
+
+	* itpp/comm/ldpc.h: Introduce LDPC_Code::get_ninfo() member
+	function
+
+	This function returns the number of information bits in a
+	codeword. Thanks to Martin Senst for submitting this patch.
+
+	* itpp/comm/ldpc.cpp: Correct the length of the result of decode()
+
+	The decode() function used to return the first "ncheck" bits of
+	the decoded codeword, but we want the first "nvar-ncheck" bits.
+
+	Thanks to Martin Senst for submitting this patch.
+
+2008-02-25  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* doc/local/users_guide.doc, doc/tutorial/src/mimoconv.cpp,
+	itpp/base/matfunc.h, itpp/base/vec.h, itpp/comm/crc.cpp,
+	itpp/signal/filter_design.cpp, itpp/signal/freq_filt.cpp,
+	itpp/signal/poly.cpp, itpp/signal/transforms.cpp,
+	tests/vec_test.cpp, tests/vec_test.ref: Revert deprecation of
+	replace_mid() method of Vec class
+
+	Do not deprecate the replace_mid() method, because it is commonly
+	used in many present codes. Just make it an alias function of
+	set_subvector() one. BTW, replace all occurrences of
+	set_subvector(i1, i2, &v) with set_subvector(i, &v).
+
+	* itpp/base/vec.h: Add support for "-1" indexing in
+	Vec<>::del(i1, i2) method
+
+	The indexing operator(i1, i2) of Vec class supports "-1" indexes
+	denoting the last element of a vector. This feature was missing
+	in the del(i1, i2) method, and this patch fixes this. It also
+	fixes the incorrect range check (i1 <= i2).
+	By the way, remove the redundant local variables ii1 and ii2
+	from the operator(i1, i2) method.
+
+	* itpp/base/vec.h: Deprecate set_subvector(i1, i2, &v) and
+	replace_mid(i, &v) functions
+
+	These two methods of the Vec class do exactly the same what the
+	set_subvector(i, &v) function does. Therefore it seems to be a
+	good idea to mark them as deprecated for possible removal from
+	future major releases of IT++.
+
+2008-02-24  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/comm/modulator.h: Remove the deprecated
+	demodulate_soft_bits_approx() functions
+
+	Since IT++ 3.99.0 was releases, these functions have been marked
+	as deprecated. The demodulate_soft_bits() functions should be used
+	instead. This patch removes them from the current development
+	branch.
+
+	* itpp/base/mat.cpp, itpp/base/mat.h, tests/mat_test.cpp,
+	tests/mat_test.ref: Remove the deprecated multiplication operator
+
+	The multiplication operator of a vector times a matrix with only one
+	row was marked as deprecated in the current stable branch (itpp-4-0).
+	Its functionality is identical to the outer_product of two vectors.
+	It is time to remove it from our development branch.
+
+-------------------------------------------------------------------------------
+
+2008-02-21  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* IT++ 4.0.3 released (SVN tag: release-4-0-3)
+
+	* NEWS, VERSION: Release notes added and version number updated
+	for IT++ 4.0.3
+
+	* itpp/base/vec.h: Minor documentation fixes to prevent warnings
+	of the Doxygen
+
+2008-02-20  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* INSTALL, doc/local/installation.doc, itpp/base/blas.h,
+	itpp/base/vec.cpp, itpp/base/vec.h, itpp/config_msvc.h,
+	m4/acx_blas.m4: Removed non-portable "--with-zdotu=complex" method
+
+	It seems that there is no portable solution for calling from C++
+	the Fortran functions that returns a complex value. C99 introduces
+	"double _Complex" type, which is compatible with Fortran COMPLEX.
+	But this C99 type is not a valid C++ type. Therefore this patch
+	removes the "complex" method from "--with-zdotu" option. The valid
+	methods are now:
+	- "zdotusub" - use a zdotusub_ Fortran wrapper function
+	- "void" - compatible with BLAS libraries built with g77 compiler
+	- "none" - do not use zdotu_ function at all
+
+2008-02-19  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* INSTALL, configure.ac.in, doc/local/installation.doc,
+	itpp/base/blas.h, itpp/base/vec.cpp, itpp/base/vec.h,
+	itpp/config_msvc.h, m4/acx_blas.m4: Add "--with-zdotu" option to
+	select zdotu_ calling convention
+
+	The "--with-zdotu=<method>" option can be used to change the
+	default calling convention of BLAS zdotu_ Fortran function. The
+	BLAS libraries built with g77 compiler do not return the complex
+	result of a function, but pass it via the first argument of the
+	function. The implementations compiled with gfortran and other
+	vendor compilers return complex result as a typical function. By
+	using a "void" method with the "--with-zdotu=<method>" option, the
+	former approach is used (g77 compatible). To use the zdotu_ call
+	that returns the result by value, a "complex" method should be
+	passed. Without setting any of the two methods explicitly, IT++
+	tries to guess the proper method based on the detected BLAS
+	implementation. Otherwise, a Fortran wrapper function zdotusub_ is
+	used, which requires a working Fortran compiler. Finally, if this
+	is not the case, the zdotu_ BLAS method is not used at all and a
+	relevant warning message is displayed during the configuration
+	step.
+
+2008-02-18  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* autogen.sh: Cosmetic improvements
+
+	Replace back-ticks `...` with POSIX shell syntax $(...). BTW,
+	improve generation of a snapshot version string.
+
+	* itpp/base/blas.h, itpp/base/vec.cpp, itpp/base/vec.h,
+	itpp/config_msvc.h, m4/acx_blas.m4, m4/ax_func_zdotu.m4: Use
+	zdotusub_ Fortran wrapper by default
+
+	This patch removes the run-time checks for correct zdotu_ calling
+	conventions, which caused a lot of portability problems in IT++
+	4.0.1 and 4.0.2 releases. The preferred method is now to use the
+	locally provided zdotusub_ Fortran wrapper (as in 4.0.0 release).
+	This requires the availability of a Fortran compiler, unless an
+	Intel MKL library is used, in which zdotu_ can be called directly
+	from C++ without any problems. If no Fortran compiler is available
+	and Intel MKL is not used, the zdotu_ function is not called at
+	all. In such case, a relevant warning message is printed during
+	the configuration step.
+
+	* configure.ac.in, itpp/base/Makefile.am, itpp/base/sources.mk,
+	itpp/base/zdotusub.f, m4/acx_blas.m4: Revert "Removed redundant
+	zdotusub_ Fortran wrapper to zdotu_ function"
+
+-------------------------------------------------------------------------------
+
+2008-02-15  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* IT++ 4.0.2 released (SVN tag: release-4-0-2)
+
+	* NEWS, VERSION: Release notes added and version number updated
+	for IT++ 4.0.2
+
+	* ChangeLog-2007: Archive ChangeLog entries from year 2007
+
+2008-02-14  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/parser.cpp, tests/parser_test.cpp,
+	tests/parser_test.ref: Fix wrong verbose output of Parser's get()
+	function for int and bool types
+
+	When Parser was used to scan an already defined int or bool
+	variable and the parsed variable was not found, the verbose
+	output was wrong. Here is a minimum example:
+
+          Parser p(argc, argv);
+	  int i = 5;
+	  bool b = true;
+          p.get(a, "a");
+	  p.get(b, "b");
+
+	The wrong output of this program was:
+
+	  i = [];
+	  b = ;
+
+	instead of:
+
+	  i = 5;
+	  b = 1;
+
+	This patch fixes this problem and also improves the parser_test
+	program, to detect such issues in future. Thanks to Jia-Yin for
+	reporting this problem.
+
+	* itpp/comm/convcode.h: Documentation improvements related to
+	encoder state.
+
+	This patch improves the documentation of the encoding and decoding
+	functions. Especially, it clarifies why set_start_state() and
+	init_encoder() methods have no effect on encode_tail() and
+	encode_tailbite() functions.
+
+	* itpp/comm/modulator.h: Improve the documentation of
+	Modulator::get_bits2symbols() function
+
+2008-01-31  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/gf2mat.cpp: Fix GF2mat_sparse_alist::from_sparse()
+	conversion function
+
+	The conversion function from GF2mat_sparse format to "alist" text
+	file format could incorrectly create the "mlist" and "nlist"
+	matrices with indexes of non-zero entries. This patch fixes this
+	bug and also improves the conversion speed by using the
+	get_nz_indices() function from Sparse_Vec class and set_row()
+	instead of append_row() where possible.
+
+2008-01-23  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* Makefile.am, VERSION, autogen.sh: Optionally append SVN revision
+	to IT++ package version
+
+	When bootstrapping IT++ sources from SVN or Git repositories
+	append the SVN revision number to the package version string. This
+	feature is triggered by including the additional "svn" keyword in
+	at the end of the first line of the VERSION file.
+
+	BTW, remove snapshot and snapshot-html top Makefile's targets.
+
+2008-01-18  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* tests/poly_test.cpp, tests/poly_test.ref, tests/window_test.cpp,
+	tests/window_test.ref: Change cout format to "fixed" and
+	workaround precision problem on MinGW
+
+	With this change, we can get rid of round_to_zero() workaround
+	functions preventing precision differences when using MinGW. BTW,
+	limit precision to 6 in poly_test to workaround precision problems
+	when using MinGW/MSYS.
+
+	* itpp/signal/poly.cpp: Add missing include file required when
+	using MSVC++
+
+	Without including itpp/base/math/trig_hyp.h, ::acosh() function is
+	undefined under MSVC++.
+
+2008-01-17  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* configure.ac.in, itpp/Makefile.am: Fix improper default shared
+	and static settings
+
+	Besides, do not add "-no-undefined" libtool switch to global
+	LDFLAGS. Use NO_UNDEFINED substituted variable instead.
+
+	* itpp/signal/window.cpp, itpp/signal/window.h,
+	tests/window_test.cpp, tests/window_test.ref: Add Dolph-Chebyshev
+	window
+
+	Add the chebwin() function to evaluate the coefficients of the
+	Dolph-Chebyshev window. Testing routines implemented as well.
+
+	The tests check the values output by the Dolph-Chebyshev window
+	function for lengths 32 and 33 for 50 dB suppression and for
+	lengths 127 and 128 at 25 dB suppression.
+
+	Thanks to Kumar Appaiah for providing and improving the patches.
+	This commit closes feature request [1869927].
+
+	* itpp/signal/poly.cpp, itpp/signal/poly.h, tests/poly_test.cpp,
+	tests/poly_test.ref: Add cheb() functions - first order Chebyshev
+	polynomial
+
+	The cheb() functions evaluates a first order Chebyshev polynomial
+	at a specific point (or set of points in a vector/matrix). Also
+	add a simple set of tests for the cheb() functions, and regenerate
+	the reference results to match the new format output in fixed
+	format.
+
+	Thanks to Kumar Appaiah for providing and improving the initial
+	patches from feature request [1869927].
+
+2008-01-06  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/math/log_exp.h: Fix bug [1863940] in log_add()
+	function for infinite arguments
+
+	When both arguments of log_add() function were either inf or -inf,
+	the result was NaN instead of +/-inf. This patch fixes this issue.
+
+2008-01-04  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* itpp/base/math/misc.h: Add missing itpp namespace description
+
+	Without this patch, Doxygen 1.5.4 did not generate any
+	documentation for the itpp namespace.
+
+2008-01-01  Adam Piatyszek  <ediap@users.sourceforge.net>
+
+	* License change: GPLv2 -> GPLv3
+
+	BTW, update Copyright years to `1995-2008'
+
+	* configure.ac.in: Add support for building a DLL library on
+	Cygwin
+
+	When libblas and liblapack are installed from Cygwin repository,
+	it is possible to build IT++ as a DLL library. This requires
+	"-no-undefined" flag to be passed to the linker.

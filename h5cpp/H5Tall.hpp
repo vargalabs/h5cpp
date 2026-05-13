@@ -2,8 +2,12 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef H5CPP_TALL_HPP
-#define H5CPP_TALL_HPP
+#pragma once
+#include <type_traits>
+#include <ostream>
+#include <optional>
+#include <vector>
+#include <initializer_list>
 
 namespace h5 {
     template<class T> hid_t register_struct(){ return H5I_UNINIT; }
@@ -46,18 +50,18 @@ namespace h5::impl::detail {
  */
 
 #define H5CPP_REGISTER_TYPE_( C_TYPE, H5_TYPE )                                           \
-namespace h5 { namespace impl { namespace detail { 	                                      \
+namespace h5::impl::detail { 	                                      \
 	template <> struct hid_t<C_TYPE,H5Tclose,true,true,hdf5::type> : public dt_p<C_TYPE> {\
 		using parent = dt_p<C_TYPE>;                                                      \
 		using dt_p<C_TYPE>::hid_t;                                                              \
 		using hidtype = C_TYPE;                                                           \
 		hid_t() : parent( H5Tcopy( H5_TYPE ) ) { 										  \
 			hid_t id = static_cast<hid_t>( *this );                                       \
-			if constexpr ( std::is_pointer<C_TYPE>::value )                               \
+			if constexpr ( std::is_pointer_v<C_TYPE> )                               \
 					H5Tset_size (id,H5T_VARIABLE), H5Tset_cset(id, H5T_CSET_UTF8);        \
 		}                                                                                 \
 	};                                                                                    \
-}}}                                                                                       \
+}                                                                                         \
 namespace h5 {                                                                            \
 	template <> struct name<C_TYPE> {                                                     \
 		static constexpr char const * value = #C_TYPE;                                    \
@@ -155,7 +159,7 @@ template<class T>
 inline std::ostream& operator<<(std::ostream &os, const h5::dt_t<T>& dt) {
 	hid_t id = static_cast<hid_t>( dt );
 	os << "data type: " << h5::name<T>::value << " ";
-	os << ( std::is_pointer<T>::value ? "pointer" : "value" );
+	os << ( std::is_pointer_v<T> ? "pointer" : "value" );
 	os << ( H5Iis_valid( id ) > 0 ? " valid" : " invalid");
 
 	size_t spos, epos, esize, mpos, msize;
@@ -180,6 +184,7 @@ inline std::ostream& operator<<(std::ostream &os, const h5::dt_t<T>& dt) {
 		case H5T_ENUM: ; break;
 		case H5T_VLEN: ; break;
 		case H5T_ARRAY: ;break;
+		default: break;
 	}
 	/*
 */
@@ -187,4 +192,39 @@ inline std::ostream& operator<<(std::ostream &os, const h5::dt_t<T>& dt) {
 	return os;
 }
 
-#endif
+namespace h5::meta {
+// Dispatch wrapper: prefers new type engine when supported, falls back to dt_t<T> for
+// unregistered compound types registered via H5CPP_REGISTER_STRUCT.
+template <class T>
+class resolved_type_t {
+    ::hid_t id_;
+    bool    owns_;
+    std::optional<h5::dt_t<T>> fallback_;
+public:
+    resolved_type_t() noexcept {
+        if constexpr (storage_traits_t<T>::supported) {
+            id_   = storage_traits_t<T>::create_type();
+            owns_ = storage_traits_t<T>::owns_handle;
+        } else {
+            fallback_.emplace();
+            id_   = static_cast<::hid_t>(*fallback_);
+            owns_ = false;
+        }
+    }
+    ~resolved_type_t() noexcept {
+        if (owns_ && H5Iis_valid(id_)) H5Tclose(id_);
+    }
+    operator ::hid_t() const noexcept { return id_; }
+    // Allows H5Dcreate's custom dt_t override path: type = static_cast<hid_t>(custom_dt)
+    resolved_type_t& operator=(::hid_t id) noexcept {
+        if (owns_ && H5Iis_valid(id_)) H5Tclose(id_);
+        fallback_.reset();
+        id_   = id;
+        owns_ = H5Iis_valid(id_);
+        return *this;
+    }
+    resolved_type_t(const resolved_type_t&) = delete;
+    resolved_type_t& operator=(const resolved_type_t&) = delete;
+};
+} // namespace h5::meta
+

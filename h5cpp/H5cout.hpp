@@ -2,8 +2,12 @@
  * Copyright (c) 2018-2020 Steven Varga, Toronto,ON Canada
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
-#ifndef  H5CPP_STD_COUT
-#define  H5CPP_STD_COUT
+#pragma once
+#include <ostream>
+#include <string>
+#include <vector>
+#include <limits>
+#include <cstdlib>
 
 inline std::ostream& operator<< (std::ostream& os, const h5::dxpl_t& dxpl) {
 	os <<"handle: " << static_cast<hid_t>( dxpl );
@@ -115,6 +119,4 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec){
 return os;
 }
 
-
-#endif
 
