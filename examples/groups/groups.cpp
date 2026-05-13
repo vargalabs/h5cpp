@@ -37,7 +37,7 @@ int main() {
 		h5::awrite(gr, "temperature", 42.0);
 		h5::awrite(gr, "unit", "C");
 		h5::awrite(gr, "vector of ints", std::vector<int>({1,2,3,4,5}));
-		h5::awrite(gr, "initializer list", std::initializer_list({1,2,3,4,5}));
-		h5::awrite(gr, "strings", std::initializer_list({"first", "second", "third","..."}));
+		h5::awrite(gr, "initializer list", std::initializer_list<int>({1,2,3,4,5}));
+		h5::awrite(gr, "strings", std::initializer_list<const char*>({"first", "second", "third","..."}));
 	}
 }
