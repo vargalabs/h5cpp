@@ -3,7 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
-
+#include <hdf5.h>
 
 #if defined(MAT_H) || defined(H5CPP_USE_ITPP_MATRIX)
 namespace h5::itpp {

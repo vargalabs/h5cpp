@@ -3,6 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include <hdf5.h>
 
 #if defined(_BOOST_UBLAS_MATRIX_) || defined(H5CPP_USE_UBLAS_MATRIX)
 namespace h5::ublas {

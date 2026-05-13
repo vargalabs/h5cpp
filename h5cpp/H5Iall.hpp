@@ -4,6 +4,9 @@
  */
 
 #pragma once
+#include <hdf5.h>
+#include "H5config.hpp"
+#include "H5Eall.hpp"
 #include <string>
 #include <vector>
 #include <tuple>

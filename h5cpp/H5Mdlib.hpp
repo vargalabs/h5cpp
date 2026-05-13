@@ -3,6 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include <hdf5.h>
 
 #if defined(DLIB_MATRIx_HEADER) || defined(H5CPP_USE_DLIB)
 namespace h5::dlib {

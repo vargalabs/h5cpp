@@ -4,6 +4,8 @@
  */
 
 #pragma once
+#include <hdf5.h>
+#include "H5config.hpp"
 #include <array>
 #include <tuple>
 #include <initializer_list>
