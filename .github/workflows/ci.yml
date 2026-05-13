@@ -6,9 +6,9 @@ env:
 
 on:
   push:
-    branches: [ release, staging ]
+    branches: [ staging ]
   pull_request:
-    branches: [ release, staging ]
+    branches: [ staging ]
   workflow_dispatch:
 
 permissions:
