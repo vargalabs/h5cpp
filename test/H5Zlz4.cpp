@@ -20,7 +20,7 @@ TEST_CASE("lz4: library availability check") {
     CHECK(true);
     MESSAGE("LZ4 is active");
 #else
-    WARN("LZ4 not configured; filter falls back to passthrough");
+    WARN_MESSAGE(false, "LZ4 not configured; filter falls back to passthrough");
 #endif
 }
 

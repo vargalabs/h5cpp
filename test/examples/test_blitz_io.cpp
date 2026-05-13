@@ -41,7 +41,7 @@ TEST_CASE("[example] blitz Array round-trip") {
 
     // BUILD and WRITE vector
     Vector V(4);
-    for (int i = 0; i < V.size(); ++i)
+    for (blitz::sizeType i = 0; i < V.size(); ++i)
         V(i) = static_cast<double>(i * 2);
 
     {
@@ -55,7 +55,7 @@ TEST_CASE("[example] blitz Array round-trip") {
         auto readback = h5::read<Vector>(fd, "vector");
 
         CHECK(readback.size() == V.size());
-        for (int i = 0; i < V.size(); ++i) {
+        for (blitz::sizeType i = 0; i < V.size(); ++i) {
             CHECK(readback(i) == doctest::Approx(V(i)));
         }
     }
