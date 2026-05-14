@@ -77,10 +77,20 @@ if(NOT TARGET libeigen3)
 	endif()
 endif()
 
+# Expose find_package-style variables from vendored targets so the conditional
+# example blocks below work regardless of whether the libraries were found via
+# find_package or via the vendored thirdparty subdirectory.
+if(TARGET libarmadillo)
+    set(ARMADILLO_FOUND TRUE)
+endif()
+if(TARGET libeigen3)
+    set(Eigen3_FOUND TRUE)
+endif()
+
 list(APPEND LIBS ${HDF5_C_LIBRARIES} ZLIB::ZLIB libh5cpp-libdeflate)
 list(APPEND INCLUDE_DIRS ${CMAKE_SOURCE_DIR} ${HDF5_INCLUDE_DIRS}  ${ZLIB_INCLUDE_DIRS})
 
-include_directories(BEFORE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/..)
+include_directories(BEFORE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/.. ${HDF5_C_INCLUDE_DIRS})
 
 if( H5CPP_COMPILER_FOUND )
 	add_custom_target(h5cpp-compiler-generated ALL
@@ -132,6 +142,25 @@ message( "-- Vendored: blitz added to examples" )
 add_executable(examples-blitz EXCLUDE_FROM_ALL "linalg/blitz.cpp")
 target_link_libraries(examples-blitz ${LIBS} libblitz)
 add_dependencies(examples examples-blitz)
+
+message( "-- Vendored: xtensor added to examples" )
+add_executable(examples-xtensor EXCLUDE_FROM_ALL "linalg/xtensor.cpp")
+target_link_libraries(examples-xtensor ${LIBS} libxtensor)
+add_dependencies(examples examples-xtensor)
+
+find_package(BLAS)
+if(BLAS_FOUND AND XFLENS_FOUND)
+    message( "-- Vendored: xtensor-blas added to examples" )
+    add_executable(examples-xtensor-blas EXCLUDE_FROM_ALL "linalg/xtensor-blas.cpp")
+    target_link_libraries(examples-xtensor-blas ${LIBS} libxtensor-blas ${BLAS_LIBRARIES})
+    add_dependencies(examples examples-xtensor-blas)
+else()
+    if(BLAS_FOUND)
+        message("-- xflens not found — xtensor-blas example disabled")
+    else()
+        message("-- BLAS not found — xtensor-blas example disabled")
+    endif()
+endif()
 
 # ublas headers are vendored but rely on system Boost config/compiler headers
 find_path(H5CPP_BOOST_CONFIG_INCLUDE_EX NAMES boost/config.hpp)
@@ -187,7 +216,7 @@ endif()
 if( ${ARMADILLO_FOUND} )
 ## attributes ###
 add_executable(examples-attributes EXCLUDE_FROM_ALL "attributes/attributes.cpp")
-target_link_libraries(examples-attributes ${LIBS} )
+target_link_libraries(examples-attributes ${LIBS} libarmadillo)
 add_dependencies(examples examples-attributes)
 endif()
 
@@ -199,7 +228,7 @@ add_dependencies(examples examples-basics)
 if( ${ARMADILLO_FOUND} )
 ## compound ###
 add_executable(examples-compound EXCLUDE_FROM_ALL "compound/struct.cpp")
-target_link_libraries(examples-compound ${LIBS} )
+target_link_libraries(examples-compound ${LIBS} libarmadillo)
 add_dependencies(examples examples-compound)
 endif()
 
@@ -214,7 +243,7 @@ endif()
 if( ${ARMADILLO_FOUND} )
 ## datasets ###
 add_executable(examples-datasets EXCLUDE_FROM_ALL "datasets/datasets.cpp")
-target_link_libraries(examples-datasets ${LIBS} )
+target_link_libraries(examples-datasets ${LIBS} libarmadillo)
 add_dependencies(examples examples-datasets)
 endif()
 
@@ -239,7 +268,7 @@ add_dependencies(examples examples-twobit)
 if( ${ARMADILLO_FOUND} )
 ## optimized ###
 add_executable(examples-optimized EXCLUDE_FROM_ALL "optimized/optimized.cpp")
-target_link_libraries(examples-optimized ${LIBS} )
+target_link_libraries(examples-optimized ${LIBS} libarmadillo)
 add_dependencies(examples examples-optimized)
 endif()
 
@@ -268,7 +297,7 @@ add_dependencies(examples examples-string)
 if( ${ARMADILLO_FOUND} )
 ## transform ###
 add_executable(examples-transform EXCLUDE_FROM_ALL "transform/transform.cpp")
-target_link_libraries(examples-transform ${LIBS} )
+target_link_libraries(examples-transform ${LIBS} libarmadillo)
 add_dependencies(examples examples-transform)
 endif()
 

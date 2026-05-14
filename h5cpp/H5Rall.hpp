@@ -3,6 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5capi.hpp"
 #include <initializer_list>
 #include <string>
 #include <tuple>
@@ -88,11 +89,11 @@ namespace h5::exp {
         h5::sp_t mem_space = h5::create_simple(block);
         h5::select_all(mem_space);
 
-        H5CPP_CHECK_NZ( 
-        H5Dread(ds_, mem_type, mem_space, file_space, dxpl, ptr ),
+        H5CPP_CHECK_NZ(
+        H5Dread(ds_, mem_type, mem_space, file_space, h5::default_dxpl, ptr ),
             h5::error::io::dataset::read, h5::error::msg::read_dataset);
-        return object; 
-        
+        return object;
+
     }
 
     template <class T, class... args_t>
@@ -128,8 +129,7 @@ namespace h5::exp {
 	inline h5::ds_t write( const h5::fd_t& fd, const std::string& dataset_path,  h5::reference_t& reference, 
                 const T* ptr,  args_t&&... args  ) try {
         
-        using tcount  = typename arg::tpos<const h5::count_t&, const args_t&...>;
-		//static_assert( tcount::present, "h5::count_t{ ... } must be provided to describe T* memory region" );
+			//static_assert( tcount::present, "h5::count_t{ ... } must be provided to describe T* memory region" );
 		h5::ds_t ds; // initialized to H5I_UNINIT
 		
 		h5::mute(); // find out if we have to create the dataset 

@@ -2,6 +2,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/all>
 #include <h5cpp/core>
+#include <h5cpp/io>
 #include <h5cpp/H5Tmeta.hpp>
 #include "support/types.hpp"
 #include "support/fixture.hpp"
@@ -31,20 +32,32 @@ TEST_CASE_TEMPLATE_DEFINE("[#114] h5 round-trip", T, io_round_trip) {
     } else if constexpr (rep == sr_t::linear_value_dataset) {
         T obj{};
         h5::test::fill(obj, LOWER, UPPER, MIN_SZ, MAX_SZ);
-        WARN_MESSAGE(false,
-            "linear_value_dataset round-trip not yet implemented (needs #89): " << type_name);
+        if constexpr (std::is_same_v<T, std::vector<int>>) {
+            h5::write(f.fd, type_name.c_str(), obj);
+            auto readback = h5::read<T>(f.fd, type_name.c_str());
+            CHECK(readback == obj);
+        } else {
+            WARN_MESSAGE(false,
+                "linear_value_dataset round-trip not yet implemented for this type: " << type_name);
+        }
+
+    } else if constexpr (rep == sr_t::fixed_inner_extent_dataset) {
+        T obj{};
+        h5::test::fill(obj, LOWER, UPPER, MIN_SZ, MAX_SZ);
+        if constexpr (std::is_same_v<T, std::vector<std::array<int, 4>>>) {
+            h5::write(f.fd, type_name.c_str(), obj);
+            auto readback = h5::read<T>(f.fd, type_name.c_str());
+            CHECK(readback == obj);
+        } else {
+            WARN_MESSAGE(false,
+                "fixed_inner_extent_dataset round-trip not yet implemented for this type: " << type_name);
+        }
 
     } else if constexpr (rep == sr_t::ragged_vlen_dataset) {
         T obj{};
         h5::test::fill(obj, LOWER, UPPER, MIN_SZ, MAX_SZ);
         WARN_MESSAGE(false,
             "ragged_vlen_dataset round-trip not yet implemented (needs #89): " << type_name);
-
-    } else if constexpr (rep == sr_t::fixed_inner_extent_dataset) {
-        T obj{};
-        h5::test::fill(obj, LOWER, UPPER, MIN_SZ, MAX_SZ);
-        WARN_MESSAGE(false,
-            "fixed_inner_extent_dataset round-trip not yet implemented (needs #89): " << type_name);
 
     } else if constexpr (rep == sr_t::key_value_dataset) {
         T obj{};

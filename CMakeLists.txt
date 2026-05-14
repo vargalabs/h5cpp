@@ -42,6 +42,7 @@ endif()
 # ─── Options ──────────────────────────────────────────────────────────────────────
 option(H5CPP_BUILD_EXAMPLES "Build examples" OFF)
 option(H5CPP_BUILD_TESTS    "Build tests"    OFF)
+option(H5CPP_BUILD_BENCH    "Build benches"  OFF)
 option(H5CPP_USE_LIBDEFLATE "Use libdeflate for H5CPP deflate/gzip filters when available" ON)
 option(H5CPP_REQUIRE_LIBDEFLATE "Fail configuration if H5CPP_USE_LIBDEFLATE is ON and libdeflate is not found" OFF)
 option(H5CPP_INSTALL_LIBDEFLATE "Install the resolved libdeflate header and library with H5CPP" OFF)
@@ -103,6 +104,8 @@ if(MPI_FOUND AND HDF5_IS_PARALLEL)
 endif()
 
 # ─── Include Directories & Libraries ──────────────────────────────────────────────
+find_package(ZLIB REQUIRED)
+
 list(APPEND H5CPP_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${HDF5_INCLUDE_DIRS}
@@ -196,6 +199,10 @@ endif()
 enable_testing()
 if(H5CPP_BUILD_TESTS AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt)
     add_subdirectory(test)
+endif()
+
+if(H5CPP_BUILD_BENCH AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bench/CMakeLists.txt)
+    add_subdirectory(bench)
 endif()
 
 # ─── Install Rules ────────────────────────────────────────────────────────────────

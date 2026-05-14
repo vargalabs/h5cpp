@@ -3,6 +3,9 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5Pdapl.hpp"
+#include "H5Mstl.hpp"
+#include "H5meta.hpp"
 #include <type_traits>
 #include <stdexcept>
 #include <string>
@@ -98,7 +101,7 @@ namespace h5 {
 	template<class T>
 	inline size_t get_size( const h5::dt_t<T>& type ){
 		size_t size;
-		H5CPP_CHECK_NZ( (size =  H5Tget_size( static_cast<hid_t>(type) )), std::runtime_error, h5::error::msg::get_filetype_size );
+		H5CPP_CHECK_SIZE( (size =  H5Tget_size( static_cast<hid_t>(type) )), std::runtime_error, h5::error::msg::get_filetype_size );
 		return size;
 	}
 

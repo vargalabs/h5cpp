@@ -3,6 +3,8 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5capi.hpp"
+#include "H5Tmeta.hpp"
 #include <string>
 #include <stdexcept>
 #include <type_traits>

@@ -71,7 +71,7 @@ namespace h5::utils {
 		return data;
 	}
 	template <typename T> inline  std::vector<T> get_test_data(size_t n){
-		return get_test_data<T>(n);
+		return get_test_data<T>(n, 0, n);
 	}
 	template <> inline std::vector<std::string> get_test_data( size_t n){
 

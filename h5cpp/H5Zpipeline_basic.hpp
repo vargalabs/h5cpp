@@ -3,6 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5Zpipeline.hpp"
 #include <stdexcept>
 
 inline void h5::impl::basic_pipeline_t::write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* data ){
@@ -18,6 +19,7 @@ inline void h5::impl::basic_pipeline_t::write_chunk_impl( const hsize_t* offset,
 			length = filter[0](out, data, nbytes, flags[0], cd_size[0], cd_values[0] ) ;
 			if( !length )
 				mask = 1 << 0;
+			[[fallthrough]];
 		default: // more than one filter
 			for(hsize_t j=1; j<tail; j++){ // invariant: out == buffer holding final result
 				tmp = in, in = out, out = tmp;
@@ -32,13 +34,15 @@ inline void h5::impl::basic_pipeline_t::write_chunk_impl( const hsize_t* offset,
 
 
 inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, size_t nbytes, void* data){
+	(void)data;
 	size_t length = nbytes;
 	uint32_t filter_mask;
 
 	if (tail == 0) {
 		// No filters: read decompressed chunk directly into chunk0
 #if H5_VERSION_GE(2,0,0)
-		H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk0, H5ES_NONE);
+		size_t buf_size = nbytes;
+		H5Dread_chunk2(ds, dxpl, offset, &filter_mask, chunk0, &buf_size);
 #else
 		H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk0);
 #endif
@@ -50,7 +54,8 @@ inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, 
 	// After the loop 'src' always points to chunk0 (the decompressed result).
 	void* read_target = (tail % 2 == 1) ? chunk1 : chunk0;
 #if H5_VERSION_GE(2,0,0)
-	H5Dread_chunk(ds, dxpl, offset, &filter_mask, read_target, H5ES_NONE);
+	size_t buf_size = nbytes;
+	H5Dread_chunk2(ds, dxpl, offset, &filter_mask, read_target, &buf_size);
 #else
 	H5Dread_chunk(ds, dxpl, offset, &filter_mask, read_target);
 #endif
@@ -67,4 +72,3 @@ inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, 
 	}
 	// src now points to chunk0, which holds the decompressed chunk data
 }
-

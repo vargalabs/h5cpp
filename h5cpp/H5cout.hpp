@@ -3,6 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5capi.hpp"
 #include <ostream>
 #include <string>
 #include <vector>

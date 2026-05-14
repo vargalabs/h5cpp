@@ -9,6 +9,9 @@ add_subdirectory(ublas)
 add_subdirectory(armadillo)
 add_subdirectory(dlib)
 add_subdirectory(blitz)
+add_subdirectory(xtl)
+add_subdirectory(xtensor)
+add_subdirectory(xtensor-blas)
 # NOTE: itpp disabled — upstream v4.3.1 uses the 'register' keyword extensively,
 # which was removed in C++17. Building with GCC 14 / -std=c++17 fails.
 # This is an ITPP upstream compatibility issue, not an h5cpp bug.

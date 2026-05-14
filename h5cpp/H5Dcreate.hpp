@@ -3,6 +3,8 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5capi.hpp"
+#include "H5Tmeta.hpp"
 #include <string>
 #include <stdexcept>
 #include <tuple>
@@ -64,7 +66,8 @@ namespace h5 {
 		h5::current_dims_t current_dims_default{0}; // if no current dims_present 
 		// this mutable value will be referenced
 		const h5::current_dims_t& current_dims = arg::get(current_dims_default, args...);
-		const h5::max_dims_t& max_dims = arg::get(h5::max_dims_t{0}, args... );
+		h5::max_dims_t max_dims_default{0};
+		const h5::max_dims_t& max_dims = arg::get(max_dims_default, args... );
 		bool has_unlimited_dimension = false;
 		size_t rank = 0;
 		h5::sp_t space_id{H5I_UNINIT}; // set to invalid state 

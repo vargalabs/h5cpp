@@ -67,7 +67,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -131,7 +131,7 @@ jobs:
           set -euxo pipefail
 
           brew update
-          brew install cmake ninja hdf5
+          brew install --quiet cmake ninja hdf5
 
           HDF5_PREFIX="$(brew --prefix hdf5)"
 
@@ -195,7 +195,7 @@ jobs:
       - name: Restore HDF5 1.10.10 cache
         if: runner.os == 'Windows'
         id: cache-hdf5
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: ${{ runner.temp }}\hdf5-${{ env.HDF5_VERSION }}-install
           key: hdf5-${{ runner.os }}-${{ matrix.compiler }}-${{ env.HDF5_VERSION }}-${{ env.HDF5_CACHE_VERSION }}
@@ -241,7 +241,7 @@ jobs:
 
       - name: Save HDF5 1.10.10 cache
         if: runner.os == 'Windows' && steps.cache-hdf5.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: ${{ runner.temp }}\hdf5-${{ env.HDF5_VERSION }}-install
           key: ${{ steps.cache-hdf5.outputs.cache-primary-key }}
@@ -282,6 +282,7 @@ jobs:
             -DCMAKE_CXX_STANDARD=23
             -DCMAKE_BUILD_TYPE=Release
             -DH5CPP_BUILD_TESTS=ON
+            -DH5CPP_BUILD_EXAMPLES=ON
           )
 
           if [[ -n "${HDF5_ROOT:-}" ]]; then
@@ -339,7 +340,7 @@ jobs:
 
       - name: Upload Status Artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: status-${{ matrix.os }}-${{ matrix.compiler }}
           path: badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
@@ -359,7 +360,7 @@ jobs:
           sudo apt-get install -y jq curl
 
       - name: Download all status artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: badge-status
           pattern: status-*
@@ -430,7 +431,7 @@ jobs:
 
       - name: Upload badges artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
           path: ${{ github.ref_name == 'staging' && 'badges-staging' || 'badges' }}
@@ -456,7 +457,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -488,7 +489,8 @@ jobs:
             -DCMAKE_CXX_COMPILER=g++-14 \
             -DCMAKE_C_FLAGS="--coverage -O0 -g" \
             -DCMAKE_CXX_FLAGS="--coverage -O0 -g" \
-            -DH5CPP_BUILD_TESTS=ON
+            -DH5CPP_BUILD_TESTS=ON \
+            -DH5CPP_BUILD_EXAMPLES=ON
 
       - name: Build
         shell: bash
@@ -530,7 +532,7 @@ jobs:
           lcov --gcov-tool /usr/bin/gcov-14 --list coverage.info
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: ./coverage.info
           disable_search: true

@@ -20,7 +20,7 @@ TEST_CASE("zstd: library availability check") {
     CHECK(true);
     MESSAGE("Zstd is active");
 #else
-    WARN("Zstd not configured (install libzstd-dev); filter falls back to passthrough");
+    WARN_MESSAGE(false, "Zstd not configured (install libzstd-dev); filter falls back to passthrough");
 #endif
 }
 

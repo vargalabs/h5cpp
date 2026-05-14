@@ -20,5 +20,9 @@
 	#include "H5Aopen.hpp"
 	#include "H5Awrite.hpp"
 	#include "H5Aread.hpp"
+
+	#if __cplusplus >= 202002L
+	#include "H5Dranges.hpp"
+	#endif
 #endif	
 

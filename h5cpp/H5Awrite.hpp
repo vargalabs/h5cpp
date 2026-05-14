@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include "H5Aopen.hpp"
 #include <string>
 #include <stdexcept>
 #include <type_traits>
@@ -26,10 +27,11 @@ namespace h5 {
 				h5::error::io::attribute::write, "couldn't var length string attribute.");
 	}
 	// const char[]
-	template <class T, class P, class... args_t> inline std::enable_if_t<
-		std::is_array_v<T> && h5::impl::is_valid_attr<P>::value,
-	h5::at_t> awrite( const P& parent, const std::string& name, const T& ref, const h5::acpl_t& acpl = h5::default_acpl ){
-		h5::current_dims_t current_dims = impl::size( ref );
+		template <class T, class P, class... args_t> inline std::enable_if_t<
+			std::is_array_v<T> && h5::impl::is_valid_attr<P>::value,
+		h5::at_t> awrite( const P& parent, const std::string& name, const T& ref, const h5::acpl_t& acpl = h5::default_acpl ){
+			(void)acpl;
+			h5::current_dims_t current_dims = impl::size( ref );
 		using element_t = typename impl::decay<T>::type;
 		h5::at_t attr = ( H5Aexists(static_cast<hid_t>(parent), name.c_str() ) > 0 ) ?
 			h5::open(parent, name, h5::default_acpl) : h5::create<element_t>(parent, name, current_dims);
@@ -38,10 +40,11 @@ namespace h5 {
 	}
 
 	// general case but not: {std::initializer_list<T>} and const char[] 
-	template <class T, class P, class... args_t>
-	inline std::enable_if_t<!std::is_array_v<T> && h5::impl::is_valid_attr<P>::value,
-	h5::at_t> awrite( const P& parent, const std::string& name, const T& ref, const h5::acpl_t& acpl = h5::default_acpl ){
-		h5::current_dims_t current_dims = impl::size( ref );
+		template <class T, class P, class... args_t>
+		inline std::enable_if_t<!std::is_array_v<T> && h5::impl::is_valid_attr<P>::value,
+		h5::at_t> awrite( const P& parent, const std::string& name, const T& ref, const h5::acpl_t& acpl = h5::default_acpl ){
+			(void)acpl;
+			h5::current_dims_t current_dims = impl::size( ref );
 		using element_t = typename impl::decay<T>::type;
 		h5::at_t attr = ( H5Aexists(static_cast<hid_t>(parent), name.c_str() ) > 0 ) ?
 			h5::open(parent, name, h5::default_acpl) : h5::create<element_t>(parent, name, current_dims);
@@ -55,6 +58,7 @@ namespace h5 {
 	inline std::enable_if_t<h5::impl::is_valid_attr<P>::value,
     h5::at_t> awrite( const P& parent, const std::string& name, const std::initializer_list<T> ref,
 																		const h5::acpl_t& acpl = h5::default_acpl ) try {
+		(void)acpl;
 
 		h5::current_dims_t current_dims = impl::size( ref );
 		using element_t = typename impl::decay<std::initializer_list<T>>::type;
@@ -94,4 +98,3 @@ h5::at_t h5::at_t::operator=( const std::initializer_list<V> args ){
 	h5::awrite(ds, name, args);
 	return *this;
 }
-

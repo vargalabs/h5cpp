@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include "H5capi.hpp"
 #include "H5Dopen.hpp" // be sure this precedes error handling macro-s !!!
 #include <string>
 #include <vector>
@@ -266,11 +267,10 @@ namespace h5 {
 		h5::sp_t file_space = h5::get_space(ds);
 	   	int rank = h5::get_simple_extent_ndims( file_space );
 
-		if( rank != count.rank ) throw h5::error::io::dataset::read( H5CPP_ERROR_MSG( h5::error::msg::rank_mismatch ));
-		h5::dt_t<char*> mem_type;
-		hid_t dapl = h5::get_access_plist( ds );
+			if( rank != count.rank ) throw h5::error::io::dataset::read( H5CPP_ERROR_MSG( h5::error::msg::rank_mismatch ));
+			h5::dt_t<char*> mem_type;
 
-		T ref = impl::get<T>::ctor( count );
+			T ref = impl::get<T>::ctor( count );
 		size_t nelem = impl::nelements(size);
 		char ** ptr = static_cast<char **>(
 										malloc( nelem * sizeof(char *)));
@@ -280,10 +280,14 @@ namespace h5 {
 		H5CPP_CHECK_NZ( H5Dread(
 					static_cast<hid_t>( ds ), static_cast<hid_t>(mem_type), static_cast<hid_t>(mem_space),
 					static_cast<hid_t>(file_space),	static_cast<hid_t>(dxpl), ptr ), h5::error::io::dataset::read, h5::error::msg::read_dataset);
-		for(int i=0; i<nelem; i++)
-				if( ptr[i] != nullptr )
+			for(size_t i=0; i<nelem; i++)
+					if( ptr[i] != nullptr )
 						ref[i] = std::string( ptr[i] );
-		H5Dvlen_reclaim (mem_type, mem_space, H5P_DEFAULT, ptr);
+#if H5_VERSION_GE(1,12,0)
+		H5Treclaim(mem_type, mem_space, H5P_DEFAULT, ptr);
+#else
+		H5Dvlen_reclaim(mem_type, mem_space, H5P_DEFAULT, ptr);
+#endif
 		free(ptr);
 		return ref;
 	}

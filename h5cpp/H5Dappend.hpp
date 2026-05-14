@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include <zlib.h>
+#include "H5capi.hpp"
 #include <string>
 #include <vector>
 #include <stdexcept>
