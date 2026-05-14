@@ -13,9 +13,8 @@ namespace h5 {
 
 		H5CPP_CHECK_PROP( acpl, h5::error::io::attribute::open, "invalid attribute creation property" );
 		hid_t attr = H5I_UNINIT;
-	   	H5CPP_CHECK_NZ((
-			attr = H5Aopen( static_cast<hid_t>(parent), path.c_str(), static_cast<hid_t>(acpl))),
-				   							h5::error::io::attribute::open, "can't open attribute..." );
+	   	H5CPP_CHECK_NZ(( attr = H5Aopen( static_cast<hid_t>(parent),
+			path.c_str(), static_cast<hid_t>(acpl))), h5::error::io::attribute::open, "can't open attribute..." );
      	return  h5::at_t{attr};
     }
 }

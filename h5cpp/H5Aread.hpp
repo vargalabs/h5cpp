@@ -9,33 +9,10 @@
 namespace h5 {
 
 	//ARITHMETIC ELEMENT TYPES 
-		template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
-		std::enable_if_t< std::is_integral_v<D> || std::is_floating_point_v<D>,
-		T> aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
-			(void)acpl;
+	template <class T, class D=typename meta::decay<T>::type, class... args_t> inline
+	std::enable_if_t< std::is_integral_v<D> || std::is_floating_point_v<D>,
+	T> aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
 
-			h5::at_t attr = h5::open(ds, name, h5::default_acpl);
-		hid_t id;
-		H5CPP_CHECK_NZ( (id = H5Aget_space( static_cast<hid_t>(attr) )),
-			   h5::error::io::attribute::read, "couldn't get space...");
-		h5::sp_t file_space{id};
-		h5::current_dims_t current_dims;
-
-			get_simple_extent_dims(file_space, current_dims );
-		using element_t = typename impl::decay<T>::type;
-		h5::dt_t<element_t> type;
-		T object = impl::get<T>::ctor( current_dims );
-		element_t *ptr = const_cast<element_t*>( impl::data( object ));
-		H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), ptr ),
-			   h5::error::io::attribute::read, "couldn't read dataset ...");
-		return object;
-	}
-
-	//POD ELEMENT TYPES: Rank 0 and rank > 0
-	template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
-	typename std::enable_if< !std::is_arithmetic<D>::value && (std::is_standard_layout_v<D> && std::is_trivial_v<D>) && !std::is_same<T,std::string>::value,
-	T>::type aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
-		(void)acpl;
 		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
 		hid_t id;
 		H5CPP_CHECK_NZ( (id = H5Aget_space( static_cast<hid_t>(attr) )),
@@ -44,7 +21,28 @@ namespace h5 {
 		h5::current_dims_t current_dims;
 
 		int rank = get_simple_extent_dims(file_space, current_dims );
-		using element_t = typename impl::decay<T>::type;
+		using element_t = typename meta::decay<T>::type;
+		h5::dt_t<element_t> type;
+		T object = meta::get<T>::ctor( current_dims );
+		element_t *ptr = const_cast<element_t*>( meta::data( object ));
+		H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), ptr ),
+			   h5::error::io::attribute::read, "couldn't read dataset ...");
+		return object;
+	}
+
+	//POD ELEMENT TYPES: Rank 0 and rank > 0
+	template <class T, class D=typename meta::decay<T>::type, class... args_t> inline
+	typename std::enable_if< !std::is_arithmetic<D>::value && (std::is_standard_layout_v<D> && std::is_trivial_v<D>) && !std::is_same<T,std::string>::value,
+	T>::type aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
+		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
+		hid_t id;
+		H5CPP_CHECK_NZ( (id = H5Aget_space( static_cast<hid_t>(attr) )),
+			   h5::error::io::attribute::read, "couldn't get space...");
+		h5::sp_t file_space{id};
+		h5::current_dims_t current_dims;
+
+		int rank = get_simple_extent_dims(file_space, current_dims );
+		using element_t = typename meta::decay<T>::type;
 		h5::dt_t<element_t> type;
 		if( !rank ){ // FIXME: write impl::get<pod_type>(...)
 			T object;
@@ -52,8 +50,8 @@ namespace h5 {
 				   h5::error::io::attribute::read, "couldn't read dataset ...");
 			return object;
 		}else{
-			T object = impl::get<T>::ctor( current_dims );
-			element_t *ptr = const_cast<element_t*>( impl::data( object ));
+			T object = meta::get<T>::ctor( current_dims );
+			element_t *ptr = const_cast<element_t*>( meta::data( object ));
 			H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), ptr ),
 				   h5::error::io::attribute::read, "couldn't read dataset ...");
 			return object;
@@ -61,19 +59,18 @@ namespace h5 {
 	}
 
 	// STD::STRING
-		template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
-		std::enable_if_t<std::is_same_v<D,std::string> || std::is_same_v<T,std::string>, //TODO: add char**
-		T> aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
-			(void)acpl;
-			h5::at_t attr = h5::open(ds, name, h5::default_acpl);
+	template <class T, class D=typename meta::decay<T>::type, class... args_t> inline
+	std::enable_if_t<std::is_same_v<D,std::string> || std::is_same_v<T,std::string>, //TODO: add char**
+	T> aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
+		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
 		hid_t id;
 		H5CPP_CHECK_NZ( (id = H5Aget_space( static_cast<hid_t>(attr) )),
 			   h5::error::io::attribute::read, "couldn't get space...");
 		h5::sp_t file_space{id};
 		h5::current_dims_t current_dims;
-			get_simple_extent_dims(file_space, current_dims );
+		int rank = get_simple_extent_dims(file_space, current_dims );
 		h5::dt_t<char*> type;
-		T object = impl::get<T>::ctor( current_dims );
+		T object = meta::get<T>::ctor( current_dims );
         size_t nelem = impl::nelements(current_dims);
 		char** ptr = static_cast<char**>( malloc ( nelem * sizeof (char *)));
 		H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), ptr ),

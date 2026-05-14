@@ -5,6 +5,8 @@
 
 #pragma once
 #include "H5capi.hpp"
+#include "H5Tmeta.hpp"
+#include "H5cout.hpp"
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -13,7 +15,6 @@
 
 namespace h5 {
 	struct pt_t;
-	//void flush(const pt_t&);
 }
 std::ostream& operator<<(std::ostream& os, const h5::pt_t& pt);
 
@@ -52,7 +53,6 @@ namespace h5 {
                 this->chunk_dims[i] = pt.chunk_dims[i];
                 this->count[i] = pt.count[i];
             }
-            // since pt.rank = 0, we can skip
 			return *this;
 		}
 		friend std::ostream& ::operator<<(std::ostream &os, const h5::pt_t& pt);
@@ -63,11 +63,11 @@ namespace h5 {
 		void init(const h5::ds_t& ds_);
 		void flush();
 
-		template<class T> inline std::enable_if_t<h5::impl::is_scalar<T>::value,
+		template<class T> inline std::enable_if_t<h5::meta::is_scalar<T>::value,
 		void> append( const T* ptr );
-		template<class T> inline std::enable_if_t< h5::impl::is_scalar<T>::value && !std::is_pointer_v<T>,
+		template<class T> inline std::enable_if_t< h5::meta::is_scalar<T>::value && !std::is_pointer_v<T>,
 		void> append( const T& ref );
-		template<class T> inline std::enable_if_t< !h5::impl::is_scalar<T>::value,
+		template<class T> inline std::enable_if_t< !h5::meta::is_scalar<T>::value,
 		void> append( const T& ref );
 		void append( const std::string& ref );
 
@@ -76,10 +76,8 @@ namespace h5 {
 		h5::ds_t ds;
 		h5::dt_t<void> dt;
 
-		hsize_t offset[H5CPP_MAX_RANK],
-			current_dims[H5CPP_MAX_RANK],
-			chunk_dims[H5CPP_MAX_RANK],
-			count[H5CPP_MAX_RANK];
+		hsize_t offset[H5CPP_MAX_RANK], current_dims[H5CPP_MAX_RANK],
+			chunk_dims[H5CPP_MAX_RANK], count[H5CPP_MAX_RANK];
 		size_t block_size,element_size,N,n,rank;
 		void *ptr, *fill_value;
 	};
@@ -136,7 +134,7 @@ void h5::pt_t::init( const h5::ds_t& handle ){
 		throw h5::error::io::packet_table::misc( H5CPP_ERROR_MSG("CTOR: unable to create handle from dataset..."));
 	}
 }
-template<class T> inline std::enable_if_t< h5::impl::is_scalar<T>::value,
+template<class T> inline std::enable_if_t< h5::meta::is_scalar<T>::value,
 void> h5::pt_t::append( const T* ptr ) try {
 	//PTR: write directly chunk size from provided buffer/ptr
 	*offset = *current_dims;
@@ -185,7 +183,7 @@ inline void h5::pt_t::append( const char* ref ) {
 }
 
 
-template<class T> inline std::enable_if_t< h5::impl::is_scalar<T>::value && !std::is_pointer_v<T>,
+template<class T> inline std::enable_if_t< h5::meta::is_scalar<T>::value && !std::is_pointer_v<T>,
 void> h5::pt_t::append( const T& ref ) try {
 //SCALAR: store inbound data directly in pipeline cache
 	static_cast<T*>( ptr )[n++] = ref;
@@ -200,15 +198,15 @@ void> h5::pt_t::append( const T& ref ) try {
 	throw h5::error::io::dataset::append( err.what() );
 }
 
-template<class T> inline std::enable_if_t< !h5::impl::is_scalar<T>::value,
+template<class T> inline std::enable_if_t< !h5::meta::is_scalar<T>::value,
 void> h5::pt_t::append( const T& ref ) try {
-	auto dims = impl::size( ref );
+	auto dims = meta::size( ref );
 
 	*offset = *current_dims;
 	*current_dims += 1;
 	h5::set_extent(ds, current_dims);
-	auto ptr_ = impl::data( ref );
-	auto dims_ = impl::size( ref );
+	auto ptr_ = meta::data( ref );
+	auto dims_ = meta::size( ref );
 
 	switch( dims_.size() ){
 		case 1: // vector
@@ -235,8 +233,6 @@ void> h5::pt_t::append( const T& ref ) try {
 		default:
 			throw h5::error::io::packet_table::misc( H5CPP_ERROR_MSG("objects with rank > 2 are not supported... "));
 	}
-	//pipeline.write_chunk(offset,block_size, (void*) ptr_ );
-
 } catch( const std::runtime_error& err ){
 	throw h5::error::io::dataset::append( err.what() );
 }

@@ -4,7 +4,6 @@
  */
 #pragma once
 #include "H5capi.hpp"
-#include "H5Tmeta.hpp"
 #include "H5Fopen.hpp"
 #include <string>
 #include <stdexcept>
@@ -94,7 +93,7 @@ namespace h5 {
 		// use move semantics to set space
 		space_id =  tmax_dims::present ?
 			std::move( h5::create_simple( current_dims, max_dims ) ) :  std::move( h5::create_simple( current_dims ) );
-		using element_t = typename impl::decay<T>::type;
+		using element_t = typename meta::decay<T>::type;
 		h5::meta::resolved_type_t<element_t> type;
 		if constexpr (tdt_t::present)
 			type = static_cast<::hid_t>(

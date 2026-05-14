@@ -6,8 +6,8 @@
 #pragma once
 #include <hdf5.h>
 #include "H5config.hpp"
+#include "H5meta.hpp"
 #include <array>
-#include <tuple>
 #include <initializer_list>
 
 namespace h5{ namespace impl {

@@ -7,15 +7,14 @@
 #include "H5capi.hpp"
 #include "H5misc.hpp"
 #include "H5Dopen.hpp" // be sure this precedes error handling macro-s !!!
+#include "H5Fopen.hpp"
 #include <string>
-#include <vector>
 #include <stdexcept>
 #include <type_traits>
 #include <tuple>
 
 namespace h5 {
-/***************************  REFERENCE *****************************/
-
+	/***************************  REFERENCE *****************************/
  	/** \func_read_hdr
  	*  Updates the content of passed **ptr** pointer, which must have enough memory space to receive data.
 	*  Optional arguments **args:= h5::offset | h5::stride | h5::count | h5::block** may be specified for partial IO, 
@@ -60,7 +59,7 @@ namespace h5 {
 	   	int rank = h5::get_simple_extent_ndims( file_space );
 
 		if( rank != count.rank ) throw h5::error::io::dataset::read( H5CPP_ERROR_MSG( h5::error::msg::rank_mismatch ));
-		using element_t = typename impl::decay<T>::type;
+		using element_t = typename meta::decay<T>::type;
 		h5::meta::resolved_type_t<element_t> mem_type;
 		hid_t dapl = h5::get_access_plist( ds );
 		if( H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT) ){
@@ -119,7 +118,7 @@ namespace h5 {
 	}
 
 
-/***************************  REFERENCE *****************************/
+	/***************************  REFERENCE *****************************/
  	/** \func_read_hdr
  	*  Updates the content of passed **ref** reference, which must have enough memory space to receive data.
 	*  Optional arguments **args:= h5::offset | h5::stride | h5::count | h5::block** may be specified for partial IO,
@@ -137,13 +136,13 @@ namespace h5 {
 	// passed 'ref' contains memory size and element type, let's extract them
 	// and delegate forward  
 		using tcount  = typename arg::tpos<const h5::count_t&,const args_t&...>;
-		using element_type = typename impl::decay<T>::type;
+		using element_type = typename meta::decay<T>::type;
 
 		static_assert( !tcount::present,
 				"h5::count_t{ ... } is already present when passing arg by reference, did you mean to pass by pointer?" );
 		// get 'count' and underlying type 
-		h5::count_t count = impl::size(ref);
-		element_type* ptr = impl::data(ref);
+		h5::count_t count = meta::size(ref);
+		element_type* ptr = meta::data(ref);
 		::h5::read<element_type>(ds, ptr, count, args...);
 	}
  	/** \func_read_hdr
@@ -182,7 +181,7 @@ namespace h5 {
 		::h5::read( fd, dataset_path, ref, args...);
 	}
 
-/***************************  OBJECT *****************************/
+	/***************************  OBJECT *****************************/
  	/** \func_read_hdr
  	*  Direct read from an opened dataset descriptor that returns the entire data space wrapped into the object specified. 
 	*  Optional arguments **args:= h5::offset | h5::stride | h5::count | h5::block** may be specified for partial IO, 
@@ -193,7 +192,7 @@ namespace h5 {
 	* \endcode  
 	* \par_ds \par_offset \par_stride \par_count \par_block \tpar_T \returns_object 
  	*/
-	template<class T, class D=typename impl::decay<T>::type, class... args_t>
+	template<class T, class D=typename meta::decay<T>::type, class... args_t>
 	inline std::enable_if_t<!std::is_same_v<D,std::string>,
 	T> read( const h5::ds_t& ds, args_t&&... args ){
 	// if 'count' isn't specified use the one inside the hdf5 file, once it is obtained
@@ -201,7 +200,7 @@ namespace h5 {
 	// update the content by we're good to go, since stride and offset can be processed in the 
 	// update step
 		using tcount  = typename arg::tpos<const h5::count_t&,const args_t&...>;
-		using element_type    = typename impl::decay<T>::type;
+		using element_type    = typename meta::decay<T>::type;
 
 		h5::count_t size;
 		const h5::count_t& count = arg::get(size, args...);
@@ -216,13 +215,13 @@ namespace h5 {
 			size.rank = count.rank;
 		}
 
-		T ref = impl::get<T>::ctor( count );
-		element_type *ptr = impl::data( ref );
+		T ref = meta::get<T>::ctor( count );
+		element_type *ptr = meta::data( ref );
 
 		::h5::read<element_type>(ds, ptr, count, args...);
 		return ref;
 	}
-/***************************  STRING *****************************/
+	/***************************  STRING *****************************/
  	/** \func_read_hdr
  	*  Direct read from an opened dataset descriptor that returns the entire data space wrapped into the object specified. 
 	*  Optional arguments **args:= h5::offset | h5::stride | h5::count | h5::block** may be specified for partial IO, 
@@ -234,7 +233,7 @@ namespace h5 {
 	* \par_ds \par_offset \par_stride \par_count \par_block \tpar_T \returns_object 
  	*/
 
-	template<class T, class D=typename impl::decay<T>::type, class... args_t>
+	template<class T, class D=typename meta::decay<T>::type, class... args_t>
 	inline std::enable_if_t<std::is_same_v<D,std::string>,
 	T> read( const h5::ds_t& ds, args_t&&... args ){
 	// if 'count' isn't specified use the one inside the hdf5 file, once it is obtained
@@ -268,10 +267,11 @@ namespace h5 {
 		h5::sp_t file_space = h5::get_space(ds);
 	   	int rank = h5::get_simple_extent_ndims( file_space );
 
-			if( rank != count.rank ) throw h5::error::io::dataset::read( H5CPP_ERROR_MSG( h5::error::msg::rank_mismatch ));
-			h5::dt_t<char*> mem_type;
+		if( rank != count.rank ) throw h5::error::io::dataset::read( H5CPP_ERROR_MSG( h5::error::msg::rank_mismatch ));
+		h5::dt_t<char*> mem_type;
+		hid_t dapl = h5::get_access_plist( ds );
 
-			T ref = impl::get<T>::ctor( count );
+		T ref = meta::get<T>::ctor( count );
 		size_t nelem = impl::nelements(size);
 		char ** ptr = static_cast<char **>(
 										malloc( nelem * sizeof(char *)));
@@ -281,8 +281,8 @@ namespace h5 {
 		H5CPP_CHECK_NZ( H5Dread(
 					static_cast<hid_t>( ds ), static_cast<hid_t>(mem_type), static_cast<hid_t>(mem_space),
 					static_cast<hid_t>(file_space),	static_cast<hid_t>(dxpl), ptr ), h5::error::io::dataset::read, h5::error::msg::read_dataset);
-			for(size_t i=0; i<nelem; i++)
-					if( ptr[i] != nullptr )
+		for(int i=0; i<nelem; i++)
+				if( ptr[i] != nullptr )
 						ref[i] = std::string( ptr[i] );
 #if H5_VERSION_GE(1,12,0)
 		H5Treclaim(mem_type, mem_space, H5P_DEFAULT, ptr);

@@ -39,17 +39,13 @@ namespace h5::impl {
 	T*> data( Object& ref ){
 			return &ref(0,0);
 	}
+	
 	template<class T> struct rank<h5::dlib::rowmat<T>> : public std::integral_constant<size_t,2>{};
-
-
-
 	template<class T>
 	inline std::array<size_t,2> size( const dlib::rowmat<T>& ref ){
 				return { (hsize_t)ref.nc(),(hsize_t)ref.nr()};
 	}
-
-
-
+	
 	template <class T> struct get<h5::dlib::rowmat<T>> {
 		static inline h5::dlib::rowmat<T> ctor( std::array<size_t,2> dims ){
 			return h5::dlib::rowmat<T>( dims[1], dims[0] );

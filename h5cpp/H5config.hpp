@@ -77,11 +77,7 @@
 	#define OPENEXR_NAMESPACE
 #endif
 
-
-
 /**
-
-
 @example attributes.cpp
 @example collective.cpp
 @example independent.cpp
@@ -107,7 +103,6 @@
 @example raw.cpp
 @example transform.cpp
 @example kita.cpp
-
 */
 
 
