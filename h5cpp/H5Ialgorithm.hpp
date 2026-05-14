@@ -9,9 +9,10 @@
 #include <vector>
 #include <stdexcept>
 
-namespace h5::impl {
-	inline static herr_t iterate_callback( ::hid_t gid, const char *name, const H5L_info_t *info, void *op_data){
-		// this must not throw error, CAPI has to clean up
+	namespace h5::impl {
+		inline static herr_t iterate_callback( ::hid_t gid, const char *name, const H5L_info_t *info, void *op_data){
+			(void)gid; (void)info;
+			// this must not throw error, CAPI has to clean up
 		try {
 			std::vector<std::string> *data =  static_cast<std::vector<std::string>* >(op_data);
 			data->push_back( std::string(name) );
@@ -34,12 +35,14 @@ namespace h5 {
         return files;
     }
 	//FIXME: to be implemented
-    inline std::vector<std::string> bfs(const h5::fd_t& fd,  const std::string& directory ){
-        std::vector<std::string> files;
-        return files;
-    }
-	inline std::vector<std::string> dfs(const h5::fd_t& fd,  const std::string& directory ){
-        std::vector<std::string> files;
+	    inline std::vector<std::string> bfs(const h5::fd_t& fd,  const std::string& directory ){
+			(void)fd; (void)directory;
+	        std::vector<std::string> files;
+	        return files;
+	    }
+		inline std::vector<std::string> dfs(const h5::fd_t& fd,  const std::string& directory ){
+			(void)fd; (void)directory;
+	        std::vector<std::string> files;
         return files;
     }
 }

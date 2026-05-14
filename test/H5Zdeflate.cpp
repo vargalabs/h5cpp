@@ -78,8 +78,7 @@ TEST_CASE("H5Z deflate callback decodes with only level param (external-file com
     // libdeflate.  The pipeline fix in set_cache prevents this by injecting block_size into
     // params[1].  This test covers the callback layer; pipeline-level coverage is in
     // the set_cache path exercised by H5Dio tests.
-    const unsigned dec_params_no_hint[] = {6};
-    std::vector<unsigned char> decoded(input.size());
+	    std::vector<unsigned char> decoded(input.size());
     // With zlib fallback uncompress() ignores max output size — always succeeds.
     // With libdeflate we need the correct output size; the set_cache fix provides it.
     // Here we simulate the fixed pipeline: params[1] = block_size is injected.

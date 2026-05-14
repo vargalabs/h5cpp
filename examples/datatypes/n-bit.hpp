@@ -51,10 +51,9 @@ std::ostream& operator<<(std::ostream& os, const bitstring::n_bit& data){
 
 std::ostream& operator<<(std::ostream& os, const
 	 Eigen::Matrix<bitstring::n_bit, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>& M){
-	for( size_t i=0; i<M.rows(); i++){
-	   	for( size_t j=0; j<M.cols(); j++) os << static_cast<unsigned int>( M(i,j)) <<" ";
+	for( Eigen::Index i=0; i<M.rows(); i++){
+		for( Eigen::Index j=0; j<M.cols(); j++) os << static_cast<unsigned int>( M(i,j)) <<" ";
 		os<<std::endl;
 	}
 	return os;
 }
-

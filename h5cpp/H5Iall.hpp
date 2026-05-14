@@ -133,13 +133,15 @@ namespace h5::impl::detail {
 		//hid_t& operator =( ::hid_t ref ) {}
 
 
-		hid_t& operator |=( const hid_t& ref){
-			return *this;
-		}
+			hid_t& operator |=( const hid_t& ref){
+				(void)ref;
+				return *this;
+			}
 
-		hid_t& operator |( const hid_t& ref){
-			return *this;
-		}
+			hid_t& operator |( const hid_t& ref){
+				(void)ref;
+				return *this;
+			}
 	};
 	/*dataset id*/ //FIXME: eliminate extra field: ds  @see HDF5 CAPI BUG: https://jira.hdfgroup.org/browse/HDFFV-10934
 	template<class T, capi_close_t capi_close>

@@ -69,9 +69,10 @@ int main(){
 		// h5::lcpl_t lcpl = h5::create_path | h5::utf8; 
 	}
 	{ // all resources follow RAII idiom / managed
-		h5::fd_t fd = h5::create("001.h5", H5F_ACC_TRUNC);  // f5::fd_t is managed resource, will call H5Fclose upon leaving code block
-		hid_t ref = static_cast<hid_t>( fd ); 			    // static cast to hid_t is always allowed, ref must be treated as managed reference, 
-										  				    // must not call CAPI H5Fclose( ref )  on it. This explicit or implicit conversion 
+			h5::fd_t fd = h5::create("001.h5", H5F_ACC_TRUNC);  // f5::fd_t is managed resource, will call H5Fclose upon leaving code block
+			hid_t ref = static_cast<hid_t>( fd ); 			    // static cast to hid_t is always allowed, ref must be treated as managed reference,
+			(void)ref;
+			// must not call CAPI H5Fclose( ref )  on it. This explicit or implicit conversion
 										  				    // is to support CAPI interop.   
 	}
 	{ // file create example: 
@@ -108,4 +109,3 @@ int main(){
 	}
 
 }
-

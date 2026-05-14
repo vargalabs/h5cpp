@@ -19,6 +19,7 @@ inline void h5::impl::basic_pipeline_t::write_chunk_impl( const hsize_t* offset,
 			length = filter[0](out, data, nbytes, flags[0], cd_size[0], cd_values[0] ) ;
 			if( !length )
 				mask = 1 << 0;
+			[[fallthrough]];
 		default: // more than one filter
 			for(hsize_t j=1; j<tail; j++){ // invariant: out == buffer holding final result
 				tmp = in, in = out, out = tmp;
@@ -33,6 +34,7 @@ inline void h5::impl::basic_pipeline_t::write_chunk_impl( const hsize_t* offset,
 
 
 inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, size_t nbytes, void* data){
+	(void)data;
 	size_t length = nbytes;
 	uint32_t filter_mask;
 
@@ -70,4 +72,3 @@ inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, 
 	}
 	// src now points to chunk0, which holds the decompressed chunk data
 }
-

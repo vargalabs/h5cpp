@@ -59,6 +59,7 @@
 
 #define H5CPP_CHECK_EQ( call, exception, msg ) if( call == 0 ) throw exception( H5CPP_ERROR_MSG( msg ));
 #define H5CPP_CHECK_NZ( call, exception, msg ) if( call < 0 ) throw exception( H5CPP_ERROR_MSG( msg ));
+#define H5CPP_CHECK_SIZE( call, exception, msg ) if( call == 0 ) throw exception( H5CPP_ERROR_MSG( msg ));
 #define H5CPP_CHECK_NULL( call, exception, msg ) if( call == nullptr ) throw exception( H5CPP_ERROR_MSG( msg ));
 #define H5CPP_CHECK_PROP( id, exception, msg ) if( static_cast<::hid_t>( id ) < 0 ) throw exception( H5CPP_ERROR_MSG( msg ));
 #define H5CPP_CHECK_ID( id, exception, msg ) if( !static_cast<::hid_t>( id ) ) throw exception( H5CPP_ERROR_MSG( msg ));
@@ -158,4 +159,3 @@
  *  **off** and **on**.  Typically used when failure is information: checking existence of [dataset|path] by call-fail pattern, etc...  
  *  \hdf5_links
  */
-

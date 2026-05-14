@@ -17,15 +17,20 @@
 TEST_CASE("[example] compound struct CSV-like round-trip") {
     const char* filename = "test_csv_io.h5";
     std::filesystem::remove(filename);
+    auto set_location = [](char (&dst)[STR_ARRAY_SIZE], const char* src) {
+        std::memset(dst, 0, STR_ARRAY_SIZE);
+        const auto src_size = std::strlen(src);
+        std::memcpy(dst, src, src_size < STR_ARRAY_SIZE ? src_size : STR_ARRAY_SIZE - 1);
+    };
 
     // BUILD test data (simulating parsed CSV rows)
     std::vector<input_t> original(3);
     original[0] = input_t{902363382, 0, 39.15920668, -86.52587356, {}};
-    std::strncpy(original[0].ReportedLocation, "1ST & FESS", STR_ARRAY_SIZE);
+    set_location(original[0].ReportedLocation, "1ST & FESS");
     original[1] = input_t{902364268, 1500, 39.16144, -86.534848, {}};
-    std::strncpy(original[1].ReportedLocation, "2ND & COLLEGE", STR_ARRAY_SIZE);
+    set_location(original[1].ReportedLocation, "2ND & COLLEGE");
     original[2] = input_t{902364412, 2300, 39.14978027, -86.56889006, {}};
-    std::strncpy(original[2].ReportedLocation, "BASSWOOD & BLOOMFIELD", STR_ARRAY_SIZE);
+    set_location(original[2].ReportedLocation, "BASSWOOD & BLOOMFIELD");
 
     // WRITE using packet table append (same pattern as csv example)
     {

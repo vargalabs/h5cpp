@@ -25,10 +25,9 @@ int main(){
 	h5::write(fd,"data", vec); // single shot write
 	auto data = h5::read<std::vector<nm::two_bit>>(fd, "data");
 
-	for( int i=0; i<vec.size(); i++ )
+	for( size_t i=0; i<vec.size(); i++ )
 		std::cout << "[" << i << ": " << vec[i] << " "  <<"]";
 	std::cout << "\n\ncomputing difference ||saved - read|| expecting norm to be zero:\n";
-	for( int i=0; i<vec.size(); i++ )
+	for( size_t i=0; i<vec.size(); i++ )
 		std::cout << abs(vec[i].value - data[i].value) <<" ";
 }
-

@@ -7,13 +7,15 @@
 
 #define H5CPP_DAPL_HIGH_THROUGHPUT "h5cpp_dapl_highthroughput"
 
-namespace h5::impl {
-	inline herr_t dapl_pipeline_close( const char *name, size_t size, void *ptr ){
-		delete *static_cast< impl::pipeline_t<impl::basic_pipeline_t>**>( ptr );
+	namespace h5::impl {
+		inline herr_t dapl_pipeline_close( const char *name, size_t size, void *ptr ){
+			(void)name; (void)size;
+			delete *static_cast< impl::pipeline_t<impl::basic_pipeline_t>**>( ptr );
 		return 0;
-	}
-	inline ::herr_t dapl_pipeline_set(::hid_t dapl ) {
-		//TODO: see why H5CPP pipeline crashes with 1.12.x  
+		}
+		inline ::herr_t dapl_pipeline_set(::hid_t dapl ) {
+			(void)dapl;
+		//TODO: see why H5CPP pipeline crashes with 1.12.x
 #if H5_VERSION_LE(1,10,6) 
 		// ignore if already set 
 		if( H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT) ) return 0;
@@ -59,4 +61,3 @@ namespace h5 {
 	//const static h5::dapl_t default_dapl = high_throughput;
 	inline const h5::dapl_t& default_dapl = impl::_default_dapl_singleton();
 }
-
