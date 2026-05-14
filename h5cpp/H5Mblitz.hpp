@@ -18,6 +18,7 @@ namespace h5::meta {
 
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+	template <class T, int N> struct detail::has_explicit_decay<h5::blitz::array<T,N>> : std::true_type {};
 	template <class T, int N> struct decay<h5::blitz::array<T,N>>{ using type = T; };
 
 	// get read access to datastore

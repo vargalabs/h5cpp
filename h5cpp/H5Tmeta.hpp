@@ -479,6 +479,7 @@ namespace h5::meta {
         !is_text_like<T>::value &&
         !is_reflected_compound_t<T>::value &&
         !std::is_arithmetic_v<T> &&
+        meta::has_value_type<T>::value &&
         has_data_pointer<T>::value &&
         meta::has_size<T>::value>>
         : is_transport_contiguous_t<typename meta::decay<T>::type> {};
@@ -607,6 +608,7 @@ namespace h5::meta {
         contiguous,  // has .data() pointer + is_transport_contiguous (bulk memcpy safe)
         pointers,    // has .data() but element is not flat (e.g., vector<string>)
         iterators,   // begin/end traversal only — no direct pointer
+        text,        // variable-length or fixed-length text (std::string, char*, etc.)
         unsupported
     };
 
@@ -640,6 +642,21 @@ namespace h5::meta {
         static T*        data(T& v)        noexcept { return &v; }
         static constexpr std::array<std::size_t,0> size(const T&) noexcept { return {}; }
         static constexpr std::size_t bytes(const T&) noexcept { return sizeof(T); }
+    };
+
+    // Text-like types (std::string, std::string_view, etc.) — handled by HDF5 string types, not raw memcpy
+    template <class T>
+    struct access_traits_t<T, std::enable_if_t<
+        is_text_like<T>::value &&
+        !std::is_array_v<T> &&
+        !std::is_pointer_v<remove_cvref_t<T>>>> {
+        using element_t  = typename remove_cvref_t<T>::value_type;
+        using pointer_t  = const element_t*;
+        static constexpr access_t kind = access_t::text;
+        static constexpr bool is_trivially_packable = false;
+        static auto data(const T& s) noexcept { return s.data(); }
+        static auto data(T& s)       noexcept { return s.data(); }
+        static std::array<std::size_t,1> size(const T& s) noexcept { return {s.size()}; }
     };
 
     // C-style arrays T[N] — contiguous by definition
@@ -681,6 +698,7 @@ namespace h5::meta {
         !is_reflected_compound_t<T>::value &&
         has_data_pointer<T>::value &&
         meta::has_size<T>::value &&
+        compat::is_detected<value_type_f, remove_cvref_t<T>>::value &&
         !is_transport_contiguous_v<T>>> {
         using element_t  = typename remove_cvref_t<T>::value_type;
         static constexpr access_t kind = access_t::pointers;
@@ -699,7 +717,12 @@ namespace h5::meta {
         using element_t  = typename remove_cvref_t<T>::value_type;
         static constexpr access_t kind = access_t::iterators;
         static constexpr bool is_trivially_packable = false;
-        static std::array<std::size_t,1> size(const T& c) noexcept { return {std::distance(c.begin(), c.end())}; }
+        static std::array<std::size_t,1> size(const T& c) noexcept {
+            if constexpr (meta::has_size<T>::value)
+                return {c.size()};
+            else
+                return {std::distance(c.begin(), c.end())};
+        }
     };
 
     template <class T>
