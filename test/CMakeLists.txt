@@ -11,6 +11,7 @@ set(INCLUDE_DIRS
 )
 
 set(LIBS
+    h5cpp
     ${HDF5_LIBRARIES}
     ZLIB::ZLIB
     libdoctest
@@ -56,6 +57,14 @@ add_test_case(H5Dgather)
 add_test_case(H5meta)
 add_test_case(H5Tmeta)
 add_test_case(H5Dio)
+add_test_case(H5Eall)
+add_test_case(H5Ialgorithm)
+add_test_case(H5Pall)
+add_test_case(H5Sall)
+add_test_case(H5capi)
+add_test_case(H5cout)
+add_test_case(H5Zpipeline)
+add_test_case(H5Rall)
 # add_test_case(H5E_exceptions)
 add_test_case(H5Dio_roundtrip)
 add_test_case(H5Zdeflate)
