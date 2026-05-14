@@ -132,7 +132,7 @@
  * The first group of function arguments are mandatory whereas the optional arguments may be specified in any order, 
  * or omitted entirely.
  *
- * [dataset]: https://support.hdfgroup.org/HDF5/doc/H5.intro.html#Intro-PMRdWrPortion 
+ * [dataset]: https://support.hdfgroup.org/documentation/hdf5/latest/_l_b_dataset.html
  */
 
 /** @defgroup io-write herr_t h5::write<T>( ds | path, object<T> [,offset] [ ,stride ] [,count] [,dxpl] );
