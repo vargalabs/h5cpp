@@ -43,3 +43,31 @@ TEST_CASE("operator<< for std::vector prints elements") {
     oss << vec;
     CHECK(oss.str().find("1") != std::string::npos);
 }
+
+TEST_CASE("operator<< for std::vector with many elements prints ellipsis") {
+    std::vector<int> vec(200, 42);
+    std::ostringstream oss;
+    oss << vec;
+    CHECK(oss.str().find(".. fix me ..") != std::string::npos);
+}
+
+TEST_CASE("operator<< for sp_t with hyperslab selection prints blocks") {
+    h5::test::file_fixture_t f("test-cout-sp-blocks.h5");
+    h5::ds_t ds = h5::create<int>(f.fd, "ds", h5::current_dims_t{10});
+    h5::sp_t sp = h5::get_space(ds);
+    h5::offset_t offset{0};
+    h5::stride_t stride{2};
+    h5::count_t count{5};
+    h5::block_t block{1};
+    h5::select_hyperslab(sp, offset, stride, count, block);
+    std::ostringstream oss;
+    oss << sp;
+    CHECK(oss.str().find("rank") != std::string::npos);
+}
+
+TEST_CASE("operator<< for rank-0 current_dims_t prints n/a") {
+    h5::current_dims_t dims;
+    std::ostringstream oss;
+    oss << dims;
+    CHECK(oss.str().find("n/a") != std::string::npos);
+}
