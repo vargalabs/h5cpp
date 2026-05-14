@@ -4,7 +4,9 @@
  */
 #pragma once
 #include <hdf5.h>
+#include "H5meta.hpp"
 #include "H5Iall.hpp"
+#include "H5Tmeta.hpp"
 #include <type_traits>
 #include <ostream>
 #include <optional>

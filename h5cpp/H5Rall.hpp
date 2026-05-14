@@ -4,6 +4,7 @@
  */
 #pragma once
 #include "H5capi.hpp"
+#include "H5Dopen.hpp"
 #include <initializer_list>
 #include <string>
 #include <tuple>

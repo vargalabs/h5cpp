@@ -5,6 +5,7 @@
 #pragma once
 #include "H5capi.hpp"
 #include "H5Tmeta.hpp"
+#include "H5Fopen.hpp"
 #include <string>
 #include <stdexcept>
 #include <tuple>
