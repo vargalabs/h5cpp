@@ -129,8 +129,7 @@ namespace h5::exp {
 	inline h5::ds_t write( const h5::fd_t& fd, const std::string& dataset_path,  h5::reference_t& reference, 
                 const T* ptr,  args_t&&... args  ) try {
         
-        using tcount  = typename arg::tpos<const h5::count_t&, const args_t&...>;
-		//static_assert( tcount::present, "h5::count_t{ ... } must be provided to describe T* memory region" );
+			//static_assert( tcount::present, "h5::count_t{ ... } must be provided to describe T* memory region" );
 		h5::ds_t ds; // initialized to H5I_UNINIT
 		
 		h5::mute(); // find out if we have to create the dataset 

@@ -423,12 +423,12 @@ namespace h5::meta {
         std::enable_if_t<meta::has_size<T>::value, std::array<size_t,1>
         > size(const T& ref){
         return {ref.size()};
-    };
-    template <class T, size_t N>
-        std::array<size_t,1> size(const T(&ref)[N]){ return {N};};
-    template <class T, class... Ts> struct get {
-        static inline T ctor( std::array<size_t,0> dims ){
-            return T(); }};
+	    };
+	    template <class T, size_t N>
+	        std::array<size_t,1> size(const T(&)[N]){ return {N};};
+	    template <class T, class... Ts> struct get {
+	        static inline T ctor( std::array<size_t,0> ){
+	            return T(); }};
     // ARRAYS
 
     //already defined line 58: template <class T, int N> struct rank<T[N]> : public std::rank<T[N]>{};
@@ -450,7 +450,7 @@ namespace h5::meta {
     template <class T,int N6,int N5,int N4,int N3,int N2,int N1,int N0>T* data(T(&ref)[N6][N5][N4][N3][N2][N1][N0]){ return &ref[0][0][0][0][0][0][0];};
 
     template <class T, int N> std::array<size_t, std::rank<T[N]>::value>
-        size(const T* ref ){ return  h5::meta::get_extent<T[N]>(); };
+        size(const T* ){ return  h5::meta::get_extent<T[N]>(); };
    // template <class T, int N> struct get {
    //     static inline T[N] ctor( std::array<size_t,0> dims ){
    //         return T[N](); }};
@@ -470,9 +470,9 @@ namespace h5::meta {
    //     return ref.data();
    // }
     template <class T, class... Ts> std::array<size_t,1> size( const std::basic_string<T, Ts...>& ref ){ return{ref.size()}; }
-    template <class T, class... Ts> struct get<std::basic_string<T,Ts...>> {
-        static inline std::basic_string<T,Ts...> ctor( std::array<size_t,1> dims ){
-            return std::basic_string<T,Ts...>(); }};
+	    template <class T, class... Ts> struct get<std::basic_string<T,Ts...>> {
+	        static inline std::basic_string<T,Ts...> ctor( std::array<size_t,1> ){
+	            return std::basic_string<T,Ts...>(); }};
 
 // STD::INITIALIZER_LIST<T>
     template<int N0> struct rank<std::initializer_list<char[N0]>>: public std::integral_constant<size_t,1>{};
@@ -490,13 +490,13 @@ namespace h5::meta {
     template <class T, size_t N> inline const T* data( const std::array<T,N>& ref ){ return ref.data(); }
     template <class T, size_t N> inline T* data( std::array<T,N>& ref ){ return ref.data(); }
 
-    template <class T, size_t N> inline typename std::array<size_t,1> size( const std::array<T,N>& ref ){ return {N}; }
+	    template <class T, size_t N> inline typename std::array<size_t,1> size( const std::array<T,N>& ){ return {N}; }
     template <class T, size_t N> struct rank<std::array<T,N>> : public std::integral_constant<int,1> {};
 // END STD::ARRAY
 
-    template <class T> void get_fields( T& sp ){}
-    template <class T> void get_field_names( T& sp ){}
-    template <class T> void get_field_attributes( T& sp ){}
+	    template <class T> void get_fields( T& ){}
+	    template <class T> void get_field_names( T& ){}
+	    template <class T> void get_field_attributes( T& ){}
 
 // NON_CONTIGUOUS 
     template <class T> struct member {

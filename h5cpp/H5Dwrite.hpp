@@ -105,7 +105,7 @@ namespace h5 {
 				const h5::offset_t& offset = arg::get( h5::default_offset, args...);
 				const h5::stride_t& stride = arg::get( h5::default_stride, args...);
 				if constexpr( tblock::present ){ // we have to normalise `count` such that `size[i] = count[i] * block[i]` holds
-					for(hsize_t i=0; i < rank; i++) count[i] /= block[i];
+					for(int i=0; i < rank; i++) count[i] /= block[i];
 					err = H5Sselect_hyperslab(file_space, H5S_SELECT_SET, *offset, *stride, *count, *block);
 				} else { // we have to convert h5::count_t{..} to h5::block{..} and initiate a single block transfer
 					h5::block_t block_ = static_cast<h5::block_t>(count);
@@ -337,11 +337,10 @@ namespace h5 {
 	* 	h5::current_dims{vec.length()}, h5::max_dims{H5S_UNLIMITED}, h5::chunk{1024} | h5::gzip{9});
 	* @endcode 
  	*/ 
-	template <class T, class... args_t,
-		class = std::enable_if_t<!std::is_pointer_v<std::decay_t<T>>>>
-	inline h5::ds_t write( const h5::fd_t& fd, const std::string& dataset_path, const T& ref,  args_t&&... args  ){
-		using tcount  = typename arg::tpos<const h5::count_t&, const args_t&...>;
-		h5::ds_t ds; // initialized to H5I_UNINIT
+		template <class T, class... args_t,
+			class = std::enable_if_t<!std::is_pointer_v<std::decay_t<T>>>>
+		inline h5::ds_t write( const h5::fd_t& fd, const std::string& dataset_path, const T& ref,  args_t&&... args  ){
+			h5::ds_t ds; // initialized to H5I_UNINIT
 		// find out if we have to create the dataset
 		h5::mute();
 			// Returns a negative value when the function fails and may return a negative value if the link does not exist.

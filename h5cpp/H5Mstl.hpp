@@ -66,17 +66,17 @@ namespace h5::impl {
 	T*> data( T& ref ){ return &ref; }
 	//template <class T> inline std::enable_if_t<std::is_integral_v<T>,
 	//	const T*> data( const T& ref ){ return &ref; }
-	// 5.) obtain dimensions of extents
-	template <class T> inline constexpr std::enable_if_t< impl::is_scalar<T>::value,
-		std::array<size_t,0>> size( T value ){ return{}; }
+		// 5.) obtain dimensions of extents
+		template <class T> inline constexpr std::enable_if_t< impl::is_scalar<T>::value,
+			std::array<size_t,0>> size( T ){ return{}; }
 	template <class T, class A> inline std::array<size_t,1> size( const std::vector<T, A>& ref ){ return {ref.size()}; }
 	template <class T> inline std::array<size_t,1> size( const std::initializer_list<T>& ref ){ return {ref.size()}; }
 	template <class T> inline constexpr std::enable_if_t<!impl::is_scalar<T>::value,
 		std::array<size_t,0>> size( const T& ){ return{}; }
-	// 6.) ctor with right dimensions
-	template <class T> struct get {
-	   	static inline T ctor( std::array<size_t,impl::rank<T>::value> dims ){
-			return T(); }};
+		// 6.) ctor with right dimensions
+		template <class T> struct get {
+		static inline T ctor( std::array<size_t,impl::rank<T>::value> ){
+				return T(); }};
 	template<class T>
 	struct get<std::vector<T>> {
 		static inline std::vector<T> ctor( std::array<size_t,1> dims ){

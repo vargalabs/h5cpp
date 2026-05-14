@@ -21,7 +21,7 @@ TEST_CASE("szip: library availability check") {
     CHECK(true);
     MESSAGE("SZIP is active (vendored v2.2.0)");
 #else
-    WARN("SZIP not configured; filter falls back to passthrough");
+    WARN_MESSAGE(false, "SZIP not configured; filter falls back to passthrough");
 #endif
 }
 

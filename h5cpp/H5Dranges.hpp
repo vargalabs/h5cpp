@@ -20,7 +20,7 @@
 
 #pragma once
 
-#if __cplusplus >= 202002L
+#if __cplusplus >= 202002L || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L)
 
 #include <hdf5.h>
 #include "H5config.hpp"

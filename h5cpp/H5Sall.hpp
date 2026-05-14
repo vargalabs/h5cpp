@@ -21,16 +21,16 @@ namespace h5{ namespace impl {
 			for(int i=0; i<rank; i++) data[i] = *(list.begin() + i);
 		}
 		// support linalg objects upto 3 dimensions or cubes
-		template<class A> array( const std::array<A,0> l ) : rank(0), data{} {}
+		template<class A> array( const std::array<A,0> ) : rank(0), data{} {}
 		template<class A> array( const std::array<A,1> l ) : rank(1), data{l[0]} {}
 		template<class A> array( const std::array<A,2> l ) : rank(2), data{l[0],l[1]} {}
 		template<class A> array( const std::array<A,3> l ) : rank(3), data{l[0],l[1],l[2]} {}
 
 		/** @brief computes the total space 
 		 */	
-		explicit operator const hsize_t () const {
+		explicit operator hsize_t () const {
 			hsize_t size = 1; 
-			for(hsize_t i=0; i<rank; i++) size *= data[i];
+			for(int i=0; i<rank; i++) size *= data[i];
 			return size;
 		}
 		// automatic conversion to std::array means to collapse tail dimensions
@@ -66,7 +66,7 @@ namespace h5{ namespace impl {
 		explicit operator array<C>(){
 			array<C> arr;
 			arr.rank = rank;
-			hsize_t i=0;
+			int i=0;
 			for(; i<rank; i++) arr[i] = data[i];
 			// the shape/dimension may be different, be certain the 
 			// remaining is initilized to ones
@@ -174,4 +174,3 @@ namespace h5::impl {
 		return current_dims;
 	}
 }
-

@@ -59,12 +59,6 @@ namespace xt
         static constexpr layout_type layout = L;
     };
 
-    template <class EC, layout_type L, class SC, class Tag>
-    struct xiterable_inner_types<xarray_container<EC, L, SC, Tag>>
-        : xcontainer_iterable_types<xarray_container<EC, L, SC, Tag>>
-    {
-    };
-
     /**
      * @class xarray_container
      * @brief Dense multidimensional container with tensor semantic.

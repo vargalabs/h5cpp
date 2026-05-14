@@ -872,7 +872,15 @@ namespace xt
         using type = C<X, allocator>;
     };
 
-#if defined(__GNUC__) && __GNUC__ > 6 && !defined(__clang__) && __cplusplus >= 201703L
+// In C++17 and later, P0522 allows template-template parameters with fewer
+// explicit parameters to match templates that have additional defaulted
+// parameters.  This creates an ambiguity between the generic C<T,N>
+// specialisation below and the explicit svector<T,N,A,B> specialisation in
+// xstorage.hpp on compilers with strict P0522 ordering (Clang-19 family,
+// including Apple Clang 17).  Use only the explicit std::array specialisation
+// in C++17 mode; all other shape containers (svector, etc.) have their own
+// rebind_container specialisations and do not need the generic C<T,N> fallback.
+#if __cplusplus >= 201703L
     template <class X, class T, std::size_t N>
     struct rebind_container<X, std::array<T, N>>
     {

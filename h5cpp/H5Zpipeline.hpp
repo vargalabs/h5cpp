@@ -131,46 +131,54 @@ namespace h5{ namespace impl {
 		void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr );
 		void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr );
 	};
-	struct threaded_pipeline_t : public pipeline_t<threaded_pipeline_t>{
-		void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
-		}
-		void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr ){
-		}
-	};
-	struct romio_pipeline_t : public pipeline_t<romio_pipeline_t>{
-		void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
-		}
-		void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr ){
-		}
-	};
-	struct hadoop_pipeline_t : public pipeline_t<hadoop_pipeline_t>{
-		void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
-		}
-		void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr ){
-		}
-	};
+		struct threaded_pipeline_t : public pipeline_t<threaded_pipeline_t>{
+			void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
+				(void)offset; (void)nbytes; (void)ptr;
+			}
+			void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr ){
+				(void)offset; (void)nbytes; (void)ptr;
+			}
+		};
+		struct romio_pipeline_t : public pipeline_t<romio_pipeline_t>{
+			void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
+				(void)offset; (void)nbytes; (void)ptr;
+			}
+			void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr ){
+				(void)offset; (void)nbytes; (void)ptr;
+			}
+		};
+		struct hadoop_pipeline_t : public pipeline_t<hadoop_pipeline_t>{
+			void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
+				(void)offset; (void)nbytes; (void)ptr;
+			}
+			void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr ){
+				(void)offset; (void)nbytes; (void)ptr;
+			}
+		};
 }}
 
 template< class Derived>
-inline void h5::impl::pipeline_t<Derived>::write(
-		const h5::ds_t& ds, const h5::offset_t& offset, const h5::stride_t& stride, const h5::block_t& block, const h5::count_t& count,
-				const h5::dxpl_t& dxpl, const void* ptr){
+	inline void h5::impl::pipeline_t<Derived>::write(
+			const h5::ds_t& ds, const h5::offset_t& offset, const h5::stride_t& stride, const h5::block_t& block, const h5::count_t& count,
+					const h5::dxpl_t& dxpl, const void* ptr){
 
-	h5::offset_t offset_; h5::count_t count_;
-	for(int i=0; i<rank; i++)
-		offset_[i] = offset[i], count_[i] = count[i] * block[i];
+		(void)stride;
+		h5::offset_t offset_; h5::count_t count_;
+		for(hsize_t i=0; i<rank; i++)
+			offset_[i] = offset[i], count_[i] = count[i] * block[i];
 	this->dxpl = dxpl; this->ds = ds;
 	split_to_chunk_write(filter_direction_t::forward, offset_.begin(), count_.begin(), ptr );
 }
 
 template< class Derived>
-inline void h5::impl::pipeline_t<Derived>::read(
-		const h5::ds_t& ds, const h5::offset_t& offset, const h5::stride_t& stride, const h5::block_t& block, const h5::count_t& count,
-				const h5::dxpl_t& dxpl, void* ptr){
+	inline void h5::impl::pipeline_t<Derived>::read(
+			const h5::ds_t& ds, const h5::offset_t& offset, const h5::stride_t& stride, const h5::block_t& block, const h5::count_t& count,
+					const h5::dxpl_t& dxpl, void* ptr){
 
-	h5::offset_t offset_; h5::count_t count_;
-	for(int i=0; i<rank; i++)
-		offset_[i] = offset[i], count_[i] = count[i] * block[i];
+		(void)stride;
+		h5::offset_t offset_; h5::count_t count_;
+		for(hsize_t i=0; i<rank; i++)
+			offset_[i] = offset[i], count_[i] = count[i] * block[i];
 	this->dxpl = dxpl; this->ds = ds;
 	split_to_chunk_read(filter_direction_t::reverse, offset_.begin(), count_.begin(), ptr );
 }
@@ -215,12 +223,13 @@ inline void h5::impl::pipeline_t<Derived>::set_cache( const h5::dcpl_t& dcpl, si
 
 #define h5cpp_outer( idx ) for( j##idx =0; j##idx < n##idx; j##idx += b##idx)
 #define h5cpp_inner( idx ) for( i##idx = j##idx; i##idx < std::min(j##idx+b##idx,n##idx); i##idx++)
-#define h5cpp_def( idx ) hsize_t i##idx=0, j##idx = 0, s##idx=0, n##idx=N[idx], b##idx=B[idx], rx##idx=Rx[idx],  ry##idx=Ry[idx];
+	#define h5cpp_def( idx ) [[maybe_unused]] hsize_t i##idx=0, j##idx = 0, s##idx=0, n##idx=N[idx], b##idx=B[idx], rx##idx=Rx[idx],  ry##idx=Ry[idx];
 
 template< class Derived>
-inline void h5::impl::pipeline_t<Derived>::split_to_chunk_read(
-	filter_direction_t direction, const hsize_t* chunk_offset, const hsize_t* dims, void* ptr_ ){
-	char* ptr = static_cast<char*>( ptr_ );
+	inline void h5::impl::pipeline_t<Derived>::split_to_chunk_read(
+		filter_direction_t direction, const hsize_t* chunk_offset, const hsize_t* dims, void* ptr_ ){
+		(void)direction;
+		char* ptr = static_cast<char*>( ptr_ );
 	// compute edges if any - for the data size
 	// computes R residuals, and sets N dimension in reverse order
 	// when actual data dimensions - current_dims are greater then a chunk, it must be broken into chunk size
@@ -242,7 +251,7 @@ inline void h5::impl::pipeline_t<Derived>::split_to_chunk_read(
 		// the coordinates are in j indices
 		D[0] = j0, D[1]=j1, D[2]=j2, D[3]=j3, D[4]=j4, D[5]=j5, D[6]=j6;
 		//coordinates are reversed in D, invert them:
-		for(int k=0;k<rank; k++ ) C[k] = D[rank-k-1] + chunk_offset[k];
+			for(hsize_t k=0;k<rank; k++ ) C[k] = D[rank-k-1] + chunk_offset[k];
 		// execute filters in reverse direction
 		read_chunk( this->C, this->block_size, this->chunk0 );
 
@@ -260,9 +269,10 @@ inline void h5::impl::pipeline_t<Derived>::split_to_chunk_read(
 }
 
 template< class Derived>
-inline void h5::impl::pipeline_t<Derived>::split_to_chunk_write(
-	filter_direction_t direction, const hsize_t* chunk_offset, const hsize_t* dims, const void* ptr_ ){
-	const char* ptr = static_cast<const char*>( ptr_ ); const hsize_t* O = chunk_offset;
+	inline void h5::impl::pipeline_t<Derived>::split_to_chunk_write(
+		filter_direction_t direction, const hsize_t* chunk_offset, const hsize_t* dims, const void* ptr_ ){
+		(void)direction;
+		const char* ptr = static_cast<const char*>( ptr_ ); const hsize_t* O = chunk_offset;
 	// compute edges if any - for the data size
 	// computes R residuals, and sets N dimension in reverse order
 	// when actual data dimensions - current_dims are greater then a chunk, it must be broken into chunk size
@@ -297,7 +307,7 @@ inline void h5::impl::pipeline_t<Derived>::split_to_chunk_write(
 		// the coordinates are in j indices
 		D[0] = j0, D[1]=j1, D[2]=j2, D[3]=j3, D[4]=j4, D[5]=j5, D[6]=j6;
 		//coordinates are reversed in D, invert them:
-		for(int k=0;k<rank; k++ ) C[k] = D[rank-k-1] + chunk_offset[k];
+			for(hsize_t k=0;k<rank; k++ ) C[k] = D[rank-k-1] + chunk_offset[k];
 
 		// execute filters in direction
 		write_chunk( this->C, this->block_size, this->chunk0 );

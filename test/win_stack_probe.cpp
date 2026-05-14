@@ -17,13 +17,13 @@
 #include <h5cpp/io>
 
 namespace {
-    char* g_sp_top = nullptr;
+    std::uintptr_t g_sp_top = 0;
 
     inline std::ptrdiff_t stack_used() {
         volatile char marker;
-        char* sp = const_cast<char*>(&marker);
-        if (g_sp_top == nullptr || sp > g_sp_top) g_sp_top = sp;
-        return g_sp_top - sp;
+        std::uintptr_t sp = reinterpret_cast<std::uintptr_t>(const_cast<char*>(&marker));
+        if (g_sp_top == 0 || sp > g_sp_top) g_sp_top = sp;
+        return static_cast<std::ptrdiff_t>(g_sp_top - sp);
     }
 
     void probe(const char* label) {
