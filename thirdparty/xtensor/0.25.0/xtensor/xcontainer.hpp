@@ -69,7 +69,7 @@ namespace xt
      */
     template <class D>
     class xcontainer : public xcontiguous_iterable<D>,
-                       private xaccessible<D>
+                       public xaccessible<D>
     {
     public:
 
@@ -137,13 +137,7 @@ namespace xt
         template <class... Args>
         const_reference unchecked(Args... args) const;
 
-        using xaccessible<D>::at;
-        using xaccessible<D>::shape;
-        using xaccessible<D>::operator[];
-        using xaccessible<D>::back;
-        using xaccessible<D>::front;
-        using xaccessible<D>::in_bounds;
-        using xaccessible<D>::periodic;
+
 
         template <class It>
         reference element(It first, It last);
