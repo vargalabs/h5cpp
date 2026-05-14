@@ -76,6 +76,22 @@ add_test_case(H5Zzstd)
 add_test_case(H5Zszip)
 # add_test_case(H5Iall)
 
+# ---------------------------------------------------------------------------
+# C++20 streaming ranges view — issue [#181].
+# Requires compiler support for std::ranges; guarded by __cplusplus check
+# inside the header itself, but we build the test with CXX_STANDARD 20 so
+# the full path is exercised.
+# ---------------------------------------------------------------------------
+if(NOT MSVC OR MSVC_VERSION GREATER_EQUAL 1930)
+    add_executable(test-h5dranges H5Dranges.cpp)
+    set_target_properties(test-h5dranges PROPERTIES
+        CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    target_include_directories(test-h5dranges PRIVATE ${INCLUDE_DIRS})
+    target_link_libraries(test-h5dranges PRIVATE ${LIBS})
+    add_test(NAME test-h5dranges COMMAND test-h5dranges)
+endif()
+
 # Example-derived I/O round-trip tests (issue/145)
 add_subdirectory(examples)
 
