@@ -1,0 +1,133 @@
+# Doxyfile 1.9.x — H5CPP API reference
+# Run from the doxy/ directory: doxygen Doxyfile
+# Output lands in ../docs/doxygen/html/ (separate from MkDocs site/)
+
+DOXYFILE_ENCODING      = UTF-8
+PROJECT_NAME           = H5CPP
+PROJECT_NUMBER         = 1.10.4.6
+PROJECT_BRIEF          = "Modern C++ templates for HDF5 serial and parallel I/O"
+PROJECT_LOGO           =
+OUTPUT_DIRECTORY       = ../docs/doxygen
+CREATE_SUBDIRS         = NO
+ALLOW_UNICODE_NAMES    = NO
+OUTPUT_LANGUAGE        = English
+
+BRIEF_MEMBER_DESC      = YES
+REPEAT_BRIEF           = YES
+ALWAYS_DETAILED_SEC    = NO
+INLINE_INHERITED_MEMB  = NO
+FULL_PATH_NAMES        = NO
+
+TAB_SIZE               = 4
+MARKDOWN_SUPPORT       = YES
+TOC_INCLUDE_HEADINGS   = 0
+AUTOLINK_SUPPORT       = YES
+BUILTIN_STL_SUPPORT    = NO
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+HIDE_FRIEND_COMPOUNDS  = YES
+HIDE_IN_BODY_DOCS      = YES
+INTERNAL_DOCS          = NO
+SHOW_INCLUDE_FILES     = NO
+SORT_MEMBER_DOCS       = NO
+GENERATE_TESTLIST      = NO
+GENERATE_BUGLIST       = NO
+GENERATE_DEPRECATEDLIST= NO
+SHOW_FILES             = NO
+SHOW_NAMESPACES        = NO
+
+WARN_FORMAT            = "$file:$line: $text"
+WARN_AS_ERROR          = NO
+WARN_NO_PARAMDOC       = NO
+
+# Input: headers (API) + README as main page + docs Markdown pages
+INPUT                  = ../h5cpp \
+                         ../README.md \
+                         ../docs/index.md \
+                         ../docs/design.md \
+                         ../docs/architecture-core.md \
+                         ../docs/architecture-io.md \
+                         ../docs/architecture-types.md \
+                         ../docs/architecture-integration.md \
+                         ../docs/architecture-parallelism.md \
+                         ../docs/compiler.md \
+                         ../docs/stl.md \
+                         ../docs/examples.md \
+                         ../docs/workflow.md \
+                         ../docs/thirdparty.md \
+                         .
+
+FILE_PATTERNS          = *.cpp *.hpp *.h *.md
+RECURSIVE              = YES
+
+EXCLUDE                = ../docs/doxygen \
+                         ../docs/overrides \
+                         ../docs/assets \
+                         ../docs/styles \
+                         ../docs/javascripts \
+                         ../docs/dot \
+                         ../docs/icons \
+                         ../docs/pix \
+                         ../docs/examples
+EXCLUDE_PATTERNS       = */thirdparty/*
+
+EXAMPLE_PATH           = ../examples/attributes \
+                         ../examples/basics \
+                         ../examples/before-after \
+                         ../examples/compound \
+                         ../examples/container \
+                         ../examples/datasets \
+                         ../examples/groups \
+                         ../examples/linalg \
+                         ../examples/mpi \
+                         ../examples/multi-tu \
+                         ../examples/optimized \
+                         ../examples/packet-table \
+                         ../examples/raw_memory \
+                         ../examples/stl \
+                         ../examples/string \
+                         ../examples/transform \
+                         ../examples/utf
+EXAMPLE_PATTERNS       = *.cpp *.hpp *.h
+EXAMPLE_RECURSIVE      = YES
+
+IMAGE_PATH             = ../docs/pix
+
+USE_MDFILE_AS_MAINPAGE = ../README.md
+
+# Index and layout
+ALPHABETICAL_INDEX     = NO
+LAYOUT_FILE            = DoxygenLayout.xml
+
+# HTML output
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+HTML_HEADER            = header.html
+HTML_FOOTER            = footer.html
+HTML_EXTRA_STYLESHEET  = doxygen-awesome.css customdoxygen.css
+HTML_EXTRA_FILES       = doxygen-awesome-darkmode-toggle.js
+HTML_COLORSTYLE        = LIGHT
+HTML_COLORSTYLE_HUE    = 28
+HTML_COLORSTYLE_SAT    = 150
+HTML_COLORSTYLE_GAMMA  = 80
+HTML_TIMESTAMP         = NO
+HTML_DYNAMIC_SECTIONS  = NO
+HTML_INDEX_NUM_ENTRIES = 100
+
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+ENUM_VALUES_PER_LINE   = 4
+
+# No LaTeX
+GENERATE_LATEX         = NO
+
+# Tag files for cross-links
+TAGFILES              += "../docs/tags/cppreference-doxygen-web.tag.xml=http://en.cppreference.com/w/"
+
+# Alias includes — each file adds ALIASES lines
+@INCLUDE_PATH          = ../docs/links
+@INCLUDE               = h5cpp.txt
+@INCLUDE               = hdf5.txt
+@INCLUDE               = linalg.txt
+@INCLUDE               = stl.txt
