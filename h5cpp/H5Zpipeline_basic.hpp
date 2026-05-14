@@ -38,7 +38,8 @@ inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, 
 	if (tail == 0) {
 		// No filters: read decompressed chunk directly into chunk0
 #if H5_VERSION_GE(2,0,0)
-		H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk0, H5ES_NONE);
+		hsize_t buf_size = nbytes;
+		H5Dread_chunk2(ds, dxpl, offset, &filter_mask, chunk0, &buf_size);
 #else
 		H5Dread_chunk(ds, dxpl, offset, &filter_mask, chunk0);
 #endif
@@ -50,7 +51,8 @@ inline void h5::impl::basic_pipeline_t::read_chunk_impl( const hsize_t* offset, 
 	// After the loop 'src' always points to chunk0 (the decompressed result).
 	void* read_target = (tail % 2 == 1) ? chunk1 : chunk0;
 #if H5_VERSION_GE(2,0,0)
-	H5Dread_chunk(ds, dxpl, offset, &filter_mask, read_target, H5ES_NONE);
+	hsize_t buf_size = nbytes;
+	H5Dread_chunk2(ds, dxpl, offset, &filter_mask, read_target, &buf_size);
 #else
 	H5Dread_chunk(ds, dxpl, offset, &filter_mask, read_target);
 #endif
