@@ -6,7 +6,7 @@
 #include <cstring>
 
 namespace h5::impl::reference {
-    inline herr_t create_region(h5::reference_t& ref, ::hid_t loc, const char* path, ::hid_t space, ::hid_t oapl=H5P_DEFAULT) {
+    inline herr_t create_region(h5::reference_t& ref, ::hid_t loc, const char* path, ::hid_t space, ::hid_t oapl=static_cast<::hid_t>(0)) {
 #if H5_VERSION_GE(1,12,0)
         return H5Rcreate_region(loc, path, space, oapl, &ref.value);
 #else
@@ -15,7 +15,7 @@ namespace h5::impl::reference {
 #endif
     }
 
-    inline h5::ds_t open_object(const h5::ds_t& ds, h5::reference_t& ref, ::hid_t oapl=H5P_DEFAULT) {
+    inline h5::ds_t open_object(const h5::ds_t& ds, h5::reference_t& ref, ::hid_t oapl=static_cast<::hid_t>(0)) {
 #if H5_VERSION_GE(1,12,0)
         (void)ds;
         return h5::ds_t(H5Ropen_object(&ref.value, H5P_DEFAULT, oapl));
@@ -24,7 +24,7 @@ namespace h5::impl::reference {
 #endif
     }
 
-    inline h5::sp_t open_region(const h5::ds_t& ds, h5::reference_t& ref, ::hid_t oapl=H5P_DEFAULT) {
+    inline h5::sp_t open_region(const h5::ds_t& ds, h5::reference_t& ref, ::hid_t oapl=static_cast<::hid_t>(0)) {
 #if H5_VERSION_GE(1,12,0)
         (void)ds;
         return h5::sp_t(H5Ropen_region(&ref.value, H5P_DEFAULT, oapl));
