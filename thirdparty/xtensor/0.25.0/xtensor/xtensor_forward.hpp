@@ -204,6 +204,29 @@ namespace xt
 
     template <class F, class... CT>
     class xfunction;
+
+    // Forward-declare xstepper so the xiterable_inner_types specialisation below
+    // can reference it without requiring xiterator.hpp to be included here.
+    template <class C>
+    class xstepper;
+
+    // xiterable_inner_types primary template (mirrors xiterable.hpp line 23).
+    // Declaring it here allows the specialisation below to be visible as soon as
+    // xtensor_forward.hpp is processed — before xarray.hpp's own specialisation
+    // at line 62 is reached.  Clang-19 performs eager instantiation of public
+    // base-class templates when building the xcontainer<D> hierarchy, causing a
+    // "no type named 'stepper'" diagnostic because the xarray.hpp specialisation
+    // has not been defined yet.  Providing it here eliminates that race.
+    template <class D>
+    struct xiterable_inner_types;
+
+    template <class EC, layout_type L, class SC, class Tag>
+    struct xiterable_inner_types<xarray_container<EC, L, SC, Tag>>
+    {
+        using inner_shape_type = SC;
+        using stepper = xstepper<xarray_container<EC, L, SC, Tag>>;
+        using const_stepper = xstepper<const xarray_container<EC, L, SC, Tag>>;
+    };
 }
 
 #endif
