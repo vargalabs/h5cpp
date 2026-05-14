@@ -42,6 +42,10 @@ namespace h5::meta {
         using type = typename meta::value<T>::type; };
     template <class T, size_t N> struct decay<T[N]>{ // support for array types
         using type = typename std::remove_all_extents<T>::type; };
+    template <size_t N> struct decay<char[N]>{ using type = char*; };
+    template <size_t N> struct decay<const char[N]>{ using type = char*; };
+    template <class T, class... Ts> struct decay<std::basic_string<T, Ts...>>{ using type = const T*; };
+    template <class T, class... Ts> struct decay<std::basic_string_view<T, Ts...>>{ using type = const T*; };
 
     /* std::array<...,R> size<T>(){} template has to compute rank R at compile 
      * time, these templates, and their respective specializations aid to accomplish that*/
@@ -453,14 +457,28 @@ namespace h5::meta {
     // DEFAULT CASE
     template <class T> struct rank<T*>: public std::integral_constant<size_t,1>{};
     template <class T, class... Ts>
-        std::enable_if_t<!std::is_array_v<T>, const T*> data(const T& ref ){ return &ref; };
-    template <class T, class... Ts> 
+        std::enable_if_t<std::is_integral<T>::value || (std::is_standard_layout_v<T> && std::is_trivial_v<T>), const T*> data(const T& ref ){ return &ref; };
+    template <class T>
+        std::enable_if_t<std::is_integral_v<T> || (std::is_standard_layout_v<T> && std::is_trivial_v<T>), T*> data(T& ref ){ return &ref; };
+    // STL / string / scalar specializations
+    template <class T, class... Ts> inline const T* data( const std::vector<T, Ts...>& ref ){ return ref.data(); }
+    template <class T, class... Ts> inline       T* data(       std::vector<T, Ts...>& ref ){ return ref.data(); }
+    template <class T, class... Ts> inline const T* data( const std::basic_string<T, Ts...>& ref ){ return ref.data(); }
+    template <class T>                inline const T* data( const std::initializer_list<T>& ref ){ return ref.begin(); }
+    inline const char* data( const char* ref ){ return ref; }
+    template <class T, class... Ts>
         std::enable_if_t<meta::has_size<T>::value, std::array<size_t,1>
         > size(const T& ref){
         return {ref.size()};
     };
     template <class T, size_t N>
         std::array<size_t,1> size(const T(&ref)[N]){ return {N};};
+    // scalars
+    template <class T>
+        std::enable_if_t<meta::is_scalar<T>::value, std::array<size_t,0>> size( const T& ){ return {}; }
+    // non-scalar types without .size()
+    template <class T>
+        std::enable_if_t<!meta::is_scalar<T>::value && !meta::has_size<T>::value, std::array<size_t,0>> size( const T& ){ return {}; }
     template <class T, class... Ts> struct get {
         static inline T ctor( std::array<size_t,0> dims ){
             return T(); }};
@@ -495,6 +513,7 @@ namespace h5::meta {
     template<> struct rank<std::basic_string_view<char32_t>>: public std::integral_constant<size_t,0>{};
   
     template <class T, class... Ts> std::array<size_t,1> size( const std::basic_string<T, Ts...>& ref ){ return{ref.size()}; }
+    inline std::array<size_t,1> size( const char* ref ){ return {std::char_traits<char>::length(ref)}; }
     template <class T, class... Ts> struct get<std::basic_string<T,Ts...>> {
         static inline std::basic_string<T,Ts...> ctor( std::array<size_t,1> dims ){
             return std::basic_string<T,Ts...>(); }};
@@ -503,10 +522,15 @@ namespace h5::meta {
     template<int N0> struct rank<std::initializer_list<char[N0]>>: public std::integral_constant<size_t,1>{};
     template<int N0, int N1> struct rank<std::initializer_list<char[N0][N1]>>: public std::integral_constant<size_t,2>{};
     template<class T> struct rank<std::initializer_list<T>>: public std::integral_constant<size_t,1>{};
+    template <class T> inline std::array<size_t,1> size( const std::initializer_list<T>& ref ){ return {ref.size()}; }
 
 // STD::VECTOR<T>
     template<class T> struct rank<std::vector<T>>: public std::integral_constant<size_t,1>{};
     template <class T, class... Ts> std::array<size_t,1> size( const std::vector<T, Ts...>& ref ){ return{ref.size()}; }
+    template<class T> struct get<std::vector<T>> {
+        static inline std::vector<T> ctor( std::array<size_t,1> dims ){
+            return std::vector<T>( dims[0] );
+    }};
 
 // STD::ARRAY<T>
     // 3.) read access

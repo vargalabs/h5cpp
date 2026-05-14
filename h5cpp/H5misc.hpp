@@ -63,8 +63,7 @@ namespace h5::utils {
 		std::vector<std::string> data;
 		data.reserve(n);
 
-		static const char alphabet[] = "abcdefghijklmnopqrstuvwxyz"
-										"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		static const char alphabet[] = "abcdefghijklmnopqrstuvwxyz"	"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		std::random_device rd;
 		std::default_random_engine rng(rd());
 		std::uniform_int_distribution<> dist(0,sizeof(alphabet)/sizeof(*alphabet)-2);

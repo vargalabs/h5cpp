@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -DNDEBUG -shared -Wl,-soname,libblitz.so.0 -o libblitz.so.1.0.2 CMakeFiles/blitz.dir/globals.cpp.o 

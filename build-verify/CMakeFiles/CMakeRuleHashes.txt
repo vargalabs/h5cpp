@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+4ea1b9f7d3a6231d9cfe5da9019277f7 CMakeFiles/h5cpp-amalgamate
+73d7f837693016d2e9666cfb1df778a7 h5cpp.hpp

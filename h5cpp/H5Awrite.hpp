@@ -29,7 +29,11 @@ namespace h5 {
 	template <class T, class P, class... args_t> inline std::enable_if_t<
 		std::is_array_v<T> && h5::impl::is_valid_attr<P>::value,
 	h5::at_t> awrite( const P& parent, const std::string& name, const T& ref, const h5::acpl_t& acpl = h5::default_acpl ){
-		h5::current_dims_t current_dims = meta::size( ref );
+		h5::current_dims_t current_dims;
+		if constexpr (h5::meta::is_text_like<T>::value)
+			current_dims = h5::current_dims_t{}; // scalar
+		else
+			current_dims = meta::size( ref );
 		using element_t = typename meta::decay<T>::type;
 		h5::at_t attr = ( H5Aexists(static_cast<hid_t>(parent), name.c_str() ) > 0 ) ?
 			h5::open(parent, name, h5::default_acpl) : h5::create<element_t>(parent, name, current_dims);
@@ -41,7 +45,11 @@ namespace h5 {
 	template <class T, class P, class... args_t>
 	inline std::enable_if_t<!std::is_array_v<T> && h5::impl::is_valid_attr<P>::value,
 	h5::at_t> awrite( const P& parent, const std::string& name, const T& ref, const h5::acpl_t& acpl = h5::default_acpl ){
-		h5::current_dims_t current_dims = meta::size( ref );
+		h5::current_dims_t current_dims;
+		if constexpr (h5::meta::is_text_like<T>::value)
+			current_dims = h5::current_dims_t{}; // scalar
+		else
+			current_dims = meta::size( ref );
 		using element_t = typename meta::decay<T>::type;
 		h5::at_t attr = ( H5Aexists(static_cast<hid_t>(parent), name.c_str() ) > 0 ) ?
 			h5::open(parent, name, h5::default_acpl) : h5::create<element_t>(parent, name, current_dims);

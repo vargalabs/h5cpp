@@ -1,0 +1,38 @@
+Determining if the function cblas_ddot exists failed with the following output:
+Change Dir: /home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_aa458/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_aa458.dir/build.make CMakeFiles/cmTC_aa458.dir/build
+gmake[1]: Entering directory '/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_aa458.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=cblas_ddot -o CMakeFiles/cmTC_aa458.dir/CheckFunctionExists.c.o -c /usr/share/cmake-3.22/Modules/CheckFunctionExists.c
+Linking C executable cmTC_aa458
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_aa458.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=cblas_ddot -rdynamic CMakeFiles/cmTC_aa458.dir/CheckFunctionExists.c.o -o cmTC_aa458 
+/usr/bin/ld: CMakeFiles/cmTC_aa458.dir/CheckFunctionExists.c.o: in function `main':
+CheckFunctionExists.c:(.text+0x14): undefined reference to `cblas_ddot'
+collect2: error: ld returned 1 exit status
+gmake[1]: *** [CMakeFiles/cmTC_aa458.dir/build.make:99: cmTC_aa458] Error 1
+gmake[1]: Leaving directory '/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:127: cmTC_aa458/fast] Error 2
+
+
+
+Determining if the function sgemm_ exists failed with the following output:
+Change Dir: /home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_1c96a/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_1c96a.dir/build.make CMakeFiles/cmTC_1c96a.dir/build
+gmake[1]: Entering directory '/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_1c96a.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=sgemm_ -o CMakeFiles/cmTC_1c96a.dir/CheckFunctionExists.c.o -c /usr/share/cmake-3.22/Modules/CheckFunctionExists.c
+Linking C executable cmTC_1c96a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1c96a.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=sgemm_ -rdynamic CMakeFiles/cmTC_1c96a.dir/CheckFunctionExists.c.o -o cmTC_1c96a 
+/usr/bin/ld: CMakeFiles/cmTC_1c96a.dir/CheckFunctionExists.c.o: in function `main':
+CheckFunctionExists.c:(.text+0x14): undefined reference to `sgemm_'
+collect2: error: ld returned 1 exit status
+gmake[1]: *** [CMakeFiles/cmTC_1c96a.dir/build.make:99: cmTC_1c96a] Error 1
+gmake[1]: Leaving directory '/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:127: cmTC_1c96a/fast] Error 2
+
+
+

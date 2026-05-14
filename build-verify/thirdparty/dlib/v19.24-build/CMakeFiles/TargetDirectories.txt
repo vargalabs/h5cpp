@@ -1,0 +1,9 @@
+/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/dlib.dir
+/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/package.dir
+/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/package_source.dir
+/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/edit_cache.dir
+/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/rebuild_cache.dir
+/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/list_install_components.dir
+/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/install.dir
+/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/install/local.dir
+/home/steven/projects/vargalabs-workspace/worktrees/h5cpp/170-fix-include-correctness/build-verify/thirdparty/dlib/v19.24-build/CMakeFiles/install/strip.dir
