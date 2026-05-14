@@ -57,7 +57,7 @@ INPUT                  = ../h5cpp \
                          ../docs/thirdparty.md \
                          .
 
-FILE_PATTERNS          = *.cpp *.hpp *.h *.md
+FILE_PATTERNS          = *.cpp *.hpp *.h *.md *.dox
 RECURSIVE              = YES
 
 EXCLUDE                = ../docs/doxygen \
@@ -73,7 +73,6 @@ EXCLUDE_PATTERNS       = */thirdparty/*
 
 EXAMPLE_PATH           = ../examples/attributes \
                          ../examples/basics \
-                         ../examples/before-after \
                          ../examples/compound \
                          ../examples/container \
                          ../examples/datasets \
@@ -106,7 +105,6 @@ HTML_HEADER            = header.html
 HTML_FOOTER            = footer.html
 HTML_EXTRA_STYLESHEET  = doxygen-awesome.css customdoxygen.css
 HTML_EXTRA_FILES       = doxygen-awesome-darkmode-toggle.js
-HTML_COLORSTYLE        = LIGHT
 HTML_COLORSTYLE_HUE    = 28
 HTML_COLORSTYLE_SAT    = 150
 HTML_COLORSTYLE_GAMMA  = 80
@@ -116,7 +114,6 @@ HTML_INDEX_NUM_ENTRIES = 100
 
 GENERATE_TREEVIEW      = YES
 DISABLE_INDEX          = NO
-FULL_SIDEBAR           = NO
 ENUM_VALUES_PER_LINE   = 4
 
 # No LaTeX

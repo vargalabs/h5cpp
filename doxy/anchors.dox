@@ -1,15 +1,14 @@
 /**
  * @file anchors.dox
- * @brief Doxygen anchor definitions for cross-references used in H5CPP headers.
+ * @brief Doxygen page definitions for cross-references used in H5CPP headers.
  *
- * These anchors resolve @ref link_* targets that appear in H5config.hpp,
- * H5Eall.hpp, and H5Fcreate.hpp.  Each anchor is attached to a brief
- * description that links to the corresponding architecture page.
+ * These pages resolve @ref link_* targets that appear in H5config.hpp,
+ * H5Eall.hpp, and H5Fcreate.hpp.  Each @page command also registers the
+ * page name as a Doxygen label usable with @ref.
  */
 
 /**
  * @page link_error_handler Error Handling
- * @anchor link_error_handler
  * H5CPP reports errors by throwing exceptions derived from `h5::error`.
  * Use `h5::mute()` / `h5::unmute()` to suppress or restore the default
  * HDF5 error handler around code that intentionally probes for missing
@@ -20,49 +19,35 @@
 
 /**
  * @page link_conversion_policy Conversion Policy
- * @anchor link_conversion_policy
  * H5CPP managed handle types (`h5::fd_t`, `h5::ds_t`, etc.) implement an
  * implicit conversion to `hid_t` so that they can be passed directly to
  * HDF5 C API calls without casting.  The conversion is governed by the
  * RAII wrapper and closes the underlying resource when the handle goes
  * out of scope.
  *
- * See also: `h5::fd_t`, `h5::ds_t`, link_raii_idiom
+ * See also: `h5::fd_t`, `h5::ds_t`, @ref link_raii_idiom
  */
 
 /**
  * @page link_raii_idiom RAII Handles
- * @anchor link_raii_idiom
  * All H5CPP resource handles follow the RAII idiom: the HDF5 object is
  * opened (or created) on construction and closed automatically on
  * destruction.  Handles are move-only; copying is disabled to prevent
  * double-close bugs.
  *
- * See also: `h5::fd_t`, `h5::ds_t`, `h5::sp_t`, link_conversion_policy
+ * See also: `h5::fd_t`, `h5::ds_t`, `h5::sp_t`, @ref link_conversion_policy
  */
 
 /**
  * @page link_property_lists Property Lists
- * @anchor link_property_lists
  * HDF5 property lists control fine-grained behaviour for file, dataset,
  * link, and data-transfer operations.  H5CPP exposes typed wrappers:
  * `h5::fcpl_t`, `h5::fapl_t`, `h5::dcpl_t`, `h5::dapl_t`, `h5::dxpl_t`,
  * `h5::lcpl_t`.  All are optional; omitting them uses HDF5 defaults.
- *
- * See also: @ref link_fcpl_l, @ref link_fapl_l, @ref link_dapl_l,
- *           @ref link_dcpl_l, @ref link_dxpl_l
  */
-
-/** @anchor link_fcpl_l */
-/** @anchor link_fapl_l */
-/** @anchor link_dapl_l */
-/** @anchor link_dcpl_l */
-/** @anchor link_dxpl_l */
-/** @anchor link_lcpl_l */
 
 /**
  * @page link_linalg_template_types Supported Linear Algebra Types
- * @anchor link_linalg_template_types
  * H5CPP supports Armadillo, Eigen, Blitz++, Blaze, DLIB, IT++, and
  * Boost uBLAS containers as first-class template arguments.  The
  * appropriate `h5cpp/H5M*.hpp` header must be included before use.
@@ -72,7 +57,6 @@
 
 /**
  * @page link_stl_template_types Supported STL Types
- * @anchor link_stl_template_types
  * `std::vector<T>`, `std::array<T,N>`, and fundamental numeric types
  * are supported without any additional include beyond `h5cpp/all`.
  *
@@ -81,14 +65,15 @@
 
 /**
  * @page link_base_template_types Elementary Template Types
- * @anchor link_base_template_types
  * The elementary types supported by H5CPP are: `int8_t`, `int16_t`,
  * `int32_t`, `int64_t` and their unsigned counterparts, `float`, `double`,
  * `long double`, and `std::complex<float|double>`.
  */
 
-/**
- * @anchor link_conversion
- * Implicit conversion between H5CPP handles and `hid_t` is governed
- * by the RAII wrapper.  See @ref link_conversion_policy.
- */
+/** @anchor link_fcpl_l */
+/** @anchor link_fapl_l */
+/** @anchor link_dapl_l */
+/** @anchor link_dcpl_l */
+/** @anchor link_dxpl_l */
+/** @anchor link_lcpl_l */
+/** @anchor link_conversion */
