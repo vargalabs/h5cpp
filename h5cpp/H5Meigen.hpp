@@ -31,15 +31,25 @@ namespace h5::impl {
 	template<class T,int R,int C, int O> struct decay<::Eigen::Array<T,R,C,O>>{ using type = T; };
 	    
 
-	// TODO: remove const_cast
 	// get read access to datastaore
 	template<class T,int R,int C,int O, int MR=R,int MC=C>
-	T* data(const ::Eigen::Matrix<T,R,C,O,MR,MC>& ref ){
-			return const_cast<T*>( ref.data() );
+	const T* data(const ::Eigen::Matrix<T,R,C,O,MR,MC>& ref ){
+			return ref.data();
 	}
+	// read write access
 	template<class T,int R,int C,int O, int MR=R,int MC=C>
-	T* data(const ::Eigen::Array<T,R,C,O,MR,MC>& ref ){
-			return const_cast<T*>( ref.data() );
+	T* data(::Eigen::Matrix<T,R,C,O,MR,MC>& ref ){
+			return ref.data();
+	}
+	// get read access to datastaore
+	template<class T,int R,int C,int O, int MR=R,int MC=C>
+	const T* data(const ::Eigen::Array<T,R,C,O,MR,MC>& ref ){
+			return ref.data();
+	}
+	// read write access
+	template<class T,int R,int C,int O, int MR=R,int MC=C>
+	T* data(::Eigen::Array<T,R,C,O,MR,MC>& ref ){
+			return ref.data();
 	}
 	// determine rank and dimensions
 	// MATRICES
