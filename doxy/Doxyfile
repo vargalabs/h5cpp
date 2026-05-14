@@ -40,21 +40,11 @@ WARN_FORMAT            = "$file:$line: $text"
 WARN_AS_ERROR          = NO
 WARN_NO_PARAMDOC       = NO
 
-# Input: headers (API) + README as main page + docs Markdown pages
+# Input: API headers + README as main page + local Doxygen pages only.
+# Conceptual guides with Material icons/images live in MkDocs; Doxygen
+# complements them with API reference, not duplicates them.
 INPUT                  = ../h5cpp \
                          ../README.md \
-                         ../docs/index.md \
-                         ../docs/design.md \
-                         ../docs/architecture-core.md \
-                         ../docs/architecture-io.md \
-                         ../docs/architecture-types.md \
-                         ../docs/architecture-integration.md \
-                         ../docs/architecture-parallelism.md \
-                         ../docs/compiler.md \
-                         ../docs/stl.md \
-                         ../docs/examples.md \
-                         ../docs/workflow.md \
-                         ../docs/thirdparty.md \
                          .
 
 FILE_PATTERNS          = *.cpp *.hpp *.h *.md *.dox
