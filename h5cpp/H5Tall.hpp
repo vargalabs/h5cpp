@@ -14,8 +14,17 @@
 namespace h5 {
     template<class T> hid_t register_struct(){ return H5I_UNINIT; }
 	struct reference_t {
+#if H5_VERSION_GE(1,12,0)
+        H5R_ref_t value; //< HDF5 1.12 generic reference storage
+#else
         hdset_reg_ref_t value; //< region or object ref storage
+#endif
     };
+#if H5_VERSION_GE(1,12,0)
+    static_assert(sizeof(reference_t) == sizeof(H5R_ref_t), "reference_t must match HDF5 reference storage");
+#else
+    static_assert(sizeof(reference_t) == sizeof(hdset_reg_ref_t), "reference_t must match HDF5 dataset-region reference storage");
+#endif
 }
 
 /* template specialization from hid_t< .. > type which provides syntactic sugar in the form
@@ -39,10 +48,14 @@ namespace h5::impl::detail {
 		using dt_p<h5::reference_t>::hid_t;
 		using hidtype = h5::reference_t;
 
+#if H5_VERSION_GE(1,12,0)
+		hid_t() : parent( H5Tcopy(H5T_STD_REF) ) {
+#else
 		hid_t() : parent( H5Tcopy(H5T_STD_REF_DSETREG) ) {
-		}
-	};
-}
+#endif
+			}
+		};
+	}
 
 /* template specialization is for the preceding class, and should be used only for HDF5 ELEMENT types
  * which are in C/C++ the integral types of: char,short,int,long, ... and C POD types. 
@@ -229,4 +242,3 @@ public:
     resolved_type_t& operator=(const resolved_type_t&) = delete;
 };
 } // namespace h5::meta
-
