@@ -50,6 +50,9 @@ endfunction()
 # smoke test — validates harness builds and runs
 add_test_case(example)
 
+# ROS3 VFD — always compiled; tests self-skip when driver is absent at runtime
+add_test_case(H5FDros3)
+
 # test content lands in issue/94
 add_test_case(H5Adelete)
 add_test_case(H5compat)
