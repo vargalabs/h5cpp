@@ -872,7 +872,16 @@ namespace xt
         using type = C<X, allocator>;
     };
 
-#if defined(__GNUC__) && __GNUC__ > 6 && !defined(__clang__) && __cplusplus >= 201703L
+// Clang-19 (upstream) and Apple Clang 17 (LLVM-19 based) have a P0522 partial
+// specialisation ordering regression: the generic template-template parameter
+// `C<T,N>` is considered ambiguous against the explicit `svector<T,N,A,B>`
+// specialisation in xstorage.hpp.  Use the same explicit std::array path as
+// GCC > 6 for these compilers to avoid the ambiguity; svector and other
+// containers with >2 template parameters have their own specialisations.
+#if (defined(__GNUC__) && __GNUC__ > 6 && !defined(__clang__) && __cplusplus >= 201703L) \
+    || (__cplusplus >= 201703L && defined(__clang__) \
+        && ((!defined(__apple_clang_version__) && __clang_major__ == 19) \
+            || ( defined(__apple_clang_version__) && __clang_major__ == 17)))
     template <class X, class T, std::size_t N>
     struct rebind_container<X, std::array<T, N>>
     {
