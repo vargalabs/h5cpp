@@ -3,6 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5Zpipeline_basic.hpp"
 
 #define H5CPP_DAPL_HIGH_THROUGHPUT "h5cpp_dapl_highthroughput"
 

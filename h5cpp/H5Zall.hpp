@@ -3,7 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
-
+#include <hdf5.h>
 #include <string>
 #include <stdexcept>
 #include <cstring>

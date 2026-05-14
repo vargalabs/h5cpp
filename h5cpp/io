@@ -20,5 +20,6 @@
 	#include "H5Aopen.hpp"
 	#include "H5Awrite.hpp"
 	#include "H5Aread.hpp"
-#endif	
+	#include "H5Adelete.hpp"
+#endif
 

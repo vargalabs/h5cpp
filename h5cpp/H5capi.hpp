@@ -3,6 +3,9 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5Pdapl.hpp"
+#include "H5Mstl.hpp"
+#include "H5meta.hpp"
 #include <type_traits>
 #include <stdexcept>
 #include <string>

@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include "H5capi.hpp"
 #include "H5Dopen.hpp" // be sure this precedes error handling macro-s !!!
 #include <string>
 #include <vector>
@@ -283,7 +284,11 @@ namespace h5 {
 		for(int i=0; i<nelem; i++)
 				if( ptr[i] != nullptr )
 						ref[i] = std::string( ptr[i] );
-		H5Dvlen_reclaim (mem_type, mem_space, H5P_DEFAULT, ptr);
+#if H5_VERSION_GE(1,12,0)
+		H5Treclaim(mem_type, mem_space, H5P_DEFAULT, ptr);
+#else
+		H5Dvlen_reclaim(mem_type, mem_space, H5P_DEFAULT, ptr);
+#endif
 		free(ptr);
 		return ref;
 	}

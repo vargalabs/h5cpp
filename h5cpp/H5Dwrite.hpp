@@ -3,7 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
-
+#include "H5capi.hpp"
 #include "H5Tmeta.hpp"
 #include "H5Dgather.hpp"
 
@@ -207,7 +207,7 @@ namespace h5 {
 			std::vector<element_t> elements;
 			const element_t* ptrs = h5::gather(ref, elements);
 			if constexpr (tcount::present) // explicitly set: mem_space and file_space are given
-				ds = ::h5::write<element_t>(ds, ptrs,  args...);
+				::h5::write<element_t>(ds, ptrs,  args...);
 			else { // we have to find out the size of `ref` and compute h5::count{}	
 				h5::count_t count = impl::size( ref );
 				::h5::write<element_t>(ds, ptrs, count, args...);

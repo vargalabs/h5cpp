@@ -3,6 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5Acreate.hpp"
 #include <string>
 #include <type_traits>
 namespace h5 {

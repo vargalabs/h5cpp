@@ -4,6 +4,7 @@
  */
 
 #pragma once
+#include "H5Pall.hpp"
 #include <string>
 
 /**

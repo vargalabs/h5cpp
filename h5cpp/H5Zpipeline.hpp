@@ -3,6 +3,8 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5Pall.hpp"
+#include "H5Zall.hpp"
 #include <memory>
 #include <stdexcept>
 #include <algorithm>

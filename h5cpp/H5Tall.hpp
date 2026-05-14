@@ -3,6 +3,8 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include <hdf5.h>
+#include "H5Iall.hpp"
 #include <type_traits>
 #include <ostream>
 #include <optional>
