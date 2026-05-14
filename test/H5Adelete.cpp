@@ -35,3 +35,9 @@ TEST_CASE("h5::adelete throws on non-existent attribute") {
     }
     CHECK(threw);
 }
+
+TEST_CASE("h5::open attribute throws on missing attribute") {
+    h5::test::file_fixture_t f("test-attr-missing.h5");
+    h5::ds_t ds = h5::create<int>(f.fd, "dataset", h5::current_dims_t{1});
+    CHECK_THROWS_AS(h5::open(ds, "missing_attr"), h5::error::io::attribute::open);
+}

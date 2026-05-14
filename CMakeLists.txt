@@ -104,6 +104,8 @@ if(MPI_FOUND AND HDF5_IS_PARALLEL)
 endif()
 
 # ─── Include Directories & Libraries ──────────────────────────────────────────────
+find_package(ZLIB REQUIRED)
+
 list(APPEND H5CPP_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${HDF5_INCLUDE_DIRS}
