@@ -131,7 +131,7 @@ jobs:
           set -euxo pipefail
 
           brew update
-          brew install cmake ninja hdf5
+          brew install --quiet cmake ninja hdf5
 
           HDF5_PREFIX="$(brew --prefix hdf5)"
 
