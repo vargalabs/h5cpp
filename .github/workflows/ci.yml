@@ -282,6 +282,7 @@ jobs:
             -DCMAKE_CXX_STANDARD=23
             -DCMAKE_BUILD_TYPE=Release
             -DH5CPP_BUILD_TESTS=ON
+            -DH5CPP_BUILD_EXAMPLES=ON
           )
 
           if [[ -n "${HDF5_ROOT:-}" ]]; then
@@ -488,7 +489,8 @@ jobs:
             -DCMAKE_CXX_COMPILER=g++-14 \
             -DCMAKE_C_FLAGS="--coverage -O0 -g" \
             -DCMAKE_CXX_FLAGS="--coverage -O0 -g" \
-            -DH5CPP_BUILD_TESTS=ON
+            -DH5CPP_BUILD_TESTS=ON \
+            -DH5CPP_BUILD_EXAMPLES=ON
 
       - name: Build
         shell: bash

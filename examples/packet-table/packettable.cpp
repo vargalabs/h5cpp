@@ -7,6 +7,7 @@
 #include <Eigen/Dense> // must include Eigen before <h5cpp/core>
 
 #include <cstdint>
+#include <numeric>
 #include "struct.h"
 #include <h5cpp/core>
 	// generated file must be sandwiched between core and io 
