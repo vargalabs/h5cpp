@@ -1,6 +1,6 @@
 
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5)
 
 message(WARNING "add_global_compiler_switch() is deprecated.  Use target_compile_options() instead")
 
