@@ -4,6 +4,8 @@
  */
 #pragma once
 #include "H5capi.hpp"
+#include "H5Dopen.hpp"
+#include "H5Dcreate.hpp"
 #include <initializer_list>
 #include <string>
 #include <tuple>
@@ -48,30 +50,11 @@ namespace h5 {
         }
     }
 }
-/* TODO: needs be matched with function below
-    template<class T, class... args_t>
-	inline void read(const h5::ds_t& ds, h5::reference_t& reference, T& object,  args_t&&... args){
-        using element_t = typename impl::decay<T>::type;
-        element_t* ptr = impl::data(object);
-        h5::count_t size = impl::size(object);
 
-        h5::ds_t ds_ = H5Rdereference2(ds, H5P_DEFAULT, H5R_DATASET_REGION, &reference);
-        h5::sp_t file_space = H5Rget_region(ds_, H5R_DATASET_REGION, &reference);
-        
-        h5::sp_t mem_space = h5::create_simple( size );
-        h5::dt_t<element_t> mem_type;
-        h5::select_all( mem_space );
-        h5::select_all( file_space );
-
-        H5CPP_CHECK_NZ( 
-        H5Dread(ds_, mem_type, mem_space, file_space, dxpl, ptr ),
-            h5::error::io::dataset::read, h5::error::msg::read_dataset);
-    }
-*/
 namespace h5::exp {
     template<class T, class... args_t>
 	inline T read(const h5::ds_t& ds, h5::reference_t& reference, args_t&&... args){
-        using element_t = typename impl::decay<T>::type;
+        using element_t = typename meta::decay<T>::type;
 
         h5::ds_t ds_ = H5Rdereference2(ds, H5P_DEFAULT, H5R_DATASET_REGION, &reference);
         h5::sp_t file_space = H5Rget_region(ds_, H5R_DATASET_REGION, &reference);
@@ -82,10 +65,10 @@ namespace h5::exp {
         H5Sget_select_bounds(file_space, *start, *stop);
         for (auto i=0; i < block.rank; i++)
             block[i] = stop[i] - start[i]+1;
-        T object = impl::get<T>::ctor(block);
+        T object = meta::get<T>::ctor(block);
         H5Sselect_hyperslab(file_space, H5S_SELECT_SET, 
             *start, nullptr, *h5::default_count, *block);
-		element_t *ptr = impl::data(object);
+		element_t *ptr = meta::data(object);
         h5::sp_t mem_space = h5::create_simple(block);
         h5::select_all(mem_space);
 

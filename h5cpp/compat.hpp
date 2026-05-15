@@ -6,10 +6,7 @@
 #pragma once
 
 #include <hdf5.h>
-#include <cstddef>
-#include <utility>
 #include <type_traits>
-#include <tuple>
 
 namespace h5::meta::compat {
 // N4436 and https://en.cppreference.com/w/cpp/experimental/is_detected 

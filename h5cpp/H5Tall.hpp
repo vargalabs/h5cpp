@@ -4,11 +4,12 @@
  */
 #pragma once
 #include <hdf5.h>
+#include "H5meta.hpp"
 #include "H5Iall.hpp"
+#include "H5Tmeta.hpp"
 #include <type_traits>
 #include <ostream>
 #include <optional>
-#include <vector>
 #include <initializer_list>
 
 namespace h5 {
@@ -52,14 +53,14 @@ namespace h5::impl::detail {
  */
 
 #define H5CPP_REGISTER_TYPE_( C_TYPE, H5_TYPE )                                           \
-namespace h5::impl::detail { 	                                      \
+namespace h5::impl::detail { 	                                                          \
 	template <> struct hid_t<C_TYPE,H5Tclose,true,true,hdf5::type> : public dt_p<C_TYPE> {\
 		using parent = dt_p<C_TYPE>;                                                      \
-		using dt_p<C_TYPE>::hid_t;                                                              \
+		using dt_p<C_TYPE>::hid_t;                                                        \
 		using hidtype = C_TYPE;                                                           \
 		hid_t() : parent( H5Tcopy( H5_TYPE ) ) { 										  \
 			hid_t id = static_cast<hid_t>( *this );                                       \
-			if constexpr ( std::is_pointer_v<C_TYPE> )                               \
+			if constexpr ( std::is_pointer_v<C_TYPE> )                                    \
 					H5Tset_size (id,H5T_VARIABLE), H5Tset_cset(id, H5T_CSET_UTF8);        \
 		}                                                                                 \
 	};                                                                                    \

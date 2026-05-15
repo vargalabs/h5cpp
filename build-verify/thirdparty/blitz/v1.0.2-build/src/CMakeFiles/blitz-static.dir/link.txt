@@ -1,0 +1,2 @@
+/usr/bin/ar qc libblitz.a CMakeFiles/blitz-static.dir/globals.cpp.o
+/usr/bin/ranlib libblitz.a

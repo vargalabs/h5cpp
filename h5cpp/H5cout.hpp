@@ -4,6 +4,8 @@
  */
 #pragma once
 #include "H5capi.hpp"
+#include "H5misc.hpp"
+#include "H5Eall.hpp"
 #include <ostream>
 #include <string>
 #include <vector>
@@ -36,8 +38,6 @@ inline std::ostream& operator<< (std::ostream& os, const h5::dxpl_t& dxpl) {
 #endif
     return os;
 }
-
-
 
 template <class T> inline
 std::ostream& operator<<(std::ostream& os, const h5::impl::array<T>& arr){

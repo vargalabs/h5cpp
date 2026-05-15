@@ -4,10 +4,8 @@
  */
 #pragma once
 #include "H5Zpipeline.hpp"
-#include <stdexcept>
 
 inline void h5::impl::basic_pipeline_t::write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* data ){
-
 	size_t length = nbytes;                        // filter may change this, think of compression
 	void *in = chunk0, *out=chunk1, *tmp = chunk0; // invariant: out must point to data block written
 	uint32_t mask = 0x0;                           // filter mask = 0x0 all filters applied

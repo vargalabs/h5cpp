@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/test-h5zlz4.dir/H5Zlz4.cpp.o -o ../test-h5zlz4  -Wl,-rpath,/usr/local/lib /usr/local/lib/libhdf5.so /usr/lib/x86_64-linux-gnu/libz.so /usr/lib/x86_64-linux-gnu/libdl.a -lm /usr/lib/x86_64-linux-gnu/libz.so ../thirdparty/libdeflate/liblibh5cpp-libdeflate-static.a /usr/lib/x86_64-linux-gnu/liblz4.so ../thirdparty/zstd/liblibh5cpp-zstd-static.a 

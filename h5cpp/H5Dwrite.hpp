@@ -5,6 +5,7 @@
 #pragma once
 #include "H5capi.hpp"
 #include "H5Tmeta.hpp"
+#include "H5Dopen.hpp"
 #include "H5Dgather.hpp"
 
 namespace h5 {

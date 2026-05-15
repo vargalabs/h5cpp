@@ -5,16 +5,16 @@
 
 #pragma once
 #include "H5capi.hpp"
+#include "H5misc.hpp"
 #include "H5Dopen.hpp" // be sure this precedes error handling macro-s !!!
+#include "H5Fopen.hpp"
 #include <string>
-#include <vector>
 #include <stdexcept>
 #include <type_traits>
 #include <tuple>
 
 namespace h5 {
-/***************************  REFERENCE *****************************/
-
+	/***************************  REFERENCE *****************************/
  	/** \func_read_hdr
  	*  Updates the content of passed **ptr** pointer, which must have enough memory space to receive data.
 	*  Optional arguments **args:= h5::offset | h5::stride | h5::count | h5::block** may be specified for partial IO, 
@@ -118,7 +118,7 @@ namespace h5 {
 	}
 
 
-/***************************  REFERENCE *****************************/
+	/***************************  REFERENCE *****************************/
  	/** \func_read_hdr
  	*  Updates the content of passed **ref** reference, which must have enough memory space to receive data.
 	*  Optional arguments **args:= h5::offset | h5::stride | h5::count | h5::block** may be specified for partial IO,
@@ -181,7 +181,7 @@ namespace h5 {
 		::h5::read( fd, dataset_path, ref, args...);
 	}
 
-/***************************  OBJECT *****************************/
+	/***************************  OBJECT *****************************/
  	/** \func_read_hdr
  	*  Direct read from an opened dataset descriptor that returns the entire data space wrapped into the object specified. 
 	*  Optional arguments **args:= h5::offset | h5::stride | h5::count | h5::block** may be specified for partial IO, 
@@ -221,7 +221,7 @@ namespace h5 {
 		::h5::read<element_type>(ds, ptr, count, args...);
 		return ref;
 	}
-/***************************  STRING *****************************/
+	/***************************  STRING *****************************/
  	/** \func_read_hdr
  	*  Direct read from an opened dataset descriptor that returns the entire data space wrapped into the object specified. 
 	*  Optional arguments **args:= h5::offset | h5::stride | h5::count | h5::block** may be specified for partial IO, 
@@ -267,10 +267,11 @@ namespace h5 {
 		h5::sp_t file_space = h5::get_space(ds);
 	   	int rank = h5::get_simple_extent_ndims( file_space );
 
-			if( rank != count.rank ) throw h5::error::io::dataset::read( H5CPP_ERROR_MSG( h5::error::msg::rank_mismatch ));
-			h5::dt_t<char*> mem_type;
+		if( rank != count.rank ) throw h5::error::io::dataset::read( H5CPP_ERROR_MSG( h5::error::msg::rank_mismatch ));
+		h5::dt_t<char*> mem_type;
+		hid_t dapl = h5::get_access_plist( ds );
 
-			T ref = impl::get<T>::ctor( count );
+		T ref = impl::get<T>::ctor( count );
 		size_t nelem = impl::nelements(size);
 		char ** ptr = static_cast<char **>(
 										malloc( nelem * sizeof(char *)));
@@ -280,8 +281,8 @@ namespace h5 {
 		H5CPP_CHECK_NZ( H5Dread(
 					static_cast<hid_t>( ds ), static_cast<hid_t>(mem_type), static_cast<hid_t>(mem_space),
 					static_cast<hid_t>(file_space),	static_cast<hid_t>(dxpl), ptr ), h5::error::io::dataset::read, h5::error::msg::read_dataset);
-			for(size_t i=0; i<nelem; i++)
-					if( ptr[i] != nullptr )
+		for(int i=0; i<nelem; i++)
+				if( ptr[i] != nullptr )
 						ref[i] = std::string( ptr[i] );
 #if H5_VERSION_GE(1,12,0)
 		H5Treclaim(mem_type, mem_space, H5P_DEFAULT, ptr);

@@ -3,8 +3,6 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
-#include "H5Pall.hpp"
-#include "H5Zall.hpp"
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
@@ -13,6 +11,11 @@
 #include <utility>
 #include <cstdlib>
 #include <new>
+
+#include "H5Iall.hpp"
+#include "H5Sall.hpp"
+#include "H5Zall.hpp"
+
 #ifdef _MSC_VER
 #include <malloc.h>
 #endif

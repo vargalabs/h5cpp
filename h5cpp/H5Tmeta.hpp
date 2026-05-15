@@ -42,6 +42,10 @@ namespace h5::meta {
         using type = typename meta::value<T>::type; };
     template <class T, size_t N> struct decay<T[N]>{ // support for array types
         using type = typename std::remove_all_extents<T>::type; };
+    template <size_t N> struct decay<char[N]>{ using type = char*; };
+    template <size_t N> struct decay<const char[N]>{ using type = char*; };
+    template <class T, class... Ts> struct decay<std::basic_string<T, Ts...>>{ using type = const T*; };
+    template <class T, class... Ts> struct decay<std::basic_string_view<T, Ts...>>{ using type = const T*; };
 
     /* std::array<...,R> size<T>(){} template has to compute rank R at compile 
      * time, these templates, and their respective specializations aid to accomplish that*/
@@ -114,71 +118,43 @@ namespace h5::meta {
         template <class T, std::size_t N> struct is_array_like_impl<T[N]>            : std::true_type {};
         template <class T, std::size_t N> struct is_array_like_impl<std::array<T,N>> : std::true_type {};
     }
-    template <class T> struct is_array_like
-        : detail_capabilities::is_array_like_impl<remove_cvref_t<T>> {};
-
+    template <class T> struct is_array_like : detail_capabilities::is_array_like_impl<remove_cvref_t<T>> {};
     template <class T> struct is_iterable : has_iterator<remove_cvref_t<T>> {};
-
     template <class T> struct is_resizable : compat::is_detected<resize_f, remove_cvref_t<T>> {};
+    template <class T> struct is_sequential_like : std::bool_constant<is_iterable<T>::value
+        && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value && !compat::is_detected<key_type_f, remove_cvref_t<T>>::value
+        && !compat::is_detected<mapped_type_f, remove_cvref_t<T>>::value && !is_text_like<T>::value> {};
 
-    template <class T> struct is_sequential_like
-        : std::bool_constant<is_iterable<T>::value
-                          && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value
-                          && !compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
-                          && !compat::is_detected<mapped_type_f, remove_cvref_t<T>>::value
-                          && !is_text_like<T>::value> {};
+    template <class T> struct is_associative_like : std::bool_constant<is_iterable<T>::value
+        && compat::is_detected<key_type_f,    remove_cvref_t<T>>::value && compat::is_detected<key_compare_f, remove_cvref_t<T>>::value> {};
+    template <class T> struct is_unordered_like : std::bool_constant<is_iterable<T>::value
+        && compat::is_detected<key_type_f, remove_cvref_t<T>>::value && compat::is_detected<hasher_f,   remove_cvref_t<T>>::value> {};
 
-    template <class T> struct is_associative_like
-        : std::bool_constant<is_iterable<T>::value
-                          && compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
-                          && compat::is_detected<key_compare_f, remove_cvref_t<T>>::value> {};
+    template <class T> struct is_set_like  : std::bool_constant<compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
+        && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value  && !compat::is_detected<mapped_type_f, remove_cvref_t<T>>::value> {};
 
-    template <class T> struct is_unordered_like
-        : std::bool_constant<is_iterable<T>::value
-                          && compat::is_detected<key_type_f, remove_cvref_t<T>>::value
-                          && compat::is_detected<hasher_f,   remove_cvref_t<T>>::value> {};
+    template <class T> struct is_map_like : std::bool_constant<compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
+        && compat::is_detected<mapped_type_f, remove_cvref_t<T>>::value && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value> {};
 
-    template <class T> struct is_set_like
-        : std::bool_constant<compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
-                          && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value
-                          && !compat::is_detected<mapped_type_f, remove_cvref_t<T>>::value> {};
-
-    template <class T> struct is_map_like
-        : std::bool_constant<compat::is_detected<key_type_f,    remove_cvref_t<T>>::value
-                          && compat::is_detected<mapped_type_f, remove_cvref_t<T>>::value
-                          && compat::is_detected<value_type_f,  remove_cvref_t<T>>::value> {};
-
-    template <class T> struct is_stl_like
-        : std::bool_constant<is_sequential_like<T>::value
-                          || is_associative_like<T>::value
-                          || is_unordered_like<T>::value> {};
+    template <class T> struct is_stl_like : std::bool_constant<is_sequential_like<T>::value
+        || is_associative_like<T>::value || is_unordered_like<T>::value> {};
 
     template <class T> struct is_enumerated_like : std::is_enum<remove_cvref_t<T>> {};
-
     template <class T> struct is_bitfield_like : std::false_type {};
     template <class A> struct is_bitfield_like<std::vector<bool, A>> : std::true_type {};
 
     template <class T> struct is_opaque_like : std::false_type {};
-    template <> struct is_opaque_like<void*>        : std::true_type {};
-    template <> struct is_opaque_like<const void*>  : std::true_type {};
-    template <> struct is_opaque_like<void**>       : std::true_type {};
+    template <> struct is_opaque_like<void*> : std::true_type {};
+    template <> struct is_opaque_like<const void*> : std::true_type {};
+    template <> struct is_opaque_like<void**> : std::true_type {};
     template <> struct is_opaque_like<const void**> : std::true_type {};
 
-    template <class T> struct has_data_pointer
-        : std::bool_constant<std::is_pointer_v<
-              compat::detected_or_t<void, data_f, remove_cvref_t<T>>>> {};
+    template <class T> struct has_data_pointer : std::bool_constant<std::is_pointer_v<
+        compat::detected_or_t<void, data_f, remove_cvref_t<T>>>> {};
 
     enum class storage_representation_t {
-        unsupported,
-        scalar,
-        c_array,
-        linear_value_dataset,
-        key_value_dataset,
-        ragged_vlen_dataset,
-        fixed_inner_extent_dataset,
-        vlen_text_dataset
-    };
-
+        unsupported, scalar, c_array, linear_value_dataset, key_value_dataset, ragged_vlen_dataset, fixed_inner_extent_dataset, vlen_text_dataset };
+        
     namespace detail_capabilities {
 
     // Marker for types that have an explicit storage_representation_impl specialisation.
@@ -267,10 +243,8 @@ namespace h5::meta {
         : std::integral_constant<storage_representation_t, storage_representation_t::key_value_dataset> {};
 
     template <class T, class A0, class A1> struct storage_representation_impl<std::vector<std::vector<T,A0>,A1>>
-        : std::integral_constant<storage_representation_t,
-              (!is_text_like<T>::value && !is_stl_like<T>::value)
-                  ? storage_representation_t::ragged_vlen_dataset
-                  : storage_representation_t::unsupported> {};
+        : std::integral_constant<storage_representation_t, (!is_text_like<T>::value && !is_stl_like<T>::value)
+                  ? storage_representation_t::ragged_vlen_dataset : storage_representation_t::unsupported> {};
     template <class Tr, class A0, class A1> struct storage_representation_impl<std::vector<std::basic_string<char, Tr, A0>,A1>>
         : std::integral_constant<storage_representation_t, storage_representation_t::vlen_text_dataset> {};
     template <class T, std::size_t N, class A> struct storage_representation_impl<std::vector<std::array<T,N>,A>>
@@ -295,12 +269,8 @@ namespace h5::meta {
         : std::integral_constant<storage_representation_t, storage_representation_t::key_value_dataset> {};
     }
 
-    template <class T> struct storage_representation
-        : detail_capabilities::storage_representation_impl<remove_cvref_t<T>> {};
-
-    template <class T> constexpr storage_representation_t storage_representation_v =
-        storage_representation<T>::value;
-
+    template <class T> struct storage_representation : detail_capabilities::storage_representation_impl<remove_cvref_t<T>> {};
+    template <class T> constexpr storage_representation_t storage_representation_v = storage_representation<T>::value;
     inline constexpr std::uint32_t metadata_version = 1;
 
     /** Base class for compiler-emitted reflected field descriptors. */
@@ -440,22 +410,14 @@ namespace h5::meta {
         }
     };
 
-    template <class T, class>
-    struct is_transport_contiguous_impl_t : std::false_type {};
-
-    template <class T>
-    struct is_transport_contiguous_impl_t<T, std::enable_if_t<std::is_arithmetic_v<T>>> : std::true_type {};
-
-    template <class T>
-    struct is_transport_contiguous_impl_t<T, std::enable_if_t<is_fixed_text_like<T>::value>> : std::true_type {};
-
-    template <class T>
-    struct is_transport_contiguous_impl_t<T, std::enable_if_t<
+    template <class T, class> struct is_transport_contiguous_impl_t : std::false_type {};
+    template <class T> struct is_transport_contiguous_impl_t<T, std::enable_if_t<std::is_arithmetic_v<T>>> : std::true_type {};
+    template <class T> struct is_transport_contiguous_impl_t<T, std::enable_if_t<is_fixed_text_like<T>::value>> : std::true_type {};
+    template <class T> struct is_transport_contiguous_impl_t<T, std::enable_if_t<
         is_array_like<T>::value && !is_text_like<T>::value>>
         : is_transport_contiguous_t<typename meta::decay<T>::type> {};
-
-    template <class T>
-    struct is_transport_contiguous_impl_t<T, std::enable_if_t<is_reflected_compound_t<T>::value>> {
+        
+    template <class T> struct is_transport_contiguous_impl_t<T, std::enable_if_t<is_reflected_compound_t<T>::value>> {
     private:
         static_assert(compiler_meta_t<T>::version == metadata_version,
             "H5CPP compiler metadata version mismatch");
@@ -495,21 +457,32 @@ namespace h5::meta {
     // DEFAULT CASE
     template <class T> struct rank<T*>: public std::integral_constant<size_t,1>{};
     template <class T, class... Ts>
-        std::enable_if_t<!std::is_array_v<T>, const T*> data(const T& ref ){ return &ref; };
-    template <class T, class... Ts> 
+        std::enable_if_t<std::is_integral<T>::value || (std::is_standard_layout_v<T> && std::is_trivial_v<T>), const T*> data(const T& ref ){ return &ref; };
+    template <class T>
+        std::enable_if_t<std::is_integral_v<T> || (std::is_standard_layout_v<T> && std::is_trivial_v<T>), T*> data(T& ref ){ return &ref; };
+    // STL / string / scalar specializations
+    template <class T, class... Ts> inline const T* data( const std::vector<T, Ts...>& ref ){ return ref.data(); }
+    template <class T, class... Ts> inline       T* data(       std::vector<T, Ts...>& ref ){ return ref.data(); }
+    template <class T, class... Ts> inline const T* data( const std::basic_string<T, Ts...>& ref ){ return ref.data(); }
+    template <class T>                inline const T* data( const std::initializer_list<T>& ref ){ return ref.begin(); }
+    inline const char* data( const char* ref ){ return ref; }
+    template <class T, class... Ts>
         std::enable_if_t<meta::has_size<T>::value, std::array<size_t,1>
         > size(const T& ref){
         return {ref.size()};
-	    };
-	    template <class T, size_t N>
-	        std::array<size_t,1> size(const T(&)[N]){ return {N};};
-	    template <class T, class... Ts> struct get {
-	        static inline T ctor( std::array<size_t,0> ){
-	            return T(); }};
+    };
+    template <class T, size_t N>
+        std::array<size_t,1> size(const T(&ref)[N]){ return {N};};
+    // scalars
+    template <class T>
+        std::enable_if_t<meta::is_scalar<T>::value, std::array<size_t,0>> size( const T& ){ return {}; }
+    // non-scalar types without .size()
+    template <class T>
+        std::enable_if_t<!meta::is_scalar<T>::value && !meta::has_size<T>::value, std::array<size_t,0>> size( const T& ){ return {}; }
+    template <class T, class... Ts> struct get {
+        static inline T ctor( std::array<size_t,0> dims ){
+            return T(); }};
     // ARRAYS
-
-    //already defined line 58: template <class T, int N> struct rank<T[N]> : public std::rank<T[N]>{};
-
     template <class T,int N0> const T* data( const T(&ref)[N0]){ return &ref[0];};
     template <class T,int N1,int N0> const T* data( const T(&ref)[N1][N0]){ return &ref[0][0];};
     template <class T,int N2,int N1,int N0> const T* data( const T(&ref)[N2][N1][N0]){ return &ref[0][0][0];};
@@ -527,11 +500,7 @@ namespace h5::meta {
     template <class T,int N6,int N5,int N4,int N3,int N2,int N1,int N0>T* data(T(&ref)[N6][N5][N4][N3][N2][N1][N0]){ return &ref[0][0][0][0][0][0][0];};
 
     template <class T, int N> std::array<size_t, std::rank<T[N]>::value>
-        size(const T* ){ return  h5::meta::get_extent<T[N]>(); };
-   // template <class T, int N> struct get {
-   //     static inline T[N] ctor( std::array<size_t,0> dims ){
-   //         return T[N](); }};
-
+        size(const T* ref ){ return  h5::meta::get_extent<T[N]>(); };
 
     //STD::STRING
     template<> struct rank<std::basic_string<char>>: public std::integral_constant<size_t,0>{};
@@ -543,37 +512,37 @@ namespace h5::meta {
     template<> struct rank<std::basic_string_view<char16_t>>: public std::integral_constant<size_t,0>{};
     template<> struct rank<std::basic_string_view<char32_t>>: public std::integral_constant<size_t,0>{};
   
-   // template <class T, class... Ts> T const* data(const std::basic_string<T, Ts...>& ref ){
-   //     return ref.data();
-   // }
     template <class T, class... Ts> std::array<size_t,1> size( const std::basic_string<T, Ts...>& ref ){ return{ref.size()}; }
-	    template <class T, class... Ts> struct get<std::basic_string<T,Ts...>> {
-	        static inline std::basic_string<T,Ts...> ctor( std::array<size_t,1> ){
-	            return std::basic_string<T,Ts...>(); }};
+    inline std::array<size_t,1> size( const char* ref ){ return {std::char_traits<char>::length(ref)}; }
+    template <class T, class... Ts> struct get<std::basic_string<T,Ts...>> {
+        static inline std::basic_string<T,Ts...> ctor( std::array<size_t,1> dims ){
+            return std::basic_string<T,Ts...>(); }};
 
 // STD::INITIALIZER_LIST<T>
     template<int N0> struct rank<std::initializer_list<char[N0]>>: public std::integral_constant<size_t,1>{};
     template<int N0, int N1> struct rank<std::initializer_list<char[N0][N1]>>: public std::integral_constant<size_t,2>{};
     template<class T> struct rank<std::initializer_list<T>>: public std::integral_constant<size_t,1>{};
+    template <class T> inline std::array<size_t,1> size( const std::initializer_list<T>& ref ){ return {ref.size()}; }
 
 // STD::VECTOR<T>
     template<class T> struct rank<std::vector<T>>: public std::integral_constant<size_t,1>{};
-    
-    template <class T, class... Ts>
-    std::array<size_t,1> size( const std::vector<T, Ts...>& ref ){ return{ref.size()}; }
+    template <class T, class... Ts> std::array<size_t,1> size( const std::vector<T, Ts...>& ref ){ return{ref.size()}; }
+    template<class T> struct get<std::vector<T>> {
+        static inline std::vector<T> ctor( std::array<size_t,1> dims ){
+            return std::vector<T>( dims[0] );
+    }};
 
 // STD::ARRAY<T>
     // 3.) read access
     template <class T, size_t N> inline const T* data( const std::array<T,N>& ref ){ return ref.data(); }
     template <class T, size_t N> inline T* data( std::array<T,N>& ref ){ return ref.data(); }
-
-	    template <class T, size_t N> inline typename std::array<size_t,1> size( const std::array<T,N>& ){ return {N}; }
+    template <class T, size_t N> inline typename std::array<size_t,1> size( const std::array<T,N>& ref ){ return {N}; }
     template <class T, size_t N> struct rank<std::array<T,N>> : public std::integral_constant<int,1> {};
 // END STD::ARRAY
 
-	    template <class T> void get_fields( T& ){}
-	    template <class T> void get_field_names( T& ){}
-	    template <class T> void get_field_attributes( T& ){}
+    template <class T> void get_fields( T& sp ){}
+    template <class T> void get_field_names( T& sp ){}
+    template <class T> void get_field_attributes( T& sp ){}
 
 // NON_CONTIGUOUS 
     template <class T> struct member {
@@ -584,8 +553,6 @@ namespace h5::meta {
             std::vector<unsigned long>, std::vector<unsigned long>, std::vector<T>>;
     const constexpr std::tuple<const char*, const char*, const char*> 
         csc_names = {"indices", "indptr","data"};
-// HID_T
-//    template <class T> struct decay<h5::dt_t<T>>{ using type = T; };
 }
 namespace h5::meta::linalg {
     /*types accepted by BLAS/LAPACK*/
@@ -598,13 +565,10 @@ namespace h5::meta {
     template <> struct has_attribute<h5::gr_t> : std::true_type {};
     template <> struct has_attribute<h5::ds_t> : std::true_type {};
     template <> struct has_attribute<h5::ob_t> : std::true_type {};
-//    template <class T> struct has_attribute<h5::dt_t<T>> : std::true_type {};
 
     template <class T, class... Ts> struct is_location : std::false_type {};
     template <> struct is_location<h5::gr_t> : std::true_type {};
     template <> struct is_location<h5::fd_t> : std::true_type {};
-
-    //template <class T> struct 
 }
 
 // Gap 3: access_t enum and access_traits_t<T> — the executable memory-access contract.
