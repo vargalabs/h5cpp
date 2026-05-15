@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG -rdynamic CMakeFiles/genmathfunc.dir/genmathfunc.cpp.o -o genmathfunc 
