@@ -4,12 +4,8 @@
  */
 #pragma once
 #include "H5Pdapl.hpp"
-#include "H5Mstl.hpp"
-#include "H5meta.hpp"
-#include <type_traits>
 #include <stdexcept>
 #include <string>
-#include <memory>
 #include <cstdlib>
 
 namespace h5 {

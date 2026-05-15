@@ -74,9 +74,6 @@ namespace h5::impl::detail {
         hid_t( std::initializer_list<::hid_t> fd ) // direct  initialization doesn't increment handle
 		   : handle( *fd.begin()){
 		}
-		//TODO: have default constructor such that can initialize properties
-		// see 'create.hpp line 164:  h5::dcpl_t dcpl = h5::dcpl_t {H5Pcreate(H5P_DATASET_CREATE)};
-		// which is awkward
 		hid_t() : handle(H5I_UNINIT){};
 		hid_t( const hid_t& ref) {
 			this->handle = ref.handle;
@@ -126,28 +123,18 @@ namespace h5::impl::detail {
 	struct hid_t<T,capi_close, true,true,hdf5::property> : public hid_t<T,capi_close,true,true,hdf5::any> {
 		using parent = hid_t<T,capi_close,true,true,hdf5::any>;
 		using hidtype = T;
-		//FIXME: delegating ctor, don't use `parent::hid_t` as crashes clang
         using hid_t<T,capi_close,true,true,hdf5::any>::hid_t;
-        //using parent::hid_t; // is a must because of ds_t{hid_t} ctor 
-		//hid_t( ::hid_t handle_ )  {}
-		//hid_t& operator =( ::hid_t ref ) {}
-
-
-			hid_t& operator |=( const hid_t& ref){
-				(void)ref;
-				return *this;
-			}
-
-			hid_t& operator |( const hid_t& ref){
-				(void)ref;
-				return *this;
-			}
+		hid_t& operator |=( const hid_t& ref){
+			return *this;
+		}
+		hid_t& operator |( const hid_t& ref){
+			return *this;
+		}
 	};
 	/*dataset id*/ //FIXME: eliminate extra field: ds  @see HDF5 CAPI BUG: https://jira.hdfgroup.org/browse/HDFFV-10934
 	template<class T, capi_close_t capi_close>
 	struct hid_t<T,capi_close, true,true,hdf5::dataset> : public hid_t<T,capi_close,true,true,hdf5::any> {
 		using parent = hid_t<T,capi_close,true,true,hdf5::any>;
-		//using parent::hid_t;  // is a must because of ds_t{hid_t} ctor 
 		using hid_t<T,capi_close,true,true,hdf5::any>::hid_t;
         using parent::handle; // is a must because of ds_t{hid_t} ctor 
 		using hidtype = T;
@@ -161,7 +148,6 @@ namespace h5::impl::detail {
 
 		::hid_t dapl;
 	};
-	/*attribute id*/ // FIXME: eliminate extra fields: ds, name
 	template<class T, capi_close_t capi_close>
 	struct hid_t<T,capi_close, true,true,hdf5::attribute> : public hid_t<T,capi_close,true,true,hdf5::any> {
 		using parent = hid_t<T,capi_close,true,true,hdf5::any>;
@@ -205,7 +191,7 @@ namespace h5 {
 	/*datatype:*/   //H5CPP__defhid_t(dt_t, H5Tclose)
 
 	/*each of these properties has a distinct proxy object to handle the details
-	 * see: https://support.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#AttributeCreatePropFuncs */
+	 * see: https://support.hdfgroup.org/documentation/hdf5/latest/group___h5_p.html */
 	H5CPP__defpid_t(acpl_t,H5Pclose)
 	H5CPP__defpid_t(dapl_t,H5Pclose) H5CPP__defpid_t(dxpl_t,H5Pclose) H5CPP__defpid_t(dcpl_t,H5Pclose)
 	H5CPP__defpid_t(tapl_t,H5Pclose) H5CPP__defpid_t(tcpl_t,H5Pclose)
@@ -218,6 +204,3 @@ namespace h5 {
 	#undef H5CPP__defpid_t
 	#undef H5CPP__defhid_t
 }
-// T ::= impl::T_ 
-// prop_t<h5::fapl_t, default_fapl,  capi, capi_call>
-// prop_base< prop_t<phid_t,init,capi,capi_call>, phid_t >

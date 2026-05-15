@@ -10,6 +10,13 @@
 	#define H5CPP_HAVE_KITA
 #endif
 
+// ROS3 VFD — set by CMake when H5_HAVE_ROS3_VFD is present in HDF5 pubconf
+#ifdef H5CPP_HAVE_ROS3_VFD
+namespace h5 { constexpr bool have_ros3_vfd = true; }
+#else
+namespace h5 { constexpr bool have_ros3_vfd = false; }
+#endif
+
 #ifndef H5CPP_MAX_RANK
 	#define H5CPP_MAX_RANK 7 //< maximum dimensions of stored arrays
 #endif
@@ -77,11 +84,7 @@
 	#define OPENEXR_NAMESPACE
 #endif
 
-
-
 /**
-
-
 @example attributes.cpp
 @example collective.cpp
 @example independent.cpp
@@ -107,7 +110,6 @@
 @example raw.cpp
 @example transform.cpp
 @example kita.cpp
-
 */
 
 
@@ -132,7 +134,7 @@
  * The first group of function arguments are mandatory whereas the optional arguments may be specified in any order, 
  * or omitted entirely.
  *
- * [dataset]: https://support.hdfgroup.org/HDF5/doc/H5.intro.html#Intro-PMRdWrPortion 
+ * [dataset]: https://support.hdfgroup.org/documentation/hdf5/latest/_l_b_dataset.html
  */
 
 /** @defgroup io-write herr_t h5::write<T>( ds | path, object<T> [,offset] [ ,stride ] [,count] [,dxpl] );

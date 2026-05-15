@@ -24,11 +24,23 @@ namespace h5::meta {
     template <class T> struct is_contiguous<h5::arma::colvec<T>> : std::true_type {};
     template <class T> struct is_contiguous<h5::arma::colmat<T>> : std::true_type {};
     template <class T> struct is_contiguous<h5::arma::cube<T>> : std::true_type {};
-}
 
+    // Register types so generic access_traits_t fallbacks don't create ambiguous partial specializations
+    template <class T> struct detail::has_explicit_access_traits<h5::arma::rowvec<T>> : std::true_type {};
+    template <class T> struct detail::has_explicit_access_traits<h5::arma::colvec<T>> : std::true_type {};
+    template <class T> struct detail::has_explicit_access_traits<h5::arma::colmat<T>> : std::true_type {};
+    template <class T> struct detail::has_explicit_access_traits<h5::arma::cube<T>> : std::true_type {};
+}
 
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+
+	// Register Armadillo types so the structural decay fallback in H5Mstl.hpp
+	// does not create an ambiguous partial-specialisation with these explicit specs.
+	template <class T> struct detail::has_explicit_decay<h5::arma::rowvec<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::arma::colvec<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::arma::colmat<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::arma::cube<T>>   : std::true_type {};
 
 	template <class T> struct decay<h5::arma::rowvec<T>>{ using type = T; };
 	template <class T> struct decay<h5::arma::colvec<T>>{ using type = T; };
@@ -78,5 +90,56 @@ namespace h5::impl {
 		static inline h5::arma::colmat<T> ctor( std::array<size_t,3> dims ){
 			return h5::arma::colmat<T>( dims[2], dims[0], dims[1] );
 	}};
+}
+
+namespace h5::meta {
+    template <class T> struct access_traits_t<h5::arma::rowvec<T>> {
+        using element_t = T;
+        static constexpr access_t kind = access_t::contiguous;
+        static constexpr bool is_trivially_packable = true;
+        static auto data(const h5::arma::rowvec<T>& c) noexcept { return h5::impl::data(c); }
+        static auto size(const h5::arma::rowvec<T>& c) noexcept { return h5::impl::size(c); }
+        static std::size_t bytes(const h5::arma::rowvec<T>& c) noexcept {
+            auto s = size(c); std::size_t n = 1;
+            for (std::size_t i = 0; i < s.size(); ++i) n *= s[i];
+            return n * sizeof(element_t);
+        }
+    };
+    template <class T> struct access_traits_t<h5::arma::colvec<T>> {
+        using element_t = T;
+        static constexpr access_t kind = access_t::contiguous;
+        static constexpr bool is_trivially_packable = true;
+        static auto data(const h5::arma::colvec<T>& c) noexcept { return h5::impl::data(c); }
+        static auto size(const h5::arma::colvec<T>& c) noexcept { return h5::impl::size(c); }
+        static std::size_t bytes(const h5::arma::colvec<T>& c) noexcept {
+            auto s = size(c); std::size_t n = 1;
+            for (std::size_t i = 0; i < s.size(); ++i) n *= s[i];
+            return n * sizeof(element_t);
+        }
+    };
+    template <class T> struct access_traits_t<h5::arma::colmat<T>> {
+        using element_t = T;
+        static constexpr access_t kind = access_t::contiguous;
+        static constexpr bool is_trivially_packable = true;
+        static auto data(const h5::arma::colmat<T>& c) noexcept { return h5::impl::data(c); }
+        static auto size(const h5::arma::colmat<T>& c) noexcept { return h5::impl::size(c); }
+        static std::size_t bytes(const h5::arma::colmat<T>& c) noexcept {
+            auto s = size(c); std::size_t n = 1;
+            for (std::size_t i = 0; i < s.size(); ++i) n *= s[i];
+            return n * sizeof(element_t);
+        }
+    };
+    template <class T> struct access_traits_t<h5::arma::cube<T>> {
+        using element_t = T;
+        static constexpr access_t kind = access_t::contiguous;
+        static constexpr bool is_trivially_packable = true;
+        static auto data(const h5::arma::cube<T>& c) noexcept { return h5::impl::data(c); }
+        static auto size(const h5::arma::cube<T>& c) noexcept { return h5::impl::size(c); }
+        static std::size_t bytes(const h5::arma::cube<T>& c) noexcept {
+            auto s = size(c); std::size_t n = 1;
+            for (std::size_t i = 0; i < s.size(); ++i) n *= s[i];
+            return n * sizeof(element_t);
+        }
+    };
 }
 #endif

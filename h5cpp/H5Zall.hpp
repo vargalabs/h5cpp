@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <zlib.h>
+#include "H5config.hpp"
 
 #if !defined(H5CPP_DISABLE_LIBDEFLATE)
 #if defined(H5CPP_HAS_LIBDEFLATE)

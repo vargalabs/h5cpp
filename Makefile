@@ -54,8 +54,13 @@ DOCS_DIR ?= docs
 SITE_DIR ?= site
 DOCS_REQUIREMENTS ?= requirements-docs.txt
 
+DOXY          ?= doxygen
+DOXY_DIR       = doxy
+DOXY_OUT       = docs/doxygen/html
+
 .PHONY: docs docs-build docs-serve docs-strict docs-deploy \
-        docs-clean docs-install docs-venv docs-bootstrap venv-clean
+        docs-clean docs-install docs-venv docs-bootstrap venv-clean \
+        docs-doxygen docs-doxygen-view docs-doxygen-clean
 
 $(VENV_PYTHON):
 	$(PYTHON) -m venv $(VENV_DIR)
@@ -88,6 +93,15 @@ docs-deploy: $(VENV_PYTHON)
 
 docs-clean:
 	rm -rf $(SITE_DIR)
+
+docs-doxygen:
+	cd $(DOXY_DIR) && $(DOXY) Doxyfile 2>&1 | tee doxygen.log
+
+docs-doxygen-view: docs-doxygen
+	xdg-open $(DOXY_OUT)/index.html
+
+docs-doxygen-clean:
+	$(RM) -rf docs/doxygen $(DOXY_DIR)/doxygen.log
 
 venv-clean:
 	rm -rf $(VENV_DIR)

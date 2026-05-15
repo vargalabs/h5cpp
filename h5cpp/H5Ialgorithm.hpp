@@ -21,7 +21,6 @@
 		}
 		return 0;
 	}
-
 }
 
 namespace h5 {

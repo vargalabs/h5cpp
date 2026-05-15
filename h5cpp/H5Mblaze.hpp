@@ -22,10 +22,20 @@ namespace h5::meta {
 		template <class T> struct is_contiguous<h5::blaze::colvec<T>> : std::true_type {};
 		template <class T> struct is_contiguous<h5::blaze::rowmat<T>> : std::true_type {};
 		template <class T> struct is_contiguous<h5::blaze::colmat<T>> : std::true_type {};
+
+		// Register types so generic access_traits_t fallbacks don't create ambiguous partial specializations
+		template <class T> struct detail::has_explicit_access_traits<h5::blaze::rowmat<T>> : std::true_type {};
+		template <class T> struct detail::has_explicit_access_traits<h5::blaze::colmat<T>> : std::true_type {};
 }
 
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+	// Register Blaze types in has_explicit_decay (Blaze vectors/matrices have value_type).
+	template <class T> struct detail::has_explicit_decay<h5::blaze::rowvec<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::blaze::colvec<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::blaze::rowmat<T>> : std::true_type {};
+	template <class T> struct detail::has_explicit_decay<h5::blaze::colmat<T>> : std::true_type {};
+
 	template <class T> struct decay<h5::blaze::rowvec<T>>{ using type = T; };
 	template <class T> struct decay<h5::blaze::colvec<T>>{ using type = T; };
 	template <class T> struct decay<h5::blaze::rowmat<T>>{ using type = T; };
@@ -71,6 +81,33 @@ namespace h5::impl {
 		static inline h5::blaze::colmat<T> ctor( std::array<size_t,2> dims ){
 			return h5::blaze::colmat<T>( dims[0], dims[1] );
 	}};
+}
+
+namespace h5::meta {
+		template <class T> struct access_traits_t<h5::blaze::rowmat<T>> {
+			using element_t = T;
+			static constexpr access_t kind = access_t::contiguous;
+			static constexpr bool is_trivially_packable = true;
+			static auto data(const h5::blaze::rowmat<T>& c) noexcept { return h5::impl::data(c); }
+			static auto size(const h5::blaze::rowmat<T>& c) noexcept { return h5::impl::size(c); }
+			static std::size_t bytes(const h5::blaze::rowmat<T>& c) noexcept {
+				auto s = size(c); std::size_t n = 1;
+				for (std::size_t i = 0; i < s.size(); ++i) n *= s[i];
+				return n * sizeof(element_t);
+			}
+		};
+		template <class T> struct access_traits_t<h5::blaze::colmat<T>> {
+			using element_t = T;
+			static constexpr access_t kind = access_t::contiguous;
+			static constexpr bool is_trivially_packable = true;
+			static auto data(const h5::blaze::colmat<T>& c) noexcept { return h5::impl::data(c); }
+			static auto size(const h5::blaze::colmat<T>& c) noexcept { return h5::impl::size(c); }
+			static std::size_t bytes(const h5::blaze::colmat<T>& c) noexcept {
+				auto s = size(c); std::size_t n = 1;
+				for (std::size_t i = 0; i < s.size(); ++i) n *= s[i];
+				return n * sizeof(element_t);
+			}
+		};
 }
 
 #endif

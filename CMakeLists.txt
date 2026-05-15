@@ -97,6 +97,29 @@ if(HDF5_VERSION VERSION_GREATER 1.12.0)
     message(STATUS "H5CPP KITA support is available, see webpage for details...")
 endif()
 
+# ─── ROS3 VFD detection ───────────────────────────────────────────────────────────
+foreach(_hdf5_inc IN LISTS HDF5_INCLUDE_DIRS)
+    foreach(_pubconf IN ITEMS "H5pubconf.h" "H5pubconf-64.h")
+        if(EXISTS "${_hdf5_inc}/${_pubconf}")
+            file(STRINGS "${_hdf5_inc}/${_pubconf}" _ros3_line REGEX "H5_HAVE_ROS3_VFD")
+            if(_ros3_line MATCHES "#define H5_HAVE_ROS3_VFD")
+                set(H5CPP_HAVE_ROS3_VFD TRUE)
+                break()
+            endif()
+        endif()
+    endforeach()
+    if(H5CPP_HAVE_ROS3_VFD)
+        break()
+    endif()
+endforeach()
+if(H5CPP_HAVE_ROS3_VFD)
+    message(STATUS "H5CPP: ROS3 VFD detected — S3 read-only support enabled")
+else()
+    message(STATUS "H5CPP: ROS3 VFD not found — S3 support disabled")
+endif()
+
+option(H5CPP_NETWORK_TESTS "Enable network-dependent tests (requires outbound S3 access)" OFF)
+
 # ─── MPI (optional) ───────────────────────────────────────────────────────────────
 find_package(MPI QUIET COMPONENTS C CXX)
 if(MPI_FOUND AND HDF5_IS_PARALLEL)
@@ -170,6 +193,10 @@ target_include_directories(h5cpp INTERFACE
 
 target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBS})
 target_compile_features(h5cpp INTERFACE cxx_std_17)
+
+if(H5CPP_HAVE_ROS3_VFD)
+    target_compile_definitions(h5cpp INTERFACE H5CPP_HAVE_ROS3_VFD=1)
+endif()
 
 if(H5CPP_LIBDEFLATE_FOUND)
     target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBDEFLATE_TARGET})

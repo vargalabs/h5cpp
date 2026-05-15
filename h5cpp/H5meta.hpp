@@ -249,9 +249,7 @@ namespace h5::meta::impl {
     h5cpp_fname(float) h5cpp_fname(double)
     h5cpp_fname2(long, double)
 
-
     template <class T, char... digits> using text = impl::name<typename std::remove_all_extents<T>::type, digits...>;
-
     template <int rank, class T, int... digits> struct parse;
     template <int rank, class T, int rem, int... digits> struct parse_extent;
 

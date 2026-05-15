@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG -rdynamic CMakeFiles/genarruops.dir/genarruops.cpp.o -o genarruops 

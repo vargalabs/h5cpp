@@ -3,6 +3,7 @@
  * Author: Varga, Steven <steven@vargaconsulting.ca>
  */
 #pragma once
+#include "H5Pall.hpp"
 #include "H5Zpipeline_basic.hpp"
 
 #define H5CPP_DAPL_HIGH_THROUGHPUT "h5cpp_dapl_highthroughput"
@@ -44,10 +45,6 @@ namespace h5 {
 	const static flag::high_throughput high_throughput;
 
 	namespace impl {
-		// Heap-allocated, intentionally never deleted.  HDF5's atexit handler
-		// closes the underlying property list.  Avoids the static-destruction-
-		// order race with HDF5's library shutdown that manifests as the
-		// "HDF5: infinite loop closing library" cascade on Windows MSVC.
 		inline const h5::dapl_t& _dapl_singleton() {
 			static h5::dapl_t* p = new h5::dapl_t(static_cast<h5::dapl_t>(H5Pcreate(H5P_DATASET_ACCESS)));
 			return *p;

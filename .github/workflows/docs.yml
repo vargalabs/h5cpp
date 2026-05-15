@@ -5,12 +5,12 @@ on:
     branches: [release, staging]
 
 permissions:
-  contents: write 
+  contents: write
 
 jobs:
-  deploy:
+  # MkDocs — conceptual docs, architecture pages, guides
+  deploy-mkdocs:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -21,14 +21,37 @@ jobs:
           python-version: '3.x'
 
       - name: Install MkDocs + Material theme
-        run: |
-          pip install mkdocs mkdocs-material
+        run: pip install mkdocs mkdocs-material
 
-      - name: Build documentation
+      - name: Build MkDocs site
         run: mkdocs build
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy MkDocs to gh-pages root
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
+          keep_files: true
+
+  # Doxygen — API reference generated from C++ headers
+  deploy-doxygen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Doxygen
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y doxygen
+
+      - name: Build Doxygen API reference
+        run: cd doxy && doxygen Doxyfile
+
+      - name: Deploy Doxygen to gh-pages/api
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/doxygen/html
+          destination_dir: api
+          keep_files: true

@@ -4,17 +4,42 @@
  */
 #pragma once
 #include <hdf5.h>
+#include "H5meta.hpp"
 #include "H5Iall.hpp"
+#include "H5Tmeta.hpp"
 #include <type_traits>
 #include <ostream>
 #include <optional>
-#include <vector>
 #include <initializer_list>
 
 namespace h5 {
     template<class T> hid_t register_struct(){ return H5I_UNINIT; }
 	struct reference_t {
+#if H5_VERSION_GE(1,12,0)
+        H5R_ref_t value; //< HDF5 1.12 generic reference storage
+#else
         hdset_reg_ref_t value; //< region or object ref storage
+#endif
+    };
+#if H5_VERSION_GE(1,12,0)
+    static_assert(sizeof(reference_t) == sizeof(H5R_ref_t), "reference_t must match HDF5 reference storage");
+#else
+    static_assert(sizeof(reference_t) == sizeof(hdset_reg_ref_t), "reference_t must match HDF5 dataset-region reference storage");
+#endif
+}
+
+namespace h5::meta {
+    // h5::reference_t is a POD scalar — single HDF5 reference value
+    template <>
+    struct access_traits_t<h5::reference_t> {
+        using element_t  = h5::reference_t;
+        using pointer_t  = const h5::reference_t*;
+        static constexpr access_t kind = access_t::object;
+        static constexpr bool is_trivially_packable = true;
+        static const h5::reference_t* data(const h5::reference_t& v) noexcept { return &v; }
+        static h5::reference_t*       data(h5::reference_t& v)       noexcept { return &v; }
+        static constexpr std::array<std::size_t,0> size(const h5::reference_t&) noexcept { return {}; }
+        static constexpr std::size_t bytes(const h5::reference_t&) noexcept { return sizeof(h5::reference_t); }
     };
 }
 
@@ -39,10 +64,14 @@ namespace h5::impl::detail {
 		using dt_p<h5::reference_t>::hid_t;
 		using hidtype = h5::reference_t;
 
+#if H5_VERSION_GE(1,12,0)
+		hid_t() : parent( H5Tcopy(H5T_STD_REF) ) {
+#else
 		hid_t() : parent( H5Tcopy(H5T_STD_REF_DSETREG) ) {
-		}
-	};
-}
+#endif
+			}
+		};
+	}
 
 /* template specialization is for the preceding class, and should be used only for HDF5 ELEMENT types
  * which are in C/C++ the integral types of: char,short,int,long, ... and C POD types. 
@@ -52,14 +81,14 @@ namespace h5::impl::detail {
  */
 
 #define H5CPP_REGISTER_TYPE_( C_TYPE, H5_TYPE )                                           \
-namespace h5::impl::detail { 	                                      \
+namespace h5::impl::detail { 	                                                          \
 	template <> struct hid_t<C_TYPE,H5Tclose,true,true,hdf5::type> : public dt_p<C_TYPE> {\
 		using parent = dt_p<C_TYPE>;                                                      \
-		using dt_p<C_TYPE>::hid_t;                                                              \
+		using dt_p<C_TYPE>::hid_t;                                                        \
 		using hidtype = C_TYPE;                                                           \
 		hid_t() : parent( H5Tcopy( H5_TYPE ) ) { 										  \
 			hid_t id = static_cast<hid_t>( *this );                                       \
-			if constexpr ( std::is_pointer_v<C_TYPE> )                               \
+			if constexpr ( std::is_pointer_v<C_TYPE> )                                    \
 					H5Tset_size (id,H5T_VARIABLE), H5Tset_cset(id, H5T_CSET_UTF8);        \
 		}                                                                                 \
 	};                                                                                    \
@@ -229,4 +258,3 @@ public:
     resolved_type_t& operator=(const resolved_type_t&) = delete;
 };
 } // namespace h5::meta
-

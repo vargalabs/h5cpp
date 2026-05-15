@@ -17,10 +17,14 @@ namespace h5::dlib {
 }
 namespace h5::meta {
 		template <class T> struct is_contiguous<h5::dlib::rowmat<T>> : std::true_type {};
+
+		// Register types so generic access_traits_t fallbacks don't create ambiguous partial specializations
+		template <class T> struct detail::has_explicit_access_traits<h5::dlib::rowmat<T>> : std::true_type {};
 }
 
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+	template <class T> struct detail::has_explicit_decay<h5::dlib::rowmat<T>> : std::true_type {};
 	template <class T> struct decay<h5::dlib::rowmat<T>>{ using type = T; };
 
 	// get read access to datastaore
@@ -35,20 +39,31 @@ namespace h5::impl {
 	T*> data( Object& ref ){
 			return &ref(0,0);
 	}
+	
 	template<class T> struct rank<h5::dlib::rowmat<T>> : public std::integral_constant<size_t,2>{};
-
-
-
 	template<class T>
 	inline std::array<size_t,2> size( const dlib::rowmat<T>& ref ){
 				return { (hsize_t)ref.nc(),(hsize_t)ref.nr()};
 	}
-
-
-
+	
 	template <class T> struct get<h5::dlib::rowmat<T>> {
 		static inline h5::dlib::rowmat<T> ctor( std::array<size_t,2> dims ){
 			return h5::dlib::rowmat<T>( dims[1], dims[0] );
 	}};
+}
+
+namespace h5::meta {
+		template <class T> struct access_traits_t<h5::dlib::rowmat<T>> {
+			using element_t = T;
+			static constexpr access_t kind = access_t::contiguous;
+			static constexpr bool is_trivially_packable = true;
+			static auto data(const h5::dlib::rowmat<T>& c) noexcept { return h5::impl::data(c); }
+			static auto size(const h5::dlib::rowmat<T>& c) noexcept { return h5::impl::size(c); }
+			static std::size_t bytes(const h5::dlib::rowmat<T>& c) noexcept {
+				auto s = size(c); std::size_t n = 1;
+				for (std::size_t i = 0; i < s.size(); ++i) n *= s[i];
+				return n * sizeof(element_t);
+			}
+		};
 }
 #endif

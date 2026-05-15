@@ -9,6 +9,8 @@
 
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+	template <class T> struct detail::has_explicit_decay<xt::xarray<T>> : std::true_type {};
+	template <class T, size_t N> struct detail::has_explicit_decay<xt::xtensor<T,N>> : std::true_type {};
 	template <class T> struct decay<xt::xarray<T>>{ using type = T; };
 	template <class T, size_t N> struct decay<xt::xtensor<T, N>>{ using type = T; };
 
@@ -63,6 +65,36 @@ namespace h5::impl {
 }
 
 namespace h5::meta {
+    template <class T> struct decay<xt::xarray<T>> : h5::impl::decay<xt::xarray<T>> {};
+    template <class T, size_t N> struct decay<xt::xtensor<T, N>> : h5::impl::decay<xt::xtensor<T, N>> {};
+
+    template <class T, size_t N> struct rank<xt::xtensor<T, N>> : h5::impl::rank<xt::xtensor<T, N>> {};
+
+    template <class T> inline
+    const T* data(const xt::xarray<T>& ref ){ return ref.data(); }
+    template <class T> inline
+    T* data(xt::xarray<T>& ref ){ return ref.data(); }
+    template <class T, size_t N> inline
+    const T* data(const xt::xtensor<T, N>& ref ){ return ref.data(); }
+    template <class T, size_t N> inline
+    T* data(xt::xtensor<T, N>& ref ){ return ref.data(); }
+
+    template <class T> inline h5::count_t size( const xt::xarray<T>& ref ){
+        return h5::impl::size( ref );
+    }
+    template <class T, size_t N> inline std::array<size_t,N> size( const xt::xtensor<T, N>& ref ){
+        return h5::impl::size( ref );
+    }
+
+    template <class T> struct get<xt::xarray<T>> {
+        static inline xt::xarray<T> ctor( h5::count_t count ){
+            std::vector<size_t> shape(count.rank);
+            for(int i = 0; i < count.rank; ++i)
+                shape[i] = count[i];
+            return xt::xarray<T>::from_shape(shape);
+    }};
+    template <class T, size_t N> struct get<xt::xtensor<T, N>> : h5::impl::get<xt::xtensor<T, N>> {};
+
     template <class T> struct is_contiguous<xt::xarray<T>> : std::true_type {};
     template <class T, size_t N> struct is_contiguous<xt::xtensor<T, N>> : std::true_type {};
 }
