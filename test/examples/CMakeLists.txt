@@ -12,7 +12,7 @@ function(add_example_test file_name)
     set(test_name example-test-${file_name})
     add_executable(${test_name} ${file_name}.cpp)
     set_target_properties(${test_name} PROPERTIES
-        CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+        CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
     target_link_libraries(${test_name} PRIVATE ${LIBS})
 
@@ -41,13 +41,17 @@ add_example_test(test_arma_io     LIBRARIES libarmadillo)
 add_example_test(test_blaze_io    LIBRARIES libblaze)
 add_example_test(test_dlib_io     LIBRARIES libdlib)
 
-# ublas headers are vendored but rely on system Boost config/compiler headers
-# (the vendored copy only includes gcc.hpp, not clang.hpp or msvc.hpp)
-find_path(H5CPP_BOOST_CONFIG_INCLUDE NAMES boost/config.hpp)
-if(H5CPP_BOOST_CONFIG_INCLUDE)
-    add_example_test(test_ublas_io LIBRARIES libublas)
+# ublas v1.74 uses std::allocator::construct which was removed in C++20.
+# Skip the ublas test under C++20 builds.
+if(CMAKE_CXX_STANDARD LESS 20)
+    find_path(H5CPP_BOOST_CONFIG_INCLUDE NAMES boost/config.hpp)
+    if(H5CPP_BOOST_CONFIG_INCLUDE)
+        add_example_test(test_ublas_io LIBRARIES libublas)
+    else()
+        message(STATUS "Boost config headers not found — skipping test_ublas_io")
+    endif()
 else()
-    message(STATUS "Boost config headers not found — skipping test_ublas_io")
+    message(STATUS "C++20 build — skipping test_ublas_io (ublas v1.74 requires std::allocator::construct, removed in C++20)")
 endif()
 
 add_example_test(test_blitz_io    LIBRARIES libblitz)
