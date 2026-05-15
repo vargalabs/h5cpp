@@ -53,6 +53,7 @@
 	#include "H5Iall.hpp" /* base hid_t type definitions */
 	#include "H5Tall.hpp"
 	#include "H5Zall.hpp"
+	#include "H5Qall.hpp"
 	#include "H5Pall.hpp"
 	#include "H5Zpipeline.hpp"
 	#include "H5Zpipeline_basic.hpp"
