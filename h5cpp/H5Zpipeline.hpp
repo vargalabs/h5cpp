@@ -134,14 +134,7 @@ namespace h5{ namespace impl {
 		void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr );
 		void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr );
 	};
-		struct threaded_pipeline_t : public pipeline_t<threaded_pipeline_t>{
-			void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
-				(void)offset; (void)nbytes; (void)ptr;
-			}
-			void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr ){
-				(void)offset; (void)nbytes; (void)ptr;
-			}
-		};
+		// threaded_pipeline_t is defined in H5Zpipeline_threaded.hpp
 		struct romio_pipeline_t : public pipeline_t<romio_pipeline_t>{
 			void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
 				(void)offset; (void)nbytes; (void)ptr;
