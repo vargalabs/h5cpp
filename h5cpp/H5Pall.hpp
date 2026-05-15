@@ -342,9 +342,62 @@ const static h5::copy_object copy_without_attr{H5O_COPY_WITHOUT_ATTR_FLAG};
 const static h5::copy_object merge_commited_dtype{H5O_COPY_MERGE_COMMITTED_DTYPE_FLAG};
 
 #ifdef H5CPP_HAVE_KITA
-// follow instructions: https://bitbucket.hdfgroup.org/users/jhenderson/repos/rest-vol/browse
+// Pre-HDF5-1.12 REST VOL API. In HDF5 1.12+ REST VOL is a VOL connector:
+// use H5Pset_vol() instead. This alias is preserved for backward compat only.
 using fapl_rest_vol              = impl::fapl_call< impl::fapl_args<hid_t>,H5Pset_fapl_rest_vol>;
 using kita                       = impl::fapl_call< impl::fapl_args<hid_t>,H5Pset_fapl_rest_vol>;
+#endif
+
+#ifdef H5_HAVE_ROS3_VFD
+// Read-Only S3 Virtual File Driver — available when HDF5 is built with ROS3 support.
+// Opens HDF5 files hosted on AWS S3 or compatible object stores (read-only).
+// Include <H5FDros3.h> if you need direct access to H5FD_ros3_fapl_t.
+struct fapl_ros3 : impl::prop_base<fapl_ros3, h5::fapl_t> {
+    // Unauthenticated access — public buckets
+    fapl_ros3() : fa{} {
+        fa.version = H5FD_CURR_ROS3_FAPL_T_VERSION;
+        fa.authenticate = false;
+        H5CPP_CHECK_NZ( (handle = H5Pcreate(H5P_FILE_ACCESS)),
+            h5::error::property_list::misc, "failed to create FAPL for ros3");
+    }
+    // Authenticated access — long-term AWS credentials (v1 FAPL, HDF5 >= 1.10.6)
+    fapl_ros3(bool authenticate,
+              const std::string& aws_region,
+              const std::string& secret_id,
+              const std::string& secret_key) : fa{} {
+        fa.version = H5FD_CURR_ROS3_FAPL_T_VERSION;
+        fa.authenticate = static_cast<hbool_t>(authenticate);
+        std::strncpy(fa.aws_region, aws_region.c_str(), H5FD_ROS3_MAX_REGION_LEN);
+        std::strncpy(fa.secret_id,  secret_id.c_str(),  H5FD_ROS3_MAX_SECRET_ID_LEN);
+        std::strncpy(fa.secret_key, secret_key.c_str(), H5FD_ROS3_MAX_SECRET_KEY_LEN);
+        H5CPP_CHECK_NZ( (handle = H5Pcreate(H5P_FILE_ACCESS)),
+            h5::error::property_list::misc, "failed to create FAPL for ros3");
+    }
+#if H5_VERSION_GE(1,12,1)
+    // Temporary credentials — AWS STS / IAM role (v2 FAPL, HDF5 >= 1.12.1)
+    fapl_ros3(bool authenticate,
+              const std::string& aws_region,
+              const std::string& secret_id,
+              const std::string& secret_key,
+              const std::string& session_token) : fa{} {
+        fa.version = H5FD_CURR_ROS3_FAPL_T_VERSION;
+        fa.authenticate = static_cast<hbool_t>(authenticate);
+        std::strncpy(fa.aws_region,     aws_region.c_str(),     H5FD_ROS3_MAX_REGION_LEN);
+        std::strncpy(fa.secret_id,      secret_id.c_str(),      H5FD_ROS3_MAX_SECRET_ID_LEN);
+        std::strncpy(fa.secret_key,     secret_key.c_str(),     H5FD_ROS3_MAX_SECRET_KEY_LEN);
+        std::strncpy(fa.session_token,  session_token.c_str(),  H5FD_ROS3_MAX_SECRET_KEY_LEN);
+        H5CPP_CHECK_NZ( (handle = H5Pcreate(H5P_FILE_ACCESS)),
+            h5::error::property_list::misc, "failed to create FAPL for ros3");
+    }
+#endif
+    void copy_impl(::hid_t id) const {
+        H5CPP_CHECK_NZ(
+            H5Pset_fapl_ros3(id, const_cast<H5FD_ros3_fapl_t*>(&fa)),
+            h5::error::property_list::argument, "H5Pset_fapl_ros3 failed");
+    }
+    H5FD_ros3_fapl_t fa;
+};
+using ros3 = fapl_ros3;
 #endif
 #ifdef H5_HAVE_PARALLEL
 using fapl_mpiio                 = impl::fapl_call< impl::fapl_args<hid_t,MPI_Comm, MPI_Info>,H5Pset_fapl_mpio>;

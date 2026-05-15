@@ -325,3 +325,6 @@ endif()
 add_executable(examples-utf EXCLUDE_FROM_ALL "utf/utf.cpp")
 target_link_libraries(examples-utf ${LIBS} libarmadillo)
 add_dependencies(examples examples-utf)
+
+## s3 / ROS3 VFD ###
+add_subdirectory(s3)
