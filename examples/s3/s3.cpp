@@ -40,28 +40,21 @@ static void list_datasets(h5::fd_t& fd, const std::string& label) {
 int main() {
     try {
         // ── 1. Unauthenticated: public bucket ───────────────────────────────
-        // Any public HDF5 file accessible without credentials.
         {
-            auto fd = h5::open(
-                "s3://hdf5ros3.s3.amazonaws.com/h5ex_d_alloc.h5",
-                H5F_ACC_RDONLY,
-                h5::ros3{}                              // unauthenticated
-            );
+            auto fd = h5::open("s3://rhdf5-public/h5ex_t_array.h5",
+                               H5F_ACC_RDONLY, h5::ros3{false, "eu-central-1", "", ""});
             list_datasets(fd, "Public bucket (no auth):");
         }
 
         // ── 2. Authenticated: long-term credentials ─────────────────────────
-        // Read access_key / secret from environment (never hard-code).
+        // Read credentials from environment — never hard-code.
         const char* region = std::getenv("AWS_REGION");
         const char* key_id = std::getenv("AWS_ACCESS_KEY_ID");
         const char* secret = std::getenv("AWS_SECRET_ACCESS_KEY");
 
         if (region && key_id && secret) {
-            auto fd = h5::open(
-                "s3://my-private-bucket/archive/run42.h5",
-                H5F_ACC_RDONLY,
-                h5::ros3{true, region, key_id, secret}  // v1 FAPL
-            );
+            auto fd = h5::open("s3://my-private-bucket/archive/run42.h5",
+                H5F_ACC_RDONLY, h5::ros3{true, region, key_id, secret});
             list_datasets(fd, "Private bucket (long-term creds):");
 
             // Normal h5cpp I/O — no special S3 code after open
@@ -76,11 +69,8 @@ int main() {
         // ── 3. Temporary credentials: STS / IAM role ────────────────────────
         const char* token = std::getenv("AWS_SESSION_TOKEN");
         if (region && key_id && secret && token) {
-            auto fd = h5::open(
-                "s3://my-secure-bucket/data.h5",
-                H5F_ACC_RDONLY,
-                h5::ros3{true, region, key_id, secret, token}  // v2 FAPL
-            );
+            auto fd = h5::open("s3://my-secure-bucket/data.h5",
+                H5F_ACC_RDONLY, h5::ros3{true, region, key_id, secret, token});
             list_datasets(fd, "Secure bucket (STS session token):");
         }
 #endif
