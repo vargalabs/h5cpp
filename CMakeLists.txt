@@ -119,6 +119,8 @@ else()
     message(STATUS "H5CPP: ROS3 VFD not found — S3 support disabled")
 endif()
 
+option(H5CPP_NETWORK_TESTS "Enable network-dependent tests (requires outbound S3 access)" OFF)
+
 # ─── MPI (optional) ───────────────────────────────────────────────────────────────
 find_package(MPI QUIET COMPONENTS C CXX)
 if(MPI_FOUND AND HDF5_IS_PARALLEL)

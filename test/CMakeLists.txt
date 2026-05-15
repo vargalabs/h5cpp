@@ -53,6 +53,14 @@ add_test_case(example)
 # ROS3 VFD — always compiled; tests self-skip when driver is absent at runtime
 add_test_case(H5FDros3)
 
+# ROS3 network smoke test — opt-in; requires outbound S3 access
+# Enable with: cmake -DH5CPP_NETWORK_TESTS=ON
+# Test file: s3://rhdf5-public/h5ex_t_array.h5  (eu-central-1, public read, no auth)
+if(H5CPP_NETWORK_TESTS AND H5CPP_HAVE_ROS3_VFD)
+    add_test_case(H5FDros3_network)
+    message(STATUS "H5CPP: network tests enabled — ROS3 S3 smoke test included")
+endif()
+
 # test content lands in issue/94
 add_test_case(H5Adelete)
 add_test_case(H5compat)
