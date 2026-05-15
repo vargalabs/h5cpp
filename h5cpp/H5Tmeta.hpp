@@ -180,6 +180,42 @@ namespace h5::meta {
     };
 
     namespace detail_capabilities {
+
+    // Marker for types that have an explicit storage_representation_impl specialisation.
+    // The structural fallbacks (Gap 4) check this to avoid partial-specialisation
+    // ambiguity with the well-known STL container specs below.
+    // Third-party / user-defined containers should NOT specialise this — they rely
+    // on the structural fallback firing automatically.
+    template <class T> struct has_explicit_storage_repr : std::false_type {};
+    template <class T, class A>
+    struct has_explicit_storage_repr<std::vector<T,A>>           : std::true_type {};
+    template <class A>
+    struct has_explicit_storage_repr<std::vector<bool,A>>        : std::true_type {};
+    template <class T, std::size_t N>
+    struct has_explicit_storage_repr<std::array<T,N>>            : std::true_type {};
+    template <class T, class A>
+    struct has_explicit_storage_repr<std::deque<T,A>>            : std::true_type {};
+    template <class T, class A>
+    struct has_explicit_storage_repr<std::list<T,A>>             : std::true_type {};
+    template <class T, class A>
+    struct has_explicit_storage_repr<std::forward_list<T,A>>     : std::true_type {};
+    template <class T, class C, class A>
+    struct has_explicit_storage_repr<std::set<T,C,A>>            : std::true_type {};
+    template <class T, class C, class A>
+    struct has_explicit_storage_repr<std::multiset<T,C,A>>       : std::true_type {};
+    template <class T, class H, class E, class A>
+    struct has_explicit_storage_repr<std::unordered_set<T,H,E,A>>        : std::true_type {};
+    template <class T, class H, class E, class A>
+    struct has_explicit_storage_repr<std::unordered_multiset<T,H,E,A>>   : std::true_type {};
+    template <class K, class V, class C, class A>
+    struct has_explicit_storage_repr<std::map<K,V,C,A>>          : std::true_type {};
+    template <class K, class V, class C, class A>
+    struct has_explicit_storage_repr<std::multimap<K,V,C,A>>     : std::true_type {};
+    template <class K, class V, class H, class E, class A>
+    struct has_explicit_storage_repr<std::unordered_map<K,V,H,E,A>>      : std::true_type {};
+    template <class K, class V, class H, class E, class A>
+    struct has_explicit_storage_repr<std::unordered_multimap<K,V,H,E,A>> : std::true_type {};
+
     template <class T, class = void> struct storage_representation_impl
         : std::integral_constant<storage_representation_t, storage_representation_t::unsupported> {};
 
@@ -239,6 +275,24 @@ namespace h5::meta {
         : std::integral_constant<storage_representation_t, storage_representation_t::vlen_text_dataset> {};
     template <class T, std::size_t N, class A> struct storage_representation_impl<std::vector<std::array<T,N>,A>>
         : std::integral_constant<storage_representation_t, storage_representation_t::fixed_inner_extent_dataset> {};
+
+    // Gap 4: structural fallbacks for third-party / unregistered containers.
+    // has_explicit_storage_repr<T> guards against ambiguity with the STL explicit
+    // specs above; any type NOT in that set reaches these fallbacks automatically.
+    // Sequential-like (has begin/end/value_type, no key_type/mapped_type, not text/bitfield):
+    template <class T>
+    struct storage_representation_impl<T, std::enable_if_t<
+        is_sequential_like<T>::value &&
+        !is_text_like<T>::value &&
+        !is_bitfield_like<T>::value &&
+        !has_explicit_storage_repr<T>::value>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::linear_value_dataset> {};
+    // Map-like (has key_type + mapped_type):
+    template <class T>
+    struct storage_representation_impl<T, std::enable_if_t<
+        is_map_like<T>::value &&
+        !has_explicit_storage_repr<T>::value>>
+        : std::integral_constant<storage_representation_t, storage_representation_t::key_value_dataset> {};
     }
 
     template <class T> struct storage_representation
@@ -415,6 +469,29 @@ namespace h5::meta {
         static constexpr bool value = check_contiguous(std::make_index_sequence<std::tuple_size_v<fields_t>>{});
     };
 
+    // Gap 1: contiguous STL sequence containers (vector<T>, span<T>, linalg types, etc.)
+    // Triggers when T exposes a data() pointer and size(), but is not a C/std::array,
+    // not text, not arithmetic, and not a reflected compound.
+    // The element type inferred from data() must be standard-layout and trivial
+    // (prevents nested containers like vector<vector<T>> or vector<string> from matching).
+    template <class T>
+    struct is_transport_contiguous_impl_t<T, std::enable_if_t<
+        !is_array_like<T>::value &&
+        !is_text_like<T>::value &&
+        !is_reflected_compound_t<T>::value &&
+        !std::is_arithmetic_v<T> &&
+        has_data_pointer<T>::value &&
+        meta::has_size<T>::value &&
+        std::is_standard_layout_v<
+            std::remove_pointer_t<
+                compat::detected_or_t<void, data_f, remove_cvref_t<T>>>> &&
+        std::is_trivial_v<
+            std::remove_pointer_t<
+                compat::detected_or_t<void, data_f, remove_cvref_t<T>>>>>>
+        : is_transport_contiguous_t<
+            std::remove_pointer_t<
+                compat::detected_or_t<void, data_f, remove_cvref_t<T>>>> {};
+
     // DEFAULT CASE
     template <class T> struct rank<T*>: public std::integral_constant<size_t,1>{};
     template <class T, class... Ts>
@@ -528,4 +605,145 @@ namespace h5::meta {
     template <> struct is_location<h5::fd_t> : std::true_type {};
 
     //template <class T> struct 
+}
+
+// Gap 3: access_t enum and access_traits_t<T> — the executable memory-access contract.
+// Describes how to obtain a data pointer, size, and byte count for a given type.
+// Used to decouple I/O dispatch from concrete container types.
+namespace h5::meta {
+    enum class access_t {
+        object,      // scalar / arithmetic / reflected compound — single addressable value
+        contiguous,  // has .data() pointer + is_transport_contiguous (bulk memcpy safe)
+        pointers,    // has .data() but element is not flat (e.g., vector<string>)
+        iterators,   // begin/end traversal only — no direct pointer
+        text,        // variable-length or fixed-length text (std::string, char*, etc.)
+        unsupported
+    };
+
+    // Registry for types with explicit access_traits_t specializations in mapper files.
+    // Prevents ambiguous partial-specialization resolution between generic fallbacks
+    // and mapper-provided access_traits_t.
+    namespace detail {
+        template <class T> struct has_explicit_access_traits : std::false_type {};
+    }
+
+    // Primary (unsupported — no match)
+    template <class T, class = void>
+    struct access_traits_t {
+        static constexpr access_t kind = access_t::unsupported;
+    };
+
+    // Arithmetic scalars and enums
+    template <class T>
+    struct access_traits_t<T, std::enable_if_t<std::is_arithmetic_v<T> || std::is_enum_v<T>>> {
+        using element_t  = T;
+        using pointer_t  = const T*;
+        static constexpr access_t kind = access_t::object;
+        static constexpr bool is_trivially_packable = true;
+        static const T*  data(const T& v)  noexcept { return &v; }
+        static T*        data(T& v)        noexcept { return &v; }
+        static constexpr std::array<std::size_t,0> size(const T&) noexcept { return {}; }
+        static constexpr std::size_t bytes(const T&) noexcept { return sizeof(T); }
+    };
+
+    // Reflected compound structs
+    template <class T>
+    struct access_traits_t<T, std::enable_if_t<is_reflected_compound_t<T>::value>> {
+        using element_t  = T;
+        using pointer_t  = const T*;
+        static constexpr access_t kind = access_t::object;
+        static constexpr bool is_trivially_packable = is_transport_contiguous_v<T>;
+        static const T*  data(const T& v)  noexcept { return &v; }
+        static T*        data(T& v)        noexcept { return &v; }
+        static constexpr std::array<std::size_t,0> size(const T&) noexcept { return {}; }
+        static constexpr std::size_t bytes(const T&) noexcept { return sizeof(T); }
+    };
+
+    // Text-like types (std::string, std::string_view, etc.) — handled by HDF5 string types, not raw memcpy
+    template <class T>
+    struct access_traits_t<T, std::enable_if_t<
+        !detail::has_explicit_access_traits<remove_cvref_t<T>>::value &&
+        is_text_like<T>::value &&
+        !std::is_array_v<T> &&
+        !std::is_pointer_v<remove_cvref_t<T>>>> {
+        using element_t  = typename remove_cvref_t<T>::value_type;
+        using pointer_t  = const element_t*;
+        static constexpr access_t kind = access_t::text;
+        static constexpr bool is_trivially_packable = false;
+        static auto data(const T& s) noexcept { return s.data(); }
+        static auto data(T& s)       noexcept { return s.data(); }
+        static std::array<std::size_t,1> size(const T& s) noexcept { return {s.size()}; }
+    };
+
+    // C-style arrays T[N] — contiguous by definition
+    template <class T, std::size_t N>
+    struct access_traits_t<T[N]> {
+        using element_t  = typename std::remove_all_extents_t<T[N]>;
+        using pointer_t  = const element_t*;
+        static constexpr access_t kind = access_t::contiguous;
+        static constexpr bool is_trivially_packable = true;
+        static const element_t* data(const T(&a)[N]) noexcept { return reinterpret_cast<const element_t*>(a); }
+        static element_t*       data(T(&a)[N])       noexcept { return reinterpret_cast<element_t*>(a); }
+        static constexpr std::array<std::size_t,1> size(const T(&)[N]) noexcept { return {N}; }
+        static constexpr std::size_t bytes(const T(&)[N]) noexcept { return N * sizeof(T); }
+    };
+
+    // Contiguous sequence containers: has .data() pointer + transport contiguous element
+    template <class T>
+    struct access_traits_t<T, std::enable_if_t<
+        !detail::has_explicit_access_traits<remove_cvref_t<T>>::value &&
+        !std::is_array_v<T> &&
+        !is_reflected_compound_t<T>::value &&
+        has_data_pointer<T>::value &&
+        meta::has_size<T>::value &&
+        is_transport_contiguous_v<T>>> {
+        using element_t  = std::remove_pointer_t<
+                               compat::detected_or_t<void*, data_f, remove_cvref_t<T>>>;
+        using pointer_t  = const element_t*;
+        static constexpr access_t kind = access_t::contiguous;
+        static constexpr bool is_trivially_packable = true;
+        static auto data(const T& c) noexcept { return c.data(); }
+        static auto data(T& c)       noexcept { return c.data(); }
+        static std::array<std::size_t,1> size(const T& c) noexcept { return {c.size()}; }
+        static std::size_t bytes(const T& c) noexcept { return c.size() * sizeof(element_t); }
+    };
+
+    // Non-contiguous sequence containers with .data() (e.g., vector<string>)
+    template <class T>
+    struct access_traits_t<T, std::enable_if_t<
+        !detail::has_explicit_access_traits<remove_cvref_t<T>>::value &&
+        !std::is_array_v<T> &&
+        !is_reflected_compound_t<T>::value &&
+        has_data_pointer<T>::value &&
+        meta::has_size<T>::value &&
+        compat::is_detected<value_type_f, remove_cvref_t<T>>::value &&
+        !is_transport_contiguous_v<T>>> {
+        using element_t  = typename remove_cvref_t<T>::value_type;
+        static constexpr access_t kind = access_t::pointers;
+        static constexpr bool is_trivially_packable = false;
+        static auto data(const T& c) noexcept { return c.data(); }
+        static std::array<std::size_t,1> size(const T& c) noexcept { return {c.size()}; }
+    };
+
+    // Iterator-only containers: begin/end but no .data() (list, set, map, ...)
+    template <class T>
+    struct access_traits_t<T, std::enable_if_t<
+        !detail::has_explicit_access_traits<remove_cvref_t<T>>::value &&
+        !std::is_array_v<T> &&
+        !has_data_pointer<T>::value &&
+        meta::has_iterator<T>::value &&
+        compat::is_detected<value_type_f, remove_cvref_t<T>>::value>> {
+        using element_t  = typename remove_cvref_t<T>::value_type;
+        static constexpr access_t kind = access_t::iterators;
+        static constexpr bool is_trivially_packable = false;
+        static std::array<std::size_t,1> size(const T& c) noexcept {
+            if constexpr (meta::has_size<T>::value)
+                return {c.size()};
+            else
+                return {std::distance(c.begin(), c.end())};
+        }
+    };
+
+    template <class T>
+    inline constexpr access_t access_kind_v = access_traits_t<remove_cvref_t<T>>::kind;
 }

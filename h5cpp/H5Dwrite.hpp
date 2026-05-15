@@ -193,25 +193,44 @@ namespace h5 {
 		using tcount = typename arg::tpos<const h5::count_t&,const args_t&...>;
 		using element_t = typename impl::decay<T>::type;
 
-		if constexpr (h5::meta::is_contiguous<T>::value) { // arrays/vectors/matrices of pod_t, funcamental types, but NOT vector<std::string> ... etc
-			auto ptr = h5::impl::data(ref);
-			if constexpr (tcount::present) // explicitly set: mem_space and file_space are given
+		using traits = h5::meta::access_traits_t<T>;
+		constexpr auto kind = traits::kind;
+
+		if constexpr (kind == h5::meta::access_t::contiguous
+				   || kind == h5::meta::access_t::object
+				   || kind == h5::meta::access_t::text) {
+			auto ptr = traits::data(ref);
+			if constexpr (tcount::present)
 				::h5::write(ds, ptr,  args...);
-			else { // we have to find out the size of `ref` and compute h5::count{}	
-				h5::count_t count = impl::size( ref );
+			else {
+				h5::count_t count = traits::size( ref );
 				::h5::write(ds, ptr, count, args...);
 			}
-		} else { // variable length datasets: ragged arrays, vector of strings...
-			// SUBTLE: lowering element_t type here with one level 
-			using element_t = typename impl::decay<element_t>::type;
+		} else if constexpr (kind == h5::meta::access_t::pointers) {
+			// e.g. vector<string>, vector<vector<int>> — elements have .data() but are not flat
+			using element_t = typename impl::decay<typename traits::element_t>::type;
 			std::vector<element_t> elements;
 			const element_t* ptrs = h5::gather(ref, elements);
-			if constexpr (tcount::present) // explicitly set: mem_space and file_space are given
+			if constexpr (tcount::present)
 				::h5::write<element_t>(ds, ptrs,  args...);
-			else { // we have to find out the size of `ref` and compute h5::count{}	
-				h5::count_t count = impl::size( ref );
+			else {
+				h5::count_t count = traits::size( ref );
 				::h5::write<element_t>(ds, ptrs, count, args...);
 			}
+		} else if constexpr (kind == h5::meta::access_t::iterators) {
+			// e.g. list<int>, set<int>, map<K,V> — no direct pointer, copy to staging buffer
+			using element_t = typename impl::decay<typename traits::element_t>::type;
+			auto count = traits::size(ref);
+			size_t n = 1;
+			for (std::size_t i = 0; i < count.size(); ++i) n *= count[i];
+			std::vector<element_t> buffer;
+			buffer.reserve(n);
+			for (const auto& elem : ref)
+				buffer.push_back(elem);
+			::h5::write(ds, buffer.data(), h5::count_t(count), args...);
+		} else {
+			static_assert(kind != h5::meta::access_t::unsupported,
+				"unsupported type for h5::write");
 		}
 		return ds;
 	} catch ( const std::exception& err ){

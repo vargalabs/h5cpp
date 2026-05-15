@@ -9,6 +9,8 @@
 
 namespace h5::impl {
 	// 1.) object -> H5T_xxx
+	template <class T> struct detail::has_explicit_decay<xt::xarray<T>> : std::true_type {};
+	template <class T, size_t N> struct detail::has_explicit_decay<xt::xtensor<T,N>> : std::true_type {};
 	template <class T> struct decay<xt::xarray<T>>{ using type = T; };
 	template <class T, size_t N> struct decay<xt::xtensor<T, N>>{ using type = T; };
 
