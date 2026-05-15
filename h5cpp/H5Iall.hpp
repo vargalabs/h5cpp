@@ -191,7 +191,7 @@ namespace h5 {
 	/*datatype:*/   //H5CPP__defhid_t(dt_t, H5Tclose)
 
 	/*each of these properties has a distinct proxy object to handle the details
-	 * see: https://support.hdfgroup.org/HDF5/doc/RM/RM_H5P.html#AttributeCreatePropFuncs */
+	 * see: https://support.hdfgroup.org/documentation/hdf5/latest/group___h5_p.html */
 	H5CPP__defpid_t(acpl_t,H5Pclose)
 	H5CPP__defpid_t(dapl_t,H5Pclose) H5CPP__defpid_t(dxpl_t,H5Pclose) H5CPP__defpid_t(dcpl_t,H5Pclose)
 	H5CPP__defpid_t(tapl_t,H5Pclose) H5CPP__defpid_t(tcpl_t,H5Pclose)

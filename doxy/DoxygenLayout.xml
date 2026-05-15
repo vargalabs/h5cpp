@@ -1,0 +1,42 @@
+<doxygenlayout version="1.0">
+  <navindex>
+    <tab type="mainpage"  visible="yes" title="Introduction"/>
+    <tab type="modules"   visible="yes" title="IO API" intro="
+      H5CPP provides C++17 templates for CREATE, READ, WRITE and APPEND operations
+      across popular linear algebra packages, STL containers, and raw memory.
+      Use the groups below to navigate overload families."/>
+    <tab type="pages"     visible="yes" title="Documents" intro="
+      Architecture guides, type-system overview, linalg integration, and workflow notes."/>
+    <tab type="examples"  visible="yes" title="Examples" intro="
+      Ready-to-compile examples. Each subdirectory has a Makefile; refer to the
+      Introduction page for build prerequisites."/>
+    <tab type="namespaces" visible="no" title="">
+      <tab type="namespacelist"    visible="no" title="" intro=""/>
+      <tab type="namespacemembers" visible="no" title="" intro=""/>
+    </tab>
+    <tab type="classes" visible="no" title="">
+      <tab type="classlist"    visible="yes" title="" intro=""/>
+      <tab type="classindex"   visible="$ALPHABETICAL_INDEX" title=""/>
+      <tab type="hierarchy"    visible="yes" title="" intro=""/>
+      <tab type="classmembers" visible="yes" title="" intro=""/>
+    </tab>
+    <tab type="files" visible="no" title="">
+      <tab type="filelist" visible="yes" title="" intro=""/>
+      <tab type="globals"  visible="yes" title="" intro=""/>
+    </tab>
+  </navindex>
+
+  <group>
+    <briefdescription visible="no"/>
+    <groupgraph visible="$GROUP_GRAPHS"/>
+    <memberdecl>
+      <nestedgroups visible="no" title=""/>
+    </memberdecl>
+    <detaileddescription title=""/>
+    <memberdef>
+      <functions title=""/>
+    </memberdef>
+    <authorsection visible="yes"/>
+  </group>
+
+</doxygenlayout>
