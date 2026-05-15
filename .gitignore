@@ -1,57 +1,140 @@
-#
-#   ALL RIGHTS RESERVED.
-#   _________________________________________________________________________________
-#   NOTICE: All information contained  herein is, and remains the property  of  Varga
-#   Consulting and  its suppliers, if  any. The intellectual and  technical  concepts
-#   contained herein are proprietary to Varga Consulting and its suppliers and may be
-#   covered  by  Canadian and  Foreign Patents, patents in process, and are protected
-#   by  trade secret or copyright law. Dissemination of this information or reproduc-
-#   tion  of  this  material is strictly forbidden unless prior written permission is
-#   obtained from Varga Consulting.
-#
-#   Copyright © <2018> Varga Consulting, Toronto, On          info@vargaconsulting.ca
-#   _________________________________________________________________________________
+# =============================================================================
+# Build directories
+# =============================================================================
+build/
+build-*/
+out/
+cmake-build-*/
 
-*.[oa]
-**/*.h5
-**/*.pcap
-**/*.aux
-**/*.prof
-docs/docs/site
-data/
-**/.ycm_extra_conf.py
-
-build
+# =============================================================================
+# CMake-generated files (when cmake is run outside a build/ dir)
+# =============================================================================
+CMakeCache.txt
+CMakeFiles/
 CMakeLists.txt.user*
-*~
-*.swp
-*.d
-*.slo
-*.lo
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+_CPack_Packages/
+install_manifest.txt
+compile_commands.json
+
+# =============================================================================
+# Compiler-generated intermediates
+# =============================================================================
 *.o
 *.obj
-*.gch
-*.pch
-*.so
-*.dylib
-*.dll
-*.mod
-*.smod
-*.lai
-*.la
 *.a
 *.lib
+*.lo
+*.slo
+*.la
+*.lai
+*.d
+*.gch
+*.pch
+
+# =============================================================================
+# Shared / dynamic libraries
+# =============================================================================
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# =============================================================================
+# Executables
+# =============================================================================
 *.exe
 *.out
 *.app
 
+# =============================================================================
+# Fortran module files
+# =============================================================================
+*.mod
+*.smod
+
+# =============================================================================
+# Code coverage
+# =============================================================================
+*.gcno
+*.gcda
+*.gcov
+*.lcov
+coverage.info
+coverage*.info
+htmlcov/
+
+# =============================================================================
+# Platform: macOS / iOS
+# =============================================================================
+.DS_Store
+*.dSYM/
+xcuserdata/
+*.xcuserstate
+DerivedData/
+
+# =============================================================================
+# Platform: Windows
+# =============================================================================
+Thumbs.db
+desktop.ini
+*.pdb
+*.ilk
+*.exp
+
+# =============================================================================
+# Platform: Android
+# =============================================================================
+*.apk
+*.aab
+*.ap_
+local.properties
+.gradle/
+.externalNativeBuild/
+.cxx/
+
+# =============================================================================
+# Editors and IDEs
+# =============================================================================
+*~
+*.swp
+*.swo
+.idea/
+.vscode/
+.clangd/
+.clang-tidy-cache/
+.cache/
+
+# =============================================================================
+# Code navigation / indexers
+# =============================================================================
+cscope.in.out
+cscope.out
+cscope.po.out
+tags
+TAGS
+**/.ycm_extra_conf.py
+.ccls-cache/
+.xwin-cache/
+
+# =============================================================================
+# Project data and outputs
+# =============================================================================
+data/
+**/*.h5
+**/*.pcap
+**/*.aux
+**/*.prof
+
+# =============================================================================
+# Python virtual environments (for tooling / scripts)
+# =============================================================================
 .venv/
 
+# =============================================================================
+# Documentation build output
+# =============================================================================
+docs/docs/site
 site/
-compile_commands.json
-
-# Generated single-header amalgamation
-h5cpp.hpp
-
-.cache/
-docs/doxygen/
