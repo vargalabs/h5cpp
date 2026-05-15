@@ -589,6 +589,10 @@ namespace h5::meta {
     // and mapper-provided access_traits_t.
     namespace detail {
         template <class T> struct has_explicit_access_traits : std::false_type {};
+        // vector<array<T,N>>: registered as explicit so the generic contiguous
+        // fallback (which would size by vec.size()) doesn't claim it.
+        template <class T, std::size_t N, class A>
+        struct has_explicit_access_traits<std::vector<std::array<T,N>, A>> : std::true_type {};
     }
 
     // Primary (unsupported — no match)
@@ -636,7 +640,7 @@ namespace h5::meta {
         static constexpr bool is_trivially_packable = false;
         static auto data(const T& s) noexcept { return s.data(); }
         static auto data(T& s)       noexcept { return s.data(); }
-        static std::array<std::size_t,1> size(const T& s) noexcept { return {s.size()}; }
+        static std::array<std::size_t,1> size(const T& s) noexcept { return {static_cast<std::size_t>(s.size())}; }
     };
 
     // C-style arrays T[N] — contiguous by definition
@@ -668,7 +672,7 @@ namespace h5::meta {
         static constexpr bool is_trivially_packable = true;
         static auto data(const T& c) noexcept { return c.data(); }
         static auto data(T& c)       noexcept { return c.data(); }
-        static std::array<std::size_t,1> size(const T& c) noexcept { return {c.size()}; }
+        static std::array<std::size_t,1> size(const T& c) noexcept { return {static_cast<std::size_t>(c.size())}; }
         static std::size_t bytes(const T& c) noexcept { return c.size() * sizeof(element_t); }
     };
 
@@ -686,7 +690,7 @@ namespace h5::meta {
         static constexpr access_t kind = access_t::pointers;
         static constexpr bool is_trivially_packable = false;
         static auto data(const T& c) noexcept { return c.data(); }
-        static std::array<std::size_t,1> size(const T& c) noexcept { return {c.size()}; }
+        static std::array<std::size_t,1> size(const T& c) noexcept { return {static_cast<std::size_t>(c.size())}; }
     };
 
     // Iterator-only containers: begin/end but no .data() (list, set, map, ...)
@@ -702,9 +706,33 @@ namespace h5::meta {
         static constexpr bool is_trivially_packable = false;
         static std::array<std::size_t,1> size(const T& c) noexcept {
             if constexpr (meta::has_size<T>::value)
-                return {c.size()};
+                return {static_cast<std::size_t>(c.size())};
             else
                 return {std::distance(c.begin(), c.end())};
+        }
+    };
+
+    // vector<array<T,N>>: contiguous, but the inner extent N means the flat
+    // element count is vec.size()*N, not vec.size(). The generic contiguous
+    // fallback sizes by vec.size() only and produces a dataset that's 1/N too
+    // small — see has_explicit_access_traits registration above.
+    template <class T, std::size_t N, class A>
+    struct access_traits_t<std::vector<std::array<T,N>, A>> {
+        using element_t  = T;
+        using pointer_t  = const T*;
+        static constexpr access_t kind = access_t::contiguous;
+        static constexpr bool is_trivially_packable = true;
+        static const T* data(const std::vector<std::array<T,N>,A>& c) noexcept {
+            return c.empty() ? nullptr : c.front().data();
+        }
+        static T* data(std::vector<std::array<T,N>,A>& c) noexcept {
+            return c.empty() ? nullptr : c.front().data();
+        }
+        static std::array<std::size_t,1> size(const std::vector<std::array<T,N>,A>& c) noexcept {
+            return {c.size() * N};
+        }
+        static std::size_t bytes(const std::vector<std::array<T,N>,A>& c) noexcept {
+            return c.size() * N * sizeof(T);
         }
     };
 

@@ -26,6 +26,8 @@ namespace h5::impl {
 		struct has_explicit_decay<std::basic_string<C,Tr,A>> : std::true_type {};
 		template <class T, class A>
 		struct has_explicit_decay<std::vector<T,A>> : std::true_type {};
+		template <class T, std::size_t N>
+		struct has_explicit_decay<std::vector<std::array<T,N>>> : std::true_type {};
 		template <class T>
 		struct has_explicit_decay<std::initializer_list<T>> : std::true_type {};
 	}
@@ -47,6 +49,13 @@ namespace h5::impl {
 	template <class T> struct decay<std::vector<const T*>>{ using type = const T*; };
 	template <class T> struct decay<std::vector<T*>>{ using type = T*; };
 	template <class T> struct decay<std::vector<T>>{ using type = T; };
+	// vector<array<T,N>>: flatten through the inner fixed extent so the I/O
+	// pipeline treats the buffer as N*M contiguous T elements (matches the
+	// dataset's effective extent). Without this specialisation `decay` stops
+	// at array<T,N> and the dataset gets sized by vec.size() instead of
+	// vec.size()*N.
+	template <class T, std::size_t N>
+	struct decay<std::vector<std::array<T,N>>>{ using type = T; };
 
 	// Gap 2: structural fallback for containers not explicitly registered above.
 	// The enable_if exclusion prevents ambiguity with the explicit specs for
@@ -92,6 +101,16 @@ namespace h5::impl {
 	template <class T, class A> inline T* data( std::vector<T, A>& ref ){
 		return ref.data();
 	}
+	// vector<array<T,N>>: hand the buffer back as flat T* so the inner write/read
+	// path operates on N*M contiguous elements (POD layout makes this aliasing safe).
+	template <class T, std::size_t N, class A>
+	inline const T* data( const std::vector<std::array<T,N>, A>& ref ){
+		return ref.empty() ? nullptr : ref.front().data();
+	}
+	template <class T, std::size_t N, class A>
+	inline T* data( std::vector<std::array<T,N>, A>& ref ){
+		return ref.empty() ? nullptr : ref.front().data();
+	}
 	// 4.) write access
 	template <class T> inline std::enable_if_t<std::is_integral_v<T>,
 	T*> data( T& ref ){ return &ref; }
@@ -99,6 +118,11 @@ namespace h5::impl {
 	template <class T> inline constexpr std::enable_if_t< impl::is_scalar<T>::value,
 		std::array<size_t,0>> size( T ){ return{}; }
 	template <class T, class A> inline std::array<size_t,1> size( const std::vector<T, A>& ref ){ return {ref.size()}; }
+	// vector<array<T,N>>: total flat extent so the dataset is sized N*M, not N.
+	template <class T, std::size_t N, class A>
+	inline std::array<size_t,1> size( const std::vector<std::array<T,N>, A>& ref ){
+		return {ref.size() * N};
+	}
 	template <class T> inline std::array<size_t,1> size( const std::initializer_list<T>& ref ){ return {ref.size()}; }
 	// Gap 2: structural size() — containers with .size() not explicitly covered.
 	// Returns rank-1 extent for any non-scalar with a .size() member.
@@ -126,5 +150,12 @@ namespace h5::impl {
 	struct get<std::vector<T>> {
 		static inline std::vector<T> ctor( std::array<size_t,1> dims ){
 			return std::vector<T>( dims[0] );
+	}};
+	// vector<array<T,N>>: dims[0] is the flat extent (= vec.size()*N), so divide
+	// to recover the outer count when constructing the readback buffer.
+	template<class T, std::size_t N>
+	struct get<std::vector<std::array<T,N>>> {
+		static inline std::vector<std::array<T,N>> ctor( std::array<size_t,1> dims ){
+			return std::vector<std::array<T,N>>( dims[0] / N );
 	}};
 }

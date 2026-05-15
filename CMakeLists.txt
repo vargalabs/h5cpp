@@ -113,7 +113,6 @@ foreach(_hdf5_inc IN LISTS HDF5_INCLUDE_DIRS)
     endif()
 endforeach()
 if(H5CPP_HAVE_ROS3_VFD)
-    target_compile_definitions(h5cpp INTERFACE H5CPP_HAVE_ROS3_VFD=1)
     message(STATUS "H5CPP: ROS3 VFD detected — S3 read-only support enabled")
 else()
     message(STATUS "H5CPP: ROS3 VFD not found — S3 support disabled")
@@ -194,6 +193,10 @@ target_include_directories(h5cpp INTERFACE
 
 target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBS})
 target_compile_features(h5cpp INTERFACE cxx_std_17)
+
+if(H5CPP_HAVE_ROS3_VFD)
+    target_compile_definitions(h5cpp INTERFACE H5CPP_HAVE_ROS3_VFD=1)
+endif()
 
 if(H5CPP_LIBDEFLATE_FOUND)
     target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBDEFLATE_TARGET})

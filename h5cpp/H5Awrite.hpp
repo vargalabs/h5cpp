@@ -49,11 +49,11 @@ namespace h5 {
 		if constexpr (h5::meta::is_text_like<T>::value)
 			current_dims = h5::current_dims_t{}; // scalar
 		else
-			current_dims = meta::size( ref );
-		using element_t = typename meta::decay<T>::type;
+			current_dims = impl::size( ref );
+		using element_t = typename impl::decay<T>::type;
 		h5::at_t attr = ( H5Aexists(static_cast<hid_t>(parent), name.c_str() ) > 0 ) ?
 			h5::open(parent, name, h5::default_acpl) : h5::create<element_t>(parent, name, current_dims);
-		auto const* data = meta::data(ref);
+		auto const* data = impl::data(ref);
 		h5::awrite(attr, data);
 		return attr;
 	}
@@ -62,12 +62,12 @@ namespace h5 {
 	template<class T, class P>
 	inline std::enable_if_t<h5::impl::is_valid_attr<P>::value,
     h5::at_t> awrite( const P& parent, const std::string& name, const std::initializer_list<T> ref, const h5::acpl_t& acpl = h5::default_acpl ) try {
-		h5::current_dims_t current_dims = meta::size( ref );
-		using element_t = typename meta::decay<std::initializer_list<T>>::type;
+		h5::current_dims_t current_dims = impl::size( ref );
+		using element_t = typename impl::decay<std::initializer_list<T>>::type;
 
 		h5::at_t attr = ( H5Aexists(static_cast<hid_t>(parent), name.c_str() ) > 0 ) ?
 			h5::open(parent, name, h5::default_acpl) : h5::create<element_t>(parent, name, current_dims);
-		h5::awrite<element_t>(attr, meta::data( ref ) );
+		h5::awrite<element_t>(attr, impl::data( ref ) );
 		return attr;
 	} catch( const std::runtime_error& err ){
 		throw h5::error::io::attribute::write( err.what() );

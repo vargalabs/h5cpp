@@ -104,6 +104,14 @@ void fill(T (&arr)[N][M], size_t lower, size_t upper, size_t min = 5, size_t max
 template <class T, size_t N, size_t M, size_t P>
 void fill(T (&arr)[N][M][P], size_t lower, size_t upper, size_t min = 5, size_t max = 10);
 
+// Forward declaration so the primary dispatcher's recursive `fill(e, ...)`
+// on a std::array element resolves to the explicit overload defined below.
+// Without this forward declaration, two-phase lookup only sees the primary
+// template and recursively dispatches into a branch that has no case for
+// std::array — leaving each std::array element zero-initialized.
+template <class V, size_t N>
+void fill(std::array<V,N>& arr, size_t lower, size_t upper, size_t min = 5, size_t max = 10);
+
 
 // ----------------------------------------------------------------
 // Primary dispatcher — handles everything that isn't a C array
@@ -176,7 +184,7 @@ void fill(T (&arr)[N][M][P], size_t lower, size_t upper, size_t min, size_t max)
 // the primary dispatcher on each element (not the C-array path)
 // ----------------------------------------------------------------
 template <class V, size_t N>
-void fill(std::array<V,N>& arr, size_t lower, size_t upper, size_t min = 5, size_t max = 10) {
+void fill(std::array<V,N>& arr, size_t lower, size_t upper, size_t min, size_t max) {
     for (auto& elem : arr) fill(elem, lower, upper, min, max);
 }
 

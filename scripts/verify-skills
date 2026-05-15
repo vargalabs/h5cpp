@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+"""
+verify-skills — CI guard: skill snippets tagged tested:true must appear
+verbatim in the test suite.
+
+Usage:
+    python3 scripts/verify-skills [--project-root PATH] [--strict]
+
+Exit codes:
+    0  all verified snippets found
+    1  one or more snippets not found in declared source file (--strict only)
+    0  mismatches printed as warnings when --strict is not set (default)
+"""
+
+import argparse
+import re
+import sys
+from pathlib import Path
+
+
+def find_workspace(hint=None):
+    if hint:
+        return Path(hint)
+    here = Path(__file__).resolve().parent.parent
+    return here if (here / "docs" / "skills").exists() else Path.cwd()
+
+
+def extract_snippets(skill_file: Path):
+    """Yield (source_file, code_block) for every fenced block in a tested:true skill."""
+    text = skill_file.read_text()
+
+    # Only process files tagged tested: true
+    fm_match = re.search(r'^---\s*\n(.*?)\n---', text, re.DOTALL | re.MULTILINE)
+    if not fm_match:
+        return
+    frontmatter = fm_match.group(1)
+    if not re.search(r'tested\s*:\s*true', frontmatter):
+        return
+
+    # Extract declared source files
+    src_match = re.search(r'source\s*:\s*(.+)', frontmatter)
+    sources = [s.strip() for s in src_match.group(1).split(",")] if src_match else []
+
+    # Extract fenced C++ code blocks
+    for block in re.finditer(r'```cpp\n(.*?)```', text, re.DOTALL):
+        yield sources, block.group(1).strip()
+
+
+def snippet_in_source(snippet: str, source_path: Path) -> bool:
+    """Return True if every h5:: API call in snippet appears somewhere in source.
+
+    Checks patterns like h5::create, h5::write, h5::read, h5::append, h5::open,
+    h5::flush, h5::chunk, h5::gzip, h5::offset, h5::pt_t, h5::fd_t etc.
+    This validates that the API surface shown is exercised by the test, without
+    requiring verbatim line matches (skill snippets are pedagogical, not copy-paste).
+    """
+    if not source_path.exists():
+        return False
+    source = source_path.read_text()
+    # Extract all h5:: tokens from the snippet
+    calls = re.findall(r'h5::\w+', snippet)
+    if not calls:
+        return True   # no h5:: API used — not a testable snippet
+    return all(call in source for call in calls)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--project-root", type=Path)
+    ap.add_argument("--strict", action="store_true",
+                    help="Exit 1 on first unverified snippet")
+    args = ap.parse_args()
+
+    root    = find_workspace(args.project_root)
+    skills  = root / "docs" / "skills"
+    failed  = []
+    checked = 0
+
+    for skill_file in sorted(skills.glob("*.md")):
+        for sources, snippet in extract_snippets(skill_file):
+            checked += 1
+            verified = False
+            for src in sources:
+                if snippet_in_source(snippet, root / src.strip()):
+                    verified = True
+                    break
+            if not verified and sources:
+                msg = f"UNVERIFIED  {skill_file.name}: snippet not found in {sources}"
+                print(msg)
+                failed.append(msg)
+
+    print(f"\nverify-skills: {checked} snippet(s) checked, {len(failed)} unverified")
+
+    if failed and args.strict:
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

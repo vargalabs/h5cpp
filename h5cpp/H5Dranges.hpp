@@ -118,22 +118,35 @@ namespace h5::impl {
 
 namespace h5 {
     /**
+     * @brief Lightweight range wrapper that avoids std::ranges::subrange
+     *        recursive-inheritance issues with clang + libstdc++-14.
+     */
+    template<typename Iter>
+    struct view_range {
+        Iter _M_begin;
+        Iter _M_end;
+
+        constexpr Iter begin() const { return _M_begin; }
+        constexpr Iter end() const { return _M_end; }
+    };
+
+    /**
      * @brief Return a C++20 input range that streams a rank-1 chunked dataset
      *        one chunk at a time.
      *
-     * The returned subrange satisfies std::ranges::input_range and can be used
+     * The returned range satisfies std::ranges::input_range and can be used
      * in a range-for loop or passed to any std::ranges algorithm.
      *
      * @tparam T  Element type matching the HDF5 dataset's stored type.
      * @param  ds Open dataset handle (must be rank-1 and chunked).
-     * @return    std::ranges::subrange over h5::impl::iterator_t<T>.
+     * @return    view_range over h5::impl::iterator_t<T>.
      */
     template<typename T>
-    [[nodiscard]] std::ranges::subrange<impl::iterator_t<T>> view(h5::ds_t ds) {
+    [[nodiscard]] view_range<impl::iterator_t<T>> view(h5::ds_t ds) {
         using Iter = impl::iterator_t<T>;
         using Key  = impl::view_access;
         hsize_t n  = impl::get_ds_element_count(ds);
-        return std::ranges::subrange<Iter>{ Iter(Key{}, ds, 0, n), Iter(Key{}, ds, n, n) };
+        return view_range<Iter>{ Iter(Key{}, ds, 0, n), Iter(Key{}, ds, n, n) };
     }
 } // namespace h5
 

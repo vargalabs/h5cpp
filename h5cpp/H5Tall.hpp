@@ -28,6 +28,21 @@ namespace h5 {
 #endif
 }
 
+namespace h5::meta {
+    // h5::reference_t is a POD scalar — single HDF5 reference value
+    template <>
+    struct access_traits_t<h5::reference_t> {
+        using element_t  = h5::reference_t;
+        using pointer_t  = const h5::reference_t*;
+        static constexpr access_t kind = access_t::object;
+        static constexpr bool is_trivially_packable = true;
+        static const h5::reference_t* data(const h5::reference_t& v) noexcept { return &v; }
+        static h5::reference_t*       data(h5::reference_t& v)       noexcept { return &v; }
+        static constexpr std::array<std::size_t,0> size(const h5::reference_t&) noexcept { return {}; }
+        static constexpr std::size_t bytes(const h5::reference_t&) noexcept { return sizeof(h5::reference_t); }
+    };
+}
+
 /* template specialization from hid_t< .. > type which provides syntactic sugar in the form
  * h5::dt_t<int> dt; 
  * */
