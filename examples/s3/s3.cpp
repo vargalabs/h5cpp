@@ -21,29 +21,16 @@ int main() {
     return 1;
 }
 #else
-#include <H5FDros3.h>
-
-// ---------------------------------------------------------------------------
-// Helper: print top-level dataset names in a file
-// ---------------------------------------------------------------------------
-static void list_datasets(h5::fd_t& fd, const std::string& label) {
-    std::cout << label << "\n";
-    // Iterate root group — using low-level CAPI for brevity
-    hsize_t idx = 0;
-    H5Literate(static_cast<hid_t>(fd), H5_INDEX_NAME, H5_ITER_NATIVE, &idx,
-        [](hid_t, const char* name, const H5L_info_t*, void*) -> herr_t {
-            std::cout << "  /" << name << "\n";
-            return 0;
-        }, nullptr);
-}
 
 int main() {
     try {
         // ── 1. Unauthenticated: public bucket ───────────────────────────────
         {
-            auto fd = h5::open("s3://rhdf5-public/h5ex_t_array.h5",
-                               H5F_ACC_RDONLY, h5::ros3{false, "eu-central-1", "", ""});
-            list_datasets(fd, "Public bucket (no auth):");
+            auto fd      = h5::open("s3://rhdf5-public/h5ex_t_array.h5",
+                                    H5F_ACC_RDONLY, h5::ros3{false, "eu-central-1", "", ""});
+            auto entries = h5::ls(fd, "/");
+            std::cout << "Public bucket (no auth):\n";
+            for (auto& name : entries) std::cout << "  /" << name << "\n";
         }
 
         // ── 2. Authenticated: long-term credentials ─────────────────────────
@@ -53,13 +40,15 @@ int main() {
         const char* secret = std::getenv("AWS_SECRET_ACCESS_KEY");
 
         if (region && key_id && secret) {
-            auto fd = h5::open("s3://my-private-bucket/archive/run42.h5",
-                H5F_ACC_RDONLY, h5::ros3{true, region, key_id, secret});
-            list_datasets(fd, "Private bucket (long-term creds):");
+            auto fd      = h5::open("s3://my-private-bucket/archive/run42.h5",
+                                    H5F_ACC_RDONLY, h5::ros3{true, region, key_id, secret});
+            auto entries = h5::ls(fd, "/");
+            std::cout << "Private bucket (long-term creds):\n";
+            for (auto& name : entries) std::cout << "  /" << name << "\n";
 
-            // Normal h5cpp I/O — no special S3 code after open
-            auto temperatures = h5::read<std::vector<double>>(fd, "/sensor/temperature");
-            std::cout << "  read " << temperatures.size() << " temperature values\n";
+            // Normal h5cpp I/O — no S3-specific code needed after open
+            auto temps = h5::read<std::vector<double>>(fd, "/sensor/temperature");
+            std::cout << "  read " << temps.size() << " temperature values\n";
         } else {
             std::cout << "Set AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY "
                          "to test authenticated access.\n";
@@ -69,9 +58,11 @@ int main() {
         // ── 3. Temporary credentials: STS / IAM role ────────────────────────
         const char* token = std::getenv("AWS_SESSION_TOKEN");
         if (region && key_id && secret && token) {
-            auto fd = h5::open("s3://my-secure-bucket/data.h5",
-                H5F_ACC_RDONLY, h5::ros3{true, region, key_id, secret, token});
-            list_datasets(fd, "Secure bucket (STS session token):");
+            auto fd      = h5::open("s3://my-secure-bucket/data.h5",
+                                    H5F_ACC_RDONLY, h5::ros3{true, region, key_id, secret, token});
+            auto entries = h5::ls(fd, "/");
+            std::cout << "Secure bucket (STS session token):\n";
+            for (auto& name : entries) std::cout << "  /" << name << "\n";
         }
 #endif
 
