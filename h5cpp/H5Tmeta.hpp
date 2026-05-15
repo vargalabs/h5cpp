@@ -708,7 +708,7 @@ namespace h5::meta {
             if constexpr (meta::has_size<T>::value)
                 return {static_cast<std::size_t>(c.size())};
             else
-                return {std::distance(c.begin(), c.end())};
+                return {static_cast<std::size_t>(std::distance(c.begin(), c.end()))};
         }
     };
 

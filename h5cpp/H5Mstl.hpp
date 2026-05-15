@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <forward_list>
 #include <initializer_list>
 #include <type_traits>
 #include "H5meta.hpp"    // for h5::meta::has_size, has_data, is_sequential_like
@@ -101,6 +102,12 @@ namespace h5::impl {
 	template <class T, class A> inline T* data( std::vector<T, A>& ref ){
 		return ref.data();
 	}
+	template <class T, std::size_t N> inline const T* data( const std::array<T,N>& ref ){
+		return ref.data();
+	}
+	template <class T, std::size_t N> inline T* data( std::array<T,N>& ref ){
+		return ref.data();
+	}
 	// vector<array<T,N>>: hand the buffer back as flat T* so the inner write/read
 	// path operates on N*M contiguous elements (POD layout makes this aliasing safe).
 	template <class T, std::size_t N, class A>
@@ -124,6 +131,10 @@ namespace h5::impl {
 		return {ref.size() * N};
 	}
 	template <class T> inline std::array<size_t,1> size( const std::initializer_list<T>& ref ){ return {ref.size()}; }
+	template <class T, class A>
+	inline std::array<size_t,1> size( const std::forward_list<T,A>& ref ){
+		return {static_cast<size_t>(std::distance(ref.begin(), ref.end()))};
+	}
 	// Gap 2: structural size() — containers with .size() not explicitly covered.
 	// Returns rank-1 extent for any non-scalar with a .size() member.
 	// The explicit vector<T,A> overload above is more specific and wins for vectors.

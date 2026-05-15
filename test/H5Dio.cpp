@@ -32,7 +32,9 @@ TEST_CASE_TEMPLATE_DEFINE("[#114] h5 round-trip", T, io_round_trip) {
     } else if constexpr (rep == sr_t::linear_value_dataset) {
         T obj{};
         h5::test::fill(obj, LOWER, UPPER, MIN_SZ, MAX_SZ);
-        if constexpr (std::is_same_v<T, std::vector<int>>) {
+        using access = h5::meta::access_traits_t<T>;
+        if constexpr (std::is_same_v<T, std::vector<int>>
+                   || access::kind == h5::meta::access_t::iterators) {
             h5::write(f.fd, type_name.c_str(), obj);
             auto readback = h5::read<T>(f.fd, type_name.c_str());
             CHECK(readback == obj);
