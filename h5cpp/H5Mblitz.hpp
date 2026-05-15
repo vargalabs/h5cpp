@@ -14,6 +14,9 @@ namespace h5::blitz {
 
 namespace h5::meta {
 		template <class T, int N> struct is_contiguous<h5::blitz::array<T,N>> : std::true_type {};
+
+		// Register types so generic access_traits_t fallbacks don't create ambiguous partial specializations
+		template <class T, int N> struct detail::has_explicit_access_traits<h5::blitz::array<T,N>> : std::true_type {};
 }
 
 namespace h5::impl {
@@ -49,5 +52,20 @@ namespace h5::impl {
 			for(int i=0; i<N; ++i) shape[i] = static_cast<int>(dims[i]);
 			return h5::blitz::array<T,N>(shape);
 	}};
+}
+
+namespace h5::meta {
+		template <class T, int N> struct access_traits_t<h5::blitz::array<T,N>> {
+			using element_t = T;
+			static constexpr access_t kind = access_t::contiguous;
+			static constexpr bool is_trivially_packable = true;
+			static auto data(const h5::blitz::array<T,N>& c) noexcept { return h5::impl::data(c); }
+			static auto size(const h5::blitz::array<T,N>& c) noexcept { return h5::impl::size(c); }
+			static std::size_t bytes(const h5::blitz::array<T,N>& c) noexcept {
+				auto s = size(c); std::size_t n = 1;
+				for (std::size_t i = 0; i < s.size(); ++i) n *= s[i];
+				return n * sizeof(element_t);
+			}
+		};
 }
 #endif

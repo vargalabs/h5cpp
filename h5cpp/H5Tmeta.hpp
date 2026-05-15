@@ -469,20 +469,28 @@ namespace h5::meta {
         static constexpr bool value = check_contiguous(std::make_index_sequence<std::tuple_size_v<fields_t>>{});
     };
 
-    // Gap 1: contiguous STL sequence containers (vector<T>, span<T>, etc.)
+    // Gap 1: contiguous STL sequence containers (vector<T>, span<T>, linalg types, etc.)
     // Triggers when T exposes a data() pointer and size(), but is not a C/std::array,
     // not text, not arithmetic, and not a reflected compound.
-    // Contiguity recurses into the element type via meta::decay (which uses value_type).
+    // The element type inferred from data() must be standard-layout and trivial
+    // (prevents nested containers like vector<vector<T>> or vector<string> from matching).
     template <class T>
     struct is_transport_contiguous_impl_t<T, std::enable_if_t<
         !is_array_like<T>::value &&
         !is_text_like<T>::value &&
         !is_reflected_compound_t<T>::value &&
         !std::is_arithmetic_v<T> &&
-        meta::has_value_type<T>::value &&
         has_data_pointer<T>::value &&
-        meta::has_size<T>::value>>
-        : is_transport_contiguous_t<typename meta::decay<T>::type> {};
+        meta::has_size<T>::value &&
+        std::is_standard_layout_v<
+            std::remove_pointer_t<
+                compat::detected_or_t<void, data_f, remove_cvref_t<T>>>> &&
+        std::is_trivial_v<
+            std::remove_pointer_t<
+                compat::detected_or_t<void, data_f, remove_cvref_t<T>>>>>>
+        : is_transport_contiguous_t<
+            std::remove_pointer_t<
+                compat::detected_or_t<void, data_f, remove_cvref_t<T>>>> {};
 
     // DEFAULT CASE
     template <class T> struct rank<T*>: public std::integral_constant<size_t,1>{};
@@ -612,6 +620,13 @@ namespace h5::meta {
         unsupported
     };
 
+    // Registry for types with explicit access_traits_t specializations in mapper files.
+    // Prevents ambiguous partial-specialization resolution between generic fallbacks
+    // and mapper-provided access_traits_t.
+    namespace detail {
+        template <class T> struct has_explicit_access_traits : std::false_type {};
+    }
+
     // Primary (unsupported — no match)
     template <class T, class = void>
     struct access_traits_t {
@@ -647,6 +662,7 @@ namespace h5::meta {
     // Text-like types (std::string, std::string_view, etc.) — handled by HDF5 string types, not raw memcpy
     template <class T>
     struct access_traits_t<T, std::enable_if_t<
+        !detail::has_explicit_access_traits<remove_cvref_t<T>>::value &&
         is_text_like<T>::value &&
         !std::is_array_v<T> &&
         !std::is_pointer_v<remove_cvref_t<T>>>> {
@@ -675,6 +691,7 @@ namespace h5::meta {
     // Contiguous sequence containers: has .data() pointer + transport contiguous element
     template <class T>
     struct access_traits_t<T, std::enable_if_t<
+        !detail::has_explicit_access_traits<remove_cvref_t<T>>::value &&
         !std::is_array_v<T> &&
         !is_reflected_compound_t<T>::value &&
         has_data_pointer<T>::value &&
@@ -694,6 +711,7 @@ namespace h5::meta {
     // Non-contiguous sequence containers with .data() (e.g., vector<string>)
     template <class T>
     struct access_traits_t<T, std::enable_if_t<
+        !detail::has_explicit_access_traits<remove_cvref_t<T>>::value &&
         !std::is_array_v<T> &&
         !is_reflected_compound_t<T>::value &&
         has_data_pointer<T>::value &&
@@ -710,6 +728,7 @@ namespace h5::meta {
     // Iterator-only containers: begin/end but no .data() (list, set, map, ...)
     template <class T>
     struct access_traits_t<T, std::enable_if_t<
+        !detail::has_explicit_access_traits<remove_cvref_t<T>>::value &&
         !std::is_array_v<T> &&
         !has_data_pointer<T>::value &&
         meta::has_iterator<T>::value &&
