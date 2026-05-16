@@ -84,6 +84,12 @@ add_test_case(H5Rall)
 add_test_case(H5Dio_roundtrip)
 add_test_case(H5Drank)
 add_test_case(H5Tcomplex)
+# std::float16_t support — issue [#224].
+# Compiled with C++23 so __STDCPP_FLOAT16_T__ is visible where the compiler
+# provides it (clang-17+, gcc-13+ on x86).  On older compilers the guard
+# produces an empty TU and the test still builds and passes silently.
+add_test_case(H5Tfloat16)
+set_target_properties(test-h5tfloat16 PROPERTIES CXX_STANDARD 23 CXX_STANDARD_REQUIRED OFF)
 add_test_case(H5Zdeflate)
 add_test_case(H5Zshuffle)
 add_test_case(H5Zfletcher32)

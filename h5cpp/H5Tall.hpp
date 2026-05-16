@@ -167,6 +167,52 @@ template<> struct h5::meta::is_contiguous<std::vector<OPENEXR_NAMESPACE::half>> 
 
 #endif
 
+#if __cplusplus >= 202302L && defined(__STDCPP_FLOAT16_T__)
+#include <stdfloat>
+namespace h5::impl::detail {
+    template <> struct hid_t<std::float16_t, H5Tclose,true,true, hdf5::type> : public dt_p<std::float16_t> {
+        using parent = dt_p<std::float16_t>;
+        using dt_p<std::float16_t>::hid_t;
+        using hidtype = std::float16_t;
+        hid_t() : parent( H5Tcopy( H5T_NATIVE_FLOAT ) ) {
+            H5Tset_fields( handle, 15, 10, 5, 0, 10);
+            H5Tset_precision(handle, 16);
+            H5Tset_ebias( handle, 15);
+            H5Tset_size(handle, 2);
+        }
+    };
+}
+namespace h5 {
+    template <> struct name<std::float16_t> {
+        static constexpr char const * value = "float16_t";
+    };
+}
+template<> struct h5::meta::is_contiguous<std::vector<std::float16_t>> : std::true_type {};
+// impl::decay and meta::decay: prevent value_type stripping
+namespace h5::meta { template <> struct decay<std::float16_t> { using type = std::float16_t; }; }
+namespace h5::impl {
+    namespace detail { template <> struct has_explicit_decay<std::float16_t> : std::true_type {}; }
+    template <> struct decay<std::float16_t> { using type = std::float16_t; };
+}
+// storage_traits_impl_t: override the arithmetic fallback which returns H5I_INVALID_HID
+// for unrecognized types; std::float16_t requires a custom constructed type.
+namespace h5::meta {
+    template <>
+    struct storage_traits_impl_t<std::float16_t> {
+        static constexpr bool supported   = true;
+        static constexpr bool owns_handle = true;
+        static ::hid_t create_type() noexcept {
+            ::hid_t tid = H5Tcopy(H5T_NATIVE_FLOAT);
+            H5Tset_fields(tid, 15, 10, 5, 0, 10);
+            H5Tset_precision(tid, 16);
+            H5Tset_ebias(tid, 15);
+            H5Tset_size(tid, 2);
+            return tid;
+        }
+    };
+}
+#endif
+
 // std::complex<T>: H5T_COMPLEX native type (HDF5 >= 2.0) or compound fallback
 namespace h5::impl::detail {
 #if H5_VERSION_GE(2,0,0)
