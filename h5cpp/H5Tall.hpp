@@ -11,6 +11,7 @@
 #include <ostream>
 #include <optional>
 #include <initializer_list>
+#include <complex>
 
 namespace h5 {
     template<class T> hid_t register_struct(){ return H5I_UNINIT; }
@@ -165,6 +166,117 @@ namespace h5 {
 template<> struct h5::meta::is_contiguous<std::vector<OPENEXR_NAMESPACE::half>> : std::true_type {};
 
 #endif
+
+// std::complex<T>: H5T_COMPLEX native type (HDF5 >= 2.0) or compound fallback
+namespace h5::impl::detail {
+#if H5_VERSION_GE(2,0,0)
+    template <> struct hid_t<std::complex<float>, H5Tclose,true,true, hdf5::type>
+            : public dt_p<std::complex<float>> {
+        using parent = dt_p<std::complex<float>>;
+        using dt_p<std::complex<float>>::hid_t;
+        using hidtype = std::complex<float>;
+        hid_t() : parent( H5Tcomplex_create(H5T_NATIVE_FLOAT) ) {}
+    };
+    template <> struct hid_t<std::complex<double>, H5Tclose,true,true, hdf5::type>
+            : public dt_p<std::complex<double>> {
+        using parent = dt_p<std::complex<double>>;
+        using dt_p<std::complex<double>>::hid_t;
+        using hidtype = std::complex<double>;
+        hid_t() : parent( H5Tcomplex_create(H5T_NATIVE_DOUBLE) ) {}
+    };
+    template <> struct hid_t<std::complex<long double>, H5Tclose,true,true, hdf5::type>
+            : public dt_p<std::complex<long double>> {
+        using parent = dt_p<std::complex<long double>>;
+        using dt_p<std::complex<long double>>::hid_t;
+        using hidtype = std::complex<long double>;
+        hid_t() : parent( H5Tcomplex_create(H5T_NATIVE_LDOUBLE) ) {}
+    };
+#else
+    // HDF5 < 2.0.0: two-field compound matching std::complex<T> contiguous layout
+    template <> struct hid_t<std::complex<float>, H5Tclose,true,true, hdf5::type>
+            : public dt_p<std::complex<float>> {
+        using parent = dt_p<std::complex<float>>;
+        using dt_p<std::complex<float>>::hid_t;
+        using hidtype = std::complex<float>;
+        hid_t() : parent( H5Tcreate(H5T_COMPOUND, sizeof(std::complex<float>)) ) {
+            H5Tinsert(handle, "r", 0,             H5T_NATIVE_FLOAT);
+            H5Tinsert(handle, "i", sizeof(float), H5T_NATIVE_FLOAT);
+        }
+    };
+    template <> struct hid_t<std::complex<double>, H5Tclose,true,true, hdf5::type>
+            : public dt_p<std::complex<double>> {
+        using parent = dt_p<std::complex<double>>;
+        using dt_p<std::complex<double>>::hid_t;
+        using hidtype = std::complex<double>;
+        hid_t() : parent( H5Tcreate(H5T_COMPOUND, sizeof(std::complex<double>)) ) {
+            H5Tinsert(handle, "r", 0,              H5T_NATIVE_DOUBLE);
+            H5Tinsert(handle, "i", sizeof(double), H5T_NATIVE_DOUBLE);
+        }
+    };
+    template <> struct hid_t<std::complex<long double>, H5Tclose,true,true, hdf5::type>
+            : public dt_p<std::complex<long double>> {
+        using parent = dt_p<std::complex<long double>>;
+        using dt_p<std::complex<long double>>::hid_t;
+        using hidtype = std::complex<long double>;
+        hid_t() : parent( H5Tcreate(H5T_COMPOUND, sizeof(std::complex<long double>)) ) {
+            H5Tinsert(handle, "r", 0,                   H5T_NATIVE_LDOUBLE);
+            H5Tinsert(handle, "i", sizeof(long double), H5T_NATIVE_LDOUBLE);
+        }
+    };
+#endif
+}
+namespace h5 {
+    template <> struct name<std::complex<float>>
+        { static constexpr char const* value = "complex<float>"; };
+    template <> struct name<std::complex<double>>
+        { static constexpr char const* value = "complex<double>"; };
+    template <> struct name<std::complex<long double>>
+        { static constexpr char const* value = "complex<long double>"; };
+}
+template<> struct h5::meta::is_contiguous<std::vector<std::complex<float>>>       : std::true_type {};
+template<> struct h5::meta::is_contiguous<std::vector<std::complex<double>>>      : std::true_type {};
+template<> struct h5::meta::is_contiguous<std::vector<std::complex<long double>>> : std::true_type {};
+
+// std::complex<T> is standard-layout and contiguous in memory (C++11 §26.4) but not
+// trivial, so the generic is_transport_contiguous rule rejects it — supply explicit overrides.
+namespace h5::meta {
+    template <class T> struct is_transport_contiguous_impl_t<std::complex<T>,       void> : std::true_type {};
+    template <class T> struct is_transport_contiguous_impl_t<std::vector<std::complex<T>>, void> : std::true_type {};
+}
+
+// std::complex<T>::value_type is T, so both h5::meta::decay and h5::impl::decay resolve
+// std::complex<T> to its scalar component T via the generic value_type fallback.  Override
+// both to keep the element type intact so the HDF5 compound type descriptor is used for I/O.
+namespace h5::meta {
+    template <class T> struct decay<std::complex<T>> { using type = std::complex<T>; };
+}
+namespace h5::impl {
+    namespace detail {
+        template <class T> struct has_explicit_decay<std::complex<T>> : std::true_type {};
+    }
+    template <class T> struct decay<std::complex<T>> { using type = std::complex<T>; };
+}
+
+// Explicit access_traits_t for std::vector<std::complex<T>> so the I/O dispatch
+// selects the contiguous path (c.data() / c.size()) rather than the pointers path.
+namespace h5::meta {
+    namespace detail {
+        template <class T, class A>
+        struct has_explicit_access_traits<std::vector<std::complex<T>, A>> : std::true_type {};
+    }
+    template <class T, class A>
+    struct access_traits_t<std::vector<std::complex<T>, A>> {
+        using element_t = std::complex<T>;
+        using pointer_t = const std::complex<T>*;
+        static constexpr access_t kind = access_t::contiguous;
+        static constexpr bool is_trivially_packable = true;
+        static const std::complex<T>* data(const std::vector<std::complex<T>,A>& c) noexcept { return c.data(); }
+        static std::complex<T>*       data(std::vector<std::complex<T>,A>& c)       noexcept { return c.data(); }
+        static std::array<std::size_t,1> size(const std::vector<std::complex<T>,A>& c) noexcept { return {c.size()}; }
+        static std::size_t bytes(const std::vector<std::complex<T>,A>& c) noexcept { return c.size() * sizeof(std::complex<T>); }
+    };
+}
+
 #define H5CPP_REGISTER_STRUCT( POD_STRUCT ) H5CPP_REGISTER_TYPE_( POD_STRUCT, h5::register_struct<POD_STRUCT>() )
 
 /* type alias is responsible for ALL type maps through H5CPP if you want to screw things up

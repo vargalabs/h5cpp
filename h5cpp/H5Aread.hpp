@@ -58,6 +58,35 @@ namespace h5 {
 		}
 	}
 
+	// COMPLEX ELEMENT TYPES: std::complex<float|double|long double>
+	template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
+	std::enable_if_t<
+		std::is_same_v<D, std::complex<float>>  ||
+		std::is_same_v<D, std::complex<double>> ||
+		std::is_same_v<D, std::complex<long double>>,
+	T> aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
+		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
+		hid_t id;
+		H5CPP_CHECK_NZ( (id = H5Aget_space( static_cast<hid_t>(attr) )),
+			   h5::error::io::attribute::read, "couldn't get space...");
+		h5::sp_t file_space{id};
+		h5::current_dims_t current_dims;
+		int rank = get_simple_extent_dims(file_space, current_dims );
+		h5::dt_t<D> type;
+		if( !rank ){
+			T object;
+			H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), &object ),
+				   h5::error::io::attribute::read, "couldn't read attribute ...");
+			return object;
+		} else {
+			T object = impl::get<T>::ctor( current_dims );
+			D* ptr = const_cast<D*>( impl::data( object ));
+			H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), ptr ),
+				   h5::error::io::attribute::read, "couldn't read attribute ...");
+			return object;
+		}
+	}
+
 	// STD::STRING
 	template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
 	std::enable_if_t<std::is_same_v<D,std::string> || std::is_same_v<T,std::string>, //TODO: add char**
