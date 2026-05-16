@@ -12,10 +12,9 @@ TEST_CASE("[example] armadillo mat/vec round-trip") {
     const char* filename = "test_arma_io.h5";
     std::filesystem::remove(filename);
 
-    // BUILD and WRITE square matrix (avoids dimension transposition complexity)
-    arma::mat M(2, 2);
-    M(0, 0) = 1.0; M(0, 1) = 2.0;
-    M(1, 0) = 3.0; M(1, 1) = 4.0;
+    // BUILD and WRITE non-square matrix — shape (3 rows x 5 cols) catches row/col transposition bugs
+    arma::mat M = arma::linspace<arma::rowvec>(1.0, 15.0, 15);
+    M.reshape(3, 5);
 
     {
         h5::fd_t fd = h5::create(filename, H5F_ACC_TRUNC);
