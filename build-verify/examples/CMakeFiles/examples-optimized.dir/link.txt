@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/examples-optimized.dir/optimized/optimized.cpp.o -o examples-optimized  -Wl,-rpath,/usr/local/lib /usr/local/lib/libhdf5.so /usr/lib/x86_64-linux-gnu/libz.so /usr/lib/x86_64-linux-gnu/libdl.a -lm /usr/lib/x86_64-linux-gnu/libz.so ../thirdparty/libdeflate/liblibh5cpp-libdeflate-static.a 

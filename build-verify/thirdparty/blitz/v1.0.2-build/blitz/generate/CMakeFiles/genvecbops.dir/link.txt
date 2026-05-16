@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG -rdynamic CMakeFiles/genvecbops.dir/genvecbops.cpp.o -o genvecbops 
