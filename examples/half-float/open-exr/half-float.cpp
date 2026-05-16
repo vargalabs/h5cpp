@@ -8,8 +8,9 @@
 #include <limits>
 #include <random>
 
-// OpenEXR doesn't use namespace!!!
-#include <OpenEXR/half.h>
+// Imath 3.x half type lives in the Imath:: namespace
+#include <half.h>
+using Imath::half;
 #include <h5cpp/all>
 #include "utils.hpp"
 
