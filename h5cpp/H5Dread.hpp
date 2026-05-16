@@ -215,11 +215,26 @@ namespace h5 {
 			size.rank = count.rank;
 		}
 
-		T ref = impl::get<T>::ctor( count );
-		element_type *ptr = impl::data( ref );
-
-		::h5::read<element_type>(ds, ptr, count, args...);
-		return ref;
+		using traits = h5::meta::access_traits_t<T>;
+		constexpr auto kind = traits::kind;
+		if constexpr (kind == h5::meta::access_t::iterators) {
+			size_t n = 1;
+			for (int i = 0; i < size.rank; ++i) n *= size[i];
+			std::vector<element_type> flat(n);
+			::h5::read<element_type>(ds, flat.data(), count, args...);
+			if constexpr (std::is_same_v<T, std::forward_list<element_type>>) {
+				T result;
+				result.assign(flat.begin(), flat.end());
+				return result;
+			} else {
+				return T(flat.begin(), flat.end());
+			}
+		} else {
+			T ref = impl::get<T>::ctor( count );
+			element_type *ptr = impl::data( ref );
+			::h5::read<element_type>(ds, ptr, count, args...);
+			return ref;
+		}
 	}
 	/***************************  STRING *****************************/
  	/** \func_read_hdr
