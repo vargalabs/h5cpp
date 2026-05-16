@@ -3,6 +3,7 @@
 #include <h5cpp/core>
 #include <h5cpp/io>
 #include <vector>
+#include <forward_list>
 #include <sstream>
 #include <string>
 #include "support/fixture.hpp"
@@ -148,4 +149,25 @@ TEST_CASE("packet table output stream for invalid handle") {
     std::ostringstream oss;
     oss << pt;
     CHECK(oss.str().find("H5I_UNINIT") != std::string::npos);
+}
+
+TEST_CASE("[#232] std::forward_list<int> append streams elements into chunked dataset") {
+    h5::test::file_fixture_t f("test-pt-fwdlist.h5");
+    // forward_list is append/view only — h5::write/read intentionally unsupported.
+    // Each element is streamed one-by-one into the packet table (partial chunk flushed explicitly).
+    std::forward_list<int> src = {10, 20, 30, 40, 50};
+    constexpr std::size_t N = 5;
+
+    h5::ds_t ds = h5::create<int>(f.fd, "fwdlist", h5::current_dims_t{0},
+        h5::max_dims_t{H5S_UNLIMITED}, h5::chunk{5});  // chunk == list size: auto-flush at boundary
+    {
+        h5::pt_t pt(ds);
+        h5::append(pt, src);  // iterates element-by-element via iterator dispatch
+        h5::flush(pt);        // flush partial chunk to file
+    }
+
+    auto readback = h5::read<std::vector<int>>(f.fd, "fwdlist");
+    REQUIRE(readback.size() == N);
+    const std::vector<int> expected(src.begin(), src.end());
+    CHECK(readback == expected);
 }
