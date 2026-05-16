@@ -43,7 +43,67 @@
 #include <memory>
 #include <new>
 #include <optional>
-#include <stop_token>   // std::stop_token — C++20
+// Apple Clang (Xcode ≥ 16, macOS 15 SDK) gates __cpp_lib_jthread behind the
+// macOS 15.0 deployment target.  When the macro is absent we inject a minimal
+// polyfill: stop_callback fires only if stop was already requested at
+// construction; wait_for_data falls back to polling so workers observe stop
+// without needing asynchronous stop_callback delivery.
+#ifdef __cpp_lib_jthread
+#  include <stop_token>
+#else
+#  include <chrono>
+#  include <thread>
+namespace std {
+    class stop_source;
+    class stop_token {
+        shared_ptr<atomic<bool>> flag_;
+        friend class stop_source;
+        explicit stop_token(shared_ptr<atomic<bool>> f) noexcept : flag_(std::move(f)) {}
+    public:
+        stop_token() = default;
+        [[nodiscard]] bool stop_requested() const noexcept {
+            return flag_ && flag_->load(memory_order_acquire);
+        }
+        [[nodiscard]] bool stop_possible() const noexcept { return static_cast<bool>(flag_); }
+    };
+    class stop_source {
+        shared_ptr<atomic<bool>> flag_ = make_shared<atomic<bool>>(false);
+    public:
+        stop_source() = default;
+        [[nodiscard]] stop_token get_token() const noexcept { return stop_token{flag_}; }
+        bool request_stop() noexcept { return !flag_->exchange(true, memory_order_release); }
+        [[nodiscard]] bool stop_requested() const noexcept { return flag_->load(memory_order_acquire); }
+    };
+    template<class Callback>
+    class stop_callback {
+    public:
+        stop_callback(stop_token st, Callback cb) noexcept { if (st.stop_requested()) cb(); }
+        stop_callback(const stop_callback&) = delete;
+        stop_callback& operator=(const stop_callback&) = delete;
+    };
+    // jthread: owns stop_source; destructor calls request_stop() then join().
+    class jthread {
+        stop_source ss_;
+        thread t_;
+    public:
+        jthread() = default;
+        template<class Fn, class... Args>
+        explicit jthread(Fn&& fn, Args&&... args) {
+            stop_token st = ss_.get_token();
+            t_ = thread(std::forward<Fn>(fn), std::move(st), std::forward<Args>(args)...);
+        }
+        ~jthread() { if (t_.joinable()) { ss_.request_stop(); t_.join(); } }
+        jthread(const jthread&) = delete;
+        jthread& operator=(const jthread&) = delete;
+        jthread(jthread&&) noexcept = default;
+        jthread& operator=(jthread&&) noexcept = default;
+        void request_stop() noexcept { ss_.request_stop(); }
+        [[nodiscard]] stop_token get_stop_token() const noexcept { return ss_.get_token(); }
+        [[nodiscard]] bool joinable() const noexcept { return t_.joinable(); }
+        void join() { if (t_.joinable()) t_.join(); }
+    };
+}  // namespace std
+#endif  // __cpp_lib_jthread
 #include <type_traits>
 #include <utility>
 
@@ -235,7 +295,12 @@ namespace bounded::spsc {
         bool wait_for_data(std::stop_token st, std::uint32_t& last_seq) const noexcept {
             if (st.stop_requested()) return false;
             if (!empty()) return true;
+#ifdef __cpp_lib_jthread
             seq.wait(last_seq, std::memory_order_acquire);
+#else
+            while (seq.load(std::memory_order_acquire) == last_seq && !st.stop_requested())
+                std::this_thread::sleep_for(std::chrono::microseconds(100));
+#endif
             last_seq = seq.load(std::memory_order_acquire);
             return !st.stop_requested();
         }
@@ -357,7 +422,12 @@ namespace bounded::mpsc {
         bool wait_for_data(std::stop_token st, std::uint32_t& last) const noexcept {
             if (st.stop_requested()) return false;
             if (doorbell.load(std::memory_order_acquire) != last) return true;
+#ifdef __cpp_lib_jthread
             doorbell.wait(last, std::memory_order_acquire);
+#else
+            while (doorbell.load(std::memory_order_acquire) == last && !st.stop_requested())
+                std::this_thread::sleep_for(std::chrono::microseconds(100));
+#endif
             last = doorbell.load(std::memory_order_acquire);
             return !st.stop_requested();
         }
@@ -468,7 +538,12 @@ namespace bounded::spmc {
         bool wait_for_data(std::stop_token st, std::uint32_t& last_seq) const noexcept {
             if (st.stop_requested()) return false;
             if (doorbell.load(std::memory_order_acquire) != last_seq) return true;
+#ifdef __cpp_lib_jthread
             doorbell.wait(last_seq, std::memory_order_acquire);
+#else
+            while (doorbell.load(std::memory_order_acquire) == last_seq && !st.stop_requested())
+                std::this_thread::sleep_for(std::chrono::microseconds(100));
+#endif
             last_seq = doorbell.load(std::memory_order_acquire);
             return !st.stop_requested();
         }
@@ -589,7 +664,12 @@ namespace bounded::mpmc {
         bool wait_for_data(std::stop_token st, std::uint32_t& last) const noexcept {
             if (st.stop_requested()) return false;
             if (doorbell.load(std::memory_order_acquire) != last) return true;
+#ifdef __cpp_lib_jthread
             doorbell.wait(last, std::memory_order_acquire);
+#else
+            while (doorbell.load(std::memory_order_acquire) == last && !st.stop_requested())
+                std::this_thread::sleep_for(std::chrono::microseconds(100));
+#endif
             last = doorbell.load(std::memory_order_acquire);
             return !st.stop_requested();
         }
