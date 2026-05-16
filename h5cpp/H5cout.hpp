@@ -74,9 +74,8 @@ std::ostream& operator<<(std::ostream &os, const h5::sp_t& sp) {
 	hsize_t total_elements = H5Sget_simple_extent_npoints( id );
  	H5Sget_select_bounds(id, *start, *end);
 	start.rank = end.rank = rank;
-	hsize_t nblocks =  H5Sget_select_hyper_nblocks( id );
+	hssize_t nblocks = H5Sget_select_hyper_nblocks( id );
 	hssize_t nelements = H5Sget_select_elem_npoints( id );
-	hsize_t ncoordinates = 2*rank*nblocks;
 
 	// if slection valid
 	std::string is_valid;
@@ -89,17 +88,21 @@ std::ostream& operator<<(std::ostream &os, const h5::sp_t& sp) {
    	os << "[dimensions]\tcurrent: " << current_dims << "\tmaximum: " << max_dims << std::endl;
 	os << "[selection]\tstart: " << start << "\tend:" << end << std::endl;
 	os << "[selection]\t" << is_valid <<std::endl;
-	h5::impl::unique_ptr<hsize_t> buffer{
-			static_cast<hsize_t*>( std::calloc( ncoordinates, sizeof(hsize_t))) };
-	if( H5Sget_select_hyper_blocklist(id, 0, nblocks, buffer.get() ) >= 0   ){
-		os << "[selected element count]\t" << nelements << std::endl; 
-		os << "[selected block count]\t" << nblocks <<std::endl;
-		os << "[selected blocks]\t";
-		for( hsize_t i=0; i<nblocks; i++){
-			os << "[{";
-			for(hsize_t j=0; j<rank; j++) os << *( buffer.get() + i*2*rank+j ) << (j < rank-1 ? "," : "}{");
-			for(hsize_t j=rank; j<2*rank; j++) os << *( buffer.get() + i*2*rank+j ) << ( j < 2*rank-1 ? "," : "}");
-			os << "] ";
+	// nblocks is -1 when no hyperslab is selected; guard to avoid calloc overflow
+	if( nblocks > 0 ){
+		hsize_t ncoordinates = static_cast<hsize_t>(2 * rank) * static_cast<hsize_t>(nblocks);
+		h5::impl::unique_ptr<hsize_t> buffer{
+				static_cast<hsize_t*>( std::calloc( ncoordinates, sizeof(hsize_t))) };
+		if( H5Sget_select_hyper_blocklist(id, 0, static_cast<hsize_t>(nblocks), buffer.get() ) >= 0 ){
+			os << "[selected element count]\t" << nelements << std::endl;
+			os << "[selected block count]\t" << nblocks <<std::endl;
+			os << "[selected blocks]\t";
+			for( hsize_t i=0; i<static_cast<hsize_t>(nblocks); i++){
+				os << "[{";
+				for(hsize_t j=0; j<rank; j++) os << *( buffer.get() + i*2*rank+j ) << (j < rank-1 ? "," : "}{");
+				for(hsize_t j=rank; j<2*rank; j++) os << *( buffer.get() + i*2*rank+j ) << ( j < 2*rank-1 ? "," : "}");
+				os << "] ";
+			}
 		}
 	}
 	h5::unmute();
