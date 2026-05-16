@@ -5,6 +5,13 @@
 # __________________________________________________________________________________
 
 cmake_minimum_required(VERSION 3.22.0)
+
+# Must be set before project() — CMake's Apple toolchain reads this at project() time.
+# macOS 14.0 is the minimum deployment target that exposes std::stop_token in Apple's libc++.
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "14.4" CACHE STRING "Minimum macOS deployment version")
+endif()
+
 project(libh5cpp-dev VERSION 1.10.4.6 LANGUAGES CXX C)
 
 # ─── Standard Settings ────────────────────────────────────────────────────────────
@@ -193,6 +200,13 @@ target_include_directories(h5cpp INTERFACE
 
 target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBS})
 target_compile_features(h5cpp INTERFACE cxx_std_20)
+
+# MSVC does not update __cplusplus to reflect the actual standard without this flag;
+# without it the #error guard in H5Qall.hpp always fires even under /std:c++20.
+if(MSVC)
+    target_compile_options(h5cpp INTERFACE /Zc:__cplusplus)
+endif()
+
 
 if(H5CPP_HAVE_ROS3_VFD)
     target_compile_definitions(h5cpp INTERFACE H5CPP_HAVE_ROS3_VFD=1)

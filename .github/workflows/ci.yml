@@ -301,6 +301,14 @@ jobs:
             cmake_args+=(-DHDF5_CXX_COMPILER_EXECUTABLE="$HDF5_CXX_COMPILER_EXECUTABLE")
           fi
 
+          # macOS: std::stop_token in Apple's libc++ requires deployment target >= 14.4.
+          # The runner sets MACOSX_DEPLOYMENT_TARGET=14.0 in the environment; CMake reads
+          # this with FORCE, overriding any CMakeLists.txt value, so we must override it
+          # explicitly on the command line with a higher value.
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            cmake_args+=(-DCMAKE_OSX_DEPLOYMENT_TARGET=14.4)
+          fi
+
           cmake "${cmake_args[@]}"
 
       - name: Configure Windows
