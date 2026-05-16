@@ -30,6 +30,9 @@ namespace h5 { constexpr bool have_ros3_vfd = false; }
 #ifndef H5CPP_MEM_ALIGNMENT
 	#define H5CPP_MEM_ALIGNMENT 64 //< maximum number of filters in a chain
 #endif
+#ifndef H5CPP_PIPELINE_WORKERS
+	#define H5CPP_PIPELINE_WORKERS 0 //< 0 = use hardware_concurrency()
+#endif
 
 #ifndef H5CPP_NO_COMPRESSION 
 	#define H5CPP_NO_COMPRESSION 0 //< maximum dimensions of stored arrays
