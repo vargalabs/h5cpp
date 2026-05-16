@@ -194,6 +194,18 @@ target_include_directories(h5cpp INTERFACE
 target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBS})
 target_compile_features(h5cpp INTERFACE cxx_std_20)
 
+# MSVC does not update __cplusplus to reflect the actual standard without this flag;
+# without it the #error guard in H5Qall.hpp always fires even under /std:c++20.
+if(MSVC)
+    target_compile_options(h5cpp INTERFACE /Zc:__cplusplus)
+endif()
+
+# Apple's libc++ gates std::stop_token behind a deployment-target availability macro;
+# 13.0 is the minimum that exposes jthread / stop_token on macOS.
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "Minimum macOS deployment version" FORCE)
+endif()
+
 if(H5CPP_HAVE_ROS3_VFD)
     target_compile_definitions(h5cpp INTERFACE H5CPP_HAVE_ROS3_VFD=1)
 endif()
