@@ -1,5 +1,5 @@
 
-[![CI](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml/badge.svg)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
+[![CI](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml/badge.svg?branch=staging)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
 [![ASan](https://vargalabs.github.io/h5cpp/badges-staging/asan.svg)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
 [![UBSan](https://vargalabs.github.io/h5cpp/badges-staging/ubsan.svg)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/vargalabs/h5cpp/branch/staging/graph/badge.svg)](https://app.codecov.io/gh/vargalabs/h5cpp/tree/staging)
