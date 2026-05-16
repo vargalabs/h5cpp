@@ -126,7 +126,7 @@ add_subdirectory(examples)
 # ---------------------------------------------------------------------------
 add_executable(test-win_stack_probe win_stack_probe.cpp)
 set_target_properties(test-win_stack_probe PROPERTIES
-    CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+    CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 target_include_directories(test-win_stack_probe PRIVATE ${INCLUDE_DIRS})
 # Intentionally do NOT link libdoctest — keep the call chain pristine.
@@ -144,7 +144,7 @@ if(WIN32)
         set(test_name test-win-lifecycle-${name})
         add_executable(${test_name} win_hdf5_lifecycle_probe.cpp)
         set_target_properties(${test_name} PROPERTIES
-            CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+            CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
             RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
         target_compile_definitions(${test_name} PRIVATE H5CPP_WIN_PROBE_MODE=${mode})
         target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
@@ -168,7 +168,7 @@ if(WIN32)
         set(test_name test-win-write-path-${name})
         add_executable(${test_name} win_h5dwrite_path_probe.cpp)
         set_target_properties(${test_name} PROPERTIES
-            CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+            CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
             RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
         target_compile_definitions(${test_name} PRIVATE H5CPP_WIN_WRITE_PROBE_MODE=${mode})
         target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
@@ -193,7 +193,7 @@ if(WIN32)
         set(test_name test-win-dapl-${name})
         add_executable(${test_name} win_dapl_probe.cpp)
         set_target_properties(${test_name} PROPERTIES
-            CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+            CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
             RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
         target_compile_definitions(${test_name} PRIVATE H5CPP_WIN_DAPL_PROBE_MODE=${mode})
         target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
