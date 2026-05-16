@@ -76,12 +76,15 @@ namespace h5 {
 		H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), ptr ),
 			   h5::error::io::attribute::read, "couldn't read dataset ...");
         if constexpr ( std::is_same_v<std::string,T> ){
-            object = std::string(*ptr), free(ptr);
+            object = std::string(*ptr);
         } else {
             for( size_t i=0; i<nelem; i++)
 			    if( ptr[i] != nullptr ) object[i] = std::string( ptr[i] );
-            free(ptr);
         }
+        // HDF5 allocates per-element vlen buffers during H5Aread conversion; reclaim them
+        // before freeing the pointer array, otherwise each string leaks under ASan.
+        H5Dvlen_reclaim(static_cast<hid_t>(type), static_cast<hid_t>(file_space), H5P_DEFAULT, ptr);
+        free(ptr);
 		return object;
 	}
 }
