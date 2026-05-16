@@ -43,14 +43,15 @@
 #include <memory>
 #include <new>
 #include <optional>
-// Apple Clang (Xcode ≥ 16, macOS 15 SDK) gates __cpp_lib_jthread behind the
-// macOS 15.0 deployment target.  When the macro is absent we inject a minimal
+// Include <stop_token> unconditionally so it can define __cpp_lib_jthread.
+// Apple Clang (Xcode ≥ 16, macOS 15 SDK) gates the types behind a deployment-
+// target check; on those platforms the header exists but leaves std::stop_token
+// undefined and __cpp_lib_jthread unset.  In that case we inject a minimal
 // polyfill: stop_callback fires only if stop was already requested at
 // construction; wait_for_data falls back to polling so workers observe stop
 // without needing asynchronous stop_callback delivery.
-#ifdef __cpp_lib_jthread
-#  include <stop_token>
-#else
+#include <stop_token>
+#ifndef __cpp_lib_jthread
 #  include <chrono>
 #  include <thread>
 namespace std {
@@ -103,7 +104,7 @@ namespace std {
         void join() { if (t_.joinable()) t_.join(); }
     };
 }  // namespace std
-#endif  // __cpp_lib_jthread
+#endif  // !__cpp_lib_jthread
 #include <type_traits>
 #include <utility>
 
