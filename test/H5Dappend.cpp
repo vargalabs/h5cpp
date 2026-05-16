@@ -34,12 +34,18 @@ TEST_CASE("packet table partial flush fills remainder with fill value") {
     h5::test::file_fixture_t f("test-pt-partial.h5");
     h5::ds_t ds = h5::create<int>(f.fd, "ds", h5::current_dims_t{0},
         h5::max_dims_t{H5S_UNLIMITED}, h5::chunk{10});
-    h5::pt_t pt(ds);
-    // Append fewer elements than chunk size, then flush
+    {
+        h5::pt_t pt(ds);
+        for (int i = 0; i < 3; ++i)
+            h5::append(pt, i + 1);
+        h5::flush(pt);
+    }
+    auto readback = h5::read<std::vector<int>>(f.fd, "ds");
+    REQUIRE(readback.size() == 10);  // partial chunk padded to full chunk size
     for (int i = 0; i < 3; ++i)
-        h5::append(pt, i + 1);
-    h5::flush(pt);
-    CHECK(true);
+        CHECK(readback[i] == i + 1);
+    for (int i = 3; i < 10; ++i)
+        CHECK(readback[i] == 0);  // fill value pads remainder
 }
 
 TEST_CASE("packet table auto-flush on destruction") {
@@ -50,9 +56,14 @@ TEST_CASE("packet table auto-flush on destruction") {
         h5::pt_t pt(ds);
         for (int i = 0; i < 3; ++i)
             h5::append(pt, i + 1);
-        // pt goes out of scope, destructor calls flush()
+        // pt destructor flushes partial chunk, then ds closes
     }
-    CHECK(true);
+    auto readback = h5::read<std::vector<int>>(f.fd, "ds");
+    REQUIRE(readback.size() == 10);  // partial chunk padded to full chunk size
+    for (int i = 0; i < 3; ++i)
+        CHECK(readback[i] == i + 1);
+    for (int i = 3; i < 10; ++i)
+        CHECK(readback[i] == 0);  // fill value pads remainder
 }
 
 TEST_CASE("packet table string append and flush") {
