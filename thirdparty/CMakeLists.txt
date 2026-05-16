@@ -22,3 +22,8 @@ add_subdirectory(doctest)
 add_subdirectory(libdeflate)
 add_subdirectory(zstd)
 add_subdirectory(szip)
+
+# Half-precision floating-point and CSV support
+add_subdirectory(half)
+add_subdirectory(imath)
+add_subdirectory(fast-cpp-csv-parser)

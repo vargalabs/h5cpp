@@ -5,7 +5,7 @@
 
 CXXFLAGS =  -std=c++17
 LIBS =  -lhdf5  -lz -ldl -lm
-INCLUDES = -I/usr/local/include -I/usr/include -I./
+INCLUDES = -I/usr/local/include -I/usr/include -I./ -I../../../thirdparty/half/v2.2.0
 
 test: half-float
 	./half-float
