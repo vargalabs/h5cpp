@@ -5,12 +5,30 @@
 #pragma once
 #include "H5Aopen.hpp"
 #include <string>
+#include <array>
 #include <type_traits>
 namespace h5 {
 
-	//ARITHMETIC ELEMENT TYPES 
+	// STD::ARRAY<T,N> — fixed-size array of arithmetic elements.
+	// The generic arithmetic branch decays std::array<T,N> to its element type T and
+	// then calls impl::data(object) which returns the array-as-POD pointer (T[N]*)
+	// rather than T*, causing an invalid const_cast.  This explicit enable_if overload
+	// intercepts all std::array instantiations and reads directly into .data().
+	template <class A, class T = typename A::value_type,
+	          class = std::enable_if_t<meta::is_array<A>::value && !meta::is_text_like<A>::value>> inline
+	A aread( const h5::ds_t& ds, const std::string& name,
+			const h5::acpl_t& acpl = h5::default_acpl ){
+		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
+		A object{};
+		h5::dt_t<T> type;
+		H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), object.data() ),
+			   h5::error::io::attribute::read, "couldn't read array attribute ...");
+		return object;
+	}
+
+	//ARITHMETIC ELEMENT TYPES — excludes std::array<T,N> (handled by explicit overload above)
 	template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
-	std::enable_if_t< std::is_integral_v<D> || std::is_floating_point_v<D>,
+	std::enable_if_t< (std::is_integral_v<D> || std::is_floating_point_v<D>) && !meta::is_array<T>::value,
 	T> aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
 
 		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
@@ -58,6 +76,35 @@ namespace h5 {
 		}
 	}
 
+	// COMPLEX ELEMENT TYPES: std::complex<float|double|long double>
+	template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
+	std::enable_if_t<
+		std::is_same_v<D, std::complex<float>>  ||
+		std::is_same_v<D, std::complex<double>> ||
+		std::is_same_v<D, std::complex<long double>>,
+	T> aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
+		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
+		hid_t id;
+		H5CPP_CHECK_NZ( (id = H5Aget_space( static_cast<hid_t>(attr) )),
+			   h5::error::io::attribute::read, "couldn't get space...");
+		h5::sp_t file_space{id};
+		h5::current_dims_t current_dims;
+		int rank = get_simple_extent_dims(file_space, current_dims );
+		h5::dt_t<D> type;
+		if( !rank ){
+			T object;
+			H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), &object ),
+				   h5::error::io::attribute::read, "couldn't read attribute ...");
+			return object;
+		} else {
+			T object = impl::get<T>::ctor( current_dims );
+			D* ptr = const_cast<D*>( impl::data( object ));
+			H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), ptr ),
+				   h5::error::io::attribute::read, "couldn't read attribute ...");
+			return object;
+		}
+	}
+
 	// STD::STRING
 	template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
 	std::enable_if_t<std::is_same_v<D,std::string> || std::is_same_v<T,std::string>, //TODO: add char**
@@ -76,12 +123,20 @@ namespace h5 {
 		H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), ptr ),
 			   h5::error::io::attribute::read, "couldn't read dataset ...");
         if constexpr ( std::is_same_v<std::string,T> ){
-            object = std::string(*ptr), free(ptr);
+            object = std::string(*ptr);
         } else {
             for( size_t i=0; i<nelem; i++)
 			    if( ptr[i] != nullptr ) object[i] = std::string( ptr[i] );
-            free(ptr);
         }
+        // HDF5 allocates per-element vlen buffers during H5Aread conversion; reclaim them
+        // before freeing the pointer array, otherwise each string leaks under ASan.
+        // H5Treclaim replaces H5Dvlen_reclaim in HDF5 1.12; H5Dvlen_reclaim was removed in 2.0.
+#if H5_VERSION_GE(1,12,0)
+        H5Treclaim(static_cast<hid_t>(type), static_cast<hid_t>(file_space), H5P_DEFAULT, ptr);
+#else
+        H5Dvlen_reclaim(static_cast<hid_t>(type), static_cast<hid_t>(file_space), H5P_DEFAULT, ptr);
+#endif
+        free(ptr);
 		return object;
 	}
 }

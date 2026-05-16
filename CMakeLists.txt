@@ -5,10 +5,17 @@
 # __________________________________________________________________________________
 
 cmake_minimum_required(VERSION 3.22.0)
+
+# Must be set before project() — CMake's Apple toolchain reads this at project() time.
+# macOS 14.0 is the minimum deployment target that exposes std::stop_token in Apple's libc++.
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "14.4" CACHE STRING "Minimum macOS deployment version")
+endif()
+
 project(libh5cpp-dev VERSION 1.10.4.6 LANGUAGES CXX C)
 
 # ─── Standard Settings ────────────────────────────────────────────────────────────
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -192,7 +199,13 @@ target_include_directories(h5cpp INTERFACE
 )
 
 target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBS})
-target_compile_features(h5cpp INTERFACE cxx_std_17)
+target_compile_features(h5cpp INTERFACE cxx_std_20)
+
+# MSVC does not update __cplusplus to reflect the actual standard without this flag;
+# without it the #error guard in H5Qall.hpp always fires even under /std:c++20.
+if(MSVC)
+    target_compile_options(h5cpp INTERFACE /Zc:__cplusplus)
+endif()
 
 if(H5CPP_HAVE_ROS3_VFD)
     target_compile_definitions(h5cpp INTERFACE H5CPP_HAVE_ROS3_VFD=1)
@@ -326,3 +339,46 @@ install(FILES
     ${CMAKE_BINARY_DIR}/h5cpp-config-version.cmake
     DESTINATION ${INSTALL_DIR_CMAKE}
 )
+
+# ─── pkg-config ───────────────────────────────────────────────────────────────
+configure_file(cmake/h5cpp.pc.in h5cpp.pc @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/h5cpp.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+# ─── CPack ────────────────────────────────────────────────────────────────────
+set(CPACK_PACKAGE_NAME                "h5cpp-dev")
+set(CPACK_PACKAGE_VENDOR              "Varga Labs")
+set(CPACK_PACKAGE_CONTACT             "steven.varga@gmail.com")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C++ template library for HDF5 I/O")
+set(CPACK_PACKAGE_HOMEPAGE_URL        "https://h5cpp.org")
+set(CPACK_PACKAGE_VERSION             "${H5CPP_VERSION}")
+set(CPACK_PACKAGE_VERSION_MAJOR       "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR       "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH       "${PROJECT_VERSION_PATCH}")
+set(CPACK_RESOURCE_FILE_LICENSE       "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_STRIP_FILES                 OFF)
+
+# DEB — headers land at /usr/include/h5cpp/ (ambient, no -I flag needed)
+set(CPACK_PACKAGING_INSTALL_PREFIX    "/usr")
+set(CPACK_DEBIAN_PACKAGE_NAME         "h5cpp-dev")
+set(CPACK_DEBIAN_PACKAGE_SECTION      "libdevel")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS      "libhdf5-dev")
+set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "h5cpp-compiler")
+
+# RPM
+set(CPACK_RPM_PACKAGE_NAME            "h5cpp-devel")
+set(CPACK_RPM_PACKAGE_LICENSE         "MIT")
+set(CPACK_RPM_PACKAGE_GROUP           "Development/Libraries")
+set(CPACK_RPM_PACKAGE_REQUIRES        "hdf5-devel")
+set(CPACK_RPM_PACKAGE_SUGGESTS        "h5cpp-compiler")
+
+# NSIS (Windows installer)
+set(CPACK_NSIS_PACKAGE_NAME           "h5cpp ${H5CPP_VERSION}")
+set(CPACK_NSIS_DISPLAY_NAME           "H5CPP ${H5CPP_VERSION}")
+set(CPACK_NSIS_URL_INFO_ABOUT         "https://h5cpp.org")
+set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+
+# productbuild (macOS .pkg)
+set(CPACK_PRODUCTBUILD_IDENTIFIER     "org.h5cpp.h5cpp")
+
+include(CPack)

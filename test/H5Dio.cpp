@@ -32,7 +32,16 @@ TEST_CASE_TEMPLATE_DEFINE("[#114] h5 round-trip", T, io_round_trip) {
     } else if constexpr (rep == sr_t::linear_value_dataset) {
         T obj{};
         h5::test::fill(obj, LOWER, UPPER, MIN_SZ, MAX_SZ);
-        if constexpr (std::is_same_v<T, std::vector<int>>) {
+        using access = h5::meta::access_traits_t<T>;
+        using elem_t = typename h5::impl::decay<T>::type;
+        if constexpr (std::is_same_v<T, std::forward_list<elem_t>>) {
+            // forward_list is streaming-only: h5::append to write, h5::view to read.
+            // h5::write / h5::read are intentionally not supported for this type.
+            WARN_MESSAGE(false,
+                "forward_list is append/view only — h5::write/read unsupported by design: " << type_name);
+        } else if constexpr (std::is_same_v<T, std::vector<int>>
+                          || access::kind == h5::meta::access_t::iterators
+                          || access::kind == h5::meta::access_t::contiguous) {
             h5::write(f.fd, type_name.c_str(), obj);
             auto readback = h5::read<T>(f.fd, type_name.c_str());
             CHECK(readback == obj);

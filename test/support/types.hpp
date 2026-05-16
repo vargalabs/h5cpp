@@ -49,10 +49,19 @@ namespace h5::test {
     using element_t = typename h5::impl::cat<numerical_t, std::tuple<pod_t>>::type;
 
     // ----------------------------------------------------------------
-    // C-array family: ranks 1, 2, 3
+    // C-array family: ranks 1–7
+    // Rank-7 is the documented supported upper bound (issue #115).
+    // N=2 keeps array sizes at 2/4/8/16/32/64/128 elements — manageable.
     // ----------------------------------------------------------------
     template <class T, size_t N = 2>
-    using array_t = std::tuple<T[N], T[N][N], T[N][N][N]>;
+    using array_t = std::tuple<
+        T[N],
+        T[N][N],
+        T[N][N][N],
+        T[N][N][N][N],
+        T[N][N][N][N][N],
+        T[N][N][N][N][N][N],
+        T[N][N][N][N][N][N][N]>;
 
     // ----------------------------------------------------------------
     // Sequential containers with fixed inner extent
@@ -189,10 +198,18 @@ namespace h5::test {
     template <> struct name<double>                   { static constexpr char const* value = "double"; };
     template <> struct name<pod_t>                    { static constexpr char const* value = "pod_t"; };
 
-    // C-array ranks 1, 2, 3
+    // C-array ranks 1–7
     template <class T, size_t N>             struct name<T[N]>         { static constexpr char const* value = "T[i]"; };
     template <class T, size_t I, size_t J>   struct name<T[I][J]>      { static constexpr char const* value = "T[i,j]"; };
     template <class T, size_t I, size_t J, size_t K> struct name<T[I][J][K]> { static constexpr char const* value = "T[i,j,k]"; };
+    template <class T, size_t A, size_t B, size_t C, size_t D>
+    struct name<T[A][B][C][D]>                  { static constexpr char const* value = "T[i,j,k,l]"; };
+    template <class T, size_t A, size_t B, size_t C, size_t D, size_t E>
+    struct name<T[A][B][C][D][E]>               { static constexpr char const* value = "T[i,j,k,l,m]"; };
+    template <class T, size_t A, size_t B, size_t C, size_t D, size_t E, size_t F>
+    struct name<T[A][B][C][D][E][F]>            { static constexpr char const* value = "T[i,j,k,l,m,n]"; };
+    template <class T, size_t A, size_t B, size_t C, size_t D, size_t E, size_t F, size_t G>
+    struct name<T[A][B][C][D][E][F][G]>         { static constexpr char const* value = "T[i,j,k,l,m,n,o]"; };
 
     // std::array
     template <class T, size_t N> struct name<std::array<T,N>>                   { static constexpr char const* value = "std::array<T,N>"; };

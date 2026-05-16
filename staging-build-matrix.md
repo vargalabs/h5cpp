@@ -1,5 +1,7 @@
 
-[![CI](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml/badge.svg)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
+[![CI](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml/badge.svg?branch=staging)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
+[![ASan](https://vargalabs.github.io/h5cpp/badges-staging/asan.svg)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
+[![UBSan](https://vargalabs.github.io/h5cpp/badges-staging/ubsan.svg)](https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/vargalabs/h5cpp/branch/staging/graph/badge.svg)](https://app.codecov.io/gh/vargalabs/h5cpp/tree/staging)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20123216.svg)](https://doi.org/10.5281/zenodo.20123216)

@@ -234,7 +234,7 @@ endif()
 
 ## csv ###
 add_executable(examples-csv EXCLUDE_FROM_ALL "csv/csv2hdf5.cpp")
-target_link_libraries(examples-csv ${LIBS} Threads::Threads )
+target_link_libraries(examples-csv ${LIBS} Threads::Threads h5cpp::csv)
 add_dependencies(examples examples-csv)
 if(MSVC)
     target_compile_definitions(examples-csv PRIVATE _CRT_SECURE_NO_WARNINGS)
@@ -283,6 +283,11 @@ endif()
 add_executable(examples-raw EXCLUDE_FROM_ALL "raw_memory/raw.cpp")
 target_link_libraries(examples-raw ${LIBS} )
 add_dependencies(examples examples-raw)
+
+## valarray ###
+add_executable(examples-valarray EXCLUDE_FROM_ALL "linalg/valarray.cpp")
+target_link_libraries(examples-valarray ${LIBS} )
+add_dependencies(examples examples-valarray)
 
 ## stl ###
 add_executable(examples-stl EXCLUDE_FROM_ALL "stl/vector.cpp")

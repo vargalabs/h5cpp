@@ -5,7 +5,7 @@
 
 CXXFLAGS =  -std=c++17
 LIBS =  -lhdf5  -lz -ldl -lm -lpthread
-INCLUDES = -I/usr/local/include -I/usr/include -I./
+INCLUDES = -I/usr/local/include -I/usr/include -I./ -I../../thirdparty/fast-cpp-csv-parser/v0.0.0
 
 test: csv2hdf5
 	./csv2hdf5

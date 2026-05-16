@@ -200,12 +200,24 @@ namespace h5::meta {
         typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value>::type>
         : std::integral_constant<storage_representation_t, storage_representation_t::scalar> {};
 
-    // C arrays — ranks 1, 2, 3
+    // C arrays — ranks 1–7 (rank-7 is the documented upper bound, issue #115)
     template <class T, std::size_t N> struct storage_representation_impl<T[N]>
         : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
     template <class T, std::size_t N, std::size_t M> struct storage_representation_impl<T[N][M]>
         : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
     template <class T, std::size_t N, std::size_t M, std::size_t P> struct storage_representation_impl<T[N][M][P]>
+        : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
+    template <class T, std::size_t N, std::size_t M, std::size_t P, std::size_t Q>
+    struct storage_representation_impl<T[N][M][P][Q]>
+        : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
+    template <class T, std::size_t N, std::size_t M, std::size_t P, std::size_t Q, std::size_t R>
+    struct storage_representation_impl<T[N][M][P][Q][R]>
+        : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
+    template <class T, std::size_t N, std::size_t M, std::size_t P, std::size_t Q, std::size_t R, std::size_t S>
+    struct storage_representation_impl<T[N][M][P][Q][R][S]>
+        : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
+    template <class T, std::size_t N, std::size_t M, std::size_t P, std::size_t Q, std::size_t R, std::size_t S, std::size_t U>
+    struct storage_representation_impl<T[N][M][P][Q][R][S][U]>
         : std::integral_constant<storage_representation_t, storage_representation_t::c_array> {};
 
     // contiguous sequence containers — generic vector<T> and array<T,N>
@@ -708,7 +720,7 @@ namespace h5::meta {
             if constexpr (meta::has_size<T>::value)
                 return {static_cast<std::size_t>(c.size())};
             else
-                return {std::distance(c.begin(), c.end())};
+                return {static_cast<std::size_t>(std::distance(c.begin(), c.end()))};
         }
     };
 

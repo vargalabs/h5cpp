@@ -36,7 +36,7 @@ function(add_test_case file_name)
     add_executable(${test_name} ${file_name}.cpp)
 
     set_target_properties(${test_name} PROPERTIES
-        CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+        CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
     target_link_libraries(${test_name} PRIVATE ${LIBS})
 
@@ -63,6 +63,8 @@ endif()
 
 # test content lands in issue/94
 add_test_case(H5Adelete)
+# attribute type coverage — issue #11
+add_test_case(H5Aall)
 add_test_case(H5compat)
 add_test_case(H5Dgather)
 add_test_case(H5meta)
@@ -80,6 +82,15 @@ add_test_case(H5Dappend)
 add_test_case(H5Rall)
 # add_test_case(H5E_exceptions)
 add_test_case(H5Dio_roundtrip)
+add_test_case(H5Drank)
+add_test_case(H5Tcomplex)
+# std::float16_t support — issue [#224].
+# Compiled with C++23 so __STDCPP_FLOAT16_T__ is visible where the compiler
+# provides it (clang-17+, gcc-13+ on x86).  On older compilers the guard
+# produces an empty TU and the test still builds and passes silently.
+add_test_case(H5Tfloat16)
+set_target_properties(test-h5tfloat16 PROPERTIES CXX_STANDARD 23 CXX_STANDARD_REQUIRED OFF)
+add_test_case(H5Mvalarray)
 add_test_case(H5Zdeflate)
 add_test_case(H5Zshuffle)
 add_test_case(H5Zfletcher32)
@@ -126,7 +137,7 @@ add_subdirectory(examples)
 # ---------------------------------------------------------------------------
 add_executable(test-win_stack_probe win_stack_probe.cpp)
 set_target_properties(test-win_stack_probe PROPERTIES
-    CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+    CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 target_include_directories(test-win_stack_probe PRIVATE ${INCLUDE_DIRS})
 # Intentionally do NOT link libdoctest — keep the call chain pristine.
@@ -144,7 +155,7 @@ if(WIN32)
         set(test_name test-win-lifecycle-${name})
         add_executable(${test_name} win_hdf5_lifecycle_probe.cpp)
         set_target_properties(${test_name} PROPERTIES
-            CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+            CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
             RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
         target_compile_definitions(${test_name} PRIVATE H5CPP_WIN_PROBE_MODE=${mode})
         target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
@@ -168,7 +179,7 @@ if(WIN32)
         set(test_name test-win-write-path-${name})
         add_executable(${test_name} win_h5dwrite_path_probe.cpp)
         set_target_properties(${test_name} PROPERTIES
-            CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+            CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
             RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
         target_compile_definitions(${test_name} PRIVATE H5CPP_WIN_WRITE_PROBE_MODE=${mode})
         target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})
@@ -193,7 +204,7 @@ if(WIN32)
         set(test_name test-win-dapl-${name})
         add_executable(${test_name} win_dapl_probe.cpp)
         set_target_properties(${test_name} PROPERTIES
-            CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
+            CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF
             RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
         target_compile_definitions(${test_name} PRIVATE H5CPP_WIN_DAPL_PROBE_MODE=${mode})
         target_include_directories(${test_name} PRIVATE ${INCLUDE_DIRS})

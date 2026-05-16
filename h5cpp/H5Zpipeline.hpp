@@ -16,7 +16,7 @@
 #include "H5Sall.hpp"
 #include "H5Zall.hpp"
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <malloc.h>
 #endif
 
@@ -28,7 +28,7 @@ namespace h5{ namespace impl {
 
 	struct aligned_deleter {
 		void operator()(char* ptr) const {
-#ifdef _MSC_VER
+#ifdef _WIN32
 			_aligned_free(ptr);
 #else
 			std::free(ptr);
@@ -44,7 +44,7 @@ namespace h5{ namespace impl {
 	inline aligned_ptr make_aligned(size_t alignment, size_t size) {
 		const size_t allocation_size = round_up_to_alignment(size, alignment);
 		void* ptr = nullptr;
-#ifdef _MSC_VER
+#ifdef _WIN32
 		ptr = _aligned_malloc(allocation_size, alignment);
 #else
 		if (posix_memalign(&ptr, alignment, allocation_size) != 0)
@@ -134,14 +134,7 @@ namespace h5{ namespace impl {
 		void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr );
 		void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr );
 	};
-		struct threaded_pipeline_t : public pipeline_t<threaded_pipeline_t>{
-			void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
-				(void)offset; (void)nbytes; (void)ptr;
-			}
-			void read_chunk_impl( const hsize_t* offset, size_t nbytes, void* ptr ){
-				(void)offset; (void)nbytes; (void)ptr;
-			}
-		};
+		// threaded_pipeline_t is defined in H5Zpipeline_threaded.hpp
 		struct romio_pipeline_t : public pipeline_t<romio_pipeline_t>{
 			void write_chunk_impl( const hsize_t* offset, size_t nbytes, const void* ptr ){
 				(void)offset; (void)nbytes; (void)ptr;

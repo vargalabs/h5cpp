@@ -39,7 +39,7 @@ namespace h5 {
 		auto tuple = std::forward_as_tuple(args...);
 		const h5::count_t& count = std::get<tcount::value>( tuple );
 
-		h5::offset_t  default_offset{0,0,0,0,0,0};
+		h5::offset_t  default_offset{0,0,0,0,0,0,0}; // must match H5CPP_MAX_RANK=7
 		const h5::offset_t& offset = arg::get( default_offset, args...);
 
 		h5::stride_t  default_stride{1,1,1,1,1,1,1};
@@ -215,11 +215,26 @@ namespace h5 {
 			size.rank = count.rank;
 		}
 
-		T ref = impl::get<T>::ctor( count );
-		element_type *ptr = impl::data( ref );
-
-		::h5::read<element_type>(ds, ptr, count, args...);
-		return ref;
+		using traits = h5::meta::access_traits_t<T>;
+		constexpr auto kind = traits::kind;
+		if constexpr (kind == h5::meta::access_t::iterators) {
+			size_t n = 1;
+			for (int i = 0; i < size.rank; ++i) n *= size[i];
+			std::vector<element_type> flat(n);
+			::h5::read<element_type>(ds, flat.data(), count, args...);
+			if constexpr (std::is_same_v<T, std::forward_list<element_type>>) {
+				T result;
+				result.assign(flat.begin(), flat.end());
+				return result;
+			} else {
+				return T(flat.begin(), flat.end());
+			}
+		} else {
+			T ref = impl::get<T>::ctor( count );
+			element_type *ptr = impl::data( ref );
+			::h5::read<element_type>(ds, ptr, count, args...);
+			return ref;
+		}
 	}
 	/***************************  STRING *****************************/
  	/** \func_read_hdr
@@ -255,7 +270,7 @@ namespace h5 {
 			size.rank = count.rank;
 		}
 
-		h5::offset_t  default_offset{0,0,0,0,0,0};
+		h5::offset_t  default_offset{0,0,0,0,0,0,0}; // must match H5CPP_MAX_RANK=7
 		const h5::offset_t& offset = arg::get( default_offset, args...);
 
 		h5::stride_t  default_stride{1,1,1,1,1,1,1};

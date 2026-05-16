@@ -112,8 +112,20 @@ h5::pt_t::~pt_t(){
 inline
 void h5::pt_t::init( const h5::ds_t& handle ){
 	try {
-		ds = handle; // copy handle inc ref, behaves as unique_ptr
-		dt = h5::dt_t<void>{H5Dget_type(static_cast<hid_t>(handle))};
+		// Re-open with zero HDF5 chunk cache: the default DAPL allocates ~1MB per H5Dopen2
+		// call which accumulates in malloc arenas when pt_t is used in loops, even though
+		// the memory is logically freed on close.
+		hid_t raw = static_cast<hid_t>(handle);
+		hid_t fid = H5Iget_file_id(raw);
+		ssize_t nlen = H5Iget_name(raw, nullptr, 0);
+		std::vector<char> dname(static_cast<size_t>(nlen) + 1);
+		H5Iget_name(raw, dname.data(), dname.size());
+		hid_t dapl = H5Pcreate(H5P_DATASET_ACCESS);
+		H5Pset_chunk_cache(dapl, 0, 0, H5D_CHUNK_CACHE_W0_DEFAULT);
+		ds = h5::ds_t{H5Dopen2(fid, dname.data(), dapl)};
+		H5Pclose(dapl);
+		H5Fclose(fid);
+		dt = h5::dt_t<void>{H5Dget_type(static_cast<hid_t>(ds))};
 		h5::sp_t file_space = h5::get_space( handle );
 		rank = h5::get_simple_extent_dims( file_space, current_dims, nullptr );
 
@@ -200,6 +212,14 @@ void> h5::pt_t::append( const T& ref ) try {
 
 template<class T> inline std::enable_if_t< !h5::meta::is_scalar<T>::value,
 void> h5::pt_t::append( const T& ref ) try {
+	// Iterator-only containers (list, forward_list, deque, set, …) have no .data().
+	// Delegate element-by-element to the scalar append overload.
+	using access = h5::meta::access_traits_t<T>;
+	if constexpr (access::kind == h5::meta::access_t::iterators) {
+		for (const auto& elem : ref)
+			this->append(elem);
+	} else {
+
 	auto dims = meta::size( ref );
 
 	*offset = *current_dims;
@@ -233,6 +253,7 @@ void> h5::pt_t::append( const T& ref ) try {
 		default:
 			throw h5::error::io::packet_table::misc( H5CPP_ERROR_MSG("objects with rank > 2 are not supported... "));
 	}
+	} // end else (non-iterator path)
 } catch( const std::runtime_error& err ){
 	throw h5::error::io::dataset::append( err.what() );
 }
@@ -251,15 +272,16 @@ void h5::pt_t::flush(){
 		h5::select_all( mem_space );
 		H5Sselect_hyperslab( static_cast<hid_t>(file_space), H5S_SELECT_SET, offset, nullptr, &block, &count);
 
-		H5Dwrite( static_cast<hid_t>( ds ), 
+		H5Dwrite( static_cast<hid_t>( ds ),
 			dt, mem_space, file_space, static_cast<hid_t>(dxpl), ptr);
-	} else { 
+	} else {
 		// the remainder of last chunk must be set to fill_value; arbitrary type size supported
 		for(hsize_t i=0; i<(N-n); i++)
 			for(size_t j=0; j < element_size; j++)
 				static_cast<char*>( ptr )[(n + i) * element_size + j] = static_cast<char*>( fill_value )[ j ];
     	pipeline.write_chunk( offset, block_size, ptr );
 	}
+	n = 0;
 }
 
 namespace h5 {

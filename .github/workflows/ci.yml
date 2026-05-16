@@ -1,8 +1,8 @@
 name: CI
 
 env:
-  HDF5_VERSION: 1.10.10
-  HDF5_CACHE_VERSION: v2
+  HDF5_VERSION: 1.12.2
+  HDF5_CACHE_VERSION: v3
 
 on:
   push:
@@ -192,7 +192,7 @@ jobs:
 
           Get-ChildItem -Recurse "$zlib_prefix\lib","$zlib_prefix\include"
 
-      - name: Restore HDF5 1.10.10 cache
+      - name: Restore HDF5 1.12.2 cache
         if: runner.os == 'Windows'
         id: cache-hdf5
         uses: actions/cache/restore@v5
@@ -200,7 +200,7 @@ jobs:
           path: ${{ runner.temp }}\hdf5-${{ env.HDF5_VERSION }}-install
           key: hdf5-${{ runner.os }}-${{ matrix.compiler }}-${{ env.HDF5_VERSION }}-${{ env.HDF5_CACHE_VERSION }}
 
-      - name: Build HDF5 1.10.10
+      - name: Build HDF5 1.12.2
         if: runner.os == 'Windows' && steps.cache-hdf5.outputs.cache-hit != 'true'
         shell: powershell
         run: |
@@ -213,7 +213,7 @@ jobs:
           $hdf5_prefix = "$env:RUNNER_TEMP\hdf5-$hdf5_version-install"
 
           Invoke-WebRequest `
-            -Uri "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-$hdf5_version/src/hdf5-$hdf5_version.tar.gz" `
+            -Uri "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-$hdf5_version/src/hdf5-$hdf5_version.tar.gz" `
             -OutFile $hdf5_archive
           tar -xzf $hdf5_archive -C $env:RUNNER_TEMP
 
@@ -239,7 +239,7 @@ jobs:
           cmake --build $hdf5_build --parallel --config Release
           cmake --install $hdf5_build --config Release
 
-      - name: Save HDF5 1.10.10 cache
+      - name: Save HDF5 1.12.2 cache
         if: runner.os == 'Windows' && steps.cache-hdf5.outputs.cache-hit != 'true'
         uses: actions/cache/save@v5
         with:
@@ -301,6 +301,14 @@ jobs:
             cmake_args+=(-DHDF5_CXX_COMPILER_EXECUTABLE="$HDF5_CXX_COMPILER_EXECUTABLE")
           fi
 
+          # macOS: std::stop_token in Apple's libc++ requires deployment target >= 14.4.
+          # The runner sets MACOSX_DEPLOYMENT_TARGET=14.0 in the environment; CMake reads
+          # this with FORCE, overriding any CMakeLists.txt value, so we must override it
+          # explicitly on the command line with a higher value.
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            cmake_args+=(-DCMAKE_OSX_DEPLOYMENT_TARGET=14.4)
+          fi
+
           cmake "${cmake_args[@]}"
 
       - name: Configure Windows
@@ -345,10 +353,156 @@ jobs:
           name: status-${{ matrix.os }}-${{ matrix.compiler }}
           path: badge-status/status-${{ matrix.os }}-${{ matrix.compiler }}.json
 
+  asan:
+    name: asan / ubuntu-24.04 / clang-20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    concurrency:
+      group: asan-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build wget gnupg lsb-release software-properties-common libhdf5-dev
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 20 all
+          echo "CC=$(command -v clang-20)" >> "$GITHUB_ENV"
+          echo "CXX=$(command -v clang++-20)" >> "$GITHUB_ENV"
+
+      - name: Configure
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_C_COMPILER="$CC" \
+            -DCMAKE_CXX_COMPILER="$CXX" \
+            -DCMAKE_CXX_STANDARD=17 \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_FLAGS="-fsanitize=address -fno-omit-frame-pointer -O1 -g" \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address -fno-omit-frame-pointer -O1 -g" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address" \
+            -DH5CPP_BUILD_TESTS=ON
+
+      - name: Build
+        shell: bash
+        run: cmake --build build --parallel
+
+      - name: Test
+        shell: bash
+        env:
+          ASAN_OPTIONS: "detect_leaks=1:halt_on_error=1:abort_on_error=1:strict_string_checks=1"
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Record Badge Status
+        if: always()
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p badge-status
+          cat <<EOF > badge-status/status-asan.json
+          {
+            "os": "ubuntu-24.04",
+            "compiler": "clang-20",
+            "label": "asan",
+            "status": "${{ job.status }}"
+          }
+          EOF
+
+      - name: Upload Status Artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: status-asan
+          path: badge-status/status-asan.json
+
+  ubsan:
+    name: ubsan / ubuntu-24.04 / clang-20
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    concurrency:
+      group: ubsan-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build wget gnupg lsb-release software-properties-common libhdf5-dev
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 20 all
+          echo "CC=$(command -v clang-20)" >> "$GITHUB_ENV"
+          echo "CXX=$(command -v clang++-20)" >> "$GITHUB_ENV"
+
+      - name: Configure
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_C_COMPILER="$CC" \
+            -DCMAKE_CXX_COMPILER="$CXX" \
+            -DCMAKE_CXX_STANDARD=17 \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_FLAGS="-fsanitize=undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer -O1 -g" \
+            -DCMAKE_CXX_FLAGS="-fsanitize=undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer -O1 -g" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=undefined" \
+            -DH5CPP_BUILD_TESTS=ON
+
+      - name: Build
+        shell: bash
+        run: cmake --build build --parallel
+
+      - name: Test
+        shell: bash
+        env:
+          UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Record Badge Status
+        if: always()
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p badge-status
+          cat <<EOF > badge-status/status-ubsan.json
+          {
+            "os": "ubuntu-24.04",
+            "compiler": "clang-20",
+            "label": "ubsan",
+            "status": "${{ job.status }}"
+          }
+          EOF
+
+      - name: Upload Status Artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: status-ubsan
+          path: badge-status/status-ubsan.json
+
   badge:
     name: Generate SVG Badges
     if: always()
-    needs: build
+    needs: [build, asan, ubsan]
     runs-on: ubuntu-24.04
 
     steps:
@@ -393,6 +547,7 @@ jobs:
             os=$(jq -r '.os' "$status_file")
             compiler=$(jq -r '.compiler' "$status_file")
             status=$(jq -r '.status' "$status_file")
+            custom_label=$(jq -r '.label // ""' "$status_file")
 
             prefix="unknown"
             symbol="%3F"
@@ -421,8 +576,13 @@ jobs:
                 ;;
             esac
 
-            label="${os}-${compiler}"
-            badge="$badge_dir/${label}.svg"
+            if [[ -n "$custom_label" ]]; then
+              badge_name="$custom_label"
+            else
+              badge_name="${os}-${compiler}"
+            fi
+
+            badge="$badge_dir/${badge_name}.svg"
             url="https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg"
 
             echo "$url -> $badge"
@@ -484,7 +644,7 @@ jobs:
 
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Debug \
-            -DCMAKE_CXX_STANDARD=17 \
+            -DCMAKE_CXX_STANDARD=20 \
             -DCMAKE_C_COMPILER=gcc-14 \
             -DCMAKE_CXX_COMPILER=g++-14 \
             -DCMAKE_C_FLAGS="--coverage -O0 -g" \
