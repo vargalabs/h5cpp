@@ -16,7 +16,7 @@
 #include "H5Sall.hpp"
 #include "H5Zall.hpp"
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <malloc.h>
 #endif
 
@@ -28,7 +28,7 @@ namespace h5{ namespace impl {
 
 	struct aligned_deleter {
 		void operator()(char* ptr) const {
-#ifdef _MSC_VER
+#ifdef _WIN32
 			_aligned_free(ptr);
 #else
 			std::free(ptr);
@@ -44,7 +44,7 @@ namespace h5{ namespace impl {
 	inline aligned_ptr make_aligned(size_t alignment, size_t size) {
 		const size_t allocation_size = round_up_to_alignment(size, alignment);
 		void* ptr = nullptr;
-#ifdef _MSC_VER
+#ifdef _WIN32
 		ptr = _aligned_malloc(allocation_size, alignment);
 #else
 		if (posix_memalign(&ptr, alignment, allocation_size) != 0)

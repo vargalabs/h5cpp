@@ -1,0 +1,182 @@
+name: Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: package-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Linux (DEB + RPM) ────────────────────────────────────────────────────────
+  package-linux:
+    name: ${{ matrix.arch }} / DEB + RPM
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-22.04
+            deb_arch: amd64
+            rpm_arch: x86_64
+          - arch: arm64
+            runner: ubuntu-22.04-arm
+            deb_arch: arm64
+            rpm_arch: aarch64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libhdf5-dev rpm
+
+      - name: Configure
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCPACK_PACKAGING_INSTALL_PREFIX=/usr \
+            -DH5CPP_BUILD_EXAMPLES=OFF \
+            -DH5CPP_BUILD_TESTS=OFF \
+            -DH5CPP_BUILD_BENCH=OFF
+
+      - name: Build (amalgamation only)
+        run: cmake --build build --target h5cpp-amalgamate
+
+      - name: Package DEB
+        run: cd build && cpack -G DEB
+        env:
+          CPACK_DEBIAN_PACKAGE_ARCHITECTURE: ${{ matrix.deb_arch }}
+
+      - name: Package RPM
+        run: cd build && cpack -G RPM
+        env:
+          CPACK_RPM_PACKAGE_ARCHITECTURE: ${{ matrix.rpm_arch }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages-linux-${{ matrix.arch }}
+          path: |
+            build/*.deb
+            build/*.rpm
+          if-no-files-found: error
+
+  # ── macOS (.pkg via productbuild) ────────────────────────────────────────────
+  package-macos:
+    name: macos-15 / arm64 / pkg
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install hdf5
+
+      - name: Configure
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr/local \
+            -DH5CPP_BUILD_EXAMPLES=OFF \
+            -DH5CPP_BUILD_TESTS=OFF \
+            -DH5CPP_BUILD_BENCH=OFF
+
+      - name: Build (amalgamation only)
+        run: cmake --build build --target h5cpp-amalgamate
+
+      - name: Package
+        run: cd build && cpack -G productbuild
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages-macos-arm64
+          path: build/*.pkg
+          if-no-files-found: error
+
+  # ── Windows (NSIS .exe) ───────────────────────────────────────────────────────
+  package-windows:
+    name: windows / x64 / NSIS
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache HDF5
+        id: cache-hdf5
+        uses: actions/cache@v4
+        with:
+          path: C:/hdf5
+          key: hdf5-1.10.10-windows-x64
+
+      - name: Download HDF5
+        if: steps.cache-hdf5.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $url = "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.10.10/hdf5-1.10.10-win-vs2022_intel.zip"
+          Invoke-WebRequest -Uri $url -OutFile hdf5.zip
+          Expand-Archive hdf5.zip -DestinationPath C:/hdf5
+
+      - name: Configure
+        shell: pwsh
+        run: |
+          cmake -B build `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DHDF5_ROOT="C:/hdf5" `
+            -DH5CPP_BUILD_EXAMPLES=OFF `
+            -DH5CPP_BUILD_TESTS=OFF `
+            -DH5CPP_BUILD_BENCH=OFF
+
+      - name: Build (amalgamation only)
+        run: cmake --build build --target h5cpp-amalgamate --config Release
+
+      - name: Package
+        run: cd build && cpack -G NSIS
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages-windows-x64
+          path: build/*.exe
+          if-no-files-found: error
+
+  # ── AppImage (TODO) ───────────────────────────────────────────────────────────
+  # h5cpp is header-only; AppImage wraps executables, not headers.
+  # AppImage packaging of the h5cpp-compiler binary belongs in the
+  # h5cpp-compiler repo. Add it here when that binary is vendored.
+
+  # ── Publish release ──────────────────────────────────────────────────────────
+  publish:
+    name: Publish release
+    needs: [package-linux, package-macos, package-windows]
+    runs-on: ubuntu-22.04
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: packages-*
+          merge-multiple: true
+          path: dist/
+
+      - name: List artifacts
+        run: ls -lh dist/
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" dist/* \
+            --title "h5cpp ${{ github.ref_name }}" \
+            --generate-notes \
+            --repo ${{ github.repository }}

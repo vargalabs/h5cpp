@@ -14,9 +14,17 @@ namespace h5::valarray {
 
 namespace h5::meta {
     template <class T> struct is_contiguous<h5::valarray::array<T>> : std::true_type {};
+
+    template <class T> struct detail::has_explicit_access_traits<h5::valarray::array<T>> : std::true_type {};
 }
 
 namespace h5::impl {
+	// std::valarray carries value_type, so it must be registered to suppress the
+	// catch-all SFINAE decay<T, has_value_type<T>...> in H5Mstl.hpp; otherwise
+	// decay<std::valarray<T>> has two viable specialisations and instantiation
+	// is ambiguous.
+	template <class T> struct detail::has_explicit_decay<h5::valarray::array<T>> : std::true_type {};
+
 	// 1.) object -> H5T_xxx
 	template <class T> struct decay<h5::valarray::array<T>>{ using type = T; };
 	// get read access to datastaore
@@ -37,4 +45,19 @@ namespace h5::impl {
 		static inline h5::valarray::array<T> ctor( std::array<size_t,1> dims ){
 			return h5::valarray::array<T>( dims[0] );
 	}};
+}
+
+namespace h5::meta {
+	template <class T> struct access_traits_t<h5::valarray::array<T>> {
+		using element_t = T;
+		static constexpr access_t kind = access_t::contiguous;
+		static constexpr bool is_trivially_packable = true;
+		static auto data(const h5::valarray::array<T>& c) noexcept { return h5::impl::data(c); }
+		static auto size(const h5::valarray::array<T>& c) noexcept { return h5::impl::size(c); }
+		static std::size_t bytes(const h5::valarray::array<T>& c) noexcept {
+			auto s = size(c); std::size_t n = 1;
+			for (std::size_t i = 0; i < s.size(); ++i) n *= s[i];
+			return n * sizeof(element_t);
+		}
+	};
 }
