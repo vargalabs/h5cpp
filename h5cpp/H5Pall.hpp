@@ -143,10 +143,6 @@ namespace h5::impl {
 	template <class capi, typename capi::fn_t capi_call, class T> using dcpl_tcall = tprop_t<h5::dcpl_t,default_dcpl, capi, capi_call, T>;
 }
 
-namespace h5::impl {
-	template <bool version, class capi, typename capi::fn_t capi_call  > 
-		using fapl_vcall = typename std::conditional<version, impl::fapl_call<capi,capi_call>,void>::type;
-}
 
 
 /** impl::property_group<H5Pset_property, args...> args... ::= all argument types except the first `this` hid_t prop_ID
@@ -281,10 +277,8 @@ using deflate                  = impl::dcpl_call< impl::dcpl_args<hid_t,unsigned
 using gzip                     = deflate;
 using fill_time                = impl::dcpl_call< impl::dcpl_args<hid_t,H5D_fill_time_t>,H5Pset_fill_time>;
 using alloc_time               = impl::dcpl_call< impl::dcpl_args<hid_t,H5D_alloc_time_t>,H5Pset_alloc_time>;
-using chunk_opts               = impl::dcpl_call< impl::dcpl_args<hid_t,unsigned>,H5Pset_chunk_opts>;
 template<class T> /*tcall ::= templated call with T*/
 using fill_value               = impl::dcpl_tcall< impl::dcpl_args<hid_t,hid_t,const void*>, H5Pset_fill_value, T>;
-using chunk                    = impl::dcpl_acall< impl::dcpl_args<hid_t,int,const hsize_t*>, H5Pset_chunk>; /*acall ::= array call of hsize_t */
 namespace flag{
 	using fletcher32           = impl::dcpl_call< impl::dcpl_args<hid_t>,H5Pset_fletcher32>;
 	using shuffle              = impl::dcpl_call< impl::dcpl_args<hid_t>,H5Pset_shuffle>;
