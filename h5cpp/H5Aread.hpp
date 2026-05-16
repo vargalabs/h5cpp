@@ -83,7 +83,12 @@ namespace h5 {
         }
         // HDF5 allocates per-element vlen buffers during H5Aread conversion; reclaim them
         // before freeing the pointer array, otherwise each string leaks under ASan.
+        // H5Treclaim replaces H5Dvlen_reclaim in HDF5 1.12; H5Dvlen_reclaim was removed in 2.0.
+#if H5_VERSION_GE(1,12,0)
+        H5Treclaim(static_cast<hid_t>(type), static_cast<hid_t>(file_space), H5P_DEFAULT, ptr);
+#else
         H5Dvlen_reclaim(static_cast<hid_t>(type), static_cast<hid_t>(file_space), H5P_DEFAULT, ptr);
+#endif
         free(ptr);
 		return object;
 	}

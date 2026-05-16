@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.22.0)
 # Must be set before project() — CMake's Apple toolchain reads this at project() time.
 # macOS 14.0 is the minimum deployment target that exposes std::stop_token in Apple's libc++.
 if(APPLE)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "14.0" CACHE STRING "Minimum macOS deployment version")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "14.4" CACHE STRING "Minimum macOS deployment version")
 endif()
 
 project(libh5cpp-dev VERSION 1.10.4.6 LANGUAGES CXX C)
