@@ -1,8 +1,8 @@
 name: CI
 
 env:
-  HDF5_VERSION: 1.10.10
-  HDF5_CACHE_VERSION: v2
+  HDF5_VERSION: 1.12.2
+  HDF5_CACHE_VERSION: v3
 
 on:
   push:
@@ -192,7 +192,7 @@ jobs:
 
           Get-ChildItem -Recurse "$zlib_prefix\lib","$zlib_prefix\include"
 
-      - name: Restore HDF5 1.10.10 cache
+      - name: Restore HDF5 1.12.2 cache
         if: runner.os == 'Windows'
         id: cache-hdf5
         uses: actions/cache/restore@v5
@@ -200,7 +200,7 @@ jobs:
           path: ${{ runner.temp }}\hdf5-${{ env.HDF5_VERSION }}-install
           key: hdf5-${{ runner.os }}-${{ matrix.compiler }}-${{ env.HDF5_VERSION }}-${{ env.HDF5_CACHE_VERSION }}
 
-      - name: Build HDF5 1.10.10
+      - name: Build HDF5 1.12.2
         if: runner.os == 'Windows' && steps.cache-hdf5.outputs.cache-hit != 'true'
         shell: powershell
         run: |
@@ -213,7 +213,7 @@ jobs:
           $hdf5_prefix = "$env:RUNNER_TEMP\hdf5-$hdf5_version-install"
 
           Invoke-WebRequest `
-            -Uri "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-$hdf5_version/src/hdf5-$hdf5_version.tar.gz" `
+            -Uri "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-$hdf5_version/src/hdf5-$hdf5_version.tar.gz" `
             -OutFile $hdf5_archive
           tar -xzf $hdf5_archive -C $env:RUNNER_TEMP
 
@@ -239,7 +239,7 @@ jobs:
           cmake --build $hdf5_build --parallel --config Release
           cmake --install $hdf5_build --config Release
 
-      - name: Save HDF5 1.10.10 cache
+      - name: Save HDF5 1.12.2 cache
         if: runner.os == 'Windows' && steps.cache-hdf5.outputs.cache-hit != 'true'
         uses: actions/cache/save@v5
         with:
