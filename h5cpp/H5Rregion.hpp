@@ -87,6 +87,7 @@ namespace h5::exp {
 		element_t *ptr = impl::data(object);
         h5::sp_t mem_space = h5::create_simple(block);
         h5::select_all(mem_space);
+        const h5::dxpl_t& dxpl = arg::get(h5::default_dxpl, args...);
 
         H5CPP_CHECK_NZ(
         H5Dread(ds_, mem_type, mem_space, file_space, dxpl, ptr ),
