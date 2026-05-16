@@ -63,6 +63,8 @@ endif()
 
 # test content lands in issue/94
 add_test_case(H5Adelete)
+# attribute type coverage — issue #11
+add_test_case(H5Aall)
 add_test_case(H5compat)
 add_test_case(H5Dgather)
 add_test_case(H5meta)

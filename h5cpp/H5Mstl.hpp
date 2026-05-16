@@ -118,6 +118,23 @@ namespace h5::impl {
 	inline T* data( std::vector<std::array<T,N>, A>& ref ){
 		return ref.empty() ? nullptr : ref.front().data();
 	}
+	// std::array<T,N>: return element pointer so I/O paths treat it as N
+	// contiguous T values rather than a single POD struct.
+	template <class T, std::size_t N>
+	inline const T* data( const std::array<T,N>& ref ){
+		return ref.data();
+	}
+	template <class T, std::size_t N>
+	inline T* data( std::array<T,N>& ref ){
+		return ref.data();
+	}
+	// std::array<T,N>: report size as {N} so the attribute/dataset is created
+	// with rank-1 extent N rather than rank-0 scalar (which is_scalar<> implies
+	// because std::array is standard_layout+trivial).
+	template <class T, std::size_t N>
+	inline std::array<size_t,1> size( const std::array<T,N>& ){
+		return {N};
+	}
 	// 4.) write access
 	template <class T> inline std::enable_if_t<std::is_integral_v<T>,
 	T*> data( T& ref ){ return &ref; }

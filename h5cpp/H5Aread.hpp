@@ -5,12 +5,30 @@
 #pragma once
 #include "H5Aopen.hpp"
 #include <string>
+#include <array>
 #include <type_traits>
 namespace h5 {
 
-	//ARITHMETIC ELEMENT TYPES 
+	// STD::ARRAY<T,N> — fixed-size array of arithmetic elements.
+	// The generic arithmetic branch decays std::array<T,N> to its element type T and
+	// then calls impl::data(object) which returns the array-as-POD pointer (T[N]*)
+	// rather than T*, causing an invalid const_cast.  This explicit enable_if overload
+	// intercepts all std::array instantiations and reads directly into .data().
+	template <class A, class T = typename A::value_type,
+	          class = std::enable_if_t<meta::is_array<A>::value && !meta::is_text_like<A>::value>> inline
+	A aread( const h5::ds_t& ds, const std::string& name,
+			const h5::acpl_t& acpl = h5::default_acpl ){
+		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
+		A object{};
+		h5::dt_t<T> type;
+		H5CPP_CHECK_NZ( H5Aread( static_cast<hid_t>(attr), static_cast<hid_t>(type), object.data() ),
+			   h5::error::io::attribute::read, "couldn't read array attribute ...");
+		return object;
+	}
+
+	//ARITHMETIC ELEMENT TYPES — excludes std::array<T,N> (handled by explicit overload above)
 	template <class T, class D=typename impl::decay<T>::type, class... args_t> inline
-	std::enable_if_t< std::is_integral_v<D> || std::is_floating_point_v<D>,
+	std::enable_if_t< (std::is_integral_v<D> || std::is_floating_point_v<D>) && !meta::is_array<T>::value,
 	T> aread( const h5::ds_t& ds, const std::string& name, const h5::acpl_t& acpl = h5::default_acpl ){
 
 		h5::at_t attr = h5::open(ds, name, h5::default_acpl);
