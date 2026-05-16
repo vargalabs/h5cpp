@@ -414,7 +414,7 @@ jobs:
           {
             "os": "ubuntu-24.04",
             "compiler": "clang-20",
-            "label": "asan",
+            "label": "ASan",
             "status": "${{ job.status }}"
           }
           EOF
@@ -487,7 +487,7 @@ jobs:
           {
             "os": "ubuntu-24.04",
             "compiler": "clang-20",
-            "label": "ubsan",
+            "label": "UBSan",
             "status": "${{ job.status }}"
           }
           EOF
@@ -577,13 +577,14 @@ jobs:
             esac
 
             if [[ -n "$custom_label" ]]; then
-              badge_name="$custom_label"
+              badge_name="${custom_label,,}"
+              url="https://img.shields.io/badge/${custom_label}-${symbol}-${color}.svg"
             else
               badge_name="${os}-${compiler}"
+              url="https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg"
             fi
 
             badge="$badge_dir/${badge_name}.svg"
-            url="https://img.shields.io/badge/${prefix}-${symbol}-${color}.svg"
 
             echo "$url -> $badge"
             curl -fsSL "$url" -o "$badge"
