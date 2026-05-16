@@ -1,6 +1,7 @@
-#if __cplusplus >= 202302L && defined(__STDCPP_FLOAT16_T__)
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/all>
+
+#if __cplusplus >= 202302L && defined(__STDCPP_FLOAT16_T__)
 #include <h5cpp/all>
 #include <stdfloat>
 #include <vector>
@@ -66,6 +67,4 @@ TEST_CASE("[#224] std::float16_t attribute write/read via h5::awrite/h5::aread")
     CHECK(static_cast<float>(read) == doctest::Approx(static_cast<float>(written)).epsilon(0.01));
 }
 
-#else
-// Empty compilation unit — pre-C++23 or compiler without __STDCPP_FLOAT16_T__
 #endif
