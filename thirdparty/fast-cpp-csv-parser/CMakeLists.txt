@@ -3,12 +3,12 @@
 
 # fast-cpp-csv-parser — Ben Strasser's header-only CSV parser
 # https://github.com/ben-strasser/fast-cpp-csv-parser  License: BSD-3-Clause
-# Vendored at commit 574a9fe4 (master, 2025-era)
+# Vendored at commit 574a9fe4 (master, 2025-era); no formal releases, versioned as v0.0.0
 
 set(name csv)
 project(libh5cpp-${name} LANGUAGES CXX)
 
-set(current_version_dir "574a9fe4")
+set(current_version_dir "v0.0.0")
 add_library(libh5cpp-${name} INTERFACE)
 add_library(h5cpp::${name} ALIAS libh5cpp-${name})
 target_include_directories(libh5cpp-${name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/${current_version_dir})
