@@ -39,7 +39,7 @@ namespace h5 {
 		auto tuple = std::forward_as_tuple(args...);
 		const h5::count_t& count = std::get<tcount::value>( tuple );
 
-		h5::offset_t  default_offset{0,0,0,0,0,0};
+		h5::offset_t  default_offset{0,0,0,0,0,0,0}; // must match H5CPP_MAX_RANK=7
 		const h5::offset_t& offset = arg::get( default_offset, args...);
 
 		h5::stride_t  default_stride{1,1,1,1,1,1,1};
@@ -270,7 +270,7 @@ namespace h5 {
 			size.rank = count.rank;
 		}
 
-		h5::offset_t  default_offset{0,0,0,0,0,0};
+		h5::offset_t  default_offset{0,0,0,0,0,0,0}; // must match H5CPP_MAX_RANK=7
 		const h5::offset_t& offset = arg::get( default_offset, args...);
 
 		h5::stride_t  default_stride{1,1,1,1,1,1,1};
