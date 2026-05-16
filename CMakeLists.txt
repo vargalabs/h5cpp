@@ -207,7 +207,6 @@ if(MSVC)
     target_compile_options(h5cpp INTERFACE /Zc:__cplusplus)
 endif()
 
-
 if(H5CPP_HAVE_ROS3_VFD)
     target_compile_definitions(h5cpp INTERFACE H5CPP_HAVE_ROS3_VFD=1)
 endif()
