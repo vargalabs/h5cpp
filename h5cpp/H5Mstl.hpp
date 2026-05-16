@@ -142,6 +142,16 @@ namespace h5::impl {
 	inline std::array<size_t,1> size( const std::forward_list<T,A>& ref ){
 		return {static_cast<size_t>(std::distance(ref.begin(), ref.end()))};
 	}
+} // h5::impl
+
+// forward_list lacks .size(), so rank<T> (which checks has_size<T>) would return 0,
+// misclassifying it as scalar. Specialize explicitly to rank-1.
+namespace h5::meta {
+	template <class T, class A>
+	struct rank<std::forward_list<T,A>> : public std::integral_constant<std::size_t, 1> {};
+}
+
+namespace h5::impl {
 	// Gap 2: structural size() — containers with .size() not explicitly covered.
 	// Returns rank-1 extent for any non-scalar with a .size() member.
 	// The explicit vector<T,A> overload above is more specific and wins for vectors.
