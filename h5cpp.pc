@@ -1,9 +1,0 @@
-
-Name: h5cpp
-Description: C++17 template library for major linear algebra systems and the STL
-URL: h5cpp.ca
-Version: 1.10.4.5-1
-Requires: hdf5
-Cflags: -I/usr/include/h5cpp  -std=c++17
-Libs:  -lhdf5  -lz -ldl -lm
-

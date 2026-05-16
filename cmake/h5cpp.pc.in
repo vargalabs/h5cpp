@@ -1,0 +1,7 @@
+Name: h5cpp
+Description: C++ template library for HDF5 I/O
+URL: https://h5cpp.org
+Version: @PROJECT_VERSION@
+Requires: hdf5
+Cflags: -I${includedir} -std=c++17
+Libs: -lhdf5 -lz -ldl -lm
