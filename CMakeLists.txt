@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.22.0)
 project(libh5cpp-dev VERSION 1.10.4.6 LANGUAGES CXX C)
 
 # ─── Standard Settings ────────────────────────────────────────────────────────────
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -192,7 +192,7 @@ target_include_directories(h5cpp INTERFACE
 )
 
 target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBS})
-target_compile_features(h5cpp INTERFACE cxx_std_17)
+target_compile_features(h5cpp INTERFACE cxx_std_20)
 
 if(H5CPP_HAVE_ROS3_VFD)
     target_compile_definitions(h5cpp INTERFACE H5CPP_HAVE_ROS3_VFD=1)
