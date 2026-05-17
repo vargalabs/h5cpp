@@ -382,3 +382,34 @@ set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 set(CPACK_PRODUCTBUILD_IDENTIFIER     "org.h5cpp.h5cpp")
 
 include(CPack)
+
+# ─── Developer convenience targets ───────────────────────────────────────────
+find_program(MKDOCS_EXECUTABLE mkdocs)
+find_program(DOXYGEN_EXECUTABLE doxygen)
+
+if(MKDOCS_EXECUTABLE)
+    add_custom_target(docs
+        COMMAND ${MKDOCS_EXECUTABLE} build
+                --config-file ${CMAKE_SOURCE_DIR}/mkdocs.yml
+                --site-dir ${CMAKE_BINARY_DIR}/site
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Building MkDocs documentation → build/site"
+        VERBATIM
+    )
+    add_custom_target(docs-serve
+        COMMAND ${MKDOCS_EXECUTABLE} serve --livereload
+                --config-file ${CMAKE_SOURCE_DIR}/mkdocs.yml
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Serving MkDocs with live reload (Ctrl-C to stop)"
+        VERBATIM
+    )
+endif()
+
+if(DOXYGEN_EXECUTABLE)
+    add_custom_target(docs-doxygen
+        COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/doxy
+        COMMENT "Building Doxygen API reference → docs/doxygen/html"
+        VERBATIM
+    )
+endif()
