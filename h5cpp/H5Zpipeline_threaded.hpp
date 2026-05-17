@@ -22,6 +22,19 @@
 // so no HDF5 API calls occur on worker threads, preserving compatibility with
 // non-thread-safe HDF5 builds.
 
+namespace h5::filter {
+    // Opt-in tag selecting the threaded filter pipeline.
+    //   h5::filter::threads{}    -> std::thread::hardware_concurrency() workers
+    //   h5::filter::threads{N}   -> N compression workers
+    // Passed to pt_t constructors (and h5::write) to switch from the default
+    // synchronous basic_pipeline_t to the parallel threaded_pipeline_t.
+    struct threads {
+        unsigned n;
+        constexpr threads() noexcept : n(0) {}
+        constexpr explicit threads(unsigned count) noexcept : n(count) {}
+    };
+}
+
 namespace h5::impl {
 
 namespace detail {
@@ -78,6 +91,11 @@ struct threaded_pipeline_t : public pipeline_t<threaded_pipeline_t> {
     threaded_pipeline_t& operator=(const threaded_pipeline_t&) = delete;
     threaded_pipeline_t(threaded_pipeline_t&&) = delete;
     threaded_pipeline_t& operator=(threaded_pipeline_t&&) = delete;
+
+    // Runtime override of worker pool size. If non-zero, takes precedence over
+    // the H5CPP_PIPELINE_WORKERS compile-time default. Must be called before
+    // the first write_chunk_impl, since workers spawn lazily via std::call_once.
+    void set_worker_count(unsigned n) noexcept { worker_count_override_ = n; }
 
     // Drains all in-flight work and calls H5Dwrite_chunk from the calling
     // (main) thread.  Must be called before reading back written data.
@@ -152,8 +170,10 @@ private:
     void ensure_workers() {
         std::call_once(init_flag_, [this] {
             constexpr unsigned cfg = static_cast<unsigned>(H5CPP_PIPELINE_WORKERS);
-            const unsigned n = (cfg > 0) ? cfg
-                                         : std::max(1u, std::thread::hardware_concurrency());
+            const unsigned n =
+                (worker_count_override_ > 0) ? worker_count_override_
+                : (cfg > 0)                  ? cfg
+                                             : std::max(1u, std::thread::hardware_concurrency());
             workers_.reserve(n);
             for (unsigned i = 0; i < n; ++i)
                 workers_.emplace_back([this](std::stop_token st) { worker_loop(st); });
@@ -223,6 +243,7 @@ private:
     std::atomic<int>          in_flight_{0};
     std::vector<std::jthread> workers_;
     std::once_flag            init_flag_;
+    unsigned                  worker_count_override_{0};
 };
 
 #else
@@ -316,6 +337,11 @@ struct threaded_pipeline_t : public pipeline_t<threaded_pipeline_t> {
     threaded_pipeline_t(threaded_pipeline_t&&) = delete;
     threaded_pipeline_t& operator=(threaded_pipeline_t&&) = delete;
 
+    // Runtime override of worker pool size. If non-zero, takes precedence over
+    // the H5CPP_PIPELINE_WORKERS compile-time default. Must be called before
+    // the first write_chunk_impl, since workers spawn lazily via std::call_once.
+    void set_worker_count(unsigned n) noexcept { worker_count_override_ = n; }
+
     // Drains all in-flight work and calls H5Dwrite_chunk from the calling
     // (main) thread.  Must be called before reading back written data.
     void flush() {
@@ -389,8 +415,10 @@ private:
     void ensure_workers() {
         std::call_once(init_flag_, [this] {
             constexpr unsigned cfg = static_cast<unsigned>(H5CPP_PIPELINE_WORKERS);
-            const unsigned n = (cfg > 0) ? cfg
-                                         : std::max(1u, std::thread::hardware_concurrency());
+            const unsigned n =
+                (worker_count_override_ > 0) ? worker_count_override_
+                : (cfg > 0)                  ? cfg
+                                             : std::max(1u, std::thread::hardware_concurrency());
             workers_.reserve(n);
             for (unsigned i = 0; i < n; ++i)
                 workers_.emplace_back(
@@ -461,6 +489,7 @@ private:
     std::atomic<int>                              in_flight_{0};
     std::vector<h5::detail::stoppable_thread_t>   workers_;
     std::once_flag                                init_flag_;
+    unsigned                                      worker_count_override_{0};
 };
 
 #endif // __cplusplus >= 202002L

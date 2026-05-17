@@ -7,7 +7,10 @@
 #include "H5capi.hpp"
 #include "H5Tmeta.hpp"
 #include "H5cout.hpp"
+#include "H5Zpipeline_threaded.hpp"
+#include <memory>
 #include <string>
+#include <variant>
 #include <vector>
 #include <stdexcept>
 #include <type_traits>
@@ -18,18 +21,35 @@ namespace h5 {
 }
 std::ostream& operator<<(std::ostream& os, const h5::pt_t& pt);
 
+namespace h5::impl {
+    // pt_t::pipeline selects between the synchronous basic pipeline (default,
+    // bytewise-identical to pre-241 behavior) and the parallel threaded pipeline.
+    // Both alternatives are indirect-owned through unique_ptr so that the
+    // variant remains move-assignable regardless of the underlying pipeline's
+    // move semantics (threaded_pipeline_t deletes moves because it owns
+    // std::jthread workers and atomics; basic_pipeline_t inherits a manually-
+    // written move-assign from pipeline_t<Derived> that suppresses the
+    // implicit move-ctor needed by variant assignment).
+    using pt_pipeline_t = std::variant<
+        std::unique_ptr<impl::basic_pipeline_t>,
+        std::unique_ptr<impl::threaded_pipeline_t>
+    >;
+}
+
 // packet table template specialization with inheritance
 namespace h5 {
 	struct pt_t {
 		pt_t();
-		pt_t( const h5::ds_t& handle ); // conversion ctor
-		// deep copy with own cache memory
+		pt_t( const h5::ds_t& handle ); // conversion ctor — synchronous pipeline
+		pt_t( const h5::ds_t& handle, h5::filter::threads workers ); // threaded pipeline
+		// deep copy with own cache memory — always uses the synchronous pipeline,
+		// since the threaded pipeline owns workers that cannot be duplicated.
 		pt_t( const h5::pt_t& pt ) : h5::pt_t(pt.ds) {
 		};
 		~pt_t();
 
 		pt_t& operator=( h5::pt_t&& pt ){
-            // prevent self assign 
+            // prevent self assign
             if (this == &pt) return *this;
             if(H5Iis_valid(this->ds)){ // flush and close dataset
                 this->flush();
@@ -71,7 +91,19 @@ namespace h5 {
 		void> append( const T& ref );
 		void append( const std::string& ref );
 
-		impl::pipeline_t<impl::basic_pipeline_t> pipeline;
+		// Resolve the variant to a reference to the live pipeline_t<Derived> CRTP
+		// instance, regardless of which alternative is active. Both alternatives
+		// expose the same set of fields (chunk0, block_size, ds, dxpl, ...) inherited
+		// from pipeline_t<Derived>, so the visiting lambda can use the result
+		// duck-typed across alternatives.
+		template <typename F>
+		decltype(auto) visit_pipeline(F&& f) {
+			return std::visit([&](auto& p) -> decltype(auto) {
+				return std::forward<F>(f)(*p);   // both alternatives are unique_ptr
+			}, pipeline);
+		}
+
+		impl::pt_pipeline_t pipeline;
 		h5::dxpl_t dxpl;
 		h5::ds_t ds;
 		h5::dt_t<void> dt;
@@ -87,16 +119,27 @@ namespace h5 {
 /* initialized to invalid state
  * */
 inline h5::pt_t::pt_t() :
+	pipeline{std::make_unique<impl::basic_pipeline_t>()},
 	dxpl{H5Pcreate(H5P_DATASET_XFER)},ds{H5I_UNINIT},n{0},fill_value{nullptr}{
 		for(hsize_t i=0; i<H5CPP_MAX_RANK; i++ )
 			count[i] = 1, offset[i] = 0;
 	}
 
-// conversion ctor
+// conversion ctor — synchronous pipeline (default)
 inline
 h5::pt_t::pt_t( const h5::ds_t& handle ) : pt_t() {
 	/*default ctor has an invalid state -- skip initialization */
 	if( !is_valid(handle) ) return;
+	init(handle);
+}
+
+// conversion ctor — threaded pipeline with N compression workers
+inline
+h5::pt_t::pt_t( const h5::ds_t& handle, h5::filter::threads workers ) : pt_t() {
+	if( !is_valid(handle) ) return;
+	auto threaded = std::make_unique<impl::threaded_pipeline_t>();
+	threaded->set_worker_count(workers.n);
+	pipeline.emplace<std::unique_ptr<impl::threaded_pipeline_t>>(std::move(threaded));
 	init(handle);
 }
 
@@ -133,12 +176,14 @@ void h5::pt_t::init( const h5::ds_t& handle ){
 		h5::dt_t<void*> type = h5::get_type<void*>( ds );
 		hsize_t size = h5::get_size( type );
 		this->fill_value = h5::get_fill_value(dcpl, type, size);
-		pipeline.set_cache(dcpl, size);
-		this->ptr = pipeline.chunk0;
-		this->block_size = pipeline.block_size;
-		this->element_size = pipeline.element_size;
-		this->N = pipeline.n;
-		pipeline.ds = ds; pipeline.dxpl = dxpl;
+		visit_pipeline([&](auto& p) {
+			p.set_cache(dcpl, size);
+			this->ptr = p.chunk0;
+			this->block_size = p.block_size;
+			this->element_size = p.element_size;
+			this->N = p.n;
+			p.ds = ds; p.dxpl = dxpl;
+		});
 		h5::get_chunk_dims( dcpl, chunk_dims );
 		for(hsize_t i=1; i<rank; i++)
 			current_dims[i] = chunk_dims[i];
@@ -152,7 +197,7 @@ void> h5::pt_t::append( const T* ptr ) try {
 	*offset = *current_dims;
 	*current_dims += *chunk_dims;
 	h5::set_extent(ds, current_dims);
-	pipeline.write_chunk(offset,block_size,ptr);
+	visit_pipeline([&](auto& p){ p.write_chunk(offset, block_size, ptr); });
 } catch( const std::runtime_error& err ){
 	throw h5::error::io::dataset::append( err.what() );
 }
@@ -205,7 +250,7 @@ void> h5::pt_t::append( const T& ref ) try {
 	*offset = *current_dims;
 	*current_dims += *chunk_dims;
 	h5::set_extent(ds, current_dims);
-	pipeline.write_chunk(offset,block_size,ptr);
+	visit_pipeline([&](auto& p){ p.write_chunk(offset, block_size, ptr); });
 } catch( const std::runtime_error& err ){
 	throw h5::error::io::dataset::append( err.what() );
 }
@@ -231,21 +276,21 @@ void> h5::pt_t::append( const T& ref ) try {
 	switch( dims_.size() ){
 		case 1: // vector
 			if( dims[0] * element_size == block_size )
-				pipeline.write_chunk(offset, block_size, (void*) ptr_ );
+				visit_pipeline([&](auto& p){ p.write_chunk(offset, block_size, (void*) ptr_ ); });
 			else throw h5::error::io::packet_table::write(
 					H5CPP_ERROR_MSG("dimension mismatch: "
 						+ std::to_string( dims[0] * element_size) + " != " + std::to_string(block_size) ));
 			break;
 		case 2: //matrix
 			if( dims[0] * dims[1] * element_size == block_size )
-				pipeline.write_chunk(offset, block_size, (void*) ptr_ );
+				visit_pipeline([&](auto& p){ p.write_chunk(offset, block_size, (void*) ptr_ ); });
 			else throw h5::error::io::packet_table::write(
 					H5CPP_ERROR_MSG("dimension mismatch: "
 						+ std::to_string( dims[0] * dims[1] * element_size) + " != " + std::to_string(block_size) ));
 			break;
 		case 3: // cube
 			if( dims[0] * dims[1] * dims[2] * element_size == block_size )
-				pipeline.write_chunk(offset, block_size, (void*) ptr_ );
+				visit_pipeline([&](auto& p){ p.write_chunk(offset, block_size, (void*) ptr_ ); });
 			else throw h5::error::io::packet_table::write(
 					H5CPP_ERROR_MSG("dimension mismatch: "
 						+ std::to_string( dims[0] * dims[1] * dims[2] * element_size) + " != " + std::to_string(block_size) ));
@@ -279,7 +324,7 @@ void h5::pt_t::flush(){
 		for(hsize_t i=0; i<(N-n); i++)
 			for(size_t j=0; j < element_size; j++)
 				static_cast<char*>( ptr )[(n + i) * element_size + j] = static_cast<char*>( fill_value )[ j ];
-    	pipeline.write_chunk( offset, block_size, ptr );
+    	visit_pipeline([&](auto& p){ p.write_chunk(offset, block_size, ptr); });
 	}
 	n = 0;
 }
