@@ -27,6 +27,28 @@ Easy to use  [HDF5][hdf5] C++ templates for Serial and Paralell HDF5
 
 H5CPP **is intended for** scientific computing, **high-performance computing**, machine learning, numerical analysis, and data-intensive C++ applications **that require portable**, inspectable, **and efficient binary storage** compatible with the broader HDF5 ecosystem, **including Python, R, MATLAB, Fortran, Julia, and other HDF5-capable environments**.
 
+## Threaded Filter Pipeline
+
+Packet-table append operations can run their filter chain on a worker pool by passing the
+`h5::filter::threads{N}` opt-in tag at `pt_t` construction. Default behavior (synchronous,
+single-threaded) is unchanged.
+
+```cpp
+// Default — synchronous filter chain
+h5::pt_t pt(ds);
+
+// Parallel — N compression workers
+h5::pt_t pt(ds, h5::filter::threads{4});
+
+// Default worker count = std::thread::hardware_concurrency()
+h5::pt_t pt(ds, h5::filter::threads{});
+```
+
+Workers handle compression only; `H5Dwrite_chunk` is still called from the calling thread,
+which preserves compatibility with the default (non-thread-safe) HDF5 build. Useful for
+append-heavy workloads with non-trivial filter chains (gzip, zstd, fletcher32). See
+issue #241 for the design notes.
+
 
 
 ## Migration and Contribution Workflow
