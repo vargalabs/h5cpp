@@ -62,7 +62,18 @@ namespace h5 {
 		using element_t = typename impl::decay<T>::type;
 		h5::meta::resolved_type_t<element_t> mem_type;
 		hid_t dapl = h5::get_access_plist( ds );
-		if( H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT) ){
+		// See H5Dwrite.hpp for the rationale: pipeline path uses H5Dread_chunk,
+		// which only works on chunked datasets. Guard on H5D_CHUNKED so DAPLs
+		// with the flag applied to contiguous datasets fall through to H5Dread.
+		const bool use_pipeline = [&]() {
+			if (!H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT)) return false;
+			hid_t dcpl_id = H5Dget_create_plist(static_cast<hid_t>(ds));
+			if (dcpl_id < 0) return false;
+			H5D_layout_t layout = H5Pget_layout(dcpl_id);
+			H5Pclose(dcpl_id);
+			return layout == H5D_CHUNKED;
+		}();
+		if( use_pipeline ){
 			h5::impl::pipeline_t<impl::basic_pipeline_t>* filters;
 			H5Pget(dapl, H5CPP_DAPL_HIGH_THROUGHPUT, &filters);
 			filters->read(ds, offset, stride, block, count, dxpl, ptr);

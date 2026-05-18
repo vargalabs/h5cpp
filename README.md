@@ -8,153 +8,111 @@
 [![Documentation](https://img.shields.io/badge/docs-stable-blue)](https://vargalabs.github.io/h5cpp)
 [![Downloads](https://img.shields.io/github/downloads/vargalabs/h5cpp/total)](https://github.com/vargalabs/h5cpp/releases)
 
-Easy to use  [HDF5][hdf5] C++ templates for Serial and Paralell HDF5  
-----------------------------------------------------------------------
+# H5CPP — High-Performance [HDF5][hdf5] for Modern C++
 
-## Build Matrix
-
-| OS / Compiler | GCC 13        | GCC 14        | GCC 15      | Clang 17   | Clang 18     | Clang 19     | Clang 20     | Apple Clang | MSVC         |
+| OS / Compiler | GCC 13        | GCC 14        | GCC 15    | Clang 17     | Clang 18     | Clang 19     | Clang 20     | Apple Clang | MSVC         |
 |---------------|---------------|---------------|-----------|--------------|--------------|--------------|--------------|-------------|--------------|
 | Ubuntu 22.04  | ![gcc13][200] | ![NA][NA]     | ![NA][NA] | ![cl17][250] | ![cl18][251] | ![cl19][252] | ![cl20][253] | ![NA][NA]   | ![NA][NA]    |
 | Ubuntu 24.04  | ![gcc13][300] | ![gcc14][301] | ![NA][NA] | ![NA][NA]    | ![cl18][351] | ![cl19][352] | ![cl20][353] | ![NA][NA]   | ![NA][NA]    |
 | macOS 15      | ![NA][NA]     | ![NA][NA]     | ![NA][NA] | ![NA][NA]    | ![NA][NA]    | ![NA][NA]    | ![NA][NA]    | ![ac][400]  | ![NA][NA]    |
 | Windows       | ![NA][NA]     | ![NA][NA]     | ![NA][NA] | ![NA][NA]    | ![NA][NA]    | ![NA][NA]    | ![NA][NA]    | ![NA][NA]   | ![msvc][500] |
 
+H5CPP is a modern C++ template library for serial and parallel HDF5 I/O. It provides type-safe RAII wrappers, high-level `create` / `read` / `write` / `append` operations, and seamless interoperability with the native HDF5 C API. Chunked and compressed datasets, extendable packet-table streams, hyperslab selection, custom datatypes, and MPI parallel I/O are all supported. HDF5 files written by H5CPP are readable from Python, R, MATLAB, Fortran, Julia, and any other HDF5-capable environment.
 
-**H5CPP is a modern C++ template library for serial and parallel HDF5 I/O**, designed to make high-performance persistence natural for C++ applications. It provides type-safe RAII wrappers around HDF5 resources, high-level create, read, write, and append operations, and seamless interoperability with the native HDF5 C API. H5CPP supports primitive numeric types, POD/C/C++ structs, std::vector, std::string, and major linear algebra containers including Armadillo, Eigen, Blaze, Blitz++, Boost uBLAS, IT++, and dlib.
+## Quick Start
 
-**The library includes compiler-assisted object persistence** for complex user-defined types, **enabling efficient storage of structured C++ data in portable HDF5 containers**. It supports chunked and compressed datasets, extendable packet-table style streams, hyperslab selection, **custom HDF5 datatypes, and MPI-enabled parallel HDF5 workflows using independent or collective I/O**.
+```cpp
+#include <h5cpp/all>
+#include <vector>
 
-H5CPP **is intended for** scientific computing, **high-performance computing**, machine learning, numerical analysis, and data-intensive C++ applications **that require portable**, inspectable, **and efficient binary storage** compatible with the broader HDF5 ecosystem, **including Python, R, MATLAB, Fortran, Julia, and other HDF5-capable environments**.
+int main() {
+    auto fd = h5::create("example.h5", H5F_ACC_TRUNC);
 
+    std::vector<float> data = {1.f, 2.f, 3.f, 4.f, 5.f};
+    h5::write(fd, "sensor/readings", data);
 
-
-## Migration and Contribution Workflow
-
-H5CPP is being migrated from its current stable state toward a modernized implementation with broader compiler coverage, improved platform support, and
-new library features. The migration is expected to be uneventful for existing users, but regressions, portability issues, and missing feature coverage should
-be tracked through GitHub issues. When you encounter a problem please file an issue in the pattern described under `issue naming`; if you have a fix, follow the steps further down.
-
-Fixes and contributions are welcome, including external feature branches and pull requests. All contributions are accepted under the MIT license.
-
-### Issue naming
-
-Issues should follow the form:
-
-```text
-<group/category>, <description>
+    auto result = h5::read<std::vector<float>>(fd, "sensor/readings");
+    // result == {1.f, 2.f, 3.f, 4.f, 5.f}
+}
 ```
 
-Examples:
-
-```text
-ci, add macOS AppleClang runner
-fix, resolve HDF5 discovery on Homebrew
-feature, add compiler metadata contract
-refactor, simplify datatype synthesis
-docs, update migration notes
+```cmake
+find_package(HDF5 REQUIRED)
+find_package(h5cpp REQUIRED)
+target_link_libraries(my_app PRIVATE h5cpp::h5cpp)
 ```
 
-The category should describe the intent of the work, for example:
+## Requirements
 
-```text
-fix
-feature
-refactor
-ci
-docs
-test
-legal
-cleanup
-```
+| Requirement | Minimum | Tested ceiling |
+|---|---|---|
+| C++ standard | C++17 | C++23 |
+| HDF5 | 1.10.x | 1.12.2 |
+| CMake | 3.22 | — |
 
-### Branch naming
+C++20 upgrades the I/O pipeline to lock-free queues and enables `h5::view<T>` streaming ranges.
+C++23 adds `std::float16_t` dataset support.
 
-Feature branches should be created from the current `staging` branch and follow
-the form:
+## Installation
 
-```text
-<#issue>-<category>-<description>
-```
+**From GitHub Releases** — pre-built packages for each tagged release:
 
-Examples:
+| Platform | Package |
+|---|---|
+| Ubuntu / Debian (amd64, arm64) | `.deb` via [Releases][releases] |
+| RHEL / Fedora (x86\_64, aarch64) | `.rpm` via [Releases][releases] |
+| macOS 15 arm64 | `.pkg` via [Releases][releases] |
+| Windows x64 | NSIS `.exe` via [Releases][releases] |
 
-```text
-138-ci-add-macos-appleclang-runner
-139-fix-hdf5-homebrew-discovery
-140-refactor-datatype-synthesis
-```
-
-This is the same style expected when creating an issue-linked development branch
-with `gh issue develop <#issue>`. If the generated branch name differs, rename or
-create the branch using the project convention.
-
-New work should always start from the current `staging` branch:
+**From source:**
 
 ```bash
-git fetch origin
-git checkout staging
-git pull --ff-only origin staging
-gh issue develop <#issue> --checkout
+git clone https://github.com/vargalabs/h5cpp.git
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DH5CPP_BUILD_TESTS=OFF
+cmake --install build
 ```
 
-If needed, ensure the resulting branch follows the project naming convention.
+## Supported Types
 
-### Commit format
+| Category | Types |
+|---|---|
+| Numeric | `bool`, `int8_t`–`int64_t`, `uint8_t`–`uint64_t`, `float`, `double`, `long double`, `std::complex<T>`, `std::float16_t` (C++23) |
+| Strings | `std::string`, `char[]`, variable-length HDF5 strings |
+| STL sequences | `std::vector`, `std::valarray`, `std::array`, `std::deque` |
+| STL node-based | `std::list`, `std::forward_list`, `std::set`, `std::multiset`, `std::unordered_set`, `std::unordered_multiset` |
+| Linear algebra | Armadillo, Eigen, Blaze, Blitz++, Boost uBLAS, IT++, dlib |
+| Structs | POD / C / C++ structs via [h5cpp-compiler][compiler] |
+| Arrays | Up to rank 7 |
 
-Each commit should follow this pattern:
+## v1.12 Highlights
 
-```text
-[#issue]:author:category, description
-```
+- **`std::valarray<T>`** read/write support
+- **Iterator containers** — `std::list`, `std::deque`, `std::set`, `std::unordered_set` and their multi- variants
+- **`std::complex<T>`** datasets
+- **`std::float16_t`** (C++23 IEEE 754 half-precision)
+- **Rank-7** array support
+- **Expanded attribute** type coverage
+- **Threaded I/O pipeline** for filter chains
+- **HDF5 1.12.2 ceiling** — tested and verified; `H5Dvlen_reclaim` / reference API compatibility
+- **Windows MSVC** in the CI matrix
+- **ASan + UBSan** clean on Clang 20
 
-Examples:
+## Documentation
 
-```text
-[#138]:svarga:ci, add macOS AppleClang runner
-[#139]:svarga:fix, resolve HDF5 discovery on Homebrew
-[#140]:svarga:refactor, simplify datatype synthesis
-```
+Full API reference, examples, and architecture notes: [vargalabs.github.io/h5cpp][docs]
 
-Keep commits focused. Prefer several precise commits over one heroic commit
-that tries to solve the universe and accidentally invents another one.
+## Contributing
 
-### Rebase-based development
+See [CONTRIBUTING.md](CONTRIBUTING.md) for issue naming, branch conventions, commit format, and the pull request workflow.
 
-H5CPP uses a rebase-based feature-branch workflow. Feature branches are carried
-forward by rebasing onto the current `staging` branch rather than merging
-`staging` into the feature branch.
+## License
 
-Before opening or updating a pull request:
+MIT — see [LICENSE](LICENSE).
 
-```bash
-git fetch origin
-git checkout <feature-branch>
-git rebase origin/staging
-```
-
-Resolve conflicts locally, rerun the relevant build and test matrix where
-possible, then force-push safely:
-
-```bash
-git push --force-with-lease
-```
-
-Use `--force-with-lease`, not plain `--force`; we are civilized barbarians.
-
-### Pull requests
-
-Once the feature branch is complete, open a pull request targeting `staging`.
-
-A pull request should:
-
-* reference the issue it resolves;
-* follow the branch and commit naming convention;
-* keep the change scoped to the issue;
-* pass the relevant CI jobs;
-* document user-visible behavior changes.
-
-The preferred merge target for active development is `staging`. Release branches are promoted from `staging` after validation.
+[hdf5]:     https://www.hdfgroup.org/solutions/hdf5/
+[docs]:     https://vargalabs.github.io/h5cpp
+[compiler]: https://github.com/vargalabs/h5cpp-compiler
+[releases]: https://github.com/vargalabs/h5cpp/releases
 
 [NA]: https://vargalabs.github.io/h5cpp/badges/na.svg
 

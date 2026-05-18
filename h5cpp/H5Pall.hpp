@@ -36,6 +36,17 @@ namespace h5::impl {
 			rhs.copy( handle );
 			return *this;
 		 }
+		// chain with an existing property-list handle (e.g. h5::chunk{N} | dcpl):
+		// deep-copy rhs via H5Pcopy, apply this property onto the copy, return owning handle.
+		template <class R>
+		std::enable_if_t< std::is_same_v<R, phid_t>, phid_t >
+		operator|( const R& rhs ) const {
+			::hid_t merged;
+			H5CPP_CHECK_NZ( (merged = H5Pcopy( static_cast<::hid_t>(rhs) )),
+				   h5::error::property_list::misc, "failed to copy property list");
+			static_cast<const Derived*>(this)->copy_impl( merged );
+			return phid_t{ merged };
+		 }
 		// convert to propery
 		void copy(::hid_t handle_) const { /*CRTP idiom*/
 			static_cast<const Derived*>(this)->copy_impl( handle_ );

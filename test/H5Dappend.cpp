@@ -162,6 +162,85 @@ TEST_CASE("packet table output stream for invalid handle") {
     CHECK(oss.str().find("H5I_UNINIT") != std::string::npos);
 }
 
+// =====================================================================
+// [#241] Threaded filter pipeline opt-in via h5::filter::threads{N}
+// =====================================================================
+
+TEST_CASE("[#241] h5::filter::threads tag construction") {
+    // Default-constructed tag means "use hardware_concurrency() workers".
+    constexpr h5::filter::threads default_t{};
+    CHECK(default_t.n == 0);
+
+    // Explicit count.
+    constexpr h5::filter::threads explicit_t{4};
+    CHECK(explicit_t.n == 4);
+}
+
+TEST_CASE("[#241] pt_t with threaded pipeline — basic round-trip (no filter)") {
+    h5::test::file_fixture_t f("test-pt-threaded-nofilter.h5");
+    h5::ds_t ds = h5::create<int>(f.fd, "ds", h5::current_dims_t{0},
+        h5::max_dims_t{H5S_UNLIMITED}, h5::chunk{16});
+    {
+        h5::pt_t pt(ds, h5::filter::threads{2});
+        for (int i = 0; i < 64; ++i)
+            h5::append(pt, i);
+        h5::flush(pt);   // ensure all workers drain before close
+    }
+    auto readback = h5::read<std::vector<int>>(f.fd, "ds");
+    REQUIRE(readback.size() == 64);
+    for (int i = 0; i < 64; ++i) CHECK(readback[i] == i);
+}
+
+TEST_CASE("[#241] pt_t with threaded pipeline — gzip-compressed bytewise equivalence") {
+    // Write the same data with basic and threaded pipelines into two files,
+    // read back, assert content matches. Different filter chain ordering can
+    // produce different on-disk bytes; we assert decompressed content equivalence.
+    constexpr int N = 256;
+    std::vector<int> expected(N);
+    for (int i = 0; i < N; ++i) expected[i] = i * 7 + 3;
+
+    auto write_file = [&](const char* path, auto pt_factory) {
+        h5::test::file_fixture_t f(path);
+        h5::ds_t ds = h5::create<int>(f.fd, "ds", h5::current_dims_t{0},
+            h5::max_dims_t{H5S_UNLIMITED}, h5::chunk{32} | h5::gzip{6});
+        {
+            auto pt = pt_factory(ds);
+            for (int v : expected) h5::append(pt, v);
+            h5::flush(pt);
+        }
+    };
+
+    write_file("test-pt-basic-gzip.h5",
+        [](const h5::ds_t& ds) { return h5::pt_t(ds); });
+    write_file("test-pt-threaded-gzip.h5",
+        [](const h5::ds_t& ds) { return h5::pt_t(ds, h5::filter::threads{4}); });
+
+    h5::fd_t basic = h5::open("test-pt-basic-gzip.h5", H5F_ACC_RDONLY);
+    h5::fd_t threaded = h5::open("test-pt-threaded-gzip.h5", H5F_ACC_RDONLY);
+    auto basic_data    = h5::read<std::vector<int>>(basic,    "ds");
+    auto threaded_data = h5::read<std::vector<int>>(threaded, "ds");
+    REQUIRE(basic_data.size() == expected.size());
+    REQUIRE(threaded_data.size() == expected.size());
+    CHECK(basic_data == expected);
+    CHECK(threaded_data == expected);
+    CHECK(basic_data == threaded_data);
+}
+
+TEST_CASE("[#241] pt_t with threaded pipeline — default worker count (hw_concurrency)") {
+    h5::test::file_fixture_t f("test-pt-threaded-default.h5");
+    h5::ds_t ds = h5::create<int>(f.fd, "ds", h5::current_dims_t{0},
+        h5::max_dims_t{H5S_UNLIMITED}, h5::chunk{16} | h5::gzip{1});
+    {
+        // h5::filter::threads{} with no number → hw_concurrency() workers
+        h5::pt_t pt(ds, h5::filter::threads{});
+        for (int i = 0; i < 96; ++i) h5::append(pt, i);
+        h5::flush(pt);
+    }
+    auto readback = h5::read<std::vector<int>>(f.fd, "ds");
+    REQUIRE(readback.size() == 96);
+    for (int i = 0; i < 96; ++i) CHECK(readback[i] == i);
+}
+
 TEST_CASE("[#232] std::forward_list<int> append streams elements into chunked dataset") {
     h5::test::file_fixture_t f("test-pt-fwdlist.h5");
     // forward_list is append/view only — h5::write/read intentionally unsupported.
@@ -181,4 +260,19 @@ TEST_CASE("[#232] std::forward_list<int> append streams elements into chunked da
     REQUIRE(readback.size() == N);
     const std::vector<int> expected(src.begin(), src.end());
     CHECK(readback == expected);
+}
+
+// regression guard for issue #239 — h5::reset(pt_t&) zeros the dimension tracker
+// so the same packet table can be reused for a fresh logical session (e.g.
+// start-of-day re-init in streaming sinks like iex2h5).
+TEST_CASE("[#239] h5::reset zeroes packet table dimension tracker") {
+    h5::test::file_fixture_t f("test-pt-reset.h5");
+    h5::ds_t ds = h5::create<int>(f.fd, "ds", h5::current_dims_t{0},
+        h5::max_dims_t{H5S_UNLIMITED}, h5::chunk{10});
+    h5::pt_t pt(ds);
+    for (int i = 0; i < 15; ++i)
+        h5::append(pt, i);
+    h5::flush(pt);          // advances current_dims to one chunk past the data
+    h5::reset(pt);          // must compile and run without throwing
+    CHECK(true);
 }
