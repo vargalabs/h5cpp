@@ -60,6 +60,7 @@
 	#include "H5Pall.hpp"
 	#include "H5Zpipeline.hpp"
 	#include "H5Zpipeline_basic.hpp"
+	#include "H5Zpipeline_threaded.hpp"
 	#include "H5Pdapl.hpp"
 	
 	#include "H5Ialgorithm.hpp"
