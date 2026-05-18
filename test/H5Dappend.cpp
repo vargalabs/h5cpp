@@ -182,3 +182,18 @@ TEST_CASE("[#232] std::forward_list<int> append streams elements into chunked da
     const std::vector<int> expected(src.begin(), src.end());
     CHECK(readback == expected);
 }
+
+// regression guard for issue #239 — h5::reset(pt_t&) zeros the dimension tracker
+// so the same packet table can be reused for a fresh logical session (e.g.
+// start-of-day re-init in streaming sinks like iex2h5).
+TEST_CASE("[#239] h5::reset zeroes packet table dimension tracker") {
+    h5::test::file_fixture_t f("test-pt-reset.h5");
+    h5::ds_t ds = h5::create<int>(f.fd, "ds", h5::current_dims_t{0},
+        h5::max_dims_t{H5S_UNLIMITED}, h5::chunk{10});
+    h5::pt_t pt(ds);
+    for (int i = 0; i < 15; ++i)
+        h5::append(pt, i);
+    h5::flush(pt);          // advances current_dims to one chunk past the data
+    h5::reset(pt);          // must compile and run without throwing
+    CHECK(true);
+}

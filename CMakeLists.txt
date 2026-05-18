@@ -213,6 +213,7 @@ endif()
 
 if(H5CPP_LIBDEFLATE_FOUND)
     target_link_libraries(h5cpp INTERFACE ${H5CPP_LIBDEFLATE_TARGET})
+    target_compile_definitions(h5cpp INTERFACE H5CPP_HAS_LIBDEFLATE=1)
 else()
     target_compile_definitions(h5cpp INTERFACE H5CPP_DISABLE_LIBDEFLATE=1)
 endif()

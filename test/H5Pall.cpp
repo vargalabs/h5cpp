@@ -198,3 +198,37 @@ TEST_CASE("[#242] high_throughput round-trip end-to-end via h5::write / h5::read
     CHECK(allocations.load() == deletions.load());
     CHECK(live_pointers().empty());
 }
+
+// regression guard for issue #239 — combining a property builder with an
+// existing property-list handle (v1.10-era idiom) must remain supported.
+TEST_CASE("property builder can be chained against an existing dcpl handle") {
+    h5::dcpl_t base = h5::gzip{6};
+    REQUIRE(static_cast<hid_t>(base) > 0);
+
+    h5::dcpl_t combined = h5::chunk{64 * 1024} | base;
+    REQUIRE(static_cast<hid_t>(combined) > 0);
+    CHECK(static_cast<hid_t>(combined) != static_cast<hid_t>(base)); // deep copy
+
+    // chunk dims set by the LHS builder survive the merge
+    hsize_t chunk_dims[H5S_MAX_RANK] = {0};
+    int rank = H5Pget_chunk(static_cast<hid_t>(combined), H5S_MAX_RANK, chunk_dims);
+    CHECK(rank == 1);
+    CHECK(chunk_dims[0] == 64 * 1024);
+
+    // deflate filter inherited from base — scan all filters since pipeline order
+    // depends on H5Pcopy + lazy-apply semantics.
+    int nfilters = H5Pget_nfilters(static_cast<hid_t>(combined));
+    CHECK(nfilters == 1);
+    bool found_deflate = false;
+    for (int i = 0; i < nfilters; ++i) {
+        unsigned flags = 0, filter_config = 0;
+        size_t cd_nelmts = 1;
+        unsigned cd_values[1] = {0};
+        char name[16] = {0};
+        H5Z_filter_t f = H5Pget_filter2(static_cast<hid_t>(combined), i, &flags,
+            &cd_nelmts, cd_values, sizeof(name), name, &filter_config);
+        if (f == H5Z_FILTER_DEFLATE && cd_values[0] == 6)
+            found_deflate = true;
+    }
+    CHECK(found_deflate);
+}

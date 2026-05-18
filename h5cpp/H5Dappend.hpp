@@ -7,6 +7,7 @@
 #include "H5capi.hpp"
 #include "H5Tmeta.hpp"
 #include "H5cout.hpp"
+#include <cstring>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -59,6 +60,9 @@ namespace h5 {
 		template<class T>
 		friend void append( h5::pt_t& ds, const T& ref);
 		friend void flush(h5::pt_t&);
+		// resets the packet-table dimension tracker so the same pt_t can be reused
+		// for a fresh logical session (e.g. start-of-day re-init in streaming sinks).
+		void reset();
 		private:
 		void init(const h5::ds_t& ds_);
 		void flush();
@@ -284,12 +288,16 @@ void h5::pt_t::flush(){
 	n = 0;
 }
 
+inline void h5::pt_t::reset() {
+	std::memset(current_dims, 0, H5CPP_MAX_RANK * sizeof(hsize_t));
+}
+
 namespace h5 {
 	/** @ingroup io-append
 	 * @brief extends HDF5 dataset along the first/slowest growing dimension, then writes passed object to the newly created space
 	 * @param pt packet_table descriptor
 	 * @param ref T type const reference to object appended
-	 * @tparam T dimensions must match the dimension of HDF5 space upto rank-1 
+	 * @tparam T dimensions must match the dimension of HDF5 space upto rank-1
 	 */
 
 	template<class T> inline
@@ -303,6 +311,17 @@ namespace h5 {
 		// for now
 	} catch ( const std::runtime_error& e){
 		throw h5::error::io::dataset::close( e.what() );
+	}
+	/** @ingroup io-append
+	 * @brief zeros the packet-table dimension tracker so the same pt_t can be
+	 * reused for a fresh logical session. Does not shrink the underlying
+	 * dataset on disk; the caller is responsible for any HDF5-level cleanup.
+	 * @param pt packet_table descriptor
+	 */
+	inline void reset(h5::pt_t& pt) try {
+		pt.reset();
+	} catch ( const std::runtime_error& e){
+		throw h5::error::io::dataset::write( e.what() );
 	}
 }
 

@@ -12,15 +12,14 @@
 #include <zlib.h>
 #include "H5config.hpp"
 
-#if !defined(H5CPP_DISABLE_LIBDEFLATE)
-#if defined(H5CPP_HAS_LIBDEFLATE)
+// libdeflate is opt-in. Build systems that want the fast path define
+// H5CPP_HAS_LIBDEFLATE=1 (and link libdeflate). The h5cpp::h5cpp CMake target
+// propagates this automatically when h5cpp was configured with libdeflate.
+// Drop-in header consumers default to the zlib fallback in zlib_deflate_*,
+// which only requires zlib — already a transitive dependency of HDF5 in
+// every common distribution path.
+#if !defined(H5CPP_DISABLE_LIBDEFLATE) && defined(H5CPP_HAS_LIBDEFLATE)
 #include <libdeflate.h>
-#elif defined(__has_include)
-#if __has_include(<libdeflate.h>)
-#include <libdeflate.h>
-#define H5CPP_HAS_LIBDEFLATE 1
-#endif
-#endif
 #endif
 
 #if defined(H5CPP_HAS_LZ4)
