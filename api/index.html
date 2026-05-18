@@ -105,8 +105,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md__2home_2runner_2work_2h5cpp_2h5cpp_2README"></a> <a href="https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml"><img src="https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml/badge.svg" alt="CI" style="pointer-events: none;" class="inline"/></a> <a href="https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml"><img src="https://vargalabs.github.io/h5cpp/badges/asan.svg" alt="ASan" style="pointer-events: none;" class="inline"/></a> <a href="https://github.com/vargalabs/h5cpp/actions/workflows/ci.yml"><img src="https://vargalabs.github.io/h5cpp/badges/ubsan.svg" alt="UBSan" style="pointer-events: none;" class="inline"/></a> <a href="https://app.codecov.io/gh/vargalabs/h5cpp/tree/release"><img src="https://codecov.io/gh/vargalabs/h5cpp/branch/release/graph/badge.svg" alt="codecov" style="pointer-events: none;" class="inline"/></a> [<img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" style="pointer-events: none;" class="inline"/>](LICENSE) <a href="https://doi.org/10.5281/zenodo.20123216"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20123216.svg" alt="DOI" style="pointer-events: none;" class="inline"/></a> <a href="https://github.com/vargalabs/h5cpp/releases"><img src="https://img.shields.io/github/v/release/vargalabs/h5cpp.svg" alt="GitHub release" style="pointer-events: none;" class="inline"/></a> <a href="https://vargalabs.github.io/h5cpp"><img src="https://img.shields.io/badge/docs-stable-blue" alt="Documentation" class="inline"/></a> <a href="https://github.com/vargalabs/h5cpp/releases"><img src="https://img.shields.io/github/downloads/vargalabs/h5cpp/total" alt="Downloads" class="inline"/></a></p>
-<h2>Easy to use [HDF5][hdf5] C++ templates for Serial and Paralell HDF5 </h2>
-<h2>Build Matrix</h2>
+<h1>H5CPP — High-Performance <a href="https://www.hdfgroup.org/solutions/hdf5/">HDF5</a> for Modern C++</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">OS / Compiler   </th><th class="markdownTableHeadNone">GCC 13   </th><th class="markdownTableHeadNone">GCC 14   </th><th class="markdownTableHeadNone">GCC 15   </th><th class="markdownTableHeadNone">Clang 17   </th><th class="markdownTableHeadNone">Clang 18   </th><th class="markdownTableHeadNone">Clang 19   </th><th class="markdownTableHeadNone">Clang 20   </th><th class="markdownTableHeadNone">Apple Clang   </th><th class="markdownTableHeadNone">MSVC    </th></tr>
@@ -119,72 +118,93 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Windows   </td><td class="markdownTableBodyNone"><img src="https://vargalabs.github.io/h5cpp/badges/na.svg" alt="NA" style="pointer-events: none;" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://vargalabs.github.io/h5cpp/badges/na.svg" alt="NA" style="pointer-events: none;" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://vargalabs.github.io/h5cpp/badges/na.svg" alt="NA" style="pointer-events: none;" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://vargalabs.github.io/h5cpp/badges/na.svg" alt="NA" style="pointer-events: none;" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://vargalabs.github.io/h5cpp/badges/na.svg" alt="NA" style="pointer-events: none;" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://vargalabs.github.io/h5cpp/badges/na.svg" alt="NA" style="pointer-events: none;" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://vargalabs.github.io/h5cpp/badges/na.svg" alt="NA" style="pointer-events: none;" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://vargalabs.github.io/h5cpp/badges/na.svg" alt="NA" style="pointer-events: none;" class="inline"/>   </td><td class="markdownTableBodyNone"><img src="https://vargalabs.github.io/h5cpp/badges/windows-latest-msvc.svg" alt="msvc" style="pointer-events: none;" class="inline"/>   </td></tr>
 </table>
-<p><b>H5CPP is a modern C++ template library for serial and parallel HDF5 I/O</b>, designed to make high-performance persistence natural for C++ applications. It provides type-safe RAII wrappers around HDF5 resources, high-level create, read, write, and append operations, and seamless interoperability with the native HDF5 C API. H5CPP supports primitive numeric types, POD/C/C++ structs, <a class="elRef" href="http://en.cppreference.com/w/cpp/container/vector.html">std::vector</a>, <a class="elRef" href="http://en.cppreference.com/w/cpp/string/basic_string.html">std::string</a>, and major linear algebra containers including Armadillo, Eigen, Blaze, Blitz++, Boost uBLAS, IT++, and dlib.</p>
-<p><b>The library includes compiler-assisted object persistence</b> for complex user-defined types, <b>enabling efficient storage of structured C++ data in portable HDF5 containers</b>. It supports chunked and compressed datasets, extendable packet-table style streams, hyperslab selection, <b>custom HDF5 datatypes, and MPI-enabled parallel HDF5 workflows using independent or collective I/O</b>.</p>
-<p>H5CPP <b>is intended for</b> scientific computing, <b>high-performance computing</b>, machine learning, numerical analysis, and data-intensive C++ applications <b>that require portable</b>, inspectable, <b>and efficient binary storage</b> compatible with the broader HDF5 ecosystem, <b>including Python, R, MATLAB, Fortran, Julia, and other HDF5-capable environments</b>.</p>
-<h2>Migration and Contribution Workflow</h2>
-<p>H5CPP is being migrated from its current stable state toward a modernized implementation with broader compiler coverage, improved platform support, and new library features. The migration is expected to be uneventful for existing users, but regressions, portability issues, and missing feature coverage should be tracked through GitHub issues. When you encounter a problem please file an issue in the pattern described under <code>issue naming</code>; if you have a fix, follow the steps further down.</p>
-<p>Fixes and contributions are welcome, including external feature branches and pull requests. All contributions are accepted under the MIT license.</p>
-<h3>Issue naming</h3>
-<p>Issues should follow the form:</p>
-<div class="fragment"><div class="line">&lt;group/category&gt;, &lt;description&gt;</div>
-</div><!-- fragment --><p>Examples:</p>
-<div class="fragment"><div class="line">ci, add macOS AppleClang runner</div>
-<div class="line">fix, resolve HDF5 discovery on Homebrew</div>
-<div class="line">feature, add compiler metadata contract</div>
-<div class="line">refactor, simplify datatype synthesis</div>
-<div class="line">docs, update migration notes</div>
-</div><!-- fragment --><p>The category should describe the intent of the work, for example:</p>
-<div class="fragment"><div class="line">fix</div>
-<div class="line">feature</div>
-<div class="line">refactor</div>
-<div class="line">ci</div>
-<div class="line">docs</div>
-<div class="line">test</div>
-<div class="line">legal</div>
-<div class="line">cleanup</div>
-</div><!-- fragment --><h3>Branch naming</h3>
-<p>Feature branches should be created from the current <code>staging</code> branch and follow the form:</p>
-<div class="fragment"><div class="line">&lt;#issue&gt;-&lt;category&gt;-&lt;description&gt;</div>
-</div><!-- fragment --><p>Examples:</p>
-<div class="fragment"><div class="line">138-ci-add-macos-appleclang-runner</div>
-<div class="line">139-fix-hdf5-homebrew-discovery</div>
-<div class="line">140-refactor-datatype-synthesis</div>
-</div><!-- fragment --><p>This is the same style expected when creating an issue-linked development branch with <code>gh issue develop &lt;#issue&gt;</code>. If the generated branch name differs, rename or create the branch using the project convention.</p>
-<p>New work should always start from the current <code>staging</code> branch:</p>
-<div class="fragment"><div class="line">git fetch origin</div>
-<div class="line">git checkout staging</div>
-<div class="line">git pull --ff-only origin staging</div>
-<div class="line">gh issue develop &lt;#issue&gt; --checkout</div>
-</div><!-- fragment --><p>If needed, ensure the resulting branch follows the project naming convention.</p>
-<h3>Commit format</h3>
-<p>Each commit should follow this pattern:</p>
-<div class="fragment"><div class="line">[#issue]:author:category, description</div>
-</div><!-- fragment --><p>Examples:</p>
-<div class="fragment"><div class="line">[#138]:svarga:ci, add macOS AppleClang runner</div>
-<div class="line">[#139]:svarga:fix, resolve HDF5 discovery on Homebrew</div>
-<div class="line">[#140]:svarga:refactor, simplify datatype synthesis</div>
-</div><!-- fragment --><p>Keep commits focused. Prefer several precise commits over one heroic commit that tries to solve the universe and accidentally invents another one.</p>
-<h3>Rebase-based development</h3>
-<p>H5CPP uses a rebase-based feature-branch workflow. Feature branches are carried forward by rebasing onto the current <code>staging</code> branch rather than merging <code>staging</code> into the feature branch.</p>
-<p>Before opening or updating a pull request:</p>
-<div class="fragment"><div class="line">git fetch origin</div>
-<div class="line">git checkout &lt;feature-branch&gt;</div>
-<div class="line">git rebase origin/staging</div>
-</div><!-- fragment --><p>Resolve conflicts locally, rerun the relevant build and test matrix where possible, then force-push safely:</p>
-<div class="fragment"><div class="line">git push --force-with-lease</div>
-</div><!-- fragment --><p>Use <code>--force-with-lease</code>, not plain <code>--force</code>; we are civilized barbarians.</p>
-<h3>Pull requests</h3>
-<p>Once the feature branch is complete, open a pull request targeting <code>staging</code>.</p>
-<p>A pull request should:</p>
+<p>H5CPP is a modern C++ template library for serial and parallel HDF5 I/O. It provides type-safe RAII wrappers, high-level <code>create</code> / <code>read</code> / <code>write</code> / <code>append</code> operations, and seamless interoperability with the native HDF5 C API. Chunked and compressed datasets, extendable packet-table streams, hyperslab selection, custom datatypes, and MPI parallel I/O are all supported. HDF5 files written by H5CPP are readable from Python, R, MATLAB, Fortran, Julia, and any other HDF5-capable environment.</p>
+<h2>Quick Start</h2>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;h5cpp/all&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    <span class="keyword">auto</span> fd = h5::create(<span class="stringliteral">&quot;example.h5&quot;</span>, H5F_ACC_TRUNC);</div>
+<div class="line"> </div>
+<div class="line">    <a class="code hl_classRef" href="http://en.cppreference.com/w/cpp/container/vector.html">std::vector&lt;float&gt;</a> data = {1.f, 2.f, 3.f, 4.f, 5.f};</div>
+<div class="line">    <a class="code hl_function" href="group__io-write.html#gaeedb492b2edeecb66043852ed8b59552">h5::write</a>(fd, <span class="stringliteral">&quot;sensor/readings&quot;</span>, data);</div>
+<div class="line"> </div>
+<div class="line">    <span class="keyword">auto</span> result = h5::read&lt;std::vector&lt;float&gt;&gt;(fd, <span class="stringliteral">&quot;sensor/readings&quot;</span>);</div>
+<div class="line">    <span class="comment">// result == {1.f, 2.f, 3.f, 4.f, 5.f}</span></div>
+<div class="line">}</div>
+<div class="ttc" id="agroup__io-write_html_gaeedb492b2edeecb66043852ed8b59552"><div class="ttname"><a href="group__io-write.html#gaeedb492b2edeecb66043852ed8b59552">h5::write</a></div><div class="ttdeci">void write(const h5::ds_t &amp;ds, const h5::sp_t &amp;mem_space, const h5::sp_t &amp;file_space, const h5::dxpl_t &amp;dxpl, const T *ptr)</div><div class="ttdoc">write the memory content of const T* ptr with given mem_space into file_space of the dataset</div><div class="ttdef"><b>Definition</b> H5Dwrite.hpp:22</div></div>
+<div class="ttc" id="avector_html"><div class="ttname"><a href="http://en.cppreference.com/w/cpp/container/vector.html">std::vector</a></div></div>
+</div><!-- fragment --><div class="fragment"><div class="line">find_package(HDF5 REQUIRED)</div>
+<div class="line">find_package(h5cpp REQUIRED)</div>
+<div class="line">target_link_libraries(my_app PRIVATE h5cpp::h5cpp)</div>
+</div><!-- fragment --><h2>Requirements</h2>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Requirement   </th><th class="markdownTableHeadNone">Minimum   </th><th class="markdownTableHeadNone">Tested ceiling    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">C++ standard   </td><td class="markdownTableBodyNone">C++17   </td><td class="markdownTableBodyNone">C++23    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">HDF5   </td><td class="markdownTableBodyNone">1.10.x   </td><td class="markdownTableBodyNone">1.12.2    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">CMake   </td><td class="markdownTableBodyNone">3.22   </td><td class="markdownTableBodyNone">—   </td></tr>
+</table>
+<p>C++20 upgrades the I/O pipeline to lock-free queues and enables <code>h5::view&lt;T&gt;</code> streaming ranges. C++23 adds <code>std::float16_t</code> dataset support.</p>
+<h2>Installation</h2>
+<p><b>From GitHub Releases</b> — pre-built packages for each tagged release:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Platform   </th><th class="markdownTableHeadNone">Package    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Ubuntu / Debian (amd64, arm64)   </td><td class="markdownTableBodyNone"><code>.deb</code> via <a href="https://github.com/vargalabs/h5cpp/releases">Releases</a>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">RHEL / Fedora (x86_64, aarch64)   </td><td class="markdownTableBodyNone"><code>.rpm</code> via <a href="https://github.com/vargalabs/h5cpp/releases">Releases</a>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">macOS 15 arm64   </td><td class="markdownTableBodyNone"><code>.pkg</code> via <a href="https://github.com/vargalabs/h5cpp/releases">Releases</a>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Windows x64   </td><td class="markdownTableBodyNone">NSIS <code>.exe</code> via <a href="https://github.com/vargalabs/h5cpp/releases">Releases</a>   </td></tr>
+</table>
+<p><b>From source:</b></p>
+<div class="fragment"><div class="line">git clone https://github.com/vargalabs/h5cpp.git</div>
+<div class="line">cmake -B build -DCMAKE_BUILD_TYPE=Release -DH5CPP_BUILD_TESTS=OFF</div>
+<div class="line">cmake --install build</div>
+</div><!-- fragment --><h2>Supported Types</h2>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Category   </th><th class="markdownTableHeadNone">Types    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Numeric   </td><td class="markdownTableBodyNone"><code>bool</code>, <code>int8_t</code>–<code>int64_t</code>, <code>uint8_t</code>–<code>uint64_t</code>, <code>float</code>, <code>double</code>, <code>long double</code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/numeric/complex.html">std::complex</a>&lt;T&gt;</code>, <code>std::float16_t</code> (C++23)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Strings   </td><td class="markdownTableBodyNone"><code><a class="elRef" href="http://en.cppreference.com/w/cpp/string/basic_string.html">std::string</a></code>, <code>char[]</code>, variable-length HDF5 strings    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">STL sequences   </td><td class="markdownTableBodyNone"><code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/vector.html">std::vector</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/numeric/valarray.html">std::valarray</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/array.html">std::array</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/deque.html">std::deque</a></code>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">STL node-based   </td><td class="markdownTableBodyNone"><code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/list.html">std::list</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/forward_list.html">std::forward_list</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/set.html">std::set</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/multiset.html">std::multiset</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/unordered_set.html">std::unordered_set</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/unordered_multiset.html">std::unordered_multiset</a></code>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Linear algebra   </td><td class="markdownTableBodyNone">Armadillo, Eigen, Blaze, Blitz++, Boost uBLAS, IT++, dlib    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Structs   </td><td class="markdownTableBodyNone">POD / C / C++ structs via <a href="https://github.com/vargalabs/h5cpp-compiler">h5cpp-compiler</a>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Arrays   </td><td class="markdownTableBodyNone">Up to rank 7   </td></tr>
+</table>
+<h2>v1.12 Highlights</h2>
 <ul>
-<li>reference the issue it resolves;</li>
-<li>follow the branch and commit naming convention;</li>
-<li>keep the change scoped to the issue;</li>
-<li>pass the relevant CI jobs;</li>
-<li>document user-visible behavior changes.</li>
+<li>**<code><a class="elRef" href="http://en.cppreference.com/w/cpp/numeric/valarray.html">std::valarray</a>&lt;T&gt;</code>** read/write support</li>
+<li><b>Iterator containers</b> — <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/list.html">std::list</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/deque.html">std::deque</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/set.html">std::set</a></code>, <code><a class="elRef" href="http://en.cppreference.com/w/cpp/container/unordered_set.html">std::unordered_set</a></code> and their multi- variants</li>
+<li>**<code><a class="elRef" href="http://en.cppreference.com/w/cpp/numeric/complex.html">std::complex</a>&lt;T&gt;</code>** datasets</li>
+<li>**<code>std::float16_t</code>** (C++23 IEEE 754 half-precision)</li>
+<li><b>Rank-7</b> array support</li>
+<li><b>Expanded attribute</b> type coverage</li>
+<li><b>Threaded I/O pipeline</b> for filter chains</li>
+<li><b>HDF5 1.12.2 ceiling</b> — tested and verified; <code>H5Dvlen_reclaim</code> / reference API compatibility</li>
+<li><b>Windows MSVC</b> in the CI matrix</li>
+<li><b>ASan + UBSan</b> clean on Clang 20</li>
 </ul>
-<p>The preferred merge target for active development is <code>staging</code>. Release branches are promoted from <code>staging</code> after validation. </p>
+<h2>Documentation</h2>
+<p>Full API reference, examples, and architecture notes: <a href="https://vargalabs.github.io/h5cpp">vargalabs.github.io/h5cpp</a></p>
+<h2>Contributing</h2>
+<p>See CONTRIBUTING.md for issue naming, branch conventions, commit format, and the pull request workflow.</p>
+<h2>License</h2>
+<p>MIT — see [LICENSE](LICENSE). </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
