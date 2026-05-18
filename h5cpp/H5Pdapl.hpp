@@ -12,22 +12,41 @@
 		inline herr_t dapl_pipeline_close( const char *name, size_t size, void *ptr ){
 			(void)name; (void)size;
 			delete *static_cast< impl::pipeline_t<impl::basic_pipeline_t>**>( ptr );
-		return 0;
+			return 0;
+		}
+		// Copy callback for the high_throughput pipeline property.
+		//
+		// HDF5 ≥ 1.10.7 internally copies the DAPL when an object (dataset, file,
+		// attribute) is opened or created against it, so the object can carry its
+		// own DAPL.  Without a copy callback, the property's bytes (the 8-byte
+		// pipeline pointer) are memcpy'd verbatim — leaving both the user's DAPL
+		// and HDF5's internal copy holding the same pipeline pointer.  When each
+		// DAPL is later destroyed, dapl_pipeline_close fires on the same pointer
+		// twice → double-free.  This is the root cause of the historic "crashes
+		// on 1.12.x" TODO.  See issue #242.
+		//
+		// Fresh-allocation semantics are correct here because the pipeline is
+		// per-write scratch state, not shared accumulating state — set_cache()
+		// runs on every H5Dopen and on every h5::write/h5::read call.
+		inline herr_t dapl_pipeline_copy( const char *name, size_t size, void *value ){
+			(void)name; (void)size;
+			using pipeline = impl::pipeline_t<impl::basic_pipeline_t>;
+			*static_cast<pipeline**>(value) = new pipeline();
+			return 0;
 		}
 		inline ::herr_t dapl_pipeline_set(::hid_t dapl ) {
-			(void)dapl;
-		//TODO: see why H5CPP pipeline crashes with 1.12.x
-#if H5_VERSION_LE(1,10,6) 
-		// ignore if already set 
-		if( H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT) ) return 0;
-		using pipeline = impl::pipeline_t<impl::basic_pipeline_t>;
-	 	pipeline* ptr = new pipeline();
-		return H5Pinsert2(dapl, H5CPP_DAPL_HIGH_THROUGHPUT, sizeof( pipeline* ), &ptr,
-				nullptr, nullptr, nullptr, nullptr, nullptr, dapl_pipeline_close);
-#else
-			return 0;
-#endif
-	}
+			// ignore if already set
+			if( H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT) ) return 0;
+			using pipeline = impl::pipeline_t<impl::basic_pipeline_t>;
+			pipeline* ptr = new pipeline();
+			return H5Pinsert2(dapl, H5CPP_DAPL_HIGH_THROUGHPUT, sizeof( pipeline* ), &ptr,
+				nullptr,                  // set
+				nullptr,                  // get
+				nullptr,                  // prp_del
+				dapl_pipeline_copy,       // copy — issue #242 fix
+				nullptr,                  // compare
+				dapl_pipeline_close);
+		}
 }
 
 namespace h5 {

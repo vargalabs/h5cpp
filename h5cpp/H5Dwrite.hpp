@@ -87,7 +87,20 @@ namespace h5 {
 		hid_t dapl = h5::get_access_plist( ds );
 		herr_t err = 0;
 
-		if( H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT) ){
+		// The high_throughput pipeline uses H5Dwrite_chunk, which requires a
+		// chunked dataset layout. Guard on H5D_CHUNKED so a DAPL with the flag
+		// applied to a contiguous/compact dataset falls through to standard
+		// H5Dwrite rather than triggering "not a chunked dataset" errors
+		// (which manifest as a SegFault on Windows MSVC, see #242 follow-up).
+		const bool use_pipeline = [&]() {
+			if (!H5Pexist(dapl, H5CPP_DAPL_HIGH_THROUGHPUT)) return false;
+			hid_t dcpl_id = H5Dget_create_plist(static_cast<hid_t>(ds));
+			if (dcpl_id < 0) return false;
+			H5D_layout_t layout = H5Pget_layout(dcpl_id);
+			H5Pclose(dcpl_id);
+			return layout == H5D_CHUNKED;
+		}();
+		if( use_pipeline ){
 			const h5::block_t& block = arg::get( h5::default_block, args...);
 			const h5::offset_t& offset = arg::get( h5::default_offset, args...);
 			const h5::stride_t& stride = arg::get( h5::default_stride, args...);

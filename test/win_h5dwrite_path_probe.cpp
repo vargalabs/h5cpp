@@ -155,7 +155,12 @@ namespace {
             h5::dapl_t dapl = h5::high_throughput;
             std::vector<double> data{1.0, 2.0, 3.0};
             probe("fd_object_high_throughput_dapl: before h5::write(fd, path, vector, high_throughput)");
-            h5::write(fd, "vec", data, h5::current_dims{3}, dapl);
+            // h5::chunk{3} is required: the high_throughput pipeline uses
+            // H5Dwrite_chunk, which only operates on chunked datasets. Pre-#242
+            // the pipeline path was a no-op on HDF5 ≥ 1.10.7 so this call
+            // silently fell back to standard H5Dwrite. With the pipeline now
+            // active, the chunk specifier is mandatory.
+            h5::write(fd, "vec", data, h5::current_dims{3}, h5::chunk{3}, dapl);
             probe("fd_object_high_throughput_dapl: after h5::write(fd, path, vector, high_throughput)");
         }
         remove_file(path);
