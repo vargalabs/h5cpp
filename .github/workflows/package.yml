@@ -48,7 +48,9 @@ jobs:
             -DCPACK_PACKAGING_INSTALL_PREFIX=/usr \
             -DH5CPP_BUILD_EXAMPLES=OFF \
             -DH5CPP_BUILD_TESTS=OFF \
-            -DH5CPP_BUILD_BENCH=OFF
+            -DH5CPP_BUILD_BENCH=OFF \
+            -DH5CPP_USE_LIBDEFLATE=OFF \
+            -DH5CPP_USE_ZSTD=OFF
 
       - name: Build (amalgamation only)
         run: cmake --build build --target h5cpp-amalgamate
@@ -87,6 +89,7 @@ jobs:
           cmake -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=/usr/local \
+            -DHDF5_ROOT=$(brew --prefix hdf5) \
             -DH5CPP_BUILD_EXAMPLES=OFF \
             -DH5CPP_BUILD_TESTS=OFF \
             -DH5CPP_BUILD_BENCH=OFF
@@ -111,30 +114,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache HDF5
-        id: cache-hdf5
-        uses: actions/cache@v4
-        with:
-          path: C:/hdf5
-          key: hdf5-1.10.10-windows-x64
-
-      - name: Download HDF5
-        if: steps.cache-hdf5.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          $url = "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.10.10/hdf5-1.10.10-win-vs2022_intel.zip"
-          Invoke-WebRequest -Uri $url -OutFile hdf5.zip
-          Expand-Archive hdf5.zip -DestinationPath C:/hdf5
+      - name: Install HDF5
+        run: choco install hdf5 -y --no-progress
 
       - name: Configure
         shell: pwsh
         run: |
           cmake -B build `
             -DCMAKE_BUILD_TYPE=Release `
-            -DHDF5_ROOT="C:/hdf5" `
             -DH5CPP_BUILD_EXAMPLES=OFF `
             -DH5CPP_BUILD_TESTS=OFF `
-            -DH5CPP_BUILD_BENCH=OFF
+            -DH5CPP_BUILD_BENCH=OFF `
+            -DH5CPP_USE_LIBDEFLATE=OFF `
+            -DH5CPP_USE_ZSTD=OFF
 
       - name: Build (amalgamation only)
         run: cmake --build build --target h5cpp-amalgamate --config Release
